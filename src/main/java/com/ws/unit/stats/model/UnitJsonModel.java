@@ -1,5 +1,12 @@
 package com.ws.unit.stats.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.ws.unit.stats.service.impl.UnitJsonModelDeserializer;
+import com.ws.unit.stats.service.impl.UnitJsonModelSerializer;
+
+@JsonDeserialize(using = UnitJsonModelDeserializer.class)
+@JsonSerialize(using = UnitJsonModelSerializer.class)
 public class UnitJsonModel {
     private int id;
     private UnitDataJsonModel data;
