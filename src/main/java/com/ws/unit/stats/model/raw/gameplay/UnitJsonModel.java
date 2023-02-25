@@ -2,6 +2,8 @@ package com.ws.unit.stats.model.raw.gameplay;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ws.unit.stats.model.raw.gameplay.submodel.AirfieldJsonModel;
+import com.ws.unit.stats.model.raw.gameplay.submodel.IncomeJsonModel;
+import com.ws.unit.stats.model.raw.gameplay.submodel.MovementJsonModel;
 import com.ws.unit.stats.model.raw.gameplay.submodel.TransportingJsonModel;
 import com.ws.unit.stats.model.raw.gameplay.submodel.TurretJsonModel;
 
@@ -11,16 +13,15 @@ import java.util.Map;
 public class UnitJsonModel {
     private List<Object> abilities;
     private Integer adjustToGround;
+    private Map<String, Object> abilityOnAction;
     private Map<String, Object> agro;
     private List<AirfieldJsonModel> airfields;
     private Map<String, Object> airplane;
     @JsonProperty("armor_")
     private Map<String, Object> armor;
+    private Map<String, Object> attackReaction;
     private List<Object> building;
-    private Integer collisionElasticity;
-    private Integer collisionTags;
     private Boolean controllable;
-    private Map<String, Object> randomMoveData;
     private List<Object> corpses;
     private List<Object> createEnvs;
     private Integer danceDuration;
@@ -29,25 +30,19 @@ public class UnitJsonModel {
     private List<Object> healMeCost;
     private Integer health;
     private Integer hiddenInFows;
-    private Map<String, Object> holdPassability;
-    private List<Object> income;
-    private Integer incomePeriod;
+    private MovementJsonModel movement;
+    private IncomeJsonModel income;
     private Integer lifeTime;
-    private Integer moveAngle;
     private Integer openFows;
     private Boolean parentMustIdle;
     private Map<String, Object> passability;
-    private Integer pathTracker;
     private List<Object> rally;
     private Integer regeneration;
     private Boolean receiveFriendlyDamage;
-    private Integer rotationSpeed;
-    private Boolean runOnDamage;
     @JsonProperty("scale_")
     private Integer scale;
     private Integer searchTags;
     private Integer size;
-    private Integer speed;
     private Integer storageMultiplier;
     private Map<String, Object> supply;
     private Integer tags;
@@ -57,8 +52,15 @@ public class UnitJsonModel {
     private Integer viewRange;
     private Integer weaponUseOnDeath;
     private List<Object> weapons;
-    private Integer weight;
     private List<Object> work;
+
+    public Map<String, Object> getAbilityOnAction() {
+        return abilityOnAction;
+    }
+
+    public void setAbilityOnAction(Map<String, Object> abilityOnAction) {
+        this.abilityOnAction = abilityOnAction;
+    }
 
     public List<Object> getAbilities() {
         return abilities;
@@ -108,6 +110,14 @@ public class UnitJsonModel {
         this.armor = armor;
     }
 
+    public Map<String, Object> getAttackReaction() {
+        return attackReaction;
+    }
+
+    public void setAttackReaction(Map<String, Object> attackReaction) {
+        this.attackReaction = attackReaction;
+    }
+
     public List<Object> getBuilding() {
         return building;
     }
@@ -116,36 +126,12 @@ public class UnitJsonModel {
         this.building = building;
     }
 
-    public Integer getCollisionElasticity() {
-        return collisionElasticity;
-    }
-
-    public void setCollisionElasticity(Integer collisionElasticity) {
-        this.collisionElasticity = collisionElasticity;
-    }
-
-    public Integer getCollisionTags() {
-        return collisionTags;
-    }
-
-    public void setCollisionTags(Integer collisionTags) {
-        this.collisionTags = collisionTags;
-    }
-
     public Boolean getControllable() {
         return controllable;
     }
 
     public void setControllable(Boolean controllable) {
         this.controllable = controllable;
-    }
-
-    public Map<String, Object> getRandomMoveData() {
-        return randomMoveData;
-    }
-
-    public void setRandomMoveData(Map<String, Object> randomMoveData) {
-        this.randomMoveData = randomMoveData;
     }
 
     public List<Object> getCorpses() {
@@ -212,28 +198,20 @@ public class UnitJsonModel {
         this.hiddenInFows = hiddenInFows;
     }
 
-    public Map<String, Object> getHoldPassability() {
-        return holdPassability;
+    public MovementJsonModel getMovement() {
+        return movement;
     }
 
-    public void setHoldPassability(Map<String, Object> holdPassability) {
-        this.holdPassability = holdPassability;
+    public void setMovement(MovementJsonModel movement) {
+        this.movement = movement;
     }
 
-    public List<Object> getIncome() {
+    public IncomeJsonModel getIncome() {
         return income;
     }
 
-    public void setIncome(List<Object> income) {
+    public void setIncome(IncomeJsonModel income) {
         this.income = income;
-    }
-
-    public Integer getIncomePeriod() {
-        return incomePeriod;
-    }
-
-    public void setIncomePeriod(Integer incomePeriod) {
-        this.incomePeriod = incomePeriod;
     }
 
     public Integer getLifeTime() {
@@ -242,14 +220,6 @@ public class UnitJsonModel {
 
     public void setLifeTime(Integer lifeTime) {
         this.lifeTime = lifeTime;
-    }
-
-    public Integer getMoveAngle() {
-        return moveAngle;
-    }
-
-    public void setMoveAngle(Integer moveAngle) {
-        this.moveAngle = moveAngle;
     }
 
     public Integer getOpenFows() {
@@ -276,14 +246,6 @@ public class UnitJsonModel {
         this.passability = passability;
     }
 
-    public Integer getPathTracker() {
-        return pathTracker;
-    }
-
-    public void setPathTracker(Integer pathTracker) {
-        this.pathTracker = pathTracker;
-    }
-
     public List<Object> getRally() {
         return rally;
     }
@@ -308,22 +270,6 @@ public class UnitJsonModel {
         this.receiveFriendlyDamage = receiveFriendlyDamage;
     }
 
-    public Integer getRotationSpeed() {
-        return rotationSpeed;
-    }
-
-    public void setRotationSpeed(Integer rotationSpeed) {
-        this.rotationSpeed = rotationSpeed;
-    }
-
-    public Boolean getRunOnDamage() {
-        return runOnDamage;
-    }
-
-    public void setRunOnDamage(Boolean runOnDamage) {
-        this.runOnDamage = runOnDamage;
-    }
-
     public Integer getScale() {
         return scale;
     }
@@ -346,14 +292,6 @@ public class UnitJsonModel {
 
     public void setSize(Integer size) {
         this.size = size;
-    }
-
-    public Integer getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(Integer speed) {
-        this.speed = speed;
     }
 
     public Integer getStorageMultiplier() {
@@ -428,14 +366,6 @@ public class UnitJsonModel {
         this.weapons = weapons;
     }
 
-    public Integer getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Integer weight) {
-        this.weight = weight;
-    }
-
     public List<Object> getWork() {
         return work;
     }
@@ -446,18 +376,16 @@ public class UnitJsonModel {
 
     @Override
     public String toString() {
-        return "UnitDataJsonModel{" +
+        return "UnitJsonModel{" +
                 "abilities=" + abilities +
                 ", adjustToGround=" + adjustToGround +
                 ", agro=" + agro +
                 ", airfields=" + airfields +
                 ", airplane=" + airplane +
                 ", armor=" + armor +
+                ", attackReaction=" + attackReaction +
                 ", building=" + building +
-                ", collisionElasticity=" + collisionElasticity +
-                ", collisionTags=" + collisionTags +
                 ", controllable=" + controllable +
-                ", randomMoveData=" + randomMoveData +
                 ", corpses=" + corpses +
                 ", createEnvs=" + createEnvs +
                 ", danceDuration=" + danceDuration +
@@ -466,24 +394,18 @@ public class UnitJsonModel {
                 ", healMeCost=" + healMeCost +
                 ", health=" + health +
                 ", hiddenInFows=" + hiddenInFows +
-                ", holdPassability=" + holdPassability +
+                ", movement=" + movement +
                 ", income=" + income +
-                ", incomePeriod=" + incomePeriod +
                 ", lifeTime=" + lifeTime +
-                ", moveAngle=" + moveAngle +
                 ", openFows=" + openFows +
                 ", parentMustIdle=" + parentMustIdle +
                 ", passability=" + passability +
-                ", pathTracker=" + pathTracker +
                 ", rally=" + rally +
                 ", regeneration=" + regeneration +
                 ", receiveFriendlyDamage=" + receiveFriendlyDamage +
-                ", rotationSpeed=" + rotationSpeed +
-                ", runOnDamage=" + runOnDamage +
                 ", scale=" + scale +
                 ", searchTags=" + searchTags +
                 ", size=" + size +
-                ", speed=" + speed +
                 ", storageMultiplier=" + storageMultiplier +
                 ", supply=" + supply +
                 ", tags=" + tags +
@@ -493,7 +415,6 @@ public class UnitJsonModel {
                 ", viewRange=" + viewRange +
                 ", weaponUseOnDeath=" + weaponUseOnDeath +
                 ", weapons=" + weapons +
-                ", weight=" + weight +
                 ", work=" + work +
                 '}';
     }
