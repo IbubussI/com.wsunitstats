@@ -1,10 +1,10 @@
-package com.ws.unit.stats.model;
+package com.ws.unit.stats.model.raw.gameplay;
 
 import java.util.List;
 import java.util.Map;
 
-public class RootGameplayFileJsonModel {
-    private List<Object> build;
+public class GameplayFileJsonModel {
+    private List<BuildJsonModel> build;
     private Integer defaultFormationInterval;
     private Integer defaultFormationType;
     private Integer fowCellSize;
@@ -16,11 +16,11 @@ public class RootGameplayFileJsonModel {
     private Map<String, Object> upgradesScripts;
     private Integer version;
 
-    public List<Object> getBuild() {
+    public List<BuildJsonModel> getBuild() {
         return build;
     }
 
-    public void setBuild(List<Object> build) {
+    public void setBuild(List<BuildJsonModel> build) {
         this.build = build;
     }
 

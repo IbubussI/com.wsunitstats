@@ -1,15 +1,18 @@
-package com.ws.unit.stats.model;
+package com.ws.unit.stats.model.raw.gameplay;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ws.unit.stats.model.raw.gameplay.submodel.AirfieldJsonModel;
+import com.ws.unit.stats.model.raw.gameplay.submodel.TransportingJsonModel;
+import com.ws.unit.stats.model.raw.gameplay.submodel.TurretJsonModel;
 
 import java.util.List;
 import java.util.Map;
 
-public class UnitDataJsonModel {
+public class UnitJsonModel {
     private List<Object> abilities;
     private Integer adjustToGround;
     private Map<String, Object> agro;
-    private List<Object> airfields;
+    private List<AirfieldJsonModel> airfields;
     private Map<String, Object> airplane;
     @JsonProperty("armor_")
     private Map<String, Object> armor;
@@ -49,126 +52,13 @@ public class UnitDataJsonModel {
     private Map<String, Object> supply;
     private Integer tags;
     private Integer threat;
-    private Map<String, Object> transporting;
-
-    private List<Object> turrets;
+    private TransportingJsonModel transporting;
+    private List<TurretJsonModel> turrets;
     private Integer viewRange;
     private Integer weaponUseOnDeath;
     private List<Object> weapons;
     private Integer weight;
     private List<Object> work;
-
-    public List<Object> getAirfields() {
-        return airfields;
-    }
-
-    public void setAirfields(List<Object> airfields) {
-        this.airfields = airfields;
-    }
-
-    public Integer getPathTracker() {
-        return pathTracker;
-    }
-
-    public void setPathTracker(Integer pathTracker) {
-        this.pathTracker = pathTracker;
-    }
-
-    public Integer getCollisionElasticity() {
-        return collisionElasticity;
-    }
-
-    public void setCollisionElasticity(Integer collisionElasticity) {
-        this.collisionElasticity = collisionElasticity;
-    }
-
-    public Integer getWeaponUseOnDeath() {
-        return weaponUseOnDeath;
-    }
-
-    public void setWeaponUseOnDeath(Integer weaponUseOnDeath) {
-        this.weaponUseOnDeath = weaponUseOnDeath;
-    }
-
-    public Boolean isParentMustIdle() {
-        return parentMustIdle;
-    }
-
-    public void setParentMustIdle(Boolean parentMustIdle) {
-        this.parentMustIdle = parentMustIdle;
-    }
-
-    public List<Object> getIncome() {
-        return income;
-    }
-
-    public void setIncome(List<Object> income) {
-        this.income = income;
-    }
-
-    public Integer getIncomePeriod() {
-        return incomePeriod;
-    }
-
-    public void setIncomePeriod(Integer incomePeriod) {
-        this.incomePeriod = incomePeriod;
-    }
-
-    public Boolean isControllable() {
-        return controllable;
-    }
-
-    public void setControllable(Boolean controllable) {
-        this.controllable = controllable;
-    }
-
-    public Map<String, Object> getRandomMoveData() {
-        return randomMoveData;
-    }
-
-    public void setRandomMoveData(Map<String, Object> randomMoveData) {
-        this.randomMoveData = randomMoveData;
-    }
-
-    public Integer getLifeTime() {
-        return lifeTime;
-    }
-
-    public void setLifeTime(Integer lifetime) {
-        this.lifeTime = lifetime;
-    }
-
-    public List<Object> getRally() {
-        return rally;
-    }
-
-    public void setRally(List<Object> rally) {
-        this.rally = rally;
-    }
-
-    public Boolean isReceiveFriendlyDamage() {
-        return receiveFriendlyDamage;
-    }
-
-    public void setReceiveFriendlyDamage(Boolean receiveFriendlyDamage) {
-        this.receiveFriendlyDamage = receiveFriendlyDamage;
-    }
-
-    public Boolean isRunOnDamage() {
-        return runOnDamage;
-    }
-
-    public void setRunOnDamage(Boolean runOnDamage) {
-        this.runOnDamage = runOnDamage;
-    }
-
-    public List<Object> getHealMeCost() {
-        return healMeCost;
-    }
-
-    public void setHealMeCost(List<Object> healMeCost) {
-        this.healMeCost = healMeCost;
-    }
 
     public List<Object> getAbilities() {
         return abilities;
@@ -192,6 +82,14 @@ public class UnitDataJsonModel {
 
     public void setAgro(Map<String, Object> agro) {
         this.agro = agro;
+    }
+
+    public List<AirfieldJsonModel> getAirfields() {
+        return airfields;
+    }
+
+    public void setAirfields(List<AirfieldJsonModel> airfields) {
+        this.airfields = airfields;
     }
 
     public Map<String, Object> getAirplane() {
@@ -218,12 +116,36 @@ public class UnitDataJsonModel {
         this.building = building;
     }
 
+    public Integer getCollisionElasticity() {
+        return collisionElasticity;
+    }
+
+    public void setCollisionElasticity(Integer collisionElasticity) {
+        this.collisionElasticity = collisionElasticity;
+    }
+
     public Integer getCollisionTags() {
         return collisionTags;
     }
 
     public void setCollisionTags(Integer collisionTags) {
         this.collisionTags = collisionTags;
+    }
+
+    public Boolean getControllable() {
+        return controllable;
+    }
+
+    public void setControllable(Boolean controllable) {
+        this.controllable = controllable;
+    }
+
+    public Map<String, Object> getRandomMoveData() {
+        return randomMoveData;
+    }
+
+    public void setRandomMoveData(Map<String, Object> randomMoveData) {
+        this.randomMoveData = randomMoveData;
     }
 
     public List<Object> getCorpses() {
@@ -266,6 +188,14 @@ public class UnitDataJsonModel {
         this.heal = heal;
     }
 
+    public List<Object> getHealMeCost() {
+        return healMeCost;
+    }
+
+    public void setHealMeCost(List<Object> healMeCost) {
+        this.healMeCost = healMeCost;
+    }
+
     public Integer getHealth() {
         return health;
     }
@@ -290,6 +220,30 @@ public class UnitDataJsonModel {
         this.holdPassability = holdPassability;
     }
 
+    public List<Object> getIncome() {
+        return income;
+    }
+
+    public void setIncome(List<Object> income) {
+        this.income = income;
+    }
+
+    public Integer getIncomePeriod() {
+        return incomePeriod;
+    }
+
+    public void setIncomePeriod(Integer incomePeriod) {
+        this.incomePeriod = incomePeriod;
+    }
+
+    public Integer getLifeTime() {
+        return lifeTime;
+    }
+
+    public void setLifeTime(Integer lifeTime) {
+        this.lifeTime = lifeTime;
+    }
+
     public Integer getMoveAngle() {
         return moveAngle;
     }
@@ -306,12 +260,36 @@ public class UnitDataJsonModel {
         this.openFows = openFows;
     }
 
+    public Boolean getParentMustIdle() {
+        return parentMustIdle;
+    }
+
+    public void setParentMustIdle(Boolean parentMustIdle) {
+        this.parentMustIdle = parentMustIdle;
+    }
+
     public Map<String, Object> getPassability() {
         return passability;
     }
 
     public void setPassability(Map<String, Object> passability) {
         this.passability = passability;
+    }
+
+    public Integer getPathTracker() {
+        return pathTracker;
+    }
+
+    public void setPathTracker(Integer pathTracker) {
+        this.pathTracker = pathTracker;
+    }
+
+    public List<Object> getRally() {
+        return rally;
+    }
+
+    public void setRally(List<Object> rally) {
+        this.rally = rally;
     }
 
     public Integer getRegeneration() {
@@ -322,12 +300,28 @@ public class UnitDataJsonModel {
         this.regeneration = regeneration;
     }
 
+    public Boolean getReceiveFriendlyDamage() {
+        return receiveFriendlyDamage;
+    }
+
+    public void setReceiveFriendlyDamage(Boolean receiveFriendlyDamage) {
+        this.receiveFriendlyDamage = receiveFriendlyDamage;
+    }
+
     public Integer getRotationSpeed() {
         return rotationSpeed;
     }
 
     public void setRotationSpeed(Integer rotationSpeed) {
         this.rotationSpeed = rotationSpeed;
+    }
+
+    public Boolean getRunOnDamage() {
+        return runOnDamage;
+    }
+
+    public void setRunOnDamage(Boolean runOnDamage) {
+        this.runOnDamage = runOnDamage;
     }
 
     public Integer getScale() {
@@ -394,19 +388,19 @@ public class UnitDataJsonModel {
         this.threat = threat;
     }
 
-    public Map<String, Object> getTransporting() {
+    public TransportingJsonModel getTransporting() {
         return transporting;
     }
 
-    public void setTransporting(Map<String, Object> transporting) {
+    public void setTransporting(TransportingJsonModel transporting) {
         this.transporting = transporting;
     }
 
-    public List<Object> getTurrets() {
+    public List<TurretJsonModel> getTurrets() {
         return turrets;
     }
 
-    public void setTurrets(List<Object> turrets) {
+    public void setTurrets(List<TurretJsonModel> turrets) {
         this.turrets = turrets;
     }
 
@@ -416,6 +410,14 @@ public class UnitDataJsonModel {
 
     public void setViewRange(Integer viewRange) {
         this.viewRange = viewRange;
+    }
+
+    public Integer getWeaponUseOnDeath() {
+        return weaponUseOnDeath;
+    }
+
+    public void setWeaponUseOnDeath(Integer weaponUseOnDeath) {
+        this.weaponUseOnDeath = weaponUseOnDeath;
     }
 
     public List<Object> getWeapons() {
@@ -496,3 +498,4 @@ public class UnitDataJsonModel {
                 '}';
     }
 }
+
