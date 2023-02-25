@@ -1,0 +1,1323 @@
+<*toolsFontFamily>Roboto-Medium
+<*font_unk>Roboto-Medium
+<*font_br>Roboto-Medium
+<*font_hu>Roboto-Medium
+<*font_tw>NotoSansTC-Regular
+<*font_cn>SIMHEI
+<*font_cs>Roboto-Medium
+<*font_da>Roboto-Medium
+<*font_de>Roboto-Medium
+<*font_en>Roboto-Medium
+<*font_es>Roboto-Medium
+<*font_fr>Roboto-Medium
+<*font_nl>Roboto-Medium
+<*font_hr>Roboto-Medium
+<*font_hi>mangal
+<*font_it>Roboto-Medium
+<*font_ka>hack-regular
+<*font_kr>NotoSansKR-Regular
+<*font_pl>Roboto-Medium
+<*font_ru>Roboto-Medium
+<*font_tr>Roboto-Medium
+<*font_sr>Roboto-Medium
+<*fontFamily>Roboto-Medium
+<*fontFamilyLat>Roboto-Medium
+<*fontFamilyKr>NotoSansKR-Regular
+<*fontFamilyTW>NotoSansTC-Regular
+<*fontFamilyCN>SIMHEI
+<*fontFamilyHi>mangal
+<*fontFamilyKa>hack-regular
+
+<*upgrade0>Fur shoes|Increases the speed of stone age workers
+<*upgrade1>Iron Age of Europe|Make the transition to the Iron Age of Europe
+<*upgrade2>Iron Age of Asia|Make the transition to the Iron Age of Asia
+<*upgrade3>Bronze Age of Europe|Make the transition to the Bronze Age of Europe
+<*upgrade4>Bronze Age of Asia|Make the transition to the Bronze Age of Asia
+<*upgrade5>Middle Ages of Western Europe|Make the transition to the Middle Ages of Western Europe
+<*upgrade6>Middle Ages of Eastern Europe|Make the transition to the Middle Ages of Eastern Europe
+<*upgrade7>Middle Ages of West Asia|Make the transition to the Middle Ages of West Asia
+<*upgrade8>Middle Ages of East Asia|Make the transition to the Middle Ages of East Asia
+<*upgrade9>Late Middle Ages of Eastern Europe|Make the transition to the later Middle Ages of Eastern Europe
+<*upgrade10>Bone armor|Increases stone armor armor effectiveness
+<*upgrade11>Strength training|Increases the damage of a warrior and a club
+<*upgrade12>Wicker Sling|Increases damage of sling and bulwark
+<*upgrade13>Leather shoes|Significantly increases the speed of movement of warriors
+<*upgrade14>Extra beds in homes|Increases the maximum population limit
+<*upgrade15>Late Middle Ages of Western Europe|Make the transition to the later Middle Ages of Western Europe
+<*upgrade16>Late Middle Ages of West Asia|Make the transition to the later Middle Ages of West Asia
+<*upgrade17>Late Middle Ages of East Asia|Make the transition to the late Middle Ages of East Asia
+<*upgrade18>Explore the area|The whole territory of the country is always visible
+<*upgrade19>Berry comb|Increases berry picking rate by Stone Age workers
+<*upgrade20>Firewood ropes|Increases speed of wood obtaining by stone age workers
+<*upgrade21>Mace|Gives the opportunity to train a Maceman
+<*upgrade22>Warehouse shelving|Improves storage efficiency in medieval warehouses
+<*upgrade23>New assault weapon|Improves production for new Zrínyi model
+<*upgrade24>Leather sling|Slinger becomes more accurate
+<*upgrade25>Stone Age World Wonder|Preparing for victory
+<*upgrade26>Spacious houses|Increases the maximum population limit
+<*upgrade27>Metal axe|Increases the speed of wood production by bronze and iron age workers
+<*upgrade28>Sickle|Increases the speed of collecting wheat by workers of the Bronze and Iron Age
+<*upgrade29>Metal chisel|Increases the speed of metal mining by bronze and iron age workers
+<*upgrade30>Metal ax|Increases the speed of wood extraction by the Bronze and Iron Age workers
+<*upgrade31>Metal chisel|Increases the rate of metal mining by bronze and iron age workers
+<*upgrade32>Metal tip|Increases damage of a spearmen
+<*upgrade33>Rawhide Bowstring|Increases archer damage
+<*upgrade34>Leather tanning|Increases armor efficiency
+<*upgrade35>Balanced spear|Increases spearmen attack speed
+<*upgrade36>Banded Bow|Increases the attack range of archers
+<*upgrade37>Metal tools|Increases construction speed
+<*upgrade38>Fish baskets|Increases fishing boat capacity
+<*upgrade39>Paper dome|Replacing rubber with paper makes it cheaper and quicker to reserve the Fu-go
+<*upgrade40>Metal Sword|Unlocks the ability to train a swordsman
+<*upgrade41>Battle Axe|Unlocks the ability to train an ax
+<*upgrade42>Horseshoe|Increases the speed of the riders
+<*upgrade43>Grinding stone|Increases damage with cutting weapons
+<*upgrade44>Stirrups|Unlocks the ability to train horseman with a spear
+<*upgrade45>Rawhide bow-string|Increases archer damage
+<*upgrade46>Mounted archery|Unlocks the ability to train a horse archer
+<*upgrade47>Metal tip|Increases spearmen damage
+<*upgrade48>Hard plumage of arrows|Increases accuracy of archers
+<*upgrade49>Stableman|Increases rider reservation speed
+<*upgrade50>Pointed bullets|increases attack range of Soldier, Ranger, Sniper for ground targets only
+<*upgrade51>Strengthened Bow|Unlocks the ability to train a heavy archer
+<*upgrade52>Armory|Increases size of spearmens reserve
+<*upgrade53>Armory|Increases size of archers reserve
+<*upgrade54>Armory|Increases size of horsemen and horse archers reserve
+<*upgrade55>Metal patches|Increases armor efficiency
+<*upgrade56>Metal oarlock|Increases fishing boat speed
+<*upgrade57>European Wonder of the World|Preparation for victory
+<*upgrade58>Asian Wonder of the World|Preparation for victory
+<*upgrade59>Abstract Country|Make a transition to the Industrial Revolution(IR1) of Abstract Country.
+<*upgrade60>Central Sewerage|Increases maximum population limit
+<*upgrade61>Austria-Hungary IR1|Make a transition to the Industrial Revolution(IR1) of Austria-Hungary.
+<*upgrade62>France IR1|Make a transition to the Industrial Revolution(IR1) of France.
+<*upgrade63>Germany IR1|Make a transition to the Industrial Revolution(IR1) of Germany.
+<*upgrade64>Great Britain IR1|Make a transition to the Industrial Revolution(IR1) of Great Britain.
+<*upgrade65>Russian Empire IR1|Make a transition to the Industrial Revolution(IR1) of of the Russian Empire.
+<*upgrade66>Ukraine IR1|Make a transition to the Industrial Revolution(IR1) of Ukraine. (Scheduled to be developed)
+<*upgrade67>Turkey IR1|Make a transition to the Industrial Revolution(IR1) of Turkey.
+<*upgrade68>India IR1|Make a transition to the Industrial Revolution(IR1) of India.
+<*upgrade69>Egypt IR1|Make a transition to the Industrial Revolution(IR1) of Egypt. (Scheduled to be developed)
+<*upgrade70>China IR1|Make a transition to the Industrial Revolution(IR1) of China.
+<*upgrade71>Korea IR1|Make a transition to the Industrial Revolution(IR1) of Korea. (Scheduled to be developed)
+<*upgrade72>Poland IR1|Make a transition to the Industrial Revolution(IR1) of Poland.
+<*upgrade73>Japan IR1|Make a transition to the Industrial Revolution(IR1) of Japan.
+<*upgrade74>Cleavage wedges|Increases speed of stone material extraction
+<*upgrade75>Supertough pickaxe|Increases speed of metal material extraction
+<*upgrade76>Steerable sail|Increases speed of all sailing vessels
+<*upgrade77>Lightweight catapult|Opens access to the construction of a siege ship
+<*upgrade78>Fishing nets|Increases fishing speed and a lower hold capacity
+<*upgrade79>Crossbow|Unlocks a possibility to train crossbowmen, horse- and unmounted ones
+<*upgrade80>Complex block system|Provides access to the construction of a trebuchet
+<*upgrade81>Metal axis|Increases movement speed of an onager
+<*upgrade82>Bulat|Increases damage of piercing melee-weapons
+<*upgrade83>Light abrasive sharpening|Increases secant weapon damage
+<*upgrade84>Weighted Tip|Increases bow, crossbow and guardian tower damage 
+<*upgrade85>Western Europe Wonder of the World|Preparation for victory
+<*upgrade86>Eastern Europe Wonder of the World|Preparation for victory
+<*upgrade87>Western Asia Wonder of the World|Preparation for victory
+<*upgrade88>Eastern Asia Wonder of the World|Preparation for victory
+<*upgrade89>Industrial Wonder of the World|Preparation for victory
+<*upgrade90>Bronze Age of Native Americans|Make the transition to the Bronze Age of Native Americans. (Scheduled to be developed)
+<*upgrade91>Bronze Age of Africa|Make the transition to the Bronze Age of Africa. (Scheduled to be developed)
+<*upgrade92>Intelligence agency|Displays all main buildings of all players on the minimap
+<*upgrade93>Industrial Revolution 2|Make a transition to the era of the Second Industrial Revolution (IR2)
+<*upgrade94>---|---
+<*upgrade95>Wheel lock|Increases musket shot speed
+<*upgrade96>Improved harness|Increases elephant movement speed
+<*upgrade97>Sorting supplies|Increases storage-elephant efficiency
+<*upgrade98>Granular gunpowder|Increases bullet damage
+<*upgrade99>Tank blueprints|Unlocks possibility to build a tank
+<*upgrade100>Lightweight structure|Increases wheeled tank speed
+<*upgrade101>Mortar|Unlocks possibility to train mortarer
+<*upgrade102>Ballistic sight|Increases cannon accuracy
+<*upgrade103>Heavy tank blueprints|Unlocks possibility to build a heavy tank
+<*upgrade104>Pernach|Unlocks possibility to train a warrior with a pernach
+<*upgrade105>Morgenstern|Unlocks possibility to train a warrior with a morgenstern
+<*upgrade106>Reinforced equipment|Increases the carrying capacity of workers(IR1)
+<*upgrade107>Damascus Steel|Increases Spear Damage
+<*upgrade108>Weighted Tip|Increases bow damage
+<*upgrade109>Light abrasive sharpening|Increases damage with secant weapons
+<*upgrade110>Cornac|Increases elephant attack speed with tusks
+<*upgrade111>Armory|Increases size of the reserve barracks
+<*upgrade112>Armory|Increases size of the reserve shooting range
+<*upgrade113>Repeating Crossbow|Unlocks possibility to train cho-ko-nu
+<*upgrade114>Great Britain IR2|Make a transition to the Second Industrial Revolution(IR2) of Great Britain.
+<*upgrade115>India IR2|Make a transition to the Second Industrial Revolution(IR2) of India.
+<*upgrade116>Turkey IR2|Make a transition to the Second Industrial Revolution(IR2) of Turkey.
+<*upgrade117>Tradition of large families|Increases the maximum population limit
+<*upgrade118>Germany IR2|Make a transition to the Second Industrial Revolution(IR2) of Germany.
+<*upgrade119>Spread influence|Increases the territory occupied by buildings
+<*upgrade120>Increase control|Increases the territory occupied by buildings
+<*upgrade121>USSR IR2|Make a transition to the Second Industrial Revolution(IR2) of USSR.
+<*upgrade122>Training standards|Reduces the cost of training elephants with machine gun and trench mortar
+<*upgrade123>Grenades|Fits soldiers with grenades
+<*upgrade124>Training|Makes more dangerous than Durga tigers
+<*upgrade125>France IR2|Make a transition to the Second Industrial Revolution(IR2) of France
+<*upgrade126>China IR2|Make a transition to the Second Industrial Revolution(IR2) of China.
+<*upgrade127>Supplies from France|Beginning of paid deliveries of vehicles from France
+<*upgrade128>Supplies from Germany|Beginning of paid deliveries of vehicles from Germany
+<*upgrade129>Supplies from USSR|Beginning of paid deliveries of vehicles from USSR
+<*upgrade130>Supplies from Great Britain|Beginning of paid deliveries of vehicles from Great Britain
+<*upgrade131>Japan IR2|Make a transition to the Second Industrial Revolution(IR2) of Japan.
+<*upgrade132>Strengthened Mortars|Increases trench mortar damage but decreases its rate of fire
+<*upgrade133>System fish catching|Significantly increases the speed of catch and the size of the hold of longboats
+<*upgrade134>Propaganda|Increases the territory occupied by buildings
+<*upgrade135>Poland IR2|Make a transition to the Second Industrial Revolution(IR2) of Poland.
+<*upgrade136>Hungary IR2|Make a transition to the Second Industrial Revolution(IR2) of Hungary.
+<*upgrade137>{Poisoning}|{Poison the victim}
+<*upgrade138>{Armor penetration}|{Decreases target's armor by half}
+<*upgrade139>{Deafening}|{Decreases speed by half}
+<*upgrade140>---|---
+<*upgrade141>---|---
+<*upgrade142>---|---
+<*upgrade143>---|---
+<*upgrade144>---|---
+<*upgrade145>---|---
+<*upgrade146>---|---
+<*upgrade147>---|---
+<*upgrade148>---|---
+<*upgrade149>---|---
+<*upgrade150>---|---
+<*upgrade151>---|---
+<*upgrade152>---|---
+<*upgrade153>---|---
+<*upgrade154>---|---
+<*upgrade155>---|---
+<*upgrade156>---|---
+<*upgrade157>---|---
+<*upgrade158>---|---
+<*upgrade159>---|---
+<*upgrade160>---|---
+<*upgrade161>---|---
+<*upgrade162>---|---
+<*upgrade163>---|---
+<*upgrade164>---|---
+<*upgrade165>---|---
+<*upgrade166>---|---
+<*upgrade167>---|---
+<*upgrade168>---|---
+<*upgrade169>---|---
+<*upgrade170>---|---
+<*upgrade171>---|---
+<*upgrade172>---|---
+<*upgrade173>---|---
+<*upgrade174>---|---
+<*upgrade175>---|---
+<*upgrade176>---|---
+<*upgrade177>---|---
+<*upgrade178>---|---
+<*upgrade179>---|---
+<*upgrade180>---|---
+<*upgrade181>---|---
+<*upgrade182>---|---
+<*upgrade183>---|---
+<*upgrade184>---|---
+<*upgrade185>---|---
+<*upgrade186>---|---
+<*upgrade187>---|---
+<*upgrade188>---|---
+<*upgrade189>---|---
+<*upgrade190>---|---
+<*upgrade191>---|---
+<*upgrade192>---|---
+<*upgrade193>---|---
+<*upgrade194>---|---
+<*upgrade195>---|---
+<*upgrade196>---|---
+<*upgrade197>---|---
+<*upgrade198>---|---
+<*upgrade199>---|---
+
+<*warningBetaUpdate>This is a beta version of the update.|The changes are not final,|but we're still working|on this update.
+
+<*ageShortNames>Stone Age|Bronze and Iron Ages|Middle Ages|Industrial Revolution
+<*ageNames>Stone Age|Bronze Age|Iron Age|Early middle Ages|Late middle ages|Industrial Revolution|Second Industrial Revolution|Modernity
+<*nationNameShort8>Britain
+<*nationName1>Stone Age
+<*nationName2>Europe
+<*nationName3>Asia
+<*nationName4>Western Europe
+<*nationName5>Eastern Europe
+<*nationName6>Western Asia
+<*nationName7>Eastern Asia
+<*nationName8>Abstract
+<*nationName9>Great Britain
+<*nationName10>India
+<*nationName11>Turkey
+<*nationName12>Germany
+<*nationName13>Russian Empire|USSR
+<*nationName14>France
+<*nationName15>China
+<*nationName16>Japan
+<*nationName17>Poland
+<*nationName18>Austro-Hungary|Hungary
+<*nationName19>Africa
+<*nationName20>Native Americans
+<*nationName0>Animals
+
+<*unitTag>Not attacked by friendly fire|Building|Worker|Army|TownHall|Repairable|Combat fleet|Disassemblable|Wonder|Shippable|Gate open|Gate closed|Technics|Aviation|Land forces|Fleet|Animal friend|Decoration|Special unit|Underwater|Radar|Destroyer|Fire Damage|Alive|Horseman||||||||||
+<*unitSearchTag>Obtaining food|Obtaining materials|Obtaining metal|Meat gathering's target|Obtaining fish|Townhall|Gate shift|Land capture|Cosmetic|Transition to the next Age|Auto Attack Target|Airfield|Aircraft||+|||||
+<*recourceName>Food|Materials|Metal|Gold|Fuel
+<*envTag>Berry|Forest|Fish|Metal|Meat|Stone|Grains|Signaled||
+<*envSearchTag>Berries|Wood|Small fish|Large fish|Metal|Meat|Stone|Wheat|Underground Iron|Rice|Underground stone||||||||ST|
+
+<*envName0>Small fish
+<*envName1>Berry bush
+<*envNameTree>Tree
+<*envName36>Large fish
+<*envName37>Copper
+<*envName274>Copper
+<*envName38>Stone
+<*envName275>Stone
+<*envName39>Iron
+<*envName276>Iron
+<*envName87>Copper vein
+<*envName88>Stone vein
+<*envName89>Iron vein
+<*envNameMeat>Meat
+<*envName90-omen>Strange wheat
+<*envName305>Rice
+<*envName90>Wheat
+
+<*unitName0>Altar
+<*unitName1>Worker
+<*unitName2>Warehouse
+<*unitName3>Hut
+<*unitName4>Bulwark
+<*unitName5>Fight pit
+<*unitName6>Warrior
+<*unitName7>Maceman
+<*unitName8>Slinger
+<*unitName9>Stonecutter
+<*unitName10>Temple
+<*unitName11>Elder's house
+<*unitName12>Worker
+<*unitName13>Mammoth
+<*unitName14>Bear
+<*unitName15>Deer
+<*unitName16>House
+<*unitName17>Warehouse
+<*unitName18>Barracks
+<*unitName19>Stable
+<*unitName20>Guardian tower
+<*unitName21>Pier
+<*unitName22>Spearmen
+<*unitName23>Archer
+<*unitName24>Horseman
+<*unitName25>Alligator
+<*unitName26>Fisher
+<*unitName27>Battle boat
+<*unitName28>Elder's house
+<*unitName29>House
+<*unitName30>Warehouse
+<*unitName31>Worker
+<*unitName32>Barracks
+<*unitName33>Stable
+<*unitName34>Shooting range
+<*unitName35>Pier
+<*unitName36>Heavy spearmen
+<*unitName37>Swordsman
+<*unitName38>Axeman
+<*unitName39>Spearmen
+<*unitName40>Archer
+<*unitName41>Horseman
+<*unitName42>Horse archer
+<*unitName43>Fisher
+<*unitName44>Sampan
+<*unitName45>Tiger
+<*unitName46>Observing tower
+<*unitName47>Guardian tower
+<*unitName48>Heavy spearmen
+<*unitName49>Heavy archer
+<*unitName50>Forge
+<*unitName51>Guildhall
+<*unitName52>Chambers
+<*unitName53>Cow
+<*unitName54>Farm
+<*unitName55>Worker
+<*unitName56>Worker
+<*unitName57>House
+<*unitName58>Log hut
+<*unitName59>Warehouse
+<*unitName60>Warehouse
+<*unitName61>Boar
+<*unitName62>Domestic fowl
+<*unitName63>Poultry yard
+<*unitName64>Barracks
+<*unitName65>Stable
+<*unitName66>Workshop
+<*unitName67>Guardian tower
+<*unitName68>Pier
+<*unitName69>Forge
+<*unitName70>Mill
+<*unitName71>Militiaman
+<*unitName72>Pikeman
+<*unitName73>Squad
+<*unitName74>Pernach
+<*unitName75>Crossbowman
+<*unitName76>Horse archer
+<*unitName77>Horse crossbowman
+<*unitName78>Light knight
+<*unitName79>Catapult
+<*unitName80>Ram
+<*unitName81>Fisher
+<*unitName82>Galley
+<*unitName83>Palace
+<*unitName84>Palace
+<*unitName85>House
+<*unitName86>House
+<*unitName87>Warehouse
+<*unitName88>Warehouse
+<*unitName89>Worker
+<*unitName90>Worker
+<*unitName91>Fort
+<*unitName92>Workshop
+<*unitName93>Pier
+<*unitName94>Forge
+<*unitName95>Mill
+<*unitName96>Barracks
+<*unitName97>Shooting range
+<*unitName98>Stable
+<*unitName99>Guardian tower
+<*unitName100>Trebuchet
+<*unitName101>Pikeman
+<*unitName102>Landsknecht
+<*unitName103>Legionary
+<*unitName104>Morgenstern
+<*unitName105>Longbow
+<*unitName106>Chariot
+<*unitName107>Heavy knight
+<*unitName108>Onager
+<*unitName109>Royal barracks
+<*unitName110>Royal shooting range
+<*unitName111>Royal stable
+<*unitName112>Barnyard
+<*unitName113>Barracks
+<*unitName114>Stable
+<*unitName115>Shooting range
+<*unitName116>Elephant house
+<*unitName117>Tower
+<*unitName118>Pier
+<*unitName119>Azap
+<*unitName120>Sarbaz
+<*unitName121>Sipakh
+<*unitName122>Oglan
+<*unitName123>Mamluk
+<*unitName124>Cargo elephant
+<*unitName125>Battle elephant
+<*unitName126>Elephant-archer
+<*unitName127>Armored elephant
+<*unitName128>Elephant-rammer
+<*unitName129>Ballista
+<*unitName130>Goat
+<*unitName131>Ashigaru
+<*unitName132>Archer
+<*unitName133>Cho-ko-nu
+<*unitName134>Ronin
+<*unitName135>Horse archer
+<*unitName136>Samurai
+<*unitName137>Springald
+<*unitName138>Rocket cannon
+<*unitName139>Poultry yard
+<*unitName140>Barracks
+<*unitName141>Shooting range
+<*unitName142>Stable
+<*unitName143>Guardian tower
+<*unitName144>Pier
+<*unitName145>Siege ship
+<*unitName146>Halberdier
+<*unitName147>Musketeer
+<*unitName148>Grenadier
+<*unitName149>Dragoon
+<*unitName150>Cuirassier
+<*unitName151>Bombard
+<*unitName152>Cannon
+<*unitName153>Halberdier
+<*unitName154>Strelets
+<*unitName155>Grenadier
+<*unitName156>Dragoon
+<*unitName157>Cuirassier
+<*unitName158>Cossack
+<*unitName159>Hussaria
+<*unitName160>Cannon
+<*unitName161>Galeon
+<*unitName162>Bombardier Ship
+<*unitName163>Junk
+<*unitName164>Janissary
+<*unitName165>Bashibuzuk
+<*unitName166>Cannon
+<*unitName167>Elephant-Bashibuzuk
+<*unitName168>Melting house
+<*unitName169>Fishing schooner
+<*unitName170>Warship
+<*unitName171>Harquebusier
+<*unitName172>Asigaru Jari
+<*unitName173>Dragoon
+<*unitName174>Hand cannon
+<*unitName175>Mounted samurai
+<*unitName176>Turtle-ship
+<*unitName177>Heavy tank
+<*unitName178>Radar station
+<*unitName179>Squadron cannon
+<*unitName180>Trench mortar
+<*unitName181>Submachine gunner
+<*unitName182>Palisade
+<*unitName183>Palisade
+<*unitName184>Gate close
+<*unitName185>Palisade
+<*unitName186>Palisade
+<*unitName187>Palisade
+<*unitName188>Gate close
+<*unitName189>Palisade
+<*unitName190>City Hall
+<*unitName191>Depot
+<*unitName192>House
+<*unitName193>Farm
+<*unitName194>University
+<*unitName195>Barracks
+<*unitName196>Factory
+<*unitName197>Machine gun Tower
+<*unitName198>Gate open
+<*unitName199>Gate open
+<*unitName200>Earth Mother
+<*unitName201>Worker
+<*unitName202>Ranger
+<*unitName203>Cavalryman
+<*unitName204>Machine gunner
+<*unitName205>Soldier
+<*unitName206>Armored car
+<*unitName207>Light tank
+<*unitName208>Howitzer
+<*unitName209>European Wonder of the World
+<*unitName210>Asian Wonder of the World
+<*unitName211>Wall
+<*unitName212>Wall
+<*unitName213>Wall
+<*unitName214>Gate close
+<*unitName215>Gate open
+<*unitName216>Wall
+<*unitName217>Wall
+<*unitName218>Wall
+<*unitName219>Gate close
+<*unitName220>Gate open
+<*unitName221>Wall
+<*unitName222>Wall
+<*unitName223>Wall
+<*unitName224>Gate close
+<*unitName225>Gate open
+<*unitName226>Wall
+<*unitName227>Wall
+<*unitName228>Wall
+<*unitName229>Gate close
+<*unitName230>Gate open
+<*unitName231>Siege ship
+<*unitName232>Antitank hedgehog
+<*unitName233>Attack ship
+<*unitName234>Arsenal
+<*unitName235>Western Europe Wonder of the World
+<*unitName236>Eastern Europe Wonder of the World
+<*unitName237>Western Asia Wonder of the World
+<*unitName238>Eastern Asia Wonder of the World
+<*unitName239>Industrial Wonder of the World
+<*unitName240>Tractor
+<*unitName241>Motorcycle
+<*unitName242>APC
+<*unitName243>Grenade launcher
+<*unitName244>Trawler
+<*unitName245>Machine-gun trawler
+<*unitName246>Balloon
+<*unitName247>Dock
+<*unitName248>Battleship
+<*unitName249>Cannon tower
+<*unitName250>Aerostat
+<*unitName251>Xmas tree
+<*unitName252>Location station
+<*unitName253>Mine
+<*unitName254>City Hall
+<*unitName255>House
+<*unitName256>Tank Rhombus
+<*unitName257>Steamboat
+<*unitName258>Marlboro Tank
+<*unitName259>Tank destroyer
+<*unitName260>Dreadnought
+<*unitName261>Sea fort
+<*unitName262>Light machine gun
+<*unitName263>Anti-tank rifle
+<*unitName264>City Hall
+<*unitName265>House
+<*unitName266>Elephant-machine gun
+<*unitName267>Elephant-trench mortar
+<*unitName268>Sikh
+<*unitName269>Wheeled tank
+<*unitName270>Fury of Durga
+<*unitName271>City Hall
+<*unitName272>House
+<*unitName273>Light cannon
+<*unitName274>Invisible man
+<*unitName275>Mortar
+<*unitName276>Zamburak
+<*unitName277>Sniper
+<*unitName278>Sniper on position
+<*unitName279>Artillery tower
+<*unitName280>Steam debarquer
+<*unitName281>Improved mine
+<*unitName282>City Hall
+<*unitName283>House
+<*unitName284>Cannon Kolossal
+<*unitName285>Big Bertha
+<*unitName286>Tank Panther
+<*unitName287>Tank Maus
+<*unitName288>Goliath operator
+<*unitName289>Goliath
+<*unitName290>Military balloon
+<*unitName291>Military aerostat
+<*unitName292>Light bomber
+<*unitName293>Flammenwerfer
+<*unitName294>Armored Flammenwerfer
+<*unitName295>Pillbox
+<*unitName296>Heavy pillbox
+<*unitName297>Airfield
+<*unitName298>T34
+<*unitName299>IS2
+<*unitName300>BM-13
+<*unitName301>Engineer
+<*unitName302>City Hall
+<*unitName303>House
+<*unitName304>Death's Scythe
+<*unitName305>Soldier
+<*unitName306>Red devil
+<*unitName307>Partisan
+<*unitName308>Bird
+<*unitName309>Flamethrower tank
+<*unitName310>Anti-Aircraft tachanka
+<*unitName311>Torpedo boat
+<*unitName312>Stable
+<*unitName313>Scout
+<*unitName314>Light Fighter
+<*unitName315>Fighter
+<*unitName316>Bomber
+<*unitName317>Anti-Aircraft machine gun
+<*unitName318>Anti-Aircraft gun
+<*unitName319>Anti-Aircraft heavy machine gun
+<*unitName320>Anti-Aircraft heavy gun
+<*unitName321>Anti-Aircraft pillbox
+<*unitName322>Anti-Aircraft sea fort
+<*unitName323>City Hall
+<*unitName324>House
+<*unitName325>FT17
+<*unitName326>2C
+<*unitName327>APC Saint Chamond
+<*unitName328>Farman Goliath
+<*unitName329>Dewoitine D520
+<*unitName330>Potez 633
+<*unitName331>Aircraft carrier
+<*unitName332>Anchor aircraft carrier
+<*unitName333>FCM F1
+<*unitName334>Lanky Jack
+<*unitName335>Heavy aircraft carrier
+<*unitName336>Heavy anchor aircraft carrier
+<*unitName337>City Hall
+<*unitName338>House
+<*unitName339>Rice Farm
+<*unitName340>Foreign Supply Center
+<*unitName341>Type FT
+<*unitName342>Howitzer
+<*unitName343>Armored car
+<*unitName344>Light tank
+<*unitName345>Squadron cannon
+<*unitName346>Type T
+<*unitName347>Type R
+<*unitName348>Type M
+<*unitName349>Worker
+<*unitName350>Militiaman
+<*unitName351>Mounted guardsman
+<*unitName352>Soldier
+<*unitName353>Fishing boat
+<*unitName354>Farm
+<*unitName355>Holyfox
+<*unitName356>Ме.262
+<*unitName357>Iron Bull
+<*unitName358>Palace
+<*unitName359>House
+<*unitName360>Yamato
+<*unitName361>Bomber G4M
+<*unitName362>Light trench mortar
+<*unitName363>Jet fighter J8M1
+<*unitName364>Submarine
+<*unitName365>Submarine in depth
+<*unitName366>Sakura blossom MXY7
+<*unitName367>Fu-go
+<*unitName368>Sentoku
+<*unitName369>Sentoku in depth
+<*unitName370>Anti-Aircraft Car
+<*unitName371>Hand ram
+<*unitName372>City Hall
+<*unitName373>House
+<*unitName374>Stone mine
+<*unitName375>Dragon's teeth
+<*unitName376>Saboteur
+<*unitName377>Suspicious bag
+<*unitName378>Ulan
+<*unitName379>Tankette KS
+<*unitName380>Tankette KD
+<*unitName381>Amphibious tank
+<*unitName382>Amphibious tank
+<*unitName383>Mr.Gingerbread
+<*unitName384>Water tiger
+<*unitName385>Townhall
+<*unitName386>House
+<*unitName387>Wonder Emma
+<*unitName388>Wonder Emma on point
+<*unitName389>Wonder Emma fortified
+<*unitName390>Csaba
+<*unitName391>Csaba AT
+<*unitName392>Zrinyi II
+<*unitName393>Nimrod
+<*unitName394>Gas mortar
+<*unitName395>Zrinyi I
+<*unitName396>Headless Horseman
+<*unitName397>Mounted King
+<*unitName398>King
+<*unitName399>Mr.Rabbit the Gold
+<*unitName400>unit
+<*unitName401>unit
+<*unitName402>unit
+<*unitName403>unit
+<*unitName404>unit
+<*unitName405>unit
+<*unitName406>unit
+<*unitName407>unit
+<*unitName408>unit
+<*unitName409>unit
+<*unitName410>unit
+<*unitName411>unit
+<*unitName412>unit
+<*unitName413>unit
+<*unitName414>unit
+<*unitName415>unit
+<*unitName416>unit
+<*unitName417>unit
+<*unitName418>unit
+<*unitName419>unit
+<*unitName420>unit
+<*unitName421>unit
+<*unitName422>unit
+<*unitName423>unit
+<*unitName424>unit
+<*unitName425>unit
+<*unitName426>unit
+<*unitName427>unit
+<*unitName428>unit
+<*unitName429>unit
+<*unitName430>unit
+<*unitName431>unit
+<*unitName432>unit
+<*unitName433>unit
+<*unitName434>unit
+<*unitName435>unit
+<*unitName436>unit
+<*unitName437>unit
+<*unitName438>unit
+<*unitName439>unit
+<*unitName440>unit
+<*unitName441>unit
+<*unitName442>unit
+<*unitName443>unit
+<*unitName444>unit
+<*unitName445>unit
+<*unitName446>unit
+<*unitName447>unit
+<*unitName448>unit
+<*unitName449>unit
+<*unitName450>unit
+
+<*unitText0>
+<*unitText1>
+<*unitText2>
+<*unitText3>
+<*unitText4>
+<*unitText5>
+<*unitText6>
+<*unitText7>
+<*unitText8>
+<*unitText9>
+<*unitText10>
+<*unitText11>
+<*unitText12>
+<*unitText13>
+<*unitText14>
+<*unitText15>
+<*unitText16>
+<*unitText17>
+<*unitText18>
+<*unitText19>
+<*unitText20>
+<*unitText21>
+<*unitText22>
+<*unitText23>
+<*unitText24>
+<*unitText25>
+<*unitText26>
+<*unitText27>
+<*unitText28>
+<*unitText29>
+<*unitText30>
+<*unitText31>
+<*unitText32>
+<*unitText33>
+<*unitText34>
+<*unitText35>
+<*unitText36>
+<*unitText37>
+<*unitText38>
+<*unitText39>
+<*unitText40>
+<*unitText41>
+<*unitText42>
+<*unitText43>
+<*unitText44>
+<*unitText45>
+<*unitText46>
+<*unitText47>
+<*unitText48>
+<*unitText49>
+<*unitText50>
+<*unitText51>
+<*unitText52>
+<*unitText53>
+<*unitText54>
+<*unitText55>
+<*unitText56>
+<*unitText57>
+<*unitText58>
+<*unitText59>
+<*unitText60>
+<*unitText61>
+<*unitText62>
+<*unitText63>
+<*unitText64>
+<*unitText65>
+<*unitText66>
+<*unitText67>
+<*unitText68>
+<*unitText69>
+<*unitText70>
+<*unitText71>
+<*unitText72>
+<*unitText73>
+<*unitText74>
+<*unitText75>
+<*unitText76>
+<*unitText77>
+<*unitText78>
+<*unitText79>
+<*unitText80>
+<*unitText81>
+<*unitText82>
+<*unitText83>
+<*unitText84>
+<*unitText85>
+<*unitText86>
+<*unitText87>
+<*unitText88>
+<*unitText89>
+<*unitText90>
+<*unitText91>
+<*unitText92>
+<*unitText93>
+<*unitText94>
+<*unitText95>
+<*unitText96>
+<*unitText97>
+<*unitText98>
+<*unitText99>
+<*unitText100>
+<*unitText101>
+<*unitText102>
+<*unitText103>
+<*unitText104>
+<*unitText105>
+<*unitText106>
+<*unitText107>
+<*unitText108>
+<*unitText109>
+<*unitText110>
+<*unitText111>
+<*unitText112>
+<*unitText113>
+<*unitText114>
+<*unitText115>
+<*unitText116>
+<*unitText117>
+<*unitText118>
+<*unitText119>
+<*unitText120>
+<*unitText121>
+<*unitText122>
+<*unitText123>
+<*unitText124>
+<*unitText125>
+<*unitText126>
+<*unitText127>
+<*unitText128>
+<*unitText129>
+<*unitText130>
+<*unitText131>
+<*unitText132>
+<*unitText133>
+<*unitText134>
+<*unitText135>
+<*unitText136>
+<*unitText137>
+<*unitText138>
+<*unitText139>
+<*unitText140>
+<*unitText141>
+<*unitText142>
+<*unitText143>
+<*unitText144>
+<*unitText145>
+<*unitText146>
+<*unitText147>
+<*unitText148>
+<*unitText149>
+<*unitText150>
+<*unitText151>
+<*unitText152>
+<*unitText153>
+<*unitText154>
+<*unitText155>
+<*unitText156>
+<*unitText157>
+<*unitText158>
+<*unitText159>
+<*unitText160>
+<*unitText161>
+<*unitText162>
+<*unitText163>
+<*unitText164>
+<*unitText165>
+<*unitText166>
+<*unitText167>
+<*unitText168>
+<*unitText169>
+<*unitText170>
+<*unitText171>
+<*unitText172>
+<*unitText173>
+<*unitText174>
+<*unitText175>
+<*unitText176>
+<*unitText177>
+<*unitText178>Automatically detects enemy aircraft in its field of vision and calls all its fighters into action
+<*unitText179>
+<*unitText180>
+<*unitText181>
+<*unitText182>
+<*unitText183>
+<*unitText184>
+<*unitText185>
+<*unitText186>
+<*unitText187>
+<*unitText188>
+<*unitText189>
+<*unitText190>
+<*unitText191>
+<*unitText192>
+<*unitText193>
+<*unitText194>
+<*unitText195>
+<*unitText196>
+<*unitText197>
+<*unitText198>
+<*unitText199>
+<*unitText200>
+<*unitText201>
+<*unitText202>
+<*unitText203>
+<*unitText204>
+<*unitText205>
+<*unitText206>
+<*unitText207>
+<*unitText208>
+<*unitText209>
+<*unitText210>
+<*unitText211>
+<*unitText212>
+<*unitText213>
+<*unitText214>
+<*unitText215>
+<*unitText216>
+<*unitText217>
+<*unitText218>
+<*unitText219>
+<*unitText220>
+<*unitText221>
+<*unitText222>
+<*unitText223>
+<*unitText224>
+<*unitText225>
+<*unitText226>
+<*unitText227>
+<*unitText228>
+<*unitText229>
+<*unitText230>
+<*unitText231>
+<*unitText232>
+<*unitText233>
+<*unitText234>
+<*unitText235>
+<*unitText236>
+<*unitText237>
+<*unitText238>
+<*unitText239>
+<*unitText240>
+<*unitText241>
+<*unitText242>
+<*unitText243>
+<*unitText244>Can build and repair water buildings
+<*unitText245>
+<*unitText246>
+<*unitText247>
+<*unitText248>
+<*unitText249>
+<*unitText250>
+<*unitText251>
+<*unitText252>
+<*unitText253>
+<*unitText254>
+<*unitText255>
+<*unitText256>
+<*unitText257>
+<*unitText258>
+<*unitText259>
+<*unitText260>
+<*unitText261>
+<*unitText262>
+<*unitText263>
+<*unitText264>
+<*unitText265>
+<*unitText266>
+<*unitText267>
+<*unitText268>Can repair buildings, collect food from trees and build and destroy fortifications
+<*unitText269>
+<*unitText270>
+<*unitText271>
+<*unitText272>
+<*unitText273>
+<*unitText274>
+<*unitText275>
+<*unitText276>
+<*unitText277>
+<*unitText278>
+<*unitText279>
+<*unitText280>Can train infantry
+<*unitText281>
+<*unitText282>
+<*unitText283>
+<*unitText284>
+<*unitText285>
+<*unitText286>
+<*unitText287>
+<*unitText288>
+<*unitText289>Moving the goliath operator will cause detonation of the device}Moving the goliath operator will cause detonation of the device
+<*unitText290>Carries a machine-gunner on board.
+<*unitText291>Carries a Bomb thrower on board.
+<*unitText292>Needs one landing lane for itself. Without refueling at the airfield - it crashes.
+<*unitText293>
+<*unitText294>
+<*unitText295>
+<*unitText296>
+<*unitText297>
+<*unitText298>
+<*unitText299>
+<*unitText300>
+<*unitText301>Can repair buildings and vehicles of its age, build military installations and destroy fortifications
+<*unitText302>
+<*unitText303>
+<*unitText304>
+<*unitText305>
+<*unitText306>
+<*unitText307>
+<*unitText308>
+<*unitText309>
+<*unitText310>
+<*unitText311>
+<*unitText312>
+<*unitText313>
+<*unitText314>Needs one landing lane for itself. Without refueling at the airfield - it crashes.
+<*unitText315>Needs one landing lane for itself. Without refueling at the airfield - it crashes.
+<*unitText316>Needs one landing lane for itself. Without refueling at the airfield - it crashes.
+<*unitText317>
+<*unitText318>
+<*unitText319>
+<*unitText320>
+<*unitText321>
+<*unitText322>
+<*unitText323>
+<*unitText324>
+<*unitText325>
+<*unitText326>
+<*unitText327>
+<*unitText328>Needs one landing lane for itself. Without refueling at the airfield - it crashes.
+<*unitText329>Needs one landing lane for itself. Without refueling at the airfield - it crashes.
+<*unitText330>Needs one landing lane for itself. Without refueling at the airfield - it crashes.
+<*unitText331>Can be deployed as an airfield on water. Serves one airplane at a time.
+<*unitText332>May receive, refuel and repair aircraft.
+<*unitText333>
+<*unitText334>
+<*unitText335>May be deployed as an airfield on water. Serves two airplanes at the same time.
+<*unitText336>May receive, refuel and repair aircraft.
+<*unitText337>
+<*unitText338>
+<*unitText339>
+<*unitText340>
+<*unitText341>
+<*unitText342>
+<*unitText343>
+<*unitText344>
+<*unitText345>
+<*unitText346>
+<*unitText347>
+<*unitText348>
+<*unitText349>
+<*unitText350>
+<*unitText351>
+<*unitText352>
+<*unitText353>
+<*unitText354>
+<*unitText355>
+<*unitText356>
+<*unitText357>
+<*unitText358>
+<*unitText359>
+<*unitText360>
+<*unitText361>Can use bombs and torpedoes. Needs one landing lane for itself. Without refueling at the airfield - it crashes.}Can use bombs and torpedoes. Needs one landing lane for itself. Without refueling at the airfield - it crashes.
+<*unitText362>
+<*unitText363>Needs one landing lane for itself. Without refueling at the airfield - it crashes.
+<*unitText364>
+<*unitText365>Can be detected by any aircraft unit, as well as a balloon or aerostat tower. Can be attacked only with bombs.
+<*unitText366>Rapid, explosive-laden, self-destructive aircraft.
+<*unitText367>Uncontrollable on the way to his target
+<*unitText368>Carries on board and can launch to target aircraft such as Sakura Blossom
+<*unitText369>Can be detected by any aircraft unit, as well as a balloon or aerostat tower. Can be attacked only with bombs.
+<*unitText370>
+<*unitText371>
+<*unitText372>
+<*unitText373>
+<*unitText374>
+<*unitText375>
+<*unitText376>Invisible to the enemy, but can be detected by any defense or observation tower, aerostat or balloon tower, radar or locator station
+<*unitText377>Set a powerful explosive device
+<*unitText378>
+<*unitText379>
+<*unitText380>
+<*unitText381>Moves on the ground. Can be transformed to move on water
+<*unitText382>Moves on water. Can transform to land movement mode
+<*unitText383>
+<*unitText384>
+<*unitText385>
+<*unitText386>
+<*unitText387>
+<*unitText388>
+<*unitText389>
+<*unitText390>
+<*unitText391>
+<*unitText392>
+<*unitText393>
+<*unitText394>
+<*unitText395>
+<*unitText396>
+<*unitText397>
+<*unitText398>
+<*unitText399>
+<*unitText400>
+<*unitText401>
+<*unitText402>
+<*unitText403>
+<*unitText404>
+<*unitText405>
+<*unitText406>
+<*unitText407>
+<*unitText408>
+<*unitText409>
+<*unitText410>
+<*unitText411>
+<*unitText412>
+<*unitText413>
+<*unitText414>
+<*unitText415>
+<*unitText416>
+<*unitText417>
+<*unitText418>
+<*unitText419>
+<*unitText420>
+<*unitText421>
+<*unitText422>
+<*unitText423>
+<*unitText424>
+<*unitText425>
+<*unitText426>
+<*unitText427>
+<*unitText428>
+<*unitText429>
+<*unitText430>
+<*unitText431>
+<*unitText432>
+<*unitText433>
+<*unitText434>
+<*unitText435>
+<*unitText436>
+<*unitText437>
+<*unitText438>
+<*unitText439>
+<*unitText440>
+<*unitText441>
+<*unitText442>
+<*unitText443>
+<*unitText444>
+<*unitText445>
+<*unitText446>
+<*unitText447>
+<*unitText448>
+<*unitText449>
+<*unitText450>
+
+<*ammoName41>Kaiten
+
+<*passabilityLevel0>Huge slope
+<*passabilityLevel1>Slope
+<*passabilityLevel2>Deep water
+<*passabilityLevel3>Shallow water
+<*passabilityLevel4>Unit/building
+<*passabilityLevel5>Building
+<*passabilityLevel6>Dryland
+
+<*gameMode>Game Mode
+
+<*timeDay>day
+
+<*menuMatchResultShowTeams>Show teams
+<*menuMatchResultGraphFilters>Summary|War|Army|Enemies slain|Territory|Economy|Workers|Production|Food|Material|Metal
+
+<*gameModeMafia>{Mafia}
+<*gameModeCustomMap>Custom map
+<*gameModeTutorial>Tutorial
+<*gameModeMultiAnyMatch>Any match
+<*gameModeMultiFFA>Free-for-all
+<*gameModeMultiBigTeam>Big team match
+<*gameModeMultiTeam>Team match
+<*gameModeMultiTeamAnySize>Any size team match
+<*gameModeMultiBattleRoyale>Armageddon
+<*gameModeSingleCampaign>Campaign
+<*gameModeSkirmish>Skirmish
+<*gameModeSandbox>Sandbox
+<*gameModeSurvival>Survival
+<*gameModeMultyRate2x2>Ranked battle 2x2
+<*gameModeMultyRate1x1>Ranked battle 1x1
+<*gameModeTugOfWar>Tug of War
+
+<*hint0>Watch out for wild animals. Wild boars are very dangerous because of their speed and inconspicuousness in the forest for example,
+<*hint1>Residential buildings and huts provide the most accessible population of your settlement. Make sure there is always enough housing.
+<*hint2>Extraction of resources, construction and repair of buildings depend on the workers. But they are weak in battle. Take care of them.
+<*hint3>Mammoths are dangerous and large beasts. But besides, this is a huge pile of nutritious digestible dietary meat.
+<*hint4>Ranged troops such as archers or slingers are vulnerable in close combat. Use their advantage of a range attack.
+<*hint5>Shooters do not always hit the target. They can miss. Some of siege machines can even damage allies.
+<*hint6>Siege machines are effective against buildings, but clumsy against single, small targets. In addition, they are bulky.
+<*hint7>If possible, explore the world. But do it carefully, for it is not known what awaits you in the dark.
+<*hint8>Fishermen in boats can catch larger fish far from the coast. But do not forget about alligators on the shore.
+<*hint9>After the transition to a new era, you can improve your troops and buildings and increasing their relevance and effectiveness.
+<*hint10>If you meet a lot of dangerous animals on your way, do not bring them to your village!
+<*hint11>Workers know how to build buildings of their Age only. Remember that when you upgrade them.
+<*hint12>Hotkeys are specified in Settings window
+<*hint13>Militiamen can be recruited in houses of Eastern Europe
+
+<*banReasonLowPractice>Experience required: at least 1000 technology points
+<*banReason0>The use of hacks
+<*banReason1>Intentional harm to allies
+<*banReason2>Creation of communication interference
+<*banReason3>Offensive communication
+<*banReason4>Abuse
+<*banReason5>Premature leaving a match / total inactivity
+<*banReason6>
+
+<*timerSec>[44] sec.
+<*timerHour>[44]:[33]
+<*timerDay>[44]:[33]:[33]
+<*timerLong>[44] d. [10] h.
+
+<*menuAgeName0>Any era
+<*menuAgeName1>Stone age
+<*menuAgeName2>Bronze age
+<*menuAgeName3>Iron age
+<*menuAgeName4>Early Middle ages
+<*menuAgeName5>Late Middle ages
+<*menuAgeName6>Industrial revolution
+<*menuAgeName7>Second industrial revolution
+
+<*messageContentLoading>Content is loading..
+
+<*menuMatchResultTabs>Results|Chronology
+
+<*signalWonder>Wonder of the World!
+<*signalFireworks>Сolorful fireworks!
+<*signalFirecracker>Firecrackers!
+<*signalSnowfall>Let It Snowfall!
+
+<*signalOpenGate>Open the gate!
+<*signalCloseGate>Close the gate!
+<*signalLookLandscape>Look!
+<*signalMoveLandscape>Come here!
+<*signalLookUnit>Here is [house]!
+<*signalMoveUnit>Come here ([house])!
+<*signalLookEnemy>Here is the enemy's [home]
+<*signalMoveEnemy>Here is the [house]. Attack!
+<*signalLookDeposit>Here is the [iron]
+<*signalMoveDeposit>Gather the [iron]
+
+<*errorCantLoadMapMetaData>Failed to load map information
+
+<*menuShopLotFullVersionName>Full version
+<*menuShopLotFullVersion>All release countries 10+|All special modes|First storyline campaign
+<*menuShopLotDonateName>Donate
+<*menuShopLotDonate>The project|needs your help
+<*menuShopLotDanceWorkersName>Workers dance
+<*menuShopLotDanceWorkers>At a command all the selected workers begin to dance
+<*menuShopLotDanceSpearmenName>Bravado of the Spearmen
+<*menuShopLotDanceSpearmen>On command, all the dedicated spearmen begin to bravely rejoice
+<*menuShopLotXtreeName>Xmas tree
+<*menuShopLotXtree>You can set the Xmas Tree anywhere on the map to the joy of all players in the match
+<*menuShopLotHappyBombName>Firecracker
+<*menuShopLotHappyBomb>Anywhere on the map you can blow up confetti firecrackers visible to all match players
+<*menuShopLotFireworksName>Fireworks
+<*menuShopLotFireworks>Anywhere on the map you can make the awesome Fireworks visible to all match players
+<*menuShopLotTigerName>WATER TIGER
+<*menuShopLotTiger>You can|set the Water Tiger Statue|anywhere on the map|for all players in the match
+<*menuShopLotCookieName>Mr.Gingerbread
+<*menuShopLotCookie>You can|set the Mr.Gingerbread Statue|anywhere on the map|for all players in the match
+<*menuShopLotBullName>Iron Bull
+<*menuShopLotBull>You can|set the Iron Bull Statue|anywhere on the map|for all players in the match
+<*menuShopLotSnowfallName>Snowfall
+<*menuShopLotSnowfall>You can call the Snowfall|anywhere on the map|for all players in the match|
+<*menuShopLotPumpkinName>Lanky Jack
+<*menuShopLotPumpkin>You can|set the Lanky Jack Statue|anywhere on the map to the horror|of all players in the match
+<*menuShopLotRabbitName>Mr.Rabbit the Gold
+<*menuShopLotRabbit>You can|set the mr.Rabbit Statue|anywhere on the map to the envy|of all players in the match
+<*menuShopLotModesName>Special modes
+<*menuShopLotModes>All special modes for Private game and Survival are available for game. Required by all participants in a match.
+<*menuShopLotDecorOpenList>Show decor
+<*menuShopLotDecor>Various decorative products
+<*menuShopLotHeadlessHorsemanName>HEADLESS HORSEMAN
+<*menuShopLotHeadless>You can|set the Headless Horseman Statue|anywhere on the map to the horror|of all players in the match
+
+<*warningAddToBlacklist>Players on your black list can not join your private game again.|Add the player to your blacklist?
+<*warningRemovePlayerFromMatch>Kick the player out of this match?
+
+<*availableAfterReceiveCoupon>{Available after receiving from the gift coupon}
+<*availableAfterPurchase>{Available after purchase in the game store or receiving from a gift coupon}
+
+<*canBeUsedAsSignal>used as a signal
+<*availableInMultiplayer>Only available in a multiplayer game
+
+--eof
