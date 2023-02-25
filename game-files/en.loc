@@ -41,7 +41,7 @@
 <*upgrade10>Bone armor|Increases stone armor armor effectiveness
 <*upgrade11>Strength training|Increases the damage of a warrior and a club
 <*upgrade12>Wicker Sling|Increases damage of sling and bulwark
-<*upgrade13>Leather shoes|Significantly increases the speed of movement of warriors
+<*upgrade13>Rash|Greatly increases the warrior's running speed if he sees the enemy
 <*upgrade14>Extra beds in homes|Increases the maximum population limit
 <*upgrade15>Late Middle Ages of Western Europe|Make the transition to the later Middle Ages of Western Europe
 <*upgrade16>Late Middle Ages of West Asia|Make the transition to the later Middle Ages of West Asia
@@ -168,7 +168,7 @@
 <*upgrade137>{Poisoning}|{Poison the victim}
 <*upgrade138>{Armor penetration}|{Decreases target's armor by half}
 <*upgrade139>{Deafening}|{Decreases speed by half}
-<*upgrade140>---|---
+<*upgrade140>Rush|Increase running speed to the enemy
 <*upgrade141>---|---
 <*upgrade142>---|---
 <*upgrade143>---|---
@@ -1226,7 +1226,7 @@
 <*hint5>Shooters do not always hit the target. They can miss. Some of siege machines can even damage allies.
 <*hint6>Siege machines are effective against buildings, but clumsy against single, small targets. In addition, they are bulky.
 <*hint7>If possible, explore the world. But do it carefully, for it is not known what awaits you in the dark.
-<*hint8>Fishermen in boats can catch larger fish far from the coast. But do not forget about alligators on the shore.
+<*hint8>Fishermen in boats can catch large fish far from the coast. But do not forget about alligators on the shore.
 <*hint9>After the transition to a new era, you can improve your troops and buildings and increasing their relevance and effectiveness.
 <*hint10>If you meet a lot of dangerous animals on your way, do not bring them to your village!
 <*hint11>Workers know how to build buildings of their Age only. Remember that when you upgrade them.
