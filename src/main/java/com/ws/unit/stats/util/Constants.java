@@ -1,16 +1,16 @@
 package com.ws.unit.stats.util;
 
 public class Constants {
-
     private Constants() {
         // Utility class
     }
 
-    public static final int TICK_RATE = 50;
+    public static final double TICK_RATE_MULTIPLIER = 50d;
     public static final double FLOAT_VALUE_MULTIPLIER = 1000d;
+    public static final String LOCALIZATION_VALUE_PATTERN = "^<\\*([^<>]*)>(.*)$";
+    public static final String LOCALIZATION_INDEX_PATTERN = "\\|";
 
     public static class UnitTypes {
-
         private UnitTypes() {
             // Utility class
         }

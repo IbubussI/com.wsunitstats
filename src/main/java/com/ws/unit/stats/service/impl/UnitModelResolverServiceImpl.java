@@ -1,12 +1,12 @@
 package com.ws.unit.stats.service.impl;
 
 import com.ws.unit.stats.model.mapped.UnitModel;
-import com.ws.unit.stats.model.raw.RootJsonContainerModel;
+import com.ws.unit.stats.model.raw.FileContainerModel;
 import com.ws.unit.stats.model.raw.gameplay.BuildJsonModel;
-import com.ws.unit.stats.model.raw.gameplay.GameplayFileJsonModel;
+import com.ws.unit.stats.model.raw.gameplay.GameplayFileModel;
 import com.ws.unit.stats.model.raw.gameplay.UnitJsonModel;
-import com.ws.unit.stats.model.raw.localization.LocalizationFileJsonModel;
-import com.ws.unit.stats.model.raw.main.MainFileJsonModel;
+import com.ws.unit.stats.model.raw.localization.LocalizationFileModel;
+import com.ws.unit.stats.model.raw.main.MainFileModel;
 import com.ws.unit.stats.service.ObjectMappingService;
 import com.ws.unit.stats.service.UnitModelResolverService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +22,11 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
     @Autowired
     private ObjectMappingService mappingService;
 
-    public List<UnitModel> resolveFromJsonModel(RootJsonContainerModel rootContainer) {
+    public List<UnitModel> resolveFromJsonModel(FileContainerModel rootContainer) {
 
-        GameplayFileJsonModel gameplayJsonModel = rootContainer.getGameplayFileJsonModel();
-        LocalizationFileJsonModel localizationJsonModel = rootContainer.getLocalizationFileJsonModel();
-        MainFileJsonModel mainFileJsonModel = rootContainer.getMainFileJsonModel();
+        GameplayFileModel gameplayJsonModel = rootContainer.getGameplayFileJsonModel();
+        LocalizationFileModel localizationJsonModel = rootContainer.getLocalizationFileJsonModel();
+        MainFileModel mainFileModel = rootContainer.getMainFileJsonModel();
 
         Map<Integer, UnitJsonModel> unitJsonMap = gameplayJsonModel.getScenes().getUnits();
         List<UnitModel> result = new ArrayList<>();
@@ -46,7 +46,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
         return result;
     }
 
-    private BuildJsonModel findUnitBuildObject(GameplayFileJsonModel gameplayJsonModel, int unitId) {
+    private BuildJsonModel findUnitBuildObject(GameplayFileModel gameplayJsonModel, int unitId) {
         return gameplayJsonModel.getBuild().stream()
                 .filter(buildJsonModel -> buildJsonModel.getUnit() == unitId)
                 .findFirst()
