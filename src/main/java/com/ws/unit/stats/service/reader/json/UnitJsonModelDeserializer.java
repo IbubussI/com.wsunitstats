@@ -1,4 +1,4 @@
-package com.ws.unit.stats.serializer;
+package com.ws.unit.stats.service.reader.json;
 
 import com.ws.unit.stats.model.raw.gameplay.UnitJsonModel;
 

@@ -3,7 +3,7 @@ package com.ws.unit.stats.model.raw.gameplay;
 import java.util.List;
 import java.util.Map;
 
-public class GameplayFileJsonModel {
+public class GameplayFileModel {
     private List<BuildJsonModel> build;
     private Integer defaultFormationInterval;
     private Integer defaultFormationType;

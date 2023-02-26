@@ -1,4 +1,4 @@
-package com.ws.unit.stats.serializer;
+package com.ws.unit.stats.service.reader.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
