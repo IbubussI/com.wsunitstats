@@ -2,6 +2,7 @@ package com.ws.unit.stats.model.mapped;
 
 import com.ws.unit.stats.model.mapped.submodel.ArmorModel;
 import com.ws.unit.stats.model.mapped.submodel.GatherModel;
+import com.ws.unit.stats.model.mapped.submodel.MovementModel;
 import com.ws.unit.stats.model.mapped.submodel.ResourceModel;
 import com.ws.unit.stats.model.mapped.submodel.TransportingModel;
 
@@ -9,7 +10,7 @@ public class UnitModel extends GenericEntityModel {
 
     protected Double size;
     protected ArmorModel armor;
-    protected Integer speed;
+    protected MovementModel movement;
     protected TransportingModel transporting;
     protected GatherModel gather;
     protected ResourceModel initCost;
@@ -30,12 +31,12 @@ public class UnitModel extends GenericEntityModel {
         this.armor = armor;
     }
 
-    public Integer getSpeed() {
-        return speed;
+    public MovementModel getMovement() {
+        return movement;
     }
 
-    public void setSpeed(Integer speed) {
-        this.speed = speed;
+    public void setMovement(MovementModel speed) {
+        this.movement = speed;
     }
 
     public TransportingModel getTransporting() {
@@ -67,7 +68,7 @@ public class UnitModel extends GenericEntityModel {
         return "UnitModel{" +
                 "size=" + size +
                 ", armor=" + armor +
-                ", speed=" + speed +
+                ", speed=" + movement +
                 ", transportSize=" + transporting +
                 ", gather=" + gather +
                 ", initCost=" + initCost +

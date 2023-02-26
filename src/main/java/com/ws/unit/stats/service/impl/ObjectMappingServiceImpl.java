@@ -2,10 +2,12 @@ package com.ws.unit.stats.service.impl;
 
 import com.ws.unit.stats.model.mapped.submodel.ArmorModel;
 import com.ws.unit.stats.model.mapped.submodel.GatherModel;
+import com.ws.unit.stats.model.mapped.submodel.MovementModel;
 import com.ws.unit.stats.model.mapped.submodel.ResourceModel;
 import com.ws.unit.stats.model.mapped.submodel.TransportingModel;
 import com.ws.unit.stats.model.raw.gameplay.submodel.ArmorJsonModel;
 import com.ws.unit.stats.model.raw.gameplay.submodel.GatherJsonModel;
+import com.ws.unit.stats.model.raw.gameplay.submodel.MovementJsonModel;
 import com.ws.unit.stats.model.raw.gameplay.submodel.TransportingJsonModel;
 import com.ws.unit.stats.service.ObjectMappingService;
 import com.ws.unit.stats.util.Constants;
@@ -58,6 +60,17 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
         transportingModel.setOwnSize(source.getOwnVolume());
         transportingModel.setOnlyInfantry(source.getUnitLimit() != null);
         return transportingModel;
+    }
+
+    @Override
+    public MovementModel map(MovementJsonModel source) {
+        if (source == null) {
+            return null;
+        }
+        MovementModel movementModel = new MovementModel();
+        movementModel.setSpeed(source.getSpeed());
+        movementModel.setRotationSpeed(map(source.getRotationSpeed()));
+        return movementModel;
     }
 
 }

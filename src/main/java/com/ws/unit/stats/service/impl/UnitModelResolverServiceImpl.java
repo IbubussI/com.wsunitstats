@@ -36,12 +36,11 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             //unit.setArmor(mappingService.map(unitJsonModel.getArmor()));
             //unit.setGather(mappingService.map(unitJsonModel.getGather()));
             unit.setSize(mappingService.map(unitJsonModel.getSize()));
-            unit.setSpeed(unitJsonModel.getSpeed());
+            unit.setMovement(mappingService.map(unitJsonModel.getMovement()));
             if (buildJsonModel != null) {
                 unit.setInitCost(mappingService.map(buildJsonModel.getCostInit()));
             }
             unit.setTransporting(mappingService.map(unitJsonModel.getTransporting()));
-
             result.add(unit);
         });
         return result;
