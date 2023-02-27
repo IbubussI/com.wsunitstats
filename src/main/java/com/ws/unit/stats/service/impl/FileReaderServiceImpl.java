@@ -7,8 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ws.unit.stats.exception.FileReadingException;
 import com.ws.unit.stats.model.raw.gameplay.GameplayFileModel;
 import com.ws.unit.stats.model.raw.localization.LocalizationFileModel;
-import com.ws.unit.stats.model.raw.session.init.SessionInitModel;
+import com.ws.unit.stats.model.raw.session.init.SessionInitFileModel;
 import com.ws.unit.stats.service.FileReaderService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,38 +17,46 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.ws.unit.stats.util.Constants.LOCALIZATION_INDEX_PATTERN;
-import static com.ws.unit.stats.util.Constants.LOCALIZATION_VALUE_PATTERN;
 
 @Service
 public class FileReaderServiceImpl implements FileReaderService {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileReaderServiceImpl.class);
 
+    private static final String LOCALIZATION_VALUE_PATTERN = "^<\\*([^<>]*)>(.*)$";
+    private static final String LOCALIZATION_INDEX_PATTERN = "\\|";
+    private static final String SESSION_INIT_ARRAY_PATTERN = "%s\\s*=\\s*\\{";
+    private static final String SESSION_INIT_ARRAY_DELIMITER = ",";
+    private static final String SESSION_INIT_ARRAY_REDUNDANT_PATTERN = "(\\s)|(--.*$)";
+
     @Override
     public GameplayFileModel readGameplayJson(String path) throws FileReadingException {
-        LOG.debug("Reading JSON file at path: {}", path);
+        LOG.debug("Reading json gameplay file at path: {}", path);
         try (FileReader fileReader = new FileReader(path)) {
+
             ObjectMapper mapper = new ObjectMapper();
             mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
             return mapper.readValue(fileReader, GameplayFileModel.class);
-        } catch (Exception e) {
-            throw new FileReadingException("File reading failed", e);
+        } catch (IOException e) {
+            throw new FileReadingException("Reading json file failed", e);
         }
     }
 
     @Override
     public LocalizationFileModel readLocalization(String path) throws FileReadingException {
-        LOG.debug("Reading LOC file at path: {}", path);
+        LOG.debug("Reading localization file at path: {}", path);
         try (Scanner scanner = new Scanner(new File(path))) {
             LocalizationFileModel localizationModel = new LocalizationFileModel();
             Map<String, List<String>> localizationValues = new HashMap<>();
@@ -55,24 +64,72 @@ public class FileReaderServiceImpl implements FileReaderService {
                     .forEach(match -> localizationValues.put(match.group(1), Arrays.asList(match.group(2).split(LOCALIZATION_INDEX_PATTERN))));
             localizationModel.setValues(localizationValues);
             return localizationModel;
-        } catch (Exception e) {
-            throw new FileReadingException("File reading failed", e);
+        } catch (IOException e) {
+            throw new FileReadingException("Reading localization file failed", e);
         }
     }
 
     @Override
-    public SessionInitModel readLua(String path, List<String> arrayNames) throws FileReadingException {
-        LOG.debug("Reading LUA file at path: {}", path);
-        return null;
+    public SessionInitFileModel readSessionInitLua(String path) throws FileReadingException {
+        LOG.debug("Reading session/init.lua file at path: {}", path);
+        try {
+            SessionInitFileModel sessionInitModel = new SessionInitFileModel();
+            List<List<String>> lists = new ArrayList<>();
+
+            byte[] bytes = Files.readAllBytes(Paths.get(path));
+            String fileContent = new String(bytes);
+
+            SessionInitFileModel.ARRAY_NAMES.forEach(arrayName -> {
+                Pattern pattern = Pattern.compile(String.format(SESSION_INIT_ARRAY_PATTERN, arrayName), Pattern.DOTALL);
+                Matcher matcher = pattern.matcher(fileContent);
+                if (matcher.find()) {
+                    int startArray = matcher.end();
+                    int endArray = findClosingCurlyBrace(fileContent, startArray);
+                    String rawArray = fileContent.substring(startArray, endArray);
+                    String array = Pattern.compile(SESSION_INIT_ARRAY_REDUNDANT_PATTERN, Pattern.MULTILINE)
+                            .matcher(rawArray).replaceAll(StringUtils.EMPTY);
+                    lists.add(Arrays.asList(array.split(SESSION_INIT_ARRAY_DELIMITER)));
+                }
+            });
+
+            if (lists.size() != SessionInitFileModel.ARRAY_NAMES.size()) {
+                LOG.error("session/init.lua file does not contain one of next required arrays {}", SessionInitFileModel.ARRAY_NAMES);
+                throw new FileReadingException("Malformed session/init.lua file");
+            }
+
+            sessionInitModel.setAll(lists);
+            return sessionInitModel;
+        } catch (
+                IOException e) {
+            throw new FileReadingException("Reading lua file failed", e);
+        }
+
     }
 
-
-
+    private int findClosingCurlyBrace(String string, int startIndex) {
+        int result = -1;
+        int open = 0;
+        int close = 0;
+        for (int i = startIndex; i < string.length(); ++i) {
+            char ch = string.charAt(i);
+            if (ch == '}') {
+                if (open == close) {
+                    result = i;
+                    break;
+                }
+                close++;
+            } else if (ch == '{') {
+                open++;
+            }
+        }
+        return result;
+    }
 
     // =================== TO BE REMOVED =====================
 
     private static final String PATH_GAMEPLAY = "game-files/gameplay.json";
     private static final String PATH_LOCALIZATION = "game-files/en.loc";
+    private static final String PATH_SESSION_INIT = "game-files/init.lua";
     private static final String PATH_NEW = "gameplay_m.json";
 
     public static void main(String[] args) {
@@ -97,7 +154,11 @@ public class FileReaderServiceImpl implements FileReaderService {
             fileWriter.close();
 
             LocalizationFileModel localizationFileModel = fileReaderService.readLocalization(PATH_LOCALIZATION);
-            System.out.println(localizationFileModel);
+            //System.out.println(localizationFileModel);
+            System.out.println("localization read success");
+
+            SessionInitFileModel sessionInitFileModel = fileReaderService.readSessionInitLua(PATH_SESSION_INIT);
+            System.out.println(sessionInitFileModel);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
