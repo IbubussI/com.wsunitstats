@@ -1,4 +1,4 @@
-package com.ws.unit.stats.service.reader.json;
+package com.ws.unit.stats.service;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;

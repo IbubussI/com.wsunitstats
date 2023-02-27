@@ -2,8 +2,8 @@ package com.ws.unit.stats.model.raw.gameplay;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.ws.unit.stats.service.reader.json.IndexedArrayDataModelSerializer;
-import com.ws.unit.stats.service.reader.json.UnitJsonModelDeserializer;
+import com.ws.unit.stats.service.IndexedArrayDataModelSerializer;
+import com.ws.unit.stats.service.UnitJsonModelDeserializer;
 
 import java.util.List;
 import java.util.Map;
