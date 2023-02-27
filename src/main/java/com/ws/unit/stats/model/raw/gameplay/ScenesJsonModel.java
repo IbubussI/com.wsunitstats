@@ -13,7 +13,6 @@ public class ScenesJsonModel {
     private List<Object> layers;
     private Integer pathFindTime;
     private List<Object> projectiles;
-
     @JsonDeserialize(using = UnitJsonModelDeserializer.class)
     @JsonSerialize(using = IndexedArrayDataModelSerializer.class)
     private Map<Integer, UnitJsonModel> units;
