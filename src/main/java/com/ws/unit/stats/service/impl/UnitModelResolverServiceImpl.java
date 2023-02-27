@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.ws.unit.stats.util.Utilities.intToDoubleShift;
+
 @Service
 public class UnitModelResolverServiceImpl implements UnitModelResolverService {
 
@@ -35,7 +37,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             UnitModel unit = new UnitModel();
             //unit.setArmor(mappingService.map(unitJsonModel.getArmor()));
             //unit.setGather(mappingService.map(unitJsonModel.getGather()));
-            unit.setSize(mappingService.map(unitJsonModel.getSize()));
+            unit.setSize(intToDoubleShift(unitJsonModel.getSize()));
             unit.setMovement(mappingService.map(unitJsonModel.getMovement()));
             if (buildJsonModel != null) {
                 unit.setInitCost(mappingService.map(buildJsonModel.getCostInit()));
