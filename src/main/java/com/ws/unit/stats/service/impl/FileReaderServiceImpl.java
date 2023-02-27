@@ -35,11 +35,11 @@ public class FileReaderServiceImpl implements FileReaderService {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileReaderServiceImpl.class);
 
-    private static final String LOCALIZATION_VALUE_PATTERN = "^<\\*([^<>]*)>(.*)$";
-    private static final String LOCALIZATION_INDEX_PATTERN = "\\|";
-    private static final String SESSION_INIT_ARRAY_PATTERN = "%s\\s*=\\s*\\{";
+    private static final Pattern LOCALIZATION_VALUE_PATTERN = Pattern.compile("^<\\*([^<>]*)>(.*)$", Pattern.MULTILINE);
+    private static final String LOCALIZATION_INDEX_REGEX = "\\|";
+    private static final String SESSION_INIT_ARRAY_REGEX = "%s\\s*=\\s*\\{";
     private static final String SESSION_INIT_ARRAY_DELIMITER = ",";
-    private static final String SESSION_INIT_ARRAY_REDUNDANT_PATTERN = "(\\s)|(--.*$)";
+    private static final Pattern SESSION_INIT_ARRAY_REDUNDANT_PATTERN = Pattern.compile("(\\s)|(--.*$)", Pattern.MULTILINE);
 
     @Override
     public GameplayFileModel readGameplayJson(String path) throws FileReadingException {
@@ -60,8 +60,9 @@ public class FileReaderServiceImpl implements FileReaderService {
         try (Scanner scanner = new Scanner(new File(path))) {
             LocalizationFileModel localizationModel = new LocalizationFileModel();
             Map<String, List<String>> localizationValues = new HashMap<>();
-            scanner.findAll(Pattern.compile(LOCALIZATION_VALUE_PATTERN, Pattern.MULTILINE))
-                    .forEach(match -> localizationValues.put(match.group(1), Arrays.asList(match.group(2).split(LOCALIZATION_INDEX_PATTERN))));
+            scanner.findAll(LOCALIZATION_VALUE_PATTERN)
+                    .forEach(match -> localizationValues.put(match.group(1),
+                            Arrays.asList(match.group(2).split(LOCALIZATION_INDEX_REGEX))));
             localizationModel.setValues(localizationValues);
             return localizationModel;
         } catch (IOException e) {
@@ -80,14 +81,13 @@ public class FileReaderServiceImpl implements FileReaderService {
             String fileContent = new String(bytes);
 
             SessionInitFileModel.ARRAY_NAMES.forEach(arrayName -> {
-                Pattern pattern = Pattern.compile(String.format(SESSION_INIT_ARRAY_PATTERN, arrayName), Pattern.DOTALL);
+                Pattern pattern = Pattern.compile(String.format(SESSION_INIT_ARRAY_REGEX, arrayName), Pattern.DOTALL);
                 Matcher matcher = pattern.matcher(fileContent);
                 if (matcher.find()) {
                     int startArray = matcher.end();
                     int endArray = findClosingCurlyBrace(fileContent, startArray);
                     String rawArray = fileContent.substring(startArray, endArray);
-                    String array = Pattern.compile(SESSION_INIT_ARRAY_REDUNDANT_PATTERN, Pattern.MULTILINE)
-                            .matcher(rawArray).replaceAll(StringUtils.EMPTY);
+                    String array = SESSION_INIT_ARRAY_REDUNDANT_PATTERN.matcher(rawArray).replaceAll(StringUtils.EMPTY);
                     lists.add(Arrays.asList(array.split(SESSION_INIT_ARRAY_DELIMITER)));
                 }
             });
@@ -153,12 +153,12 @@ public class FileReaderServiceImpl implements FileReaderService {
             fileWriter.flush();
             fileWriter.close();
 
-            LocalizationFileModel localizationFileModel = fileReaderService.readLocalization(PATH_LOCALIZATION);
+            //LocalizationFileModel localizationFileModel = fileReaderService.readLocalization(PATH_LOCALIZATION);
             //System.out.println(localizationFileModel);
-            System.out.println("localization read success");
+            //System.out.println("localization read success");
 
-            SessionInitFileModel sessionInitFileModel = fileReaderService.readSessionInitLua(PATH_SESSION_INIT);
-            System.out.println(sessionInitFileModel);
+            //SessionInitFileModel sessionInitFileModel = fileReaderService.readSessionInitLua(PATH_SESSION_INIT);
+            //System.out.println(sessionInitFileModel);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
