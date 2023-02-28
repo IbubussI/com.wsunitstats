@@ -2,14 +2,17 @@ package com.ws.unit.stats.model.raw.json.gameplay.submodel;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.ws.unit.stats.service.IndexedArrayDataModelSerializer;
-import com.ws.unit.stats.service.UnitJsonModelDeserializer;
+import com.ws.unit.stats.service.serializer.EnvJsonModelDeserializer;
+import com.ws.unit.stats.service.serializer.IndexedArrayDataModelSerializer;
+import com.ws.unit.stats.service.serializer.UnitJsonModelDeserializer;
 
 import java.util.List;
 import java.util.Map;
 
 public class ScenesJsonModel {
-    private List<Object> envs;
+    @JsonDeserialize(using = EnvJsonModelDeserializer.class)
+    @JsonSerialize(using = IndexedArrayDataModelSerializer.class)
+    private Map<Integer, EnvJsonModel> envs;
     private List<Object> layers;
     private Integer pathFindTime;
     private List<Object> projectiles;
@@ -17,11 +20,11 @@ public class ScenesJsonModel {
     @JsonSerialize(using = IndexedArrayDataModelSerializer.class)
     private Map<Integer, UnitJsonModel> units;
 
-    public List<Object> getEnvs() {
+    public Map<Integer, EnvJsonModel> getEnvs() {
         return envs;
     }
 
-    public void setEnvs(List<Object> envs) {
+    public void setEnvs(Map<Integer, EnvJsonModel> envs) {
         this.envs = envs;
     }
 

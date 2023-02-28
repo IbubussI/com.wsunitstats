@@ -1,4 +1,4 @@
-package com.ws.unit.stats.service;
+package com.ws.unit.stats.service.serializer;
 
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.UnitJsonModel;
 
