@@ -11,7 +11,7 @@ import java.util.List;
 public class UnitModel extends GenericEntityModel {
 
     protected Double size;
-    protected ArmorModel armor;
+    protected List<ArmorModel> armor;
     protected MovementModel movement;
     protected TransportingModel transporting;
     protected List<GatherModel> gather;
@@ -25,11 +25,11 @@ public class UnitModel extends GenericEntityModel {
         this.size = size;
     }
 
-    public ArmorModel getArmor() {
+    public List<ArmorModel> getArmor() {
         return armor;
     }
 
-    public void setArmor(ArmorModel armor) {
+    public void setArmor(List<ArmorModel> armor) {
         this.armor = armor;
     }
 

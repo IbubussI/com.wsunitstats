@@ -2,10 +2,13 @@ package com.ws.unit.stats.service.impl;
 
 import com.ws.unit.stats.model.mapped.LocalizationModel;
 import com.ws.unit.stats.model.mapped.UnitModel;
+import com.ws.unit.stats.model.mapped.submodel.ArmorModel;
 import com.ws.unit.stats.model.mapped.submodel.GatherModel;
 import com.ws.unit.stats.model.raw.FileContainerModel;
+import com.ws.unit.stats.model.raw.json.gameplay.submodel.ArmorJsonModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.BuildJsonModel;
 import com.ws.unit.stats.model.raw.json.gameplay.GameplayFileModel;
+import com.ws.unit.stats.model.raw.json.gameplay.submodel.GatherJsonModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.UnitJsonModel;
 import com.ws.unit.stats.model.raw.json.main.MainFileModel;
 import com.ws.unit.stats.model.raw.lua.MainStartupFileModel;
@@ -40,9 +43,8 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
         unitJsonMap.forEach((id, unitJsonModel) -> {
             BuildJsonModel buildJsonModel = findUnitBuildObject(gameplayModel, id);
             UnitModel unit = new UnitModel();
-            //unit.setArmor(mappingService.map(unitJsonModel.getArmor()));
-
-            unit.setGather(getGatherList(unitJsonModel, localizationModel));
+            unit.setArmor(getArmorList(unitJsonModel.getArmor()));
+            unit.setGather(getGatherList(unitJsonModel.getGather(), localizationModel));
             unit.setSize(intToDoubleShift(unitJsonModel.getSize()));
             unit.setMovement(mappingService.map(unitJsonModel.getMovement()));
             if (buildJsonModel != null) {
@@ -61,9 +63,18 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
                 .orElse(null);
     }
 
-    private List<GatherModel> getGatherList(UnitJsonModel unitJson, LocalizationModel localization) {
-        return unitJson.getGather().stream()
-                .map(gatherJsonModel -> mappingService.map(gatherJsonModel, localization))
-                .toList();
+    private List<GatherModel> getGatherList(List<GatherJsonModel> gatherList, LocalizationModel localization) {
+        return gatherList == null ? null :
+                gatherList.stream()
+                        .map(gatherJsonModel -> mappingService.map(gatherJsonModel, localization))
+                        .toList();
+    }
+
+    private List<ArmorModel> getArmorList(ArmorJsonModel armorJsonModel) {
+        //Armor should not be null for every unit
+        return armorJsonModel.getData() == null ? null :
+                armorJsonModel.getData().stream()
+                        .map(entry -> mappingService.map(entry))
+                        .toList();
     }
 }

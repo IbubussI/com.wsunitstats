@@ -29,7 +29,7 @@ public class UnitStatsApplication {
     }
 
     @Component
-    public class TestRunner implements CommandLineRunner {
+    public static class TestRunner implements CommandLineRunner {
 
         // =================== TO BE REMOVED =====================
 

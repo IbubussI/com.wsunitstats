@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,11 +37,20 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
     private static final Pattern LOCALIZATION_PATTERN = Pattern.compile("^localize\\(\"(<\\*[a-zA-Z0-9/]*>)\"\\)$", Pattern.MULTILINE);
     private static final Pattern MAP_ENTRY_PATTERN = Pattern.compile("^\\[(\\d*)]=localize(\"(<\\*[a-zA-Z0-9/]*>)\")$", Pattern.MULTILINE);
     private static final String NIL = "nil";
+    private static final int PROBABILITY_100 = 100;
 
     @Override
-    public ArmorModel map(ArmorJsonModel source) {
-        //TODO
-        return null;
+    public ArmorModel map(ArmorJsonModel.Entry source) {
+        if (source == null) {
+            return null;
+        }
+        ArmorModel armorModel = new ArmorModel();
+        armorModel.setValue(intToDoubleShift(source.getObject()));
+        Optional.ofNullable(source.getProbability()).ifPresentOrElse(
+                armorModel::setProbability,
+                () -> armorModel.setProbability(PROBABILITY_100)
+        );
+        return armorModel;
     }
 
     @Override

@@ -13,7 +13,7 @@ public class UnitJsonModel {
     private List<AirfieldJsonModel> airfields;
     private Map<String, Object> airplane;
     @JsonProperty("armor_")
-    private Map<String, Object> armor;
+    private ArmorJsonModel armor;
     private Map<String, Object> attackReaction;
     private List<Object> building;
     private Boolean controllable;
@@ -97,11 +97,11 @@ public class UnitJsonModel {
         this.airplane = airplane;
     }
 
-    public Map<String, Object> getArmor() {
+    public ArmorJsonModel getArmor() {
         return armor;
     }
 
-    public void setArmor(Map<String, Object> armor) {
+    public void setArmor(ArmorJsonModel armor) {
         this.armor = armor;
     }
 

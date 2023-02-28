@@ -16,7 +16,7 @@ import com.ws.unit.stats.model.raw.lua.SessionInitFileModel;
 import java.util.List;
 
 public interface ObjectMappingService {
-    ArmorModel map(ArmorJsonModel source);
+    ArmorModel map(ArmorJsonModel.Entry source);
 
     GatherModel map(GatherJsonModel gatherSource, LocalizationModel localizationSource);
 
