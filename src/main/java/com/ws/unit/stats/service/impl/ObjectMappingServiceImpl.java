@@ -34,7 +34,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
     private static final Logger LOG = LoggerFactory.getLogger(ObjectMappingServiceImpl.class);
 
     private static final Pattern LOCALIZATION_PATTERN = Pattern.compile("^localize\\(\"(<\\*[a-zA-Z0-9/]*>)\"\\)$", Pattern.MULTILINE);
-    private static final Pattern MAP_ENTRY_PATTERN = Pattern.compile("^\\[(\\d*)]=localize(\"(<\\*[a-zA-Z0-9/]*>)\")$", Pattern.MULTILINE);;
+    private static final Pattern MAP_ENTRY_PATTERN = Pattern.compile("^\\[(\\d*)]=localize(\"(<\\*[a-zA-Z0-9/]*>)\")$", Pattern.MULTILINE);
     private static final String NIL = "nil";
 
     @Override
@@ -44,22 +44,19 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
     }
 
     @Override
-    public List<GatherModel> map(List<GatherJsonModel> gatherSource, LocalizationModel localizationSource) {
-        List<GatherModel> result = new ArrayList<>();
-        if (gatherSource != null && localizationSource != null) {
-            for (GatherJsonModel gatherEntry : gatherSource) {
-                GatherModel gatherModel = new GatherModel();
-                gatherModel.setBagSize(intToDoubleShift(gatherEntry.getBagsize()));
-                gatherModel.setGatherDistance(intToDoubleShift(gatherEntry.getGatherdistance()));
-                gatherModel.setPerSecond(intToDoubleTick(gatherEntry.getPertick()));
-                gatherModel.setFindTargetDistance(intToDoubleShift(gatherEntry.getFindtargetdistance()));
-                gatherModel.setPutDistance(intToDoubleShift(gatherEntry.getPutdistance()));
-                gatherModel.setEnv(localizationSource.getEnvTagNames().get(getBitPosition(gatherEntry.getEnvtags())));
-                gatherModel.setResource(localizationSource.getResourceNames().get(gatherEntry.getResource()));
-                result.add(gatherModel);
-            }
+    public GatherModel map(GatherJsonModel gatherSource, LocalizationModel localizationSource) {
+        if (gatherSource == null || localizationSource == null) {
+            return null;
         }
-        return result.isEmpty() ? null : result;
+        GatherModel gatherModel = new GatherModel();
+        gatherModel.setBagSize(intToDoubleShift(gatherSource.getBagsize()));
+        gatherModel.setGatherDistance(intToDoubleShift(gatherSource.getGatherdistance()));
+        gatherModel.setPerSecond(intToDoubleTick(gatherSource.getPertick()));
+        gatherModel.setFindTargetDistance(intToDoubleShift(gatherSource.getFindtargetdistance()));
+        gatherModel.setPutDistance(intToDoubleShift(gatherSource.getPutdistance()));
+        gatherModel.setEnv(localizationSource.getEnvTagNames().get(getBitPosition(gatherSource.getEnvtags())));
+        gatherModel.setResource(localizationSource.getResourceNames().get(gatherSource.getResource()));
+        return gatherModel;
     }
 
     @Override
@@ -159,7 +156,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
             String ir1 = rawNationNames.get(i);
             String ir2 = ir1;
             if (ir1.contains("{")) {
-                ++i; //NOSONAR process next value as ir2 and exclude it from further processing
+                ++i; //NOSONAR consume next value and exclude it from further processing
                 ir2 = rawNationNames.get(i);
                 ir1 = ir1.replace("{", StringUtils.EMPTY);
                 ir2 = ir2.replace("}", StringUtils.EMPTY);
