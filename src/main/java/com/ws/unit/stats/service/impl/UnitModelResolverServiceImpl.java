@@ -2,11 +2,11 @@ package com.ws.unit.stats.service.impl;
 
 import com.ws.unit.stats.model.mapped.LocalizationModel;
 import com.ws.unit.stats.model.mapped.UnitModel;
+import com.ws.unit.stats.model.mapped.submodel.GatherModel;
 import com.ws.unit.stats.model.raw.FileContainerModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.BuildJsonModel;
 import com.ws.unit.stats.model.raw.json.gameplay.GameplayFileModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.UnitJsonModel;
-import com.ws.unit.stats.model.raw.localization.LocalizationFileModel;
 import com.ws.unit.stats.model.raw.json.main.MainFileModel;
 import com.ws.unit.stats.model.raw.lua.MainStartupFileModel;
 import com.ws.unit.stats.model.raw.lua.SessionInitFileModel;
@@ -41,7 +41,8 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             BuildJsonModel buildJsonModel = findUnitBuildObject(gameplayModel, id);
             UnitModel unit = new UnitModel();
             //unit.setArmor(mappingService.map(unitJsonModel.getArmor()));
-            unit.setGather(mappingService.map(unitJsonModel.getGather(), localizationModel));
+
+            unit.setGather(getGatherList(unitJsonModel, localizationModel));
             unit.setSize(intToDoubleShift(unitJsonModel.getSize()));
             unit.setMovement(mappingService.map(unitJsonModel.getMovement()));
             if (buildJsonModel != null) {
@@ -60,4 +61,9 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
                 .orElse(null);
     }
 
+    private List<GatherModel> getGatherList(UnitJsonModel unitJson, LocalizationModel localization) {
+        return unitJson.getGather().stream()
+                .map(gatherJsonModel -> mappingService.map(gatherJsonModel, localization))
+                .toList();
+    }
 }
