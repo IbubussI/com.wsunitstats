@@ -34,8 +34,8 @@ import static com.ws.unit.stats.util.Utilities.intToDoubleTick;
 public class ObjectMappingServiceImpl implements ObjectMappingService {
     private static final Logger LOG = LoggerFactory.getLogger(ObjectMappingServiceImpl.class);
 
-    private static final Pattern LOCALIZATION_PATTERN = Pattern.compile("^localize\\(\"(<\\*[a-zA-Z0-9/]>)\"\\)$", Pattern.MULTILINE);
-    private static final Pattern MAP_ENTRY_PATTERN = Pattern.compile("^\\[(\\d*)]=localize(\"(<\\*[a-zA-Z0-9/]>)\")$", Pattern.MULTILINE);;
+    private static final Pattern LOCALIZATION_PATTERN = Pattern.compile("^localize\\(\"(<\\*[a-zA-Z0-9/]*>)\"\\)$", Pattern.MULTILINE);
+    private static final Pattern MAP_ENTRY_PATTERN = Pattern.compile("^\\[(\\d*)]=localize(\"(<\\*[a-zA-Z0-9/]*>)\")$", Pattern.MULTILINE);;
     private static final String NIL = "nil";
 
     @Override
