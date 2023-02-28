@@ -8,7 +8,6 @@ import com.ws.unit.stats.model.mapped.submodel.NationNameModel;
 import com.ws.unit.stats.model.mapped.submodel.ResourceModel;
 import com.ws.unit.stats.model.mapped.submodel.TransportingModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.ArmorJsonModel;
-import com.ws.unit.stats.model.raw.json.gameplay.submodel.EnvJsonModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.GatherJsonModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.MovementJsonModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.TransportingJsonModel;
@@ -55,12 +54,12 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
                 gatherModel.setPerSecond(intToDoubleTick(gatherEntry.getPertick()));
                 gatherModel.setFindTargetDistance(intToDoubleShift(gatherEntry.getFindtargetdistance()));
                 gatherModel.setPutDistance(intToDoubleShift(gatherEntry.getPutdistance()));
-                gatherModel.setEnv(localizationSource.getEnvTagNames().get(gatherEntry.getEnvtags()));
+                gatherModel.setEnv(localizationSource.getEnvTagNames().get(getBitPosition(gatherEntry.getEnvtags())));
                 gatherModel.setResource(localizationSource.getResourceNames().get(gatherEntry.getResource()));
                 result.add(gatherModel);
             }
         }
-        return result;
+        return result.isEmpty() ? null : result;
     }
 
     @Override
@@ -69,9 +68,9 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
             return null;
         }
         ResourceModel resourceModel = new ResourceModel();
-        resourceModel.setFood(source.get(0));
-        resourceModel.setWood(source.get(1));
-        resourceModel.setIron(source.get(2));
+        resourceModel.setFood(intToDoubleShift(source.get(0)).intValue());
+        resourceModel.setWood(intToDoubleShift(source.get(1)).intValue());
+        resourceModel.setIron(intToDoubleShift(source.get(2)).intValue());
         return resourceModel;
     }
 
@@ -83,7 +82,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
         TransportingModel transportingModel = new TransportingModel();
         transportingModel.setCarrySize(source.getVolume());
         transportingModel.setOwnSize(source.getOwnVolume());
-        transportingModel.setOnlyInfantry(source.getUnitLimit() != null);
+        transportingModel.setOnlyInfantry(source.getUnitLimit() != null ? true : null);
         return transportingModel;
     }
 
@@ -186,6 +185,15 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
             }
         });
         return result;
+    }
+
+    private int getBitPosition(int i) {
+        int pos = 0;
+        while (i != 1) {
+            i = i >> 1;
+            pos++;
+        }
+        return pos;
     }
 
 }
