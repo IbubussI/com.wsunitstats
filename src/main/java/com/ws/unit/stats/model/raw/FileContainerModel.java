@@ -1,45 +1,56 @@
 package com.ws.unit.stats.model.raw;
 
 import com.ws.unit.stats.model.raw.json.gameplay.GameplayFileModel;
-import com.ws.unit.stats.model.raw.localization.LocalizationFileModel;
 import com.ws.unit.stats.model.raw.json.main.MainFileModel;
+import com.ws.unit.stats.model.raw.lua.MainStartupFileModel;
+import com.ws.unit.stats.model.raw.lua.SessionInitFileModel;
 
 public class FileContainerModel {
 
     private GameplayFileModel gameplayFileModel;
-    private LocalizationFileModel localizationFileModel;
     private MainFileModel mainFileModel;
+    private SessionInitFileModel sessionInitFileModel;
+    private MainStartupFileModel mainStartupFileModel;
 
-    public GameplayFileModel getGameplayFileJsonModel() {
+    public GameplayFileModel getGameplayFileModel() {
         return gameplayFileModel;
     }
 
-    public void setGameplayFileJsonModel(GameplayFileModel gameplayFileModel) {
+    public void setGameplayFileModel(GameplayFileModel gameplayFileModel) {
         this.gameplayFileModel = gameplayFileModel;
     }
 
-    public LocalizationFileModel getLocalizationFileJsonModel() {
-        return localizationFileModel;
-    }
-
-    public void setLocalizationFileJsonModel(LocalizationFileModel localizationFileModel) {
-        this.localizationFileModel = localizationFileModel;
-    }
-
-    public MainFileModel getMainFileJsonModel() {
+    public MainFileModel getMainFileModel() {
         return mainFileModel;
     }
 
-    public void setMainFileJsonModel(MainFileModel mainFileModel) {
+    public void setMainFileModel(MainFileModel mainFileModel) {
         this.mainFileModel = mainFileModel;
+    }
+
+    public SessionInitFileModel getSessionInitFileModel() {
+        return sessionInitFileModel;
+    }
+
+    public void setSessionInitFileModel(SessionInitFileModel sessionInitFileModel) {
+        this.sessionInitFileModel = sessionInitFileModel;
+    }
+
+    public MainStartupFileModel getMainStartupFileModel() {
+        return mainStartupFileModel;
+    }
+
+    public void setMainStartupFileModel(MainStartupFileModel mainStartupFileModel) {
+        this.mainStartupFileModel = mainStartupFileModel;
     }
 
     @Override
     public String toString() {
-        return "RootJsonContainerModel{" +
-                "gameplayFileJsonModel=" + gameplayFileModel +
-                ", localizationFileJsonModel=" + localizationFileModel +
-                ", mainFileJsonModel=" + mainFileModel +
+        return "FileContainerModel{" +
+                "gameplayFileModel=" + gameplayFileModel +
+                ", mainFileModel=" + mainFileModel +
+                ", sessionInitFileModel=" + sessionInitFileModel +
+                ", mainStartupFileModel=" + mainStartupFileModel +
                 '}';
     }
 }

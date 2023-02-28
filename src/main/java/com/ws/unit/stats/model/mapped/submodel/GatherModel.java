@@ -6,7 +6,7 @@ public class GatherModel {
     private Double gatherDistance;
     private Double putDistance;
     private Double perSecond;
-    private String envType;
+    private String env;
     private String resource;
 
     public Double getBagSize() {
@@ -49,12 +49,12 @@ public class GatherModel {
         this.perSecond = perSecond;
     }
 
-    public String getEnvType() {
-        return envType;
+    public String getEnv() {
+        return env;
     }
 
-    public void setEnvType(String envType) {
-        this.envType = envType;
+    public void setEnv(String env) {
+        this.env = env;
     }
 
     public String getResource() {
@@ -73,7 +73,7 @@ public class GatherModel {
                 ", gatherDistance=" + gatherDistance +
                 ", putDistance=" + putDistance +
                 ", perSecond=" + perSecond +
-                ", envType='" + envType + '\'' +
+                ", env='" + env + '\'' +
                 ", resource='" + resource + '\'' +
                 '}';
     }

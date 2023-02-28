@@ -1,5 +1,6 @@
 package com.ws.unit.stats.service.impl;
 
+import com.ws.unit.stats.model.mapped.LocalizationModel;
 import com.ws.unit.stats.model.mapped.UnitModel;
 import com.ws.unit.stats.model.raw.FileContainerModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.BuildJsonModel;
@@ -7,6 +8,8 @@ import com.ws.unit.stats.model.raw.json.gameplay.GameplayFileModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.UnitJsonModel;
 import com.ws.unit.stats.model.raw.localization.LocalizationFileModel;
 import com.ws.unit.stats.model.raw.json.main.MainFileModel;
+import com.ws.unit.stats.model.raw.lua.MainStartupFileModel;
+import com.ws.unit.stats.model.raw.lua.SessionInitFileModel;
 import com.ws.unit.stats.service.ObjectMappingService;
 import com.ws.unit.stats.service.UnitModelResolverService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,18 +28,20 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
     private ObjectMappingService mappingService;
 
     public List<UnitModel> resolveFromJsonModel(FileContainerModel rootContainer) {
+        GameplayFileModel gameplayModel = rootContainer.getGameplayFileModel();
+        MainFileModel mainModel = rootContainer.getMainFileModel();
+        MainStartupFileModel startupModel = rootContainer.getMainStartupFileModel();
+        SessionInitFileModel sessionInitModel = rootContainer.getSessionInitFileModel();
 
-        GameplayFileModel gameplayJsonModel = rootContainer.getGameplayFileJsonModel();
-        LocalizationFileModel localizationJsonModel = rootContainer.getLocalizationFileJsonModel();
-        MainFileModel mainFileModel = rootContainer.getMainFileJsonModel();
+        LocalizationModel localizationModel = mappingService.map(sessionInitModel, startupModel);
 
-        Map<Integer, UnitJsonModel> unitJsonMap = gameplayJsonModel.getScenes().getUnits();
+        Map<Integer, UnitJsonModel> unitJsonMap = gameplayModel.getScenes().getUnits();
         List<UnitModel> result = new ArrayList<>();
         unitJsonMap.forEach((id, unitJsonModel) -> {
-            BuildJsonModel buildJsonModel = findUnitBuildObject(gameplayJsonModel, id);
+            BuildJsonModel buildJsonModel = findUnitBuildObject(gameplayModel, id);
             UnitModel unit = new UnitModel();
             //unit.setArmor(mappingService.map(unitJsonModel.getArmor()));
-            //unit.setGather(mappingService.map(unitJsonModel.getGather()));
+            unit.setGather(mappingService.map(unitJsonModel.getGather(), localizationModel));
             unit.setSize(intToDoubleShift(unitJsonModel.getSize()));
             unit.setMovement(mappingService.map(unitJsonModel.getMovement()));
             if (buildJsonModel != null) {

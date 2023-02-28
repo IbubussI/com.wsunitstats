@@ -8,6 +8,7 @@ import com.ws.unit.stats.model.mapped.submodel.NationNameModel;
 import com.ws.unit.stats.model.mapped.submodel.ResourceModel;
 import com.ws.unit.stats.model.mapped.submodel.TransportingModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.ArmorJsonModel;
+import com.ws.unit.stats.model.raw.json.gameplay.submodel.EnvJsonModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.GatherJsonModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.MovementJsonModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.TransportingJsonModel;
@@ -44,20 +45,22 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
     }
 
     @Override
-    public GatherModel map(GatherJsonModel gatherSource, LocalizationModel localizationSource) {
-        if (gatherSource == null || localizationSource == null) {
-            return null;
+    public List<GatherModel> map(List<GatherJsonModel> gatherSource, LocalizationModel localizationSource) {
+        List<GatherModel> result = new ArrayList<>();
+        if (gatherSource != null && localizationSource != null) {
+            for (GatherJsonModel gatherEntry : gatherSource) {
+                GatherModel gatherModel = new GatherModel();
+                gatherModel.setBagSize(intToDoubleShift(gatherEntry.getBagsize()));
+                gatherModel.setGatherDistance(intToDoubleShift(gatherEntry.getGatherdistance()));
+                gatherModel.setPerSecond(intToDoubleTick(gatherEntry.getPertick()));
+                gatherModel.setFindTargetDistance(intToDoubleShift(gatherEntry.getFindtargetdistance()));
+                gatherModel.setPutDistance(intToDoubleShift(gatherEntry.getPutdistance()));
+                gatherModel.setEnv(localizationSource.getEnvTagNames().get(gatherEntry.getEnvtags()));
+                gatherModel.setResource(localizationSource.getResourceNames().get(gatherEntry.getResource()));
+                result.add(gatherModel);
+            }
         }
-        GatherModel gatherModel = new GatherModel();
-        gatherModel.setBagSize(intToDoubleShift(gatherSource.getBagsize()));
-        gatherModel.setGatherDistance(intToDoubleShift(gatherSource.getGatherdistance()));
-        gatherModel.setPerSecond(intToDoubleTick(gatherSource.getPertick()));
-        gatherModel.setFindTargetDistance(intToDoubleShift(gatherSource.getFindtargetdistance()));
-        gatherModel.setPutDistance(intToDoubleShift(gatherSource.getPutdistance()));
-
-        //gatherModel.setEnvType();
-        //gatherModel.setResource();
-        return gatherModel;
+        return result;
     }
 
     @Override
@@ -101,15 +104,17 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
             return null;
         }
         LocalizationModel localizationModel = new LocalizationModel();
-        localizationModel.setAgeNames(convertToLocalizationTags(sessionInitSource.getAgeNames()));
-        localizationModel.setEnvNames(convertToMap(sessionInitSource.getEnvNames()));
         localizationModel.setNationNames(convertToNationNames(sessionInitSource.getNationNames()));
         localizationModel.setResearchNames(convertToLocalizationTags(sessionInitSource.getResearchNames()));
         localizationModel.setResearchTexts(convertToLocalizationTags(sessionInitSource.getResearchTexts()));
         localizationModel.setUnitNames(convertToLocalizationTags(sessionInitSource.getUnitNames()));
         localizationModel.setUnitTexts(convertToLocalizationTags(sessionInitSource.getUnitTexts()));
-        localizationModel.setUnitNations(convertToNullableIntegers(sessionInitSource.getUnitNations()));
-        localizationModel.setUnitTags(convertToLocalizationTags(sessionInitSource.getUnitTags()));
+        localizationModel.setUnitTagNames(convertToLocalizationTags(mainStartupSource.getUnitTagNames()));
+        localizationModel.setUnitSearchTagNames(convertToLocalizationTags(mainStartupSource.getUnitSearchTagNames()));
+        localizationModel.setEnvNames(convertToLocalizationTagMap(sessionInitSource.getEnvNames()));
+        localizationModel.setEnvTagNames(convertToLocalizationTags(mainStartupSource.getEnvTagNames()));
+        localizationModel.setEnvSearchTagNames(convertToLocalizationTags(mainStartupSource.getEnvSearchTagNames()));
+        localizationModel.setAgeNames(convertToLocalizationTags(sessionInitSource.getAgeNames()));
         localizationModel.setResourceNames(convertToLocalizationTags(mainStartupSource.getResourceNames()));
         return localizationModel;
     }
@@ -117,7 +122,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
     /**
      * Converts list of next format: {[0]=localize("<*sample_tag/0>"), ...} to map where key - env id, value - localization key
      */
-    private Map<Integer, String> convertToMap(List<String> list) {
+    private Map<Integer, String> convertToLocalizationTagMap(List<String> list) {
         Map<Integer, String> result = new HashMap<>();
         list.forEach(item -> {
             Matcher matcher = MAP_ENTRY_PATTERN.matcher(item);

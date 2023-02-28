@@ -6,13 +6,15 @@ import com.ws.unit.stats.model.mapped.submodel.MovementModel;
 import com.ws.unit.stats.model.mapped.submodel.ResourceModel;
 import com.ws.unit.stats.model.mapped.submodel.TransportingModel;
 
+import java.util.List;
+
 public class UnitModel extends GenericEntityModel {
 
     protected Double size;
     protected ArmorModel armor;
     protected MovementModel movement;
     protected TransportingModel transporting;
-    protected GatherModel gather;
+    protected List<GatherModel> gather;
     protected ResourceModel initCost;
 
     public Double getSize() {
@@ -47,11 +49,11 @@ public class UnitModel extends GenericEntityModel {
         this.transporting = transportSize;
     }
 
-    public GatherModel getGather() {
+    public List<GatherModel> getGather() {
         return gather;
     }
 
-    public void setGather(GatherModel gather) {
+    public void setGather(List<GatherModel> gather) {
         this.gather = gather;
     }
 
