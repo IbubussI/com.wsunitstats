@@ -1,12 +1,6 @@
-package com.ws.unit.stats.model.raw.gameplay;
+package com.ws.unit.stats.model.raw.json.gameplay.submodel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ws.unit.stats.model.raw.gameplay.submodel.AirfieldJsonModel;
-import com.ws.unit.stats.model.raw.gameplay.submodel.GatherJsonModel;
-import com.ws.unit.stats.model.raw.gameplay.submodel.IncomeJsonModel;
-import com.ws.unit.stats.model.raw.gameplay.submodel.MovementJsonModel;
-import com.ws.unit.stats.model.raw.gameplay.submodel.TransportingJsonModel;
-import com.ws.unit.stats.model.raw.gameplay.submodel.TurretJsonModel;
 
 import java.util.List;
 import java.util.Map;

@@ -1,4 +1,7 @@
-package com.ws.unit.stats.model.raw.gameplay;
+package com.ws.unit.stats.model.raw.json.gameplay;
+
+import com.ws.unit.stats.model.raw.json.gameplay.submodel.BuildJsonModel;
+import com.ws.unit.stats.model.raw.json.gameplay.submodel.ScenesJsonModel;
 
 import java.util.List;
 import java.util.Map;
