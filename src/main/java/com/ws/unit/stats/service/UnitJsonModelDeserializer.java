@@ -1,6 +1,6 @@
 package com.ws.unit.stats.service;
 
-import com.ws.unit.stats.model.raw.gameplay.UnitJsonModel;
+import com.ws.unit.stats.model.raw.json.gameplay.submodel.UnitJsonModel;
 
 public class UnitJsonModelDeserializer extends IndexedArrayDataModelDeserializer<UnitJsonModel> {
 

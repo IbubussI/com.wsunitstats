@@ -1,4 +1,4 @@
-package com.ws.unit.stats.model.raw.session.init;
+package com.ws.unit.stats.model.raw.lua;
 
 import java.util.List;
 

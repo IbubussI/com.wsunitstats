@@ -1,8 +1,8 @@
 package com.ws.unit.stats.model.raw;
 
-import com.ws.unit.stats.model.raw.gameplay.GameplayFileModel;
+import com.ws.unit.stats.model.raw.json.gameplay.GameplayFileModel;
 import com.ws.unit.stats.model.raw.localization.LocalizationFileModel;
-import com.ws.unit.stats.model.raw.main.MainFileModel;
+import com.ws.unit.stats.model.raw.json.main.MainFileModel;
 
 public class FileContainerModel {
 

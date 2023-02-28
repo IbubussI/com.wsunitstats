@@ -1,4 +1,4 @@
-package com.ws.unit.stats.model.raw.gameplay;
+package com.ws.unit.stats.model.raw.json.gameplay.submodel;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

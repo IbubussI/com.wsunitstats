@@ -1,4 +1,4 @@
-package com.ws.unit.stats.model.raw.gameplay.submodel;
+package com.ws.unit.stats.model.raw.json.gameplay.submodel;
 
 public class GatherJsonModel {
     private Integer angle;

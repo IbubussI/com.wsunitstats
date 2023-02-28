@@ -1,9 +1,9 @@
 package com.ws.unit.stats.service;
 
 import com.ws.unit.stats.exception.FileReadingException;
-import com.ws.unit.stats.model.raw.gameplay.GameplayFileModel;
+import com.ws.unit.stats.model.raw.json.gameplay.GameplayFileModel;
 import com.ws.unit.stats.model.raw.localization.LocalizationFileModel;
-import com.ws.unit.stats.model.raw.session.init.SessionInitFileModel;
+import com.ws.unit.stats.model.raw.lua.SessionInitFileModel;
 
 public interface FileReaderService {
 

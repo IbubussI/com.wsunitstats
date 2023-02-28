@@ -6,11 +6,11 @@ import com.ws.unit.stats.model.mapped.submodel.GatherModel;
 import com.ws.unit.stats.model.mapped.submodel.MovementModel;
 import com.ws.unit.stats.model.mapped.submodel.ResourceModel;
 import com.ws.unit.stats.model.mapped.submodel.TransportingModel;
-import com.ws.unit.stats.model.raw.gameplay.submodel.ArmorJsonModel;
-import com.ws.unit.stats.model.raw.gameplay.submodel.GatherJsonModel;
-import com.ws.unit.stats.model.raw.gameplay.submodel.MovementJsonModel;
-import com.ws.unit.stats.model.raw.gameplay.submodel.TransportingJsonModel;
-import com.ws.unit.stats.model.raw.session.init.SessionInitFileModel;
+import com.ws.unit.stats.model.raw.json.gameplay.submodel.ArmorJsonModel;
+import com.ws.unit.stats.model.raw.json.gameplay.submodel.GatherJsonModel;
+import com.ws.unit.stats.model.raw.json.gameplay.submodel.MovementJsonModel;
+import com.ws.unit.stats.model.raw.json.gameplay.submodel.TransportingJsonModel;
+import com.ws.unit.stats.model.raw.lua.SessionInitFileModel;
 
 import java.util.List;
 

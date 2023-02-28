@@ -2,11 +2,11 @@ package com.ws.unit.stats.service.impl;
 
 import com.ws.unit.stats.model.mapped.UnitModel;
 import com.ws.unit.stats.model.raw.FileContainerModel;
-import com.ws.unit.stats.model.raw.gameplay.BuildJsonModel;
-import com.ws.unit.stats.model.raw.gameplay.GameplayFileModel;
-import com.ws.unit.stats.model.raw.gameplay.UnitJsonModel;
+import com.ws.unit.stats.model.raw.json.gameplay.submodel.BuildJsonModel;
+import com.ws.unit.stats.model.raw.json.gameplay.GameplayFileModel;
+import com.ws.unit.stats.model.raw.json.gameplay.submodel.UnitJsonModel;
 import com.ws.unit.stats.model.raw.localization.LocalizationFileModel;
-import com.ws.unit.stats.model.raw.main.MainFileModel;
+import com.ws.unit.stats.model.raw.json.main.MainFileModel;
 import com.ws.unit.stats.service.ObjectMappingService;
 import com.ws.unit.stats.service.UnitModelResolverService;
 import org.springframework.beans.factory.annotation.Autowired;
