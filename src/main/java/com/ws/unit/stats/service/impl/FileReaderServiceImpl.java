@@ -1,8 +1,6 @@
 package com.ws.unit.stats.service.impl;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.util.DefaultIndenter;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ws.unit.stats.exception.FileReadingException;
 import com.ws.unit.stats.model.raw.json.gameplay.GameplayFileModel;
@@ -17,9 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -135,49 +131,5 @@ public class FileReaderServiceImpl implements FileReaderService {
         }
         return result;
     }
-
-
-    // =================== TO BE REMOVED =====================
-
-    private static final String PATH_GAMEPLAY = "game-files/gameplay.json";
-    private static final String PATH_LOCALIZATION = "game-files/en.loc";
-    private static final String PATH_SESSION_INIT = "game-files/init.lua";
-    private static final String PATH_MAIN_STARTUP = "game-files/startup.lua";
-    private static final String PATH_NEW = "gameplay_m.json";
-
-    public static void main(String[] args) {
-        try {
-            FileReaderService fileReaderService = new FileReaderServiceImpl();
-            GameplayFileModel gameplayFileModel = fileReaderService.readGameplayJson(PATH_GAMEPLAY);
-
-            ObjectMapper mapper = new ObjectMapper();
-            Writer fileWriter = new FileWriter(PATH_NEW, false);
-            DefaultPrettyPrinter prettyWriter = new DefaultPrettyPrinter();
-            DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("\t", DefaultIndenter.SYS_LF);
-            prettyWriter.indentObjectsWith(indenter);
-            prettyWriter.indentArraysWith(indenter);
-            String output = mapper.writer(prettyWriter).writeValueAsString(gameplayFileModel);
-
-            //System.out.println(gameplayFileModel);
-            //System.out.println("==================================================");
-            //System.out.println(output);
-            System.out.println("json read-write success");
-            fileWriter.write(output);
-            fileWriter.flush();
-            fileWriter.close();
-
-            //LocalizationFileModel localizationFileModel = fileReaderService.readLocalization(PATH_LOCALIZATION);
-            //System.out.println(localizationFileModel);
-
-            //SessionInitFileModel sessionInitFileModel = fileReaderService.readSessionInitLua(PATH_SESSION_INIT);
-            //System.out.println(sessionInitFileModel);
-
-            //MainStartupFileModel startupFileModel = fileReaderService.readMainStartupLua(PATH_MAIN_STARTUP);
-            //System.out.println(startupFileModel);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
 }
 
