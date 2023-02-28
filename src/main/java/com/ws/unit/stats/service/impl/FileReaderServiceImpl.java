@@ -36,11 +36,12 @@ public class FileReaderServiceImpl implements FileReaderService {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileReaderServiceImpl.class);
 
-    private static final Pattern LOC_VALUE_PATTERN = Pattern.compile("^<\\*([^<>]*)>(.*)$", Pattern.MULTILINE);
+    private static final Pattern LOC_VALUE_PATTERN = Pattern.compile("^(<\\*[^<>]*>)(.*)$", Pattern.MULTILINE);
     private static final String LOC_INDEX_REGEX = "\\|";
     private static final String LUA_ARRAY_REGEX = "%s\\s*=\\s*\\{";
-    private static final String LUA_ARRAY_DELIMITER = ",";
-    private static final Pattern LUA_ARRAY_REDUNDANT_PATTERN = Pattern.compile("(\\s)|(--.*$)", Pattern.MULTILINE);
+    private static final String LUA_ARRAY_DELIMITER = "\\s*,\\s*";
+    private static final Pattern LUA_COMMENTS_PATTERN = Pattern.compile("--[^\n\t\"]*$", Pattern.MULTILINE);
+    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("[\n\t\r]*", Pattern.MULTILINE);
 
     @Override
     public GameplayFileModel readGameplayJson(String path) throws FileReadingException {
@@ -99,9 +100,10 @@ public class FileReaderServiceImpl implements FileReaderService {
                 if (matcher.find()) {
                     int startArray = matcher.end();
                     int endArray = findClosingCurlyBrace(fileContent, startArray);
-                    String rawArray = fileContent.substring(startArray, endArray);
-                    String array = LUA_ARRAY_REDUNDANT_PATTERN.matcher(rawArray).replaceAll(StringUtils.EMPTY);
-                    lists.add(Arrays.asList(array.split(LUA_ARRAY_DELIMITER)));
+                    StringBuilder arrayBuilder = new StringBuilder(fileContent.substring(startArray, endArray));
+                    arrayBuilder.replace(0, arrayBuilder.length(), LUA_COMMENTS_PATTERN.matcher(arrayBuilder).replaceAll(StringUtils.EMPTY));
+                    arrayBuilder.replace(0, arrayBuilder.length(), NEW_LINE_PATTERN.matcher(arrayBuilder).replaceAll(StringUtils.EMPTY));
+                    lists.add(Arrays.asList(arrayBuilder.toString().split(LUA_ARRAY_DELIMITER)));
                 }
             });
 
@@ -133,6 +135,7 @@ public class FileReaderServiceImpl implements FileReaderService {
         }
         return result;
     }
+
 
     // =================== TO BE REMOVED =====================
 
