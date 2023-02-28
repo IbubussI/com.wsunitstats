@@ -6,24 +6,18 @@ import java.util.List;
 import java.util.Map;
 
 public class LocalizationModel {
-    private List<Integer> unitNations;
     private List<NationNameModel> nationNames;
     private List<String> researchNames;
     private List<String> researchTexts;
     private List<String> unitNames;
     private List<String> unitTexts;
+    private List<String> unitTagNames;
+    private List<String> unitSearchTagNames;
     private Map<Integer, String> envNames;
-    private List<String> unitTags;
+    private List<String> envTagNames;
+    private List<String> envSearchTagNames;
     private List<String> ageNames;
     private List<String> resourceNames;
-
-    public List<Integer> getUnitNations() {
-        return unitNations;
-    }
-
-    public void setUnitNations(List<Integer> unitNations) {
-        this.unitNations = unitNations;
-    }
 
     public List<NationNameModel> getNationNames() {
         return nationNames;
@@ -65,6 +59,22 @@ public class LocalizationModel {
         this.unitTexts = unitTexts;
     }
 
+    public List<String> getUnitTagNames() {
+        return unitTagNames;
+    }
+
+    public void setUnitTagNames(List<String> unitTagNames) {
+        this.unitTagNames = unitTagNames;
+    }
+
+    public List<String> getUnitSearchTagNames() {
+        return unitSearchTagNames;
+    }
+
+    public void setUnitSearchTagNames(List<String> unitSearchTagNames) {
+        this.unitSearchTagNames = unitSearchTagNames;
+    }
+
     public Map<Integer, String> getEnvNames() {
         return envNames;
     }
@@ -73,12 +83,20 @@ public class LocalizationModel {
         this.envNames = envNames;
     }
 
-    public List<String> getUnitTags() {
-        return unitTags;
+    public List<String> getEnvTagNames() {
+        return envTagNames;
     }
 
-    public void setUnitTags(List<String> unitTags) {
-        this.unitTags = unitTags;
+    public void setEnvTagNames(List<String> envTagNames) {
+        this.envTagNames = envTagNames;
+    }
+
+    public List<String> getEnvSearchTagNames() {
+        return envSearchTagNames;
+    }
+
+    public void setEnvSearchTagNames(List<String> envSearchTagNames) {
+        this.envSearchTagNames = envSearchTagNames;
     }
 
     public List<String> getAgeNames() {
@@ -100,14 +118,16 @@ public class LocalizationModel {
     @Override
     public String toString() {
         return "LocalizationModel{" +
-                "unitNations=" + unitNations +
-                ", nationNames=" + nationNames +
+                "nationNames=" + nationNames +
                 ", researchNames=" + researchNames +
                 ", researchTexts=" + researchTexts +
                 ", unitNames=" + unitNames +
                 ", unitTexts=" + unitTexts +
+                ", unitTagNames=" + unitTagNames +
+                ", unitSearchTagNames=" + unitSearchTagNames +
                 ", envNames=" + envNames +
-                ", unitTags=" + unitTags +
+                ", envTagNames=" + envTagNames +
+                ", envSearchTagNames=" + envSearchTagNames +
                 ", ageNames=" + ageNames +
                 ", resourceNames=" + resourceNames +
                 '}';

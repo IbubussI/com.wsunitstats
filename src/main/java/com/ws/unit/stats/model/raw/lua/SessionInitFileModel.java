@@ -3,15 +3,16 @@ package com.ws.unit.stats.model.raw.lua;
 import java.util.List;
 
 public class SessionInitFileModel {
-    public static final List<String> ARRAY_NAMES = List.of("unitNations",
+    public static final List<String> ARRAY_NAMES = List.of(
+            "unitNations",
             "nationNames",
             "researchNames",
             "researchTexts",
             "unitNames",
             "unitTexts",
             "envNames",
-            "unitTags",
-            "ageNames");
+            "ageNames"
+    );
 
     private List<String> unitNations;
     private List<String> nationNames;
@@ -20,11 +21,10 @@ public class SessionInitFileModel {
     private List<String> unitNames;
     private List<String> unitTexts;
     private List<String> envNames;
-    private List<String> unitTags;
     private List<String> ageNames;
 
     public void setAll(List<List<String>> lists) {
-        if (lists.size() == 9) {
+        if (lists.size() == 8) {
             unitNations = lists.get(0);
             nationNames = lists.get(1);
             researchNames = lists.get(2);
@@ -32,8 +32,7 @@ public class SessionInitFileModel {
             unitNames = lists.get(4);
             unitTexts = lists.get(5);
             envNames = lists.get(6);
-            unitTags = lists.get(7);
-            ageNames = lists.get(8);
+            ageNames = lists.get(7);
         }
     }
 
@@ -93,14 +92,6 @@ public class SessionInitFileModel {
         this.envNames = envNames;
     }
 
-    public List<String> getUnitTags() {
-        return unitTags;
-    }
-
-    public void setUnitTags(List<String> unitTags) {
-        this.unitTags = unitTags;
-    }
-
     public List<String> getAgeNames() {
         return ageNames;
     }
@@ -119,7 +110,6 @@ public class SessionInitFileModel {
                 ", unitNames=" + unitNames +
                 ", unitTexts=" + unitTexts +
                 ", envNames=" + envNames +
-                ", unitTags=" + unitTags +
                 ", ageNames=" + ageNames +
                 '}';
     }
