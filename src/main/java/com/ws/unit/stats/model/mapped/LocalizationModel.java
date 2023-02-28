@@ -15,6 +15,7 @@ public class LocalizationModel {
     private Map<Integer, String> envNames;
     private List<String> unitTags;
     private List<String> ageNames;
+    private List<String> resourceNames;
 
     public List<Integer> getUnitNations() {
         return unitNations;
@@ -88,9 +89,17 @@ public class LocalizationModel {
         this.ageNames = ageNames;
     }
 
+    public List<String> getResourceNames() {
+        return resourceNames;
+    }
+
+    public void setResourceNames(List<String> resourceNames) {
+        this.resourceNames = resourceNames;
+    }
+
     @Override
     public String toString() {
-        return "LocalizationTagModel{" +
+        return "LocalizationModel{" +
                 "unitNations=" + unitNations +
                 ", nationNames=" + nationNames +
                 ", researchNames=" + researchNames +
@@ -100,6 +109,7 @@ public class LocalizationModel {
                 ", envNames=" + envNames +
                 ", unitTags=" + unitTags +
                 ", ageNames=" + ageNames +
+                ", resourceNames=" + resourceNames +
                 '}';
     }
 }

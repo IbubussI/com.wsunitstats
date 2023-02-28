@@ -11,6 +11,7 @@ import com.ws.unit.stats.model.raw.json.gameplay.submodel.ArmorJsonModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.GatherJsonModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.MovementJsonModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.TransportingJsonModel;
+import com.ws.unit.stats.model.raw.lua.MainStartupFileModel;
 import com.ws.unit.stats.model.raw.lua.SessionInitFileModel;
 import com.ws.unit.stats.service.ObjectMappingService;
 import org.apache.commons.lang3.StringUtils;
@@ -43,16 +44,16 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
     }
 
     @Override
-    public GatherModel map(GatherJsonModel source, LocalizationModel loc) {
-        if (source == null) {
+    public GatherModel map(GatherJsonModel gatherSource, LocalizationModel localizationSource) {
+        if (gatherSource == null || localizationSource == null) {
             return null;
         }
         GatherModel gatherModel = new GatherModel();
-        gatherModel.setBagSize(intToDoubleShift(source.getBagsize()));
-        gatherModel.setGatherDistance(intToDoubleShift(source.getGatherdistance()));
-        gatherModel.setPerSecond(intToDoubleTick(source.getPertick()));
-        gatherModel.setFindTargetDistance(intToDoubleShift(source.getFindtargetdistance()));
-        gatherModel.setPutDistance(intToDoubleShift(source.getPutdistance()));
+        gatherModel.setBagSize(intToDoubleShift(gatherSource.getBagsize()));
+        gatherModel.setGatherDistance(intToDoubleShift(gatherSource.getGatherdistance()));
+        gatherModel.setPerSecond(intToDoubleTick(gatherSource.getPertick()));
+        gatherModel.setFindTargetDistance(intToDoubleShift(gatherSource.getFindtargetdistance()));
+        gatherModel.setPutDistance(intToDoubleShift(gatherSource.getPutdistance()));
 
         //gatherModel.setEnvType();
         //gatherModel.setResource();
@@ -95,20 +96,21 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
     }
 
     @Override
-    public LocalizationModel map(SessionInitFileModel source) {
-        if (source == null) {
+    public LocalizationModel map(SessionInitFileModel sessionInitSource, MainStartupFileModel mainStartupSource) {
+        if (sessionInitSource == null || mainStartupSource == null) {
             return null;
         }
         LocalizationModel localizationModel = new LocalizationModel();
-        localizationModel.setAgeNames(convertToLocalizationTags(source.getAgeNames()));
-        localizationModel.setEnvNames(convertToMap(source.getEnvNames()));
-        localizationModel.setNationNames(convertToNationNames(source.getNationNames()));
-        localizationModel.setResearchNames(convertToLocalizationTags(source.getResearchNames()));
-        localizationModel.setResearchTexts(convertToLocalizationTags(source.getResearchTexts()));
-        localizationModel.setUnitNames(convertToLocalizationTags(source.getUnitNames()));
-        localizationModel.setUnitTexts(convertToLocalizationTags(source.getUnitTexts()));
-        localizationModel.setUnitNations(convertToNullableIntegers(source.getUnitNations()));
-        localizationModel.setUnitTags(convertToLocalizationTags(source.getUnitTags()));
+        localizationModel.setAgeNames(convertToLocalizationTags(sessionInitSource.getAgeNames()));
+        localizationModel.setEnvNames(convertToMap(sessionInitSource.getEnvNames()));
+        localizationModel.setNationNames(convertToNationNames(sessionInitSource.getNationNames()));
+        localizationModel.setResearchNames(convertToLocalizationTags(sessionInitSource.getResearchNames()));
+        localizationModel.setResearchTexts(convertToLocalizationTags(sessionInitSource.getResearchTexts()));
+        localizationModel.setUnitNames(convertToLocalizationTags(sessionInitSource.getUnitNames()));
+        localizationModel.setUnitTexts(convertToLocalizationTags(sessionInitSource.getUnitTexts()));
+        localizationModel.setUnitNations(convertToNullableIntegers(sessionInitSource.getUnitNations()));
+        localizationModel.setUnitTags(convertToLocalizationTags(sessionInitSource.getUnitTags()));
+        localizationModel.setResourceNames(convertToLocalizationTags(mainStartupSource.getResourceNames()));
         return localizationModel;
     }
 
