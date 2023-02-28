@@ -10,6 +10,7 @@ import com.ws.unit.stats.model.raw.json.gameplay.submodel.ArmorJsonModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.GatherJsonModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.MovementJsonModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.TransportingJsonModel;
+import com.ws.unit.stats.model.raw.lua.MainStartupFileModel;
 import com.ws.unit.stats.model.raw.lua.SessionInitFileModel;
 
 import java.util.List;
@@ -25,5 +26,5 @@ public interface ObjectMappingService {
 
     MovementModel map(MovementJsonModel source);
 
-    LocalizationModel map(SessionInitFileModel source);
+    LocalizationModel map(SessionInitFileModel sessionInitSource, MainStartupFileModel mainStartupSource);
 }
