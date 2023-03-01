@@ -1,16 +1,22 @@
 package com.wsunitstats.exporter.model.mapped.submodel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.wsunitstats.exporter.service.serializer.ResourceModelSerializer;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@JsonSerialize(using = ResourceModelSerializer.class)
 public class ResourceModel {
+    private static final String RESOURCE_KEY = "resource";
+    private static final String RESOURCE_VALUE = "value";
 
-    private String foodKey = "Food";
-    private String woodKey = "Wood";
-    private String ironKey = "Iron";
+    private String foodKey = "food";
+    private String woodKey = "wood";
+    private String ironKey = "iron";
 
     private int food;
     private int wood;
@@ -67,11 +73,24 @@ public class ResourceModel {
         this.ironKey = ironKey;
     }
 
-    public Map<String, Integer> getData() {
-        Map<String, Integer> result = new LinkedHashMap<>();
-        result.put(foodKey, food);
-        result.put(woodKey, wood);
-        result.put(ironKey, iron);
+    public List<Map<String, Object>> getData() {
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        Map<String, Object> foodMap = new LinkedHashMap<>();
+        foodMap.put(RESOURCE_KEY, foodKey);
+        foodMap.put(RESOURCE_VALUE, food);
+        result.add(foodMap);
+
+        Map<String, Object> woodMap = new LinkedHashMap<>();
+        woodMap.put(RESOURCE_KEY, woodKey);
+        woodMap.put(RESOURCE_VALUE, wood);
+        result.add(woodMap);
+
+        Map<String, Object> ironMap = new LinkedHashMap<>();
+        ironMap.put(RESOURCE_KEY, ironKey);
+        ironMap.put(RESOURCE_VALUE, iron);
+        result.add(ironMap);
+
         return result;
     }
 

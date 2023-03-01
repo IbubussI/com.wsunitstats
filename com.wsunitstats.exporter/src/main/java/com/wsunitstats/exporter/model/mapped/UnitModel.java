@@ -90,7 +90,6 @@ public class UnitModel extends GenericEntityModel {
                 ", gather=" + gather +
                 ", initCost=" + initCost +
                 ", fullCost=" + fullCost +
-                ", persistenceId=" + persistenceId +
                 ", gameId=" + gameId +
                 ", name='" + name + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +

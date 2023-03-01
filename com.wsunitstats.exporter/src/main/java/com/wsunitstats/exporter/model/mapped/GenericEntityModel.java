@@ -1,23 +1,11 @@
 package com.wsunitstats.exporter.model.mapped;
 
-import java.util.List;
-
 public abstract class GenericEntityModel {
-
-    protected int persistenceId;
 
     protected int gameId;
     protected String name;
     protected String imageUrl;
     protected String nation;
-
-    public int getPersistenceId() {
-        return persistenceId;
-    }
-
-    public void setPersistenceId(int persistenceId) {
-        this.persistenceId = persistenceId;
-    }
 
     public int getGameId() {
         return gameId;
@@ -54,8 +42,7 @@ public abstract class GenericEntityModel {
     @Override
     public String toString() {
         return "GenericEntityModel{" +
-                "persistenceId=" + persistenceId +
-                ", gameId=" + gameId +
+                "gameId=" + gameId +
                 ", name='" + name + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", nation='" + nation + '\'' +
