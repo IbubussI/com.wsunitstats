@@ -33,11 +33,11 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
 
     private static final Pattern LOCALIZATION_PATTERN = Pattern.compile("^localize\\(\"(<\\*[a-zA-Z0-9/]+>)\"\\)$", Pattern.MULTILINE);
     private static final Pattern MAP_ENTRY_PATTERN = Pattern.compile("^\\[(\\d*)]=localize(\"(<\\*[a-zA-Z0-9/]+>)\")$", Pattern.MULTILINE);
-    private static final int PROBABILITY_100 = 100;
+    private static final int PROBABILITY_MAX = 100;
     private static final String NATION_DELIMITER = "/";
 
     @Override
-    public ArmorModel map(ArmorJsonModel.Entry source) {
+    public ArmorModel map(ArmorJsonModel.Entry source, int probabilitiesSum) {
         if (source == null) {
             return null;
         }
@@ -45,7 +45,13 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
         armorModel.setValue(Utilities.intToDoubleShift(source.getObject()));
         Optional.ofNullable(source.getProbability()).ifPresentOrElse(
                 armorModel::setProbability,
-                () -> armorModel.setProbability(PROBABILITY_100)
+                () -> {
+                    if (probabilitiesSum == 0) {
+                        armorModel.setProbability(PROBABILITY_MAX);
+                    } else {
+                        armorModel.setProbability(PROBABILITY_MAX - probabilitiesSum);
+                    }
+                }
         );
         return armorModel;
     }
@@ -161,7 +167,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
             String ir1 = rawNationNames.get(i);
             String ir2 = null;
             if (ir1.contains("{")) {
-                ++i; //NOSONAR consume next value and exclude it from further processing
+                ++i;
                 ir2 = rawNationNames.get(i);
                 ir1 = ir1.replace("{", StringUtils.EMPTY);
                 ir2 = ir2.replace("}", StringUtils.EMPTY);
