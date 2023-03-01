@@ -16,7 +16,7 @@ import com.wsunitstats.exporter.model.mapped.submodel.TransportingModel;
 import java.util.List;
 
 public interface ObjectMappingService {
-    ArmorModel map(ArmorJsonModel.Entry source);
+    ArmorModel map(ArmorJsonModel.Entry source, int probabilitiesSum);
 
     GatherModel map(GatherJsonModel gatherSource, LocalizationModel localizationSource);
 

@@ -94,9 +94,10 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
 
     private List<ArmorModel> getArmorList(ArmorJsonModel armorJsonModel) {
         //Armor should not be null for every unit
-        return armorJsonModel.getData() == null ? null :
-                armorJsonModel.getData().stream()
-                        .map(entry -> mappingService.map(entry))
+        List<ArmorJsonModel.Entry> entries = armorJsonModel.getData();
+        int probabilitiesSum = Utilities.sum(armorJsonModel.getData().stream().map(ArmorJsonModel.Entry::getProbability).toList());
+        return entries.stream()
+                        .map(entry -> mappingService.map(entry, probabilitiesSum))
                         .toList();
     }
 
