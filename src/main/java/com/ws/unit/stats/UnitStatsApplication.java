@@ -11,7 +11,6 @@ import com.ws.unit.stats.model.raw.lua.MainStartupFileModel;
 import com.ws.unit.stats.model.raw.lua.SessionInitFileModel;
 import com.ws.unit.stats.service.FileReaderService;
 import com.ws.unit.stats.service.UnitModelResolverService;
-import com.ws.unit.stats.service.impl.FileReaderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -46,7 +45,7 @@ public class UnitStatsApplication {
         private UnitModelResolverService unitModelResolverService;
 
         @Override
-        public void run(String... args) throws Exception {
+        public void run(String... args) {
             try {
                 GameplayFileModel gameplayFileModel = fileReaderService.readGameplayJson(PATH_GAMEPLAY);
 

@@ -1,12 +1,10 @@
 package com.ws.unit.stats.model.mapped;
 
-import com.ws.unit.stats.model.mapped.submodel.NationNameModel;
-
 import java.util.List;
 import java.util.Map;
 
 public class LocalizationModel {
-    private List<NationNameModel> nationNames;
+    private List<String> nationNames;
     private List<String> researchNames;
     private List<String> researchTexts;
     private List<String> unitNames;
@@ -19,11 +17,11 @@ public class LocalizationModel {
     private List<String> ageNames;
     private List<String> resourceNames;
 
-    public List<NationNameModel> getNationNames() {
+    public List<String> getNationNames() {
         return nationNames;
     }
 
-    public void setNationNames(List<NationNameModel> nationNames) {
+    public void setNationNames(List<String> nationNames) {
         this.nationNames = nationNames;
     }
 

@@ -4,7 +4,6 @@ import com.ws.unit.stats.model.mapped.LocalizationModel;
 import com.ws.unit.stats.model.mapped.submodel.ArmorModel;
 import com.ws.unit.stats.model.mapped.submodel.GatherModel;
 import com.ws.unit.stats.model.mapped.submodel.MovementModel;
-import com.ws.unit.stats.model.mapped.submodel.NationNameModel;
 import com.ws.unit.stats.model.mapped.submodel.ResourceModel;
 import com.ws.unit.stats.model.mapped.submodel.TransportingModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.ArmorJsonModel;
@@ -36,8 +35,8 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
 
     private static final Pattern LOCALIZATION_PATTERN = Pattern.compile("^localize\\(\"(<\\*[a-zA-Z0-9/]*>)\"\\)$", Pattern.MULTILINE);
     private static final Pattern MAP_ENTRY_PATTERN = Pattern.compile("^\\[(\\d*)]=localize(\"(<\\*[a-zA-Z0-9/]*>)\")$", Pattern.MULTILINE);
-    private static final String NIL = "nil";
     private static final int PROBABILITY_100 = 100;
+    private static final String NATION_DELIMITER = "/";
 
     @Override
     public ArmorModel map(ArmorJsonModel.Entry source) {
@@ -55,7 +54,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
 
     @Override
     public GatherModel map(GatherJsonModel gatherSource, LocalizationModel localizationSource) {
-        if (gatherSource == null || localizationSource == null) {
+        if (gatherSource == null) {
             return null;
         }
         GatherModel gatherModel = new GatherModel();
@@ -70,14 +69,15 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
     }
 
     @Override
-    public ResourceModel map(List<Integer> source) {
-        if (source == null) {
+    public ResourceModel map(List<Integer> resourcesSource, LocalizationModel localizationSource) {
+        if (resourcesSource == null) {
             return null;
         }
         ResourceModel resourceModel = new ResourceModel();
-        resourceModel.setFood(intToDoubleShift(source.get(0)).intValue());
-        resourceModel.setWood(intToDoubleShift(source.get(1)).intValue());
-        resourceModel.setIron(intToDoubleShift(source.get(2)).intValue());
+        resourceModel.setFood(intToDoubleShift(resourcesSource.get(0)).intValue());
+        resourceModel.setWood(intToDoubleShift(resourcesSource.get(1)).intValue());
+        resourceModel.setIron(intToDoubleShift(resourcesSource.get(2)).intValue());
+        resourceModel.setLocalization(localizationSource.getResourceNames());
         return resourceModel;
     }
 
@@ -106,9 +106,6 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
 
     @Override
     public LocalizationModel map(SessionInitFileModel sessionInitSource, MainStartupFileModel mainStartupSource) {
-        if (sessionInitSource == null || mainStartupSource == null) {
-            return null;
-        }
         LocalizationModel localizationModel = new LocalizationModel();
         localizationModel.setNationNames(convertToNationNames(sessionInitSource.getNationNames()));
         localizationModel.setResearchNames(convertToLocalizationTags(sessionInitSource.getResearchNames()));
@@ -160,37 +157,27 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
         throw new IllegalStateException("Localization Tag expected");
     }
 
-    private List<NationNameModel> convertToNationNames(List<String> rawNationNames) {
-        List<NationNameModel> result = new ArrayList<>();
+    private List<String> convertToNationNames(List<String> rawNationNames) {
+        List<String> result = new ArrayList<>();
         for (int i = 0; i < rawNationNames.size(); ++i) {
             String ir1 = rawNationNames.get(i);
-            String ir2 = ir1;
+            String ir2 = null;
             if (ir1.contains("{")) {
                 ++i; //NOSONAR consume next value and exclude it from further processing
                 ir2 = rawNationNames.get(i);
                 ir1 = ir1.replace("{", StringUtils.EMPTY);
                 ir2 = ir2.replace("}", StringUtils.EMPTY);
             }
-            NationNameModel nationName = new NationNameModel();
-            nationName.setIr1(convertToLocalizationTag(ir1));
-            nationName.setIr1(convertToLocalizationTag(ir2));
+            String nationName;
+            if (ir2 != null) {
+                nationName = convertToLocalizationTag(ir1) +
+                        NATION_DELIMITER +
+                        convertToLocalizationTag(ir2);
+            } else {
+                nationName = convertToLocalizationTag(ir1);
+            }
             result.add(nationName);
         }
-        return result;
-    }
-
-    /**
-     * Converts string to integer, nil to null
-     */
-    private List<Integer> convertToNullableIntegers(List<String> unitNations) {
-        List<Integer> result = new ArrayList<>();
-        unitNations.forEach(unitNation -> {
-            if (NIL.equals(unitNation)) {
-                result.add(null);
-            } else {
-                result.add(Integer.parseInt(unitNation));
-            }
-        });
         return result;
     }
 

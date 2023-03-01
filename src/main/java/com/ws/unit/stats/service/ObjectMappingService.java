@@ -20,7 +20,7 @@ public interface ObjectMappingService {
 
     GatherModel map(GatherJsonModel gatherSource, LocalizationModel localizationSource);
 
-    ResourceModel map(List<Integer> source);
+    ResourceModel map(List<Integer> resourcesSource, LocalizationModel localizationSource);
 
     TransportingModel map(TransportingJsonModel source);
 

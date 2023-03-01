@@ -9,13 +9,20 @@ import com.ws.unit.stats.model.mapped.submodel.TransportingModel;
 import java.util.List;
 
 public class UnitModel extends GenericEntityModel {
-
+    //Unit traits
     protected Double size;
     protected List<ArmorModel> armor;
+
+    //Movable unit traits
     protected MovementModel movement;
     protected TransportingModel transporting;
+
+    //Worker traits
     protected List<GatherModel> gather;
+
+    //Building traits
     protected ResourceModel initCost;
+    protected ResourceModel fullCost;
 
     public Double getSize() {
         return size;
@@ -65,15 +72,29 @@ public class UnitModel extends GenericEntityModel {
         this.initCost = initCost;
     }
 
+    public ResourceModel getFullCost() {
+        return fullCost;
+    }
+
+    public void setFullCost(ResourceModel buildCost) {
+        this.fullCost = buildCost;
+    }
+
     @Override
     public String toString() {
         return "UnitModel{" +
                 "size=" + size +
                 ", armor=" + armor +
-                ", speed=" + movement +
-                ", transportSize=" + transporting +
+                ", movement=" + movement +
+                ", transporting=" + transporting +
                 ", gather=" + gather +
                 ", initCost=" + initCost +
+                ", fullCost=" + fullCost +
+                ", persistenceId=" + persistenceId +
+                ", gameId=" + gameId +
+                ", name='" + name + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", nation='" + nation + '\'' +
                 '}';
     }
 }

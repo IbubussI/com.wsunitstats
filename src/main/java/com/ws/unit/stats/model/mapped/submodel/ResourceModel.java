@@ -1,17 +1,34 @@
 package com.ws.unit.stats.model.mapped.submodel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 public class ResourceModel {
+
+    private String foodKey = "Food";
+    private String woodKey = "Wood";
+    private String ironKey = "Iron";
 
     private int food;
     private int wood;
     private int iron;
 
-    public void addResources(ResourceModel resToAdd) {
-        this.food += resToAdd.food;
-        this.wood += resToAdd.wood;
-        this.iron += resToAdd.iron;
+    /**
+     * Returns new ResourceModel as sum of this and given one
+     */
+    public ResourceModel add(ResourceModel resToAdd) {
+        ResourceModel result = new ResourceModel();
+        result.setFood(this.food + resToAdd.food);
+        result.setWood(this.wood + resToAdd.wood);
+        result.setIron(this.iron + resToAdd.iron);
+        result.setLocalization(foodKey, woodKey, ironKey);
+        return result;
     }
 
+    @JsonIgnore
     public int getFood() {
         return food;
     }
@@ -20,6 +37,7 @@ public class ResourceModel {
         this.food = food;
     }
 
+    @JsonIgnore
     public int getWood() {
         return wood;
     }
@@ -28,12 +46,33 @@ public class ResourceModel {
         this.wood = wood;
     }
 
+    @JsonIgnore
     public int getIron() {
         return iron;
     }
 
     public void setIron(int iron) {
         this.iron = iron;
+    }
+
+    public void setLocalization(List<String> resourceNames) {
+        this.foodKey = resourceNames.get(0);
+        this.woodKey = resourceNames.get(1);
+        this.ironKey = resourceNames.get(2);
+    }
+
+    public void setLocalization(String foodKey, String woodKey, String ironKey) {
+        this.foodKey = foodKey;
+        this.woodKey = woodKey;
+        this.ironKey = ironKey;
+    }
+
+    public Map<String, Integer> getData() {
+        Map<String, Integer> result = new LinkedHashMap<>();
+        result.put(foodKey, food);
+        result.put(woodKey, wood);
+        result.put(ironKey, iron);
+        return result;
     }
 
     @Override
