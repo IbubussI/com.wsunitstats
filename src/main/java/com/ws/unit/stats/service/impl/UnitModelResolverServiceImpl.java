@@ -4,6 +4,7 @@ import com.ws.unit.stats.model.mapped.LocalizationModel;
 import com.ws.unit.stats.model.mapped.UnitModel;
 import com.ws.unit.stats.model.mapped.submodel.ArmorModel;
 import com.ws.unit.stats.model.mapped.submodel.GatherModel;
+import com.ws.unit.stats.model.mapped.submodel.ResourceModel;
 import com.ws.unit.stats.model.raw.FileContainerModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.ArmorJsonModel;
 import com.ws.unit.stats.model.raw.json.gameplay.submodel.BuildJsonModel;
@@ -26,10 +27,12 @@ import static com.ws.unit.stats.util.Utilities.intToDoubleShift;
 
 @Service
 public class UnitModelResolverServiceImpl implements UnitModelResolverService {
+    private static final String NIL = "nil";
 
     @Autowired
     private ObjectMappingService mappingService;
 
+    @Override
     public List<UnitModel> resolveFromJsonModel(FileContainerModel rootContainer) {
         GameplayFileModel gameplayModel = rootContainer.getGameplayFileModel();
         MainFileModel mainModel = rootContainer.getMainFileModel();
@@ -40,19 +43,40 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
 
         Map<Integer, UnitJsonModel> unitJsonMap = gameplayModel.getScenes().getUnits();
         List<UnitModel> result = new ArrayList<>();
-        unitJsonMap.forEach((id, unitJsonModel) -> {
+        for (Map.Entry<Integer, UnitJsonModel> entry : unitJsonMap.entrySet()) {
+            Integer id = entry.getKey();
+            UnitJsonModel unitJsonModel = entry.getValue();
             BuildJsonModel buildJsonModel = findUnitBuildObject(gameplayModel, id);
             UnitModel unit = new UnitModel();
-            unit.setArmor(getArmorList(unitJsonModel.getArmor()));
-            unit.setGather(getGatherList(unitJsonModel.getGather(), localizationModel));
-            unit.setSize(intToDoubleShift(unitJsonModel.getSize()));
-            unit.setMovement(mappingService.map(unitJsonModel.getMovement()));
+
+            // Generic traits
+            unit.setGameId(id);
+            unit.setName(localizationModel.getUnitNames().get(id));
+            //unit.setImageUrl();
+            unit.setNation(getUnitNation(sessionInitModel, localizationModel, id));
+
+
+            // Build traits
             if (buildJsonModel != null) {
-                unit.setInitCost(mappingService.map(buildJsonModel.getCostInit()));
+                ResourceModel initCost = mappingService.map(buildJsonModel.getCostInit(), localizationModel);
+                ResourceModel buildCost = mappingService.map(buildJsonModel.getCostBuilding(), localizationModel);
+                unit.setInitCost(initCost);
+                unit.setFullCost(buildCost.add(initCost));
             }
+
+            // Unit traits
+            unit.setArmor(getArmorList(unitJsonModel.getArmor()));
+            unit.setSize(intToDoubleShift(unitJsonModel.getSize()));
+
+            // Movable traits
+            unit.setMovement(mappingService.map(unitJsonModel.getMovement()));
             unit.setTransporting(mappingService.map(unitJsonModel.getTransporting()));
+
+            // Worker traits
+            unit.setGather(getGatherList(unitJsonModel.getGather(), localizationModel));
+
             result.add(unit);
-        });
+        }
         return result;
     }
 
@@ -63,10 +87,10 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
                 .orElse(null);
     }
 
-    private List<GatherModel> getGatherList(List<GatherJsonModel> gatherList, LocalizationModel localization) {
+    private List<GatherModel> getGatherList(List<GatherJsonModel> gatherList, LocalizationModel localizationModel) {
         return gatherList == null ? null :
                 gatherList.stream()
-                        .map(gatherJsonModel -> mappingService.map(gatherJsonModel, localization))
+                        .map(gatherJsonModel -> mappingService.map(gatherJsonModel, localizationModel))
                         .toList();
     }
 
@@ -77,4 +101,11 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
                         .map(entry -> mappingService.map(entry))
                         .toList();
     }
+
+    private String getUnitNation(SessionInitFileModel sessionInitModel, LocalizationModel localizationModel, int unitId) {
+        String unitNation = sessionInitModel.getUnitNations().get(unitId);
+        Integer nationId = NIL.equals(unitNation) ? null : Integer.parseInt(unitNation);
+        return nationId == null ? null : localizationModel.getNationNames().get(nationId);
+    }
+
 }

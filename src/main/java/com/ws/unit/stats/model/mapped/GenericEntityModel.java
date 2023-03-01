@@ -1,6 +1,6 @@
 package com.ws.unit.stats.model.mapped;
 
-import com.ws.unit.stats.model.mapped.submodel.ResourceModel;
+import java.util.List;
 
 public abstract class GenericEntityModel {
 
@@ -10,8 +10,6 @@ public abstract class GenericEntityModel {
     protected String name;
     protected String imageUrl;
     protected String nation;
-    protected String type; // replace with tags that will be created after model init
-    protected ResourceModel creationCost;
 
     public int getPersistenceId() {
         return persistenceId;
@@ -53,22 +51,6 @@ public abstract class GenericEntityModel {
         this.nation = nation;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public ResourceModel getCreationCost() {
-        return creationCost;
-    }
-
-    public void setCreationCost(ResourceModel creationCost) {
-        this.creationCost = creationCost;
-    }
-
     @Override
     public String toString() {
         return "GenericEntityModel{" +
@@ -77,8 +59,6 @@ public abstract class GenericEntityModel {
                 ", name='" + name + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", nation='" + nation + '\'' +
-                ", type='" + type + '\'' +
-                ", creationCost=" + creationCost +
                 '}';
     }
 }
