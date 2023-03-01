@@ -1,6 +1,5 @@
 package com.wsunitstats.exporter.service.impl;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wsunitstats.exporter.exception.FileReadingException;
 import com.wsunitstats.exporter.model.raw.json.gameplay.GameplayFileModel;
@@ -32,7 +31,7 @@ public class FileReaderServiceImpl implements FileReaderService {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileReaderServiceImpl.class);
 
-    private static final Pattern LOC_VALUE_PATTERN = Pattern.compile("^(<\\*[^<>]*>)(.*)$", Pattern.MULTILINE);
+    private static final Pattern LOC_VALUE_PATTERN = Pattern.compile("^<\\*([^<>]*)>(.*)$", Pattern.MULTILINE);
     private static final String LOC_INDEX_REGEX = "\\|";
     private static final String LUA_ARRAY_REGEX = "%s\\s*=\\s*\\{";
     private static final String LUA_ARRAY_DELIMITER = "\\s*,\\s*";
@@ -43,9 +42,7 @@ public class FileReaderServiceImpl implements FileReaderService {
     public GameplayFileModel readGameplayJson(String path) throws FileReadingException {
         LOG.debug("Reading json gameplay file at path: {}", path);
         try (FileReader fileReader = new FileReader(path)) {
-
             ObjectMapper mapper = new ObjectMapper();
-            mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
             return mapper.readValue(fileReader, GameplayFileModel.class);
         } catch (IOException e) {
             throw new FileReadingException("Reading json file failed", e);

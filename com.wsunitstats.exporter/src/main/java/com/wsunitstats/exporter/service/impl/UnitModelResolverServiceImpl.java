@@ -54,7 +54,6 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             //unit.setImageUrl();
             unit.setNation(getUnitNation(sessionInitModel, localizationModel, id));
 
-
             // Build traits
             if (buildJsonModel != null) {
                 ResourceModel initCost = mappingService.map(buildJsonModel.getCostInit(), localizationModel);
