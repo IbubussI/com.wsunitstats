@@ -10,6 +10,8 @@ import com.wsunitstats.exporter.model.mapped.UnitModel;
 import com.wsunitstats.exporter.model.raw.FileContainerModel;
 import com.wsunitstats.exporter.model.raw.localization.LocalizationFileModel;
 import com.wsunitstats.exporter.service.FileReaderService;
+import com.wsunitstats.exporter.service.LocalizationService;
+import com.wsunitstats.exporter.service.ModelExporterService;
 import com.wsunitstats.exporter.service.UnitModelResolverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -25,6 +27,47 @@ import java.util.List;
 public class UnitStatsExporterApplication {
     public static void main(String[] args) {
         SpringApplication.run(UnitStatsExporterApplication.class, args);
+    }
+
+    @Component
+    public static class ExporterRunner implements CommandLineRunner {
+
+        private static final String PATH_GAMEPLAY = "game-files/gameplay.json";
+        private static final String PATH_LOCALIZATION = "game-files/en.loc";
+        private static final String PATH_SESSION_INIT = "game-files/init.lua";
+        private static final String PATH_MAIN_STARTUP = "game-files/startup.lua";
+
+        @Autowired
+        private FileReaderService fileReaderService;
+
+        @Autowired
+        private UnitModelResolverService unitModelResolverService;
+
+        @Autowired
+        private LocalizationService localizationService;
+
+        @Autowired
+        private ModelExporterService exporterService;
+
+        @Override
+        public void run(String... args) throws Exception {
+            GameplayFileModel gameplayFileModel = fileReaderService.readGameplayJson(PATH_GAMEPLAY);
+            LocalizationFileModel localizationFileModel = fileReaderService.readLocalization(PATH_LOCALIZATION);
+            SessionInitFileModel sessionInitFileModel = fileReaderService.readSessionInitLua(PATH_SESSION_INIT);
+            MainStartupFileModel startupFileModel = fileReaderService.readMainStartupLua(PATH_MAIN_STARTUP);
+
+            FileContainerModel fileContainer = new FileContainerModel();
+            fileContainer.setGameplayFileModel(gameplayFileModel);
+            fileContainer.setMainFileModel(null);
+            fileContainer.setMainStartupFileModel(startupFileModel);
+            fileContainer.setSessionInitFileModel(sessionInitFileModel);
+
+            List<UnitModel> unitModels = unitModelResolverService.resolveFromJsonModel(fileContainer);
+            String json = exporterService.exportToJson(unitModels);
+            String localizedJson = localizationService.localize(json, localizationFileModel);
+
+            System.out.println(localizedJson);
+        }
     }
 
     @Component
@@ -60,19 +103,19 @@ public class UnitStatsExporterApplication {
                 //System.out.println(gameplayFileModel);
                 //System.out.println("==================================================");
                 //System.out.println(output);
-                System.out.println("json read-write success");
+                //System.out.println("json read-write success");
                 fileWriter.write(output);
                 fileWriter.flush();
                 fileWriter.close();
 
                 LocalizationFileModel localizationFileModel = fileReaderService.readLocalization(PATH_LOCALIZATION);
-                System.out.println(localizationFileModel);
+                //System.out.println(localizationFileModel);
 
                 SessionInitFileModel sessionInitFileModel = fileReaderService.readSessionInitLua(PATH_SESSION_INIT);
-                System.out.println(sessionInitFileModel);
+                //System.out.println(sessionInitFileModel);
 
                 MainStartupFileModel startupFileModel = fileReaderService.readMainStartupLua(PATH_MAIN_STARTUP);
-                System.out.println(startupFileModel);
+                //System.out.println(startupFileModel);
 
                 FileContainerModel fileContainer = new FileContainerModel();
                 fileContainer.setGameplayFileModel(gameplayFileModel);
@@ -81,7 +124,7 @@ public class UnitStatsExporterApplication {
                 fileContainer.setSessionInitFileModel(sessionInitFileModel);
 
                 List<UnitModel> unitModels = unitModelResolverService.resolveFromJsonModel(fileContainer);
-                System.out.println(unitModels);
+                //System.out.println(unitModels);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
