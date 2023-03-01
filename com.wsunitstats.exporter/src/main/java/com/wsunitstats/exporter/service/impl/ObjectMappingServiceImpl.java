@@ -61,7 +61,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
         gatherModel.setPerSecond(Utilities.intToDoubleTick(gatherSource.getPertick()));
         gatherModel.setFindTargetDistance(Utilities.intToDoubleShift(gatherSource.getFindtargetdistance()));
         gatherModel.setPutDistance(Utilities.intToDoubleShift(gatherSource.getPutdistance()));
-        gatherModel.setEnv(localizationSource.getEnvTagNames().get(getBitPosition(gatherSource.getEnvtags())));
+        gatherModel.setEnv(localizationSource.getEnvSearchTagNames().get(getBitPosition(gatherSource.getEnvtags())));
         gatherModel.setResource(localizationSource.getResourceNames().get(gatherSource.getResource()));
         return gatherModel;
     }
