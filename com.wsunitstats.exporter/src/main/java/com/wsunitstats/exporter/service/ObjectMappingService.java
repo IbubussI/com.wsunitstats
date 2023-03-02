@@ -18,9 +18,9 @@ import java.util.List;
 public interface ObjectMappingService {
     ArmorModel map(ArmorJsonModel.Entry source, int probabilitiesSum);
 
-    GatherModel map(GatherJsonModel gatherSource, LocalizationModel localizationSource);
+    GatherModel map(GatherJsonModel source, LocalizationModel localization);
 
-    ResourceModel map(List<Integer> resourcesSource, LocalizationModel localizationSource);
+    List<ResourceModel> map(List<Integer> source, LocalizationModel localization);
 
     TransportingModel map(TransportingJsonModel source);
 

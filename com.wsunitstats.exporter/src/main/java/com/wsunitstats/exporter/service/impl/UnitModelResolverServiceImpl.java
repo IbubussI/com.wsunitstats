@@ -15,7 +15,6 @@ import com.wsunitstats.exporter.model.mapped.LocalizationModel;
 import com.wsunitstats.exporter.model.mapped.UnitModel;
 import com.wsunitstats.exporter.model.mapped.submodel.ArmorModel;
 import com.wsunitstats.exporter.model.mapped.submodel.GatherModel;
-import com.wsunitstats.exporter.model.mapped.submodel.ResourceModel;
 import com.wsunitstats.exporter.model.raw.FileContainerModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,10 +55,9 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
 
             // Build traits
             if (buildJsonModel != null) {
-                ResourceModel initCost = mappingService.map(buildJsonModel.getCostInit(), localizationModel);
-                ResourceModel buildCost = mappingService.map(buildJsonModel.getCostBuilding(), localizationModel);
-                unit.setInitCost(initCost);
-                unit.setFullCost(buildCost.add(initCost));
+                unit.setInitCost(mappingService.map(buildJsonModel.getCostInit(), localizationModel));
+                List<Integer> fullCost = Utilities.add(buildJsonModel.getCostInit(), buildJsonModel.getCostBuilding());
+                unit.setFullCost(mappingService.map(fullCost, localizationModel));
             }
 
             // Unit traits

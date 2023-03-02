@@ -21,8 +21,8 @@ public class UnitModel extends GenericEntityModel {
     protected List<GatherModel> gather;
 
     //Building traits
-    protected ResourceModel initCost;
-    protected ResourceModel fullCost;
+    protected List<ResourceModel> initCost;
+    protected List<ResourceModel> fullCost;
 
     public Double getSize() {
         return size;
@@ -64,19 +64,19 @@ public class UnitModel extends GenericEntityModel {
         this.gather = gather;
     }
 
-    public ResourceModel getInitCost() {
+    public List<ResourceModel> getInitCost() {
         return initCost;
     }
 
-    public void setInitCost(ResourceModel initCost) {
+    public void setInitCost(List<ResourceModel> initCost) {
         this.initCost = initCost;
     }
 
-    public ResourceModel getFullCost() {
+    public List<ResourceModel> getFullCost() {
         return fullCost;
     }
 
-    public void setFullCost(ResourceModel buildCost) {
+    public void setFullCost(List<ResourceModel> buildCost) {
         this.fullCost = buildCost;
     }
 
