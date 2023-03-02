@@ -2,6 +2,7 @@ package com.wsunitstats.service.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wsunitstats.model.LocalizationModel;
 import com.wsunitstats.model.UnitModel;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,11 +17,20 @@ import java.util.List;
 @RestController
 public class BasicController {
 
-    @PostMapping(path = "/upload/model", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void parseFromFile(@RequestBody String data) throws JsonProcessingException {
+    @PostMapping(path = "/upload/model/gameplay", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void updateGameplay(@RequestBody String data) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         List<UnitModel> units = Arrays.asList(mapper.readValue(data, UnitModel[].class));
+        // TODO
         System.out.println(units);
+    }
+
+    @PostMapping(path = "/upload/model/localization", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void updateLocalization(@RequestBody String data) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        LocalizationModel localization = mapper.readValue(data, LocalizationModel.class);
+        // TODO
+        System.out.println(localization);
     }
 
     @GetMapping(path = "/stats-data")

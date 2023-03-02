@@ -1,21 +1,21 @@
 package com.wsunitstats.exporter.service.impl;
 
-import com.wsunitstats.exporter.model.raw.json.gameplay.GameplayFileModel;
-import com.wsunitstats.exporter.model.raw.json.gameplay.submodel.ArmorJsonModel;
-import com.wsunitstats.exporter.model.raw.json.gameplay.submodel.BuildJsonModel;
-import com.wsunitstats.exporter.model.raw.json.gameplay.submodel.GatherJsonModel;
-import com.wsunitstats.exporter.model.raw.json.gameplay.submodel.UnitJsonModel;
-import com.wsunitstats.exporter.model.raw.json.main.MainFileModel;
-import com.wsunitstats.exporter.model.raw.lua.MainStartupFileModel;
-import com.wsunitstats.exporter.model.raw.lua.SessionInitFileModel;
+import com.wsunitstats.exporter.model.json.gameplay.GameplayFileModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.UnitJsonModel;
+import com.wsunitstats.exporter.model.json.main.MainFileModel;
+import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
+import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.service.ObjectMappingService;
 import com.wsunitstats.exporter.service.UnitModelResolverService;
 import com.wsunitstats.exporter.util.Utilities;
-import com.wsunitstats.exporter.model.mapped.LocalizationModel;
+import com.wsunitstats.model.LocalizationModel;
 import com.wsunitstats.model.UnitModel;
 import com.wsunitstats.model.submodel.ArmorModel;
 import com.wsunitstats.model.submodel.GatherModel;
-import com.wsunitstats.exporter.model.raw.FileContainerModel;
+import com.wsunitstats.exporter.model.FileContainerModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -2,11 +2,11 @@ package com.wsunitstats.exporter.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wsunitstats.exporter.exception.FileReadingException;
-import com.wsunitstats.exporter.model.raw.json.gameplay.GameplayFileModel;
-import com.wsunitstats.exporter.model.raw.lua.MainStartupFileModel;
-import com.wsunitstats.exporter.model.raw.lua.SessionInitFileModel;
+import com.wsunitstats.exporter.model.json.gameplay.GameplayFileModel;
+import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
+import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.service.FileReaderService;
-import com.wsunitstats.exporter.model.raw.localization.LocalizationFileModel;
+import com.wsunitstats.exporter.model.localization.LocalizationFileModel;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

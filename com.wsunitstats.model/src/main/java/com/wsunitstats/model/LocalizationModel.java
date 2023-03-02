@@ -1,4 +1,4 @@
-package com.wsunitstats.exporter.model.mapped;
+package com.wsunitstats.model;
 
 import java.util.List;
 import java.util.Map;

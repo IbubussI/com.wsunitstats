@@ -1,4 +1,4 @@
-package com.wsunitstats.exporter.model.raw.localization;
+package com.wsunitstats.exporter.model.localization;
 
 import java.util.List;
 import java.util.Map;
