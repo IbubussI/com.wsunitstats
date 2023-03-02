@@ -35,6 +35,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
     private static final Pattern MAP_ENTRY_PATTERN = Pattern.compile("^\\[(\\d*)]=localize(\"(<\\*[a-zA-Z0-9/]+>)\")$", Pattern.MULTILINE);
     private static final int PROBABILITY_MAX = 100;
     private static final String NATION_DELIMITER = "/";
+    private static final int RESOURCES_COUNT = 3;
 
     @Override
     public ArmorModel map(ArmorJsonModel.Entry source, int probabilitiesSum) {
@@ -57,32 +58,33 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
     }
 
     @Override
-    public GatherModel map(GatherJsonModel gatherSource, LocalizationModel localizationSource) {
-        if (gatherSource == null) {
+    public GatherModel map(GatherJsonModel source, LocalizationModel localization) {
+        if (source == null) {
             return null;
         }
         GatherModel gatherModel = new GatherModel();
-        gatherModel.setBagSize(Utilities.intToDoubleShift(gatherSource.getBagsize()));
-        gatherModel.setGatherDistance(Utilities.intToDoubleShift(gatherSource.getGatherdistance()));
-        gatherModel.setPerSecond(Utilities.intToDoubleTick(gatherSource.getPertick()));
-        gatherModel.setFindTargetDistance(Utilities.intToDoubleShift(gatherSource.getFindtargetdistance()));
-        gatherModel.setPutDistance(Utilities.intToDoubleShift(gatherSource.getPutdistance()));
-        gatherModel.setEnv(localizationSource.getEnvSearchTagNames().get(getBitPosition(gatherSource.getEnvtags())));
-        gatherModel.setResource(localizationSource.getResourceNames().get(gatherSource.getResource()));
+        gatherModel.setBagSize(Utilities.intToDoubleShift(source.getBagsize()));
+        gatherModel.setGatherDistance(Utilities.intToDoubleShift(source.getGatherdistance()));
+        gatherModel.setPerSecond(Utilities.intToDoubleTick(source.getPertick()));
+        gatherModel.setFindTargetDistance(Utilities.intToDoubleShift(source.getFindtargetdistance()));
+        gatherModel.setPutDistance(Utilities.intToDoubleShift(source.getPutdistance()));
+        gatherModel.setEnv(localization.getEnvSearchTagNames().get(getBitPosition(source.getEnvtags())));
+        gatherModel.setResource(localization.getResourceNames().get(source.getResource()));
         return gatherModel;
     }
 
     @Override
-    public ResourceModel map(List<Integer> resourcesSource, LocalizationModel localizationSource) {
-        if (resourcesSource == null) {
-            return null;
+    public List<ResourceModel> map(List<Integer> source, LocalizationModel localization) {
+        List<ResourceModel> resources = new ArrayList<>();
+        if (source != null && !source.isEmpty()) {
+            for (int i = 0; i < RESOURCES_COUNT; ++i) {
+                ResourceModel resource = new ResourceModel();
+                resource.setResource(localization.getResourceNames().get(i));
+                resource.setValue(Utilities.intToDoubleShift(source.get(i)).intValue());
+                resources.add(resource);
+            }
         }
-        ResourceModel resourceModel = new ResourceModel();
-        resourceModel.setFood(Utilities.intToDoubleShift(resourcesSource.get(0)).intValue());
-        resourceModel.setWood(Utilities.intToDoubleShift(resourcesSource.get(1)).intValue());
-        resourceModel.setIron(Utilities.intToDoubleShift(resourcesSource.get(2)).intValue());
-        resourceModel.setLocalization(localizationSource.getResourceNames());
-        return resourceModel;
+        return resources;
     }
 
     @Override
