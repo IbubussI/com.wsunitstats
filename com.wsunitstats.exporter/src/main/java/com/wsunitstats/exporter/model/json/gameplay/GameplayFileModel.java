@@ -1,7 +1,7 @@
-package com.wsunitstats.exporter.model.raw.json.gameplay;
+package com.wsunitstats.exporter.model.json.gameplay;
 
-import com.wsunitstats.exporter.model.raw.json.gameplay.submodel.BuildJsonModel;
-import com.wsunitstats.exporter.model.raw.json.gameplay.submodel.ScenesJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.ScenesJsonModel;
 
 import java.util.List;
 import java.util.Map;

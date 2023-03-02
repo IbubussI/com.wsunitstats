@@ -1,4 +1,4 @@
-package com.wsunitstats.exporter.model.raw.json.gameplay.submodel;
+package com.wsunitstats.exporter.model.json.gameplay.submodel;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

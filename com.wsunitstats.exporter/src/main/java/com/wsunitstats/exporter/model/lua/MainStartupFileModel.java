@@ -1,4 +1,4 @@
-package com.wsunitstats.exporter.model.raw.lua;
+package com.wsunitstats.exporter.model.lua;
 
 import java.util.List;
 

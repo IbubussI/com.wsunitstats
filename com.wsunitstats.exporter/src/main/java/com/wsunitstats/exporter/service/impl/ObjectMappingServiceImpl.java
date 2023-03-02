@@ -1,14 +1,14 @@
 package com.wsunitstats.exporter.service.impl;
 
-import com.wsunitstats.exporter.model.raw.json.gameplay.submodel.ArmorJsonModel;
-import com.wsunitstats.exporter.model.raw.json.gameplay.submodel.GatherJsonModel;
-import com.wsunitstats.exporter.model.raw.json.gameplay.submodel.MovementJsonModel;
-import com.wsunitstats.exporter.model.raw.json.gameplay.submodel.TransportingJsonModel;
-import com.wsunitstats.exporter.model.raw.lua.MainStartupFileModel;
-import com.wsunitstats.exporter.model.raw.lua.SessionInitFileModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.MovementJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportingJsonModel;
+import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
+import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.service.ObjectMappingService;
 import com.wsunitstats.exporter.util.Utilities;
-import com.wsunitstats.exporter.model.mapped.LocalizationModel;
+import com.wsunitstats.model.LocalizationModel;
 import com.wsunitstats.model.submodel.ArmorModel;
 import com.wsunitstats.model.submodel.GatherModel;
 import com.wsunitstats.model.submodel.MovementModel;

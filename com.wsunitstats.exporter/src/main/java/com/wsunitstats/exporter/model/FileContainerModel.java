@@ -1,9 +1,9 @@
-package com.wsunitstats.exporter.model.raw;
+package com.wsunitstats.exporter.model;
 
-import com.wsunitstats.exporter.model.raw.json.gameplay.GameplayFileModel;
-import com.wsunitstats.exporter.model.raw.json.main.MainFileModel;
-import com.wsunitstats.exporter.model.raw.lua.MainStartupFileModel;
-import com.wsunitstats.exporter.model.raw.lua.SessionInitFileModel;
+import com.wsunitstats.exporter.model.json.gameplay.GameplayFileModel;
+import com.wsunitstats.exporter.model.json.main.MainFileModel;
+import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
+import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 
 public class FileContainerModel {
 

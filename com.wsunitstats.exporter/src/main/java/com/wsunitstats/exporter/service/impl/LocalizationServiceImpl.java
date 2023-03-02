@@ -1,6 +1,6 @@
 package com.wsunitstats.exporter.service.impl;
 
-import com.wsunitstats.exporter.model.raw.localization.LocalizationFileModel;
+import com.wsunitstats.exporter.model.localization.LocalizationFileModel;
 import com.wsunitstats.exporter.service.LocalizationService;
 import org.springframework.stereotype.Service;
 

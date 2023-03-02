@@ -1,10 +1,10 @@
 package com.wsunitstats.exporter.service;
 
 import com.wsunitstats.exporter.exception.FileReadingException;
-import com.wsunitstats.exporter.model.raw.json.gameplay.GameplayFileModel;
-import com.wsunitstats.exporter.model.raw.lua.MainStartupFileModel;
-import com.wsunitstats.exporter.model.raw.lua.SessionInitFileModel;
-import com.wsunitstats.exporter.model.raw.localization.LocalizationFileModel;
+import com.wsunitstats.exporter.model.json.gameplay.GameplayFileModel;
+import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
+import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
+import com.wsunitstats.exporter.model.localization.LocalizationFileModel;
 
 public interface FileReaderService {
 
