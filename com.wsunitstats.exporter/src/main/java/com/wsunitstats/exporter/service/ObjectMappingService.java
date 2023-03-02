@@ -7,11 +7,11 @@ import com.wsunitstats.exporter.model.raw.json.gameplay.submodel.TransportingJso
 import com.wsunitstats.exporter.model.raw.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.raw.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.model.mapped.LocalizationModel;
-import com.wsunitstats.exporter.model.mapped.submodel.ArmorModel;
-import com.wsunitstats.exporter.model.mapped.submodel.GatherModel;
-import com.wsunitstats.exporter.model.mapped.submodel.MovementModel;
-import com.wsunitstats.exporter.model.mapped.submodel.ResourceModel;
-import com.wsunitstats.exporter.model.mapped.submodel.TransportingModel;
+import com.wsunitstats.model.submodel.ArmorModel;
+import com.wsunitstats.model.submodel.GatherModel;
+import com.wsunitstats.model.submodel.MovementModel;
+import com.wsunitstats.model.submodel.ResourceModel;
+import com.wsunitstats.model.submodel.TransportingModel;
 
 import java.util.List;
 

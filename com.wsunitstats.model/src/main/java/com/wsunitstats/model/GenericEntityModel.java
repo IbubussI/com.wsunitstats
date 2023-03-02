@@ -1,4 +1,4 @@
-package com.wsunitstats.exporter.model.mapped;
+package com.wsunitstats.model;
 
 public abstract class GenericEntityModel {
 

@@ -1,4 +1,4 @@
-package com.wsunitstats.exporter.model.mapped.submodel;
+package com.wsunitstats.model.submodel;
 
 public class GatherModel {
     private Double bagSize;

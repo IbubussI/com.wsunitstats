@@ -6,17 +6,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wsunitstats.exporter.model.raw.json.gameplay.GameplayFileModel;
 import com.wsunitstats.exporter.model.raw.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.raw.lua.SessionInitFileModel;
-import com.wsunitstats.exporter.model.mapped.UnitModel;
 import com.wsunitstats.exporter.model.raw.FileContainerModel;
 import com.wsunitstats.exporter.model.raw.localization.LocalizationFileModel;
 import com.wsunitstats.exporter.service.FileReaderService;
 import com.wsunitstats.exporter.service.LocalizationService;
 import com.wsunitstats.exporter.service.ModelExporterService;
+import com.wsunitstats.exporter.service.RestService;
 import com.wsunitstats.exporter.service.UnitModelResolverService;
+import com.wsunitstats.model.UnitModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.io.FileWriter;
@@ -49,6 +51,9 @@ public class UnitStatsExporterApplication {
         @Autowired
         private ModelExporterService exporterService;
 
+        @Autowired
+        private RestService restService;
+
         @Override
         public void run(String... args) throws Exception {
             GameplayFileModel gameplayFileModel = fileReaderService.readGameplayJson(PATH_GAMEPLAY);
@@ -65,8 +70,8 @@ public class UnitStatsExporterApplication {
             List<UnitModel> unitModels = unitModelResolverService.resolveFromJsonModel(fileContainer);
             String json = exporterService.exportToJson(unitModels);
             String localizedJson = localizationService.localize(json, localizationFileModel);
-
-            System.out.println(localizedJson);
+            ResponseEntity<String> response = restService.postJson(localizedJson, "http://localhost:8080/upload/model");
+            System.out.println(response.getStatusCode().value());
         }
     }
 

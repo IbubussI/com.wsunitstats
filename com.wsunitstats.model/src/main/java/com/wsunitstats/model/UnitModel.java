@@ -1,10 +1,10 @@
-package com.wsunitstats.exporter.model.mapped;
+package com.wsunitstats.model;
 
-import com.wsunitstats.exporter.model.mapped.submodel.MovementModel;
-import com.wsunitstats.exporter.model.mapped.submodel.ResourceModel;
-import com.wsunitstats.exporter.model.mapped.submodel.ArmorModel;
-import com.wsunitstats.exporter.model.mapped.submodel.GatherModel;
-import com.wsunitstats.exporter.model.mapped.submodel.TransportingModel;
+import com.wsunitstats.model.submodel.MovementModel;
+import com.wsunitstats.model.submodel.ResourceModel;
+import com.wsunitstats.model.submodel.ArmorModel;
+import com.wsunitstats.model.submodel.GatherModel;
+import com.wsunitstats.model.submodel.TransportingModel;
 
 import java.util.List;
 
