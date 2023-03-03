@@ -4,23 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Utilities {
-    private Utilities() {
+public class Util {
+    private Util() {
         //Utility class
     }
+
+    public static final double TICK_RATE_MULTIPLIER = 50d;
+    public static final double FLOAT_VALUE_MULTIPLIER = 1000d;
 
     public static Double intToDoubleShift(Integer value) {
         if (value == null) {
             return null;
         }
-        return value / Constants.FLOAT_VALUE_MULTIPLIER;
+        return value / FLOAT_VALUE_MULTIPLIER;
     }
 
     public static Double intToDoubleTick(Integer value) {
         if (value == null) {
             return null;
         }
-        return value / Constants.TICK_RATE_MULTIPLIER;
+        return value / TICK_RATE_MULTIPLIER;
     }
 
     public static int sum(List<Integer> list) {
