@@ -10,7 +10,7 @@ import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.service.ObjectMappingService;
 import com.wsunitstats.exporter.service.UnitModelResolverService;
-import com.wsunitstats.exporter.util.Utilities;
+import com.wsunitstats.exporter.util.Util;
 import com.wsunitstats.model.LocalizationModel;
 import com.wsunitstats.model.UnitModel;
 import com.wsunitstats.model.submodel.ArmorModel;
@@ -56,13 +56,13 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             // Build traits
             if (buildJsonModel != null) {
                 unit.setInitCost(mappingService.map(buildJsonModel.getCostInit(), localizationModel));
-                List<Integer> fullCost = Utilities.add(buildJsonModel.getCostInit(), buildJsonModel.getCostBuilding());
+                List<Integer> fullCost = Util.add(buildJsonModel.getCostInit(), buildJsonModel.getCostBuilding());
                 unit.setFullCost(mappingService.map(fullCost, localizationModel));
             }
 
             // Unit traits
             unit.setArmor(getArmorList(unitJsonModel.getArmor()));
-            unit.setSize(Utilities.intToDoubleShift(unitJsonModel.getSize()));
+            unit.setSize(Util.intToDoubleShift(unitJsonModel.getSize()));
 
             // Movable traits
             unit.setMovement(mappingService.map(unitJsonModel.getMovement()));
@@ -93,7 +93,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
     private List<ArmorModel> getArmorList(ArmorJsonModel armorJsonModel) {
         //Armor should not be null for every unit
         List<ArmorJsonModel.Entry> entries = armorJsonModel.getData();
-        int probabilitiesSum = Utilities.sum(armorJsonModel.getData().stream().map(ArmorJsonModel.Entry::getProbability).toList());
+        int probabilitiesSum = Util.sum(armorJsonModel.getData().stream().map(ArmorJsonModel.Entry::getProbability).toList());
         return entries.stream()
                         .map(entry -> mappingService.map(entry, probabilitiesSum))
                         .toList();

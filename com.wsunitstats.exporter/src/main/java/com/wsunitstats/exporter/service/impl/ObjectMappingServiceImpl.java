@@ -7,7 +7,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportingJsonMod
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.service.ObjectMappingService;
-import com.wsunitstats.exporter.util.Utilities;
+import com.wsunitstats.exporter.util.Util;
 import com.wsunitstats.model.LocalizationModel;
 import com.wsunitstats.model.submodel.ArmorModel;
 import com.wsunitstats.model.submodel.GatherModel;
@@ -43,7 +43,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
             return null;
         }
         ArmorModel armorModel = new ArmorModel();
-        armorModel.setValue(Utilities.intToDoubleShift(source.getObject()));
+        armorModel.setValue(Util.intToDoubleShift(source.getObject()));
         Optional.ofNullable(source.getProbability()).ifPresentOrElse(
                 armorModel::setProbability,
                 () -> {
@@ -63,11 +63,11 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
             return null;
         }
         GatherModel gatherModel = new GatherModel();
-        gatherModel.setBagSize(Utilities.intToDoubleShift(source.getBagsize()));
-        gatherModel.setGatherDistance(Utilities.intToDoubleShift(source.getGatherdistance()));
-        gatherModel.setPerSecond(Utilities.intToDoubleTick(source.getPertick()));
-        gatherModel.setFindTargetDistance(Utilities.intToDoubleShift(source.getFindtargetdistance()));
-        gatherModel.setPutDistance(Utilities.intToDoubleShift(source.getPutdistance()));
+        gatherModel.setBagSize(Util.intToDoubleShift(source.getBagsize()));
+        gatherModel.setGatherDistance(Util.intToDoubleShift(source.getGatherdistance()));
+        gatherModel.setPerSecond(Util.intToDoubleTick(source.getPertick()));
+        gatherModel.setFindTargetDistance(Util.intToDoubleShift(source.getFindtargetdistance()));
+        gatherModel.setPutDistance(Util.intToDoubleShift(source.getPutdistance()));
         gatherModel.setEnv(localization.getEnvSearchTagNames().get(getBitPosition(source.getEnvtags())));
         gatherModel.setResource(localization.getResourceNames().get(source.getResource()));
         return gatherModel;
@@ -80,7 +80,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
             for (int i = 0; i < RESOURCES_COUNT; ++i) {
                 ResourceModel resource = new ResourceModel();
                 resource.setResource(localization.getResourceNames().get(i));
-                resource.setValue(Utilities.intToDoubleShift(source.get(i)).intValue());
+                resource.setValue(Util.intToDoubleShift(source.get(i)).intValue());
                 resources.add(resource);
             }
         }
@@ -106,7 +106,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
         }
         MovementModel movementModel = new MovementModel();
         movementModel.setSpeed(source.getSpeed());
-        movementModel.setRotationSpeed(Utilities.intToDoubleShift(source.getRotationSpeed()));
+        movementModel.setRotationSpeed(Util.intToDoubleShift(source.getRotationSpeed()));
         return movementModel;
     }
 
