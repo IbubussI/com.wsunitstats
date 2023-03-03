@@ -77,8 +77,8 @@ public class UnitStatsExporterApplication {
             String locJson = exporterService.exportToJson(localizationModels);
             ResponseEntity<String> gameplayResponse = restService.postJson(unitsJson, "http://localhost:8080/upload/model/gameplay");
             ResponseEntity<String> locResponse = restService.postJson(locJson, "http://localhost:8080/upload/model/localization/bulk");
-            System.out.println("gameplay submitted response: " + gameplayResponse.getStatusCode().value());
-            System.out.println("localization submitted response: " + locResponse.getStatusCode().value());
+            System.out.println("gameplay submitted response: " + gameplayResponse.getStatusCode().value() + " " + gameplayResponse.getBody());
+            System.out.println("localization submitted response: " + locResponse.getStatusCode().value() + " " + locResponse.getBody());
         }
     }
 
