@@ -6,13 +6,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
-import com.wsunitstats.exporter.model.FileContainerModel;
+import com.wsunitstats.exporter.model.UnitResolvingFileContainer;
 import com.wsunitstats.exporter.model.localization.LocalizationFileModel;
 import com.wsunitstats.exporter.service.FileReaderService;
-import com.wsunitstats.exporter.service.LocalizationService;
+import com.wsunitstats.exporter.service.LocalizationModelResolver;
 import com.wsunitstats.exporter.service.ModelExporterService;
 import com.wsunitstats.exporter.service.RestService;
 import com.wsunitstats.exporter.service.UnitModelResolverService;
+import com.wsunitstats.model.LocalizationModel;
 import com.wsunitstats.model.UnitModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -35,7 +36,7 @@ public class UnitStatsExporterApplication {
     public static class ExporterRunner implements CommandLineRunner {
 
         private static final String PATH_GAMEPLAY = "game-files/gameplay.json";
-        private static final String PATH_LOCALIZATION = "game-files/en.loc";
+        private static final String PATH_LOCALIZATION = "game-files/";
         private static final String PATH_SESSION_INIT = "game-files/init.lua";
         private static final String PATH_MAIN_STARTUP = "game-files/startup.lua";
 
@@ -46,7 +47,7 @@ public class UnitStatsExporterApplication {
         private UnitModelResolverService unitModelResolverService;
 
         @Autowired
-        private LocalizationService localizationService;
+        private LocalizationModelResolver localizationModelResolver;
 
         @Autowired
         private ModelExporterService exporterService;
@@ -57,21 +58,27 @@ public class UnitStatsExporterApplication {
         @Override
         public void run(String... args) throws Exception {
             GameplayFileModel gameplayFileModel = fileReaderService.readGameplayJson(PATH_GAMEPLAY);
-            LocalizationFileModel localizationFileModel = fileReaderService.readLocalization(PATH_LOCALIZATION);
             SessionInitFileModel sessionInitFileModel = fileReaderService.readSessionInitLua(PATH_SESSION_INIT);
             MainStartupFileModel startupFileModel = fileReaderService.readMainStartupLua(PATH_MAIN_STARTUP);
+            List<LocalizationFileModel> localizationFileModels = fileReaderService.readLocalizations(PATH_LOCALIZATION);
 
-            FileContainerModel fileContainer = new FileContainerModel();
+            UnitResolvingFileContainer fileContainer = new UnitResolvingFileContainer();
             fileContainer.setGameplayFileModel(gameplayFileModel);
             fileContainer.setMainFileModel(null);
             fileContainer.setMainStartupFileModel(startupFileModel);
             fileContainer.setSessionInitFileModel(sessionInitFileModel);
 
             List<UnitModel> unitModels = unitModelResolverService.resolveFromJsonModel(fileContainer);
-            String json = exporterService.exportToJson(unitModels);
-            String localizedJson = localizationService.localize(json, localizationFileModel);
-            ResponseEntity<String> response = restService.postJson(localizedJson, "http://localhost:8080/upload/model/gameplay");
-            System.out.println(response.getStatusCode().value());
+            List<LocalizationModel> localizationModels = localizationFileModels.stream()
+                    .map(locFile -> localizationModelResolver.resolveFromJsonModel(locFile))
+                    .toList();
+
+            String unitsJson = exporterService.exportToJson(unitModels);
+            String locJson = exporterService.exportToJson(localizationModels);
+            ResponseEntity<String> gameplayResponse = restService.postJson(unitsJson, "http://localhost:8080/upload/model/gameplay");
+            ResponseEntity<String> locResponse = restService.postJson(locJson, "http://localhost:8080/upload/model/localization/bulk");
+            System.out.println("gameplay submitted response: " + gameplayResponse.getStatusCode().value());
+            System.out.println("localization submitted response: " + locResponse.getStatusCode().value());
         }
     }
 
@@ -113,7 +120,7 @@ public class UnitStatsExporterApplication {
                 fileWriter.flush();
                 fileWriter.close();
 
-                LocalizationFileModel localizationFileModel = fileReaderService.readLocalization(PATH_LOCALIZATION);
+                //List<LocalizationFileModel localizationFileModel = fileReaderService.readLocalizations(PATH_LOCALIZATION);
                 //System.out.println(localizationFileModel);
 
                 SessionInitFileModel sessionInitFileModel = fileReaderService.readSessionInitLua(PATH_SESSION_INIT);
@@ -122,7 +129,7 @@ public class UnitStatsExporterApplication {
                 MainStartupFileModel startupFileModel = fileReaderService.readMainStartupLua(PATH_MAIN_STARTUP);
                 //System.out.println(startupFileModel);
 
-                FileContainerModel fileContainer = new FileContainerModel();
+                UnitResolvingFileContainer fileContainer = new UnitResolvingFileContainer();
                 fileContainer.setGameplayFileModel(gameplayFileModel);
                 fileContainer.setMainFileModel(null);
                 fileContainer.setMainStartupFileModel(startupFileModel);

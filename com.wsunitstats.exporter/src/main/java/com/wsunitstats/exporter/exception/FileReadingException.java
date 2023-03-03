@@ -1,6 +1,6 @@
 package com.wsunitstats.exporter.exception;
 
-public class FileReadingException extends Exception {
+public class FileReadingException extends RuntimeException {
     public FileReadingException(Throwable cause) {
         super(cause);
     }

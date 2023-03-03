@@ -1,7 +1,7 @@
-package com.wsunitstats.exporter.service.impl;
+package com.wsunitstats.service.service.impl;
 
-import com.wsunitstats.exporter.model.localization.LocalizationFileModel;
-import com.wsunitstats.exporter.service.LocalizationService;
+import com.wsunitstats.model.LocalizationModel;
+import com.wsunitstats.service.service.LocalizationService;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Matcher;
@@ -14,7 +14,7 @@ public class LocalizationServiceImpl implements LocalizationService {
     private static final String LOCALIZATION_MULTI_KEY_DELIMITER = "/";
 
     @Override
-    public String localize(String input, LocalizationFileModel localizationFileModel) {
+    public String localize(String input, LocalizationModel localizationModel) {
         Matcher matcher = LOCALIZATION_KEY_PATTERN.matcher(input);
         StringBuilder output = new StringBuilder();
         while (matcher.find()) {
@@ -28,7 +28,7 @@ public class LocalizationServiceImpl implements LocalizationService {
                     index = Integer.parseInt(multikeySplit[1]);
                 }
             }
-            String localized = localizationFileModel.getValue(key, index);
+            String localized = localizationModel.getValue(key, index);
             matcher.appendReplacement(output, localized);
         }
         matcher.appendTail(output);

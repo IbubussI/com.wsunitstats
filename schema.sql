@@ -1,69 +1,15 @@
 
-    create table localization (
+    create table LocalizationModel (
        id bigint not null auto_increment,
+        locale varchar(255),
         primary key (id)
     ) engine=InnoDB;
 
-    create table localization_ageNames (
-       localization_id bigint not null,
-        ageNames varchar(255)
-    ) engine=InnoDB;
-
-    create table localization_envNames (
-       localization_id bigint not null,
-        envNames varchar(255),
-        envNames_KEY integer not null,
-        primary key (localization_id, envNames_KEY)
-    ) engine=InnoDB;
-
-    create table localization_envSearchTagNames (
-       localization_id bigint not null,
-        envSearchTagNames varchar(255)
-    ) engine=InnoDB;
-
-    create table localization_envTagNames (
-       localization_id bigint not null,
-        envTagNames varchar(255)
-    ) engine=InnoDB;
-
-    create table localization_nationNames (
-       localization_id bigint not null,
-        nationNames varchar(255)
-    ) engine=InnoDB;
-
-    create table localization_researchNames (
-       localization_id bigint not null,
-        researchNames varchar(255)
-    ) engine=InnoDB;
-
-    create table localization_researchTexts (
-       localization_id bigint not null,
-        researchTexts varchar(255)
-    ) engine=InnoDB;
-
-    create table localization_resourceNames (
-       localization_id bigint not null,
-        resourceNames varchar(255)
-    ) engine=InnoDB;
-
-    create table localization_unitNames (
-       localization_id bigint not null,
-        unitNames varchar(255)
-    ) engine=InnoDB;
-
-    create table localization_unitSearchTagNames (
-       localization_id bigint not null,
-        unitSearchTagNames varchar(255)
-    ) engine=InnoDB;
-
-    create table localization_unitTagNames (
-       localization_id bigint not null,
-        unitTagNames varchar(255)
-    ) engine=InnoDB;
-
-    create table localization_unitTexts (
-       localization_id bigint not null,
-        unitTexts varchar(255)
+    create table LocalizationModel_values (
+       LocalizationModel_id bigint not null,
+        values_ varbinary(1000),
+        values_KEY varchar(255) not null,
+        primary key (LocalizationModel_id, values_KEY)
     ) engine=InnoDB;
 
     create table unit (
@@ -110,65 +56,13 @@
         value_ integer
     ) engine=InnoDB;
 
-    alter table localization_ageNames 
-       add constraint FK39xmwy2x3hcf7no89y4x0otpb 
-       foreign key (localization_id) 
-       references localization (id);
+    alter table LocalizationModel 
+       add constraint UK_toseld3cxq1bwh4699h5o48je unique (locale);
 
-    alter table localization_envNames 
-       add constraint FK5yvqgwxlxp5pav7cjh7pp66w0 
-       foreign key (localization_id) 
-       references localization (id);
-
-    alter table localization_envSearchTagNames 
-       add constraint FKc47hu7l4lukrg7m84u4qrsqb1 
-       foreign key (localization_id) 
-       references localization (id);
-
-    alter table localization_envTagNames 
-       add constraint FKoj5tqtnfh1imy7cmugh6odc5b 
-       foreign key (localization_id) 
-       references localization (id);
-
-    alter table localization_nationNames 
-       add constraint FKt8av7idrtx7f5cs64c6ht4p6m 
-       foreign key (localization_id) 
-       references localization (id);
-
-    alter table localization_researchNames 
-       add constraint FKl9v18t99s898sa3q01owcxpxu 
-       foreign key (localization_id) 
-       references localization (id);
-
-    alter table localization_researchTexts 
-       add constraint FK2h826nem5oekjbqk3ubg4yjvl 
-       foreign key (localization_id) 
-       references localization (id);
-
-    alter table localization_resourceNames 
-       add constraint FKln41hrixwx9asduc2l6xktw4u 
-       foreign key (localization_id) 
-       references localization (id);
-
-    alter table localization_unitNames 
-       add constraint FKt657xqya55msvyfc4jncssj9n 
-       foreign key (localization_id) 
-       references localization (id);
-
-    alter table localization_unitSearchTagNames 
-       add constraint FK7fl0wvk047kfdar30asvmxon4 
-       foreign key (localization_id) 
-       references localization (id);
-
-    alter table localization_unitTagNames 
-       add constraint FKkgb2wgows3c48phu8kgiick6b 
-       foreign key (localization_id) 
-       references localization (id);
-
-    alter table localization_unitTexts 
-       add constraint FK5vll69n0tgxnwasja3x8tvpr5 
-       foreign key (localization_id) 
-       references localization (id);
+    alter table LocalizationModel_values 
+       add constraint FKjg2wuy0jij4b1cmfjdl1uknr8 
+       foreign key (LocalizationModel_id) 
+       references LocalizationModel (id);
 
     alter table unit_armor 
        add constraint FKj8su9390vg7e7lr7av9o1jsyq 

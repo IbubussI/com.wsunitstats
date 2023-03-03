@@ -6,13 +6,18 @@ import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.model.localization.LocalizationFileModel;
 
+import java.io.File;
+import java.util.List;
+
 public interface FileReaderService {
 
-    GameplayFileModel readGameplayJson(String path) throws FileReadingException;
+    GameplayFileModel readGameplayJson(String path);
 
-    LocalizationFileModel readLocalization(String path) throws FileReadingException;
+    List<LocalizationFileModel> readLocalizations(String... paths);
 
-    SessionInitFileModel readSessionInitLua(String path) throws FileReadingException;
+    LocalizationFileModel readLocalization(File file);
 
-    MainStartupFileModel readMainStartupLua(String path) throws FileReadingException;
+    SessionInitFileModel readSessionInitLua(String path);
+
+    MainStartupFileModel readMainStartupLua(String path);
 }

@@ -11,11 +11,11 @@ import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.service.ObjectMappingService;
 import com.wsunitstats.exporter.service.UnitModelResolverService;
 import com.wsunitstats.exporter.util.Util;
-import com.wsunitstats.model.LocalizationModel;
+import com.wsunitstats.exporter.model.LocalizationKeyModel;
 import com.wsunitstats.model.UnitModel;
 import com.wsunitstats.model.submodel.ArmorModel;
 import com.wsunitstats.model.submodel.GatherModel;
-import com.wsunitstats.exporter.model.FileContainerModel;
+import com.wsunitstats.exporter.model.UnitResolvingFileContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,13 +31,13 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
     private ObjectMappingService mappingService;
 
     @Override
-    public List<UnitModel> resolveFromJsonModel(FileContainerModel rootContainer) {
+    public List<UnitModel> resolveFromJsonModel(UnitResolvingFileContainer rootContainer) {
         GameplayFileModel gameplayModel = rootContainer.getGameplayFileModel();
         MainFileModel mainModel = rootContainer.getMainFileModel();
         MainStartupFileModel startupModel = rootContainer.getMainStartupFileModel();
         SessionInitFileModel sessionInitModel = rootContainer.getSessionInitFileModel();
 
-        LocalizationModel localizationModel = mappingService.map(sessionInitModel, startupModel);
+        LocalizationKeyModel localizationModel = mappingService.map(sessionInitModel, startupModel);
 
         Map<Integer, UnitJsonModel> unitJsonMap = gameplayModel.getScenes().getUnits();
         List<UnitModel> result = new ArrayList<>();
@@ -83,7 +83,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
                 .orElse(null);
     }
 
-    private List<GatherModel> getGatherList(List<GatherJsonModel> gatherList, LocalizationModel localizationModel) {
+    private List<GatherModel> getGatherList(List<GatherJsonModel> gatherList, LocalizationKeyModel localizationModel) {
         return gatherList == null ? null :
                 gatherList.stream()
                         .map(gatherJsonModel -> mappingService.map(gatherJsonModel, localizationModel))
@@ -99,7 +99,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
                         .toList();
     }
 
-    private String getUnitNation(SessionInitFileModel sessionInitModel, LocalizationModel localizationModel, int unitId) {
+    private String getUnitNation(SessionInitFileModel sessionInitModel, LocalizationKeyModel localizationModel, int unitId) {
         String unitNation = sessionInitModel.getUnitNations().get(unitId);
         Integer nationId = NIL.equals(unitNation) ? null : Integer.parseInt(unitNation);
         return nationId == null ? null : localizationModel.getNationNames().get(nationId);

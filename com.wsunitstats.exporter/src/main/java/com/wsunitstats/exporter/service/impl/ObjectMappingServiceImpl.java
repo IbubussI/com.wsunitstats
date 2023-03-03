@@ -8,7 +8,7 @@ import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.service.ObjectMappingService;
 import com.wsunitstats.exporter.util.Util;
-import com.wsunitstats.model.LocalizationModel;
+import com.wsunitstats.exporter.model.LocalizationKeyModel;
 import com.wsunitstats.model.submodel.ArmorModel;
 import com.wsunitstats.model.submodel.GatherModel;
 import com.wsunitstats.model.submodel.MovementModel;
@@ -58,7 +58,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
     }
 
     @Override
-    public GatherModel map(GatherJsonModel source, LocalizationModel localization) {
+    public GatherModel map(GatherJsonModel source, LocalizationKeyModel localization) {
         if (source == null) {
             return null;
         }
@@ -74,7 +74,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
     }
 
     @Override
-    public List<ResourceModel> map(List<Integer> source, LocalizationModel localization) {
+    public List<ResourceModel> map(List<Integer> source, LocalizationKeyModel localization) {
         List<ResourceModel> resources = new ArrayList<>();
         if (source != null && !source.isEmpty()) {
             for (int i = 0; i < RESOURCES_COUNT; ++i) {
@@ -111,8 +111,8 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
     }
 
     @Override
-    public LocalizationModel map(SessionInitFileModel sessionInitSource, MainStartupFileModel mainStartupSource) {
-        LocalizationModel localizationModel = new LocalizationModel();
+    public LocalizationKeyModel map(SessionInitFileModel sessionInitSource, MainStartupFileModel mainStartupSource) {
+        LocalizationKeyModel localizationModel = new LocalizationKeyModel();
         localizationModel.setNationNames(convertToNationNames(sessionInitSource.getNationNames()));
         localizationModel.setResearchNames(convertToLocalizationTags(sessionInitSource.getResearchNames()));
         localizationModel.setResearchTexts(convertToLocalizationTags(sessionInitSource.getResearchTexts()));
