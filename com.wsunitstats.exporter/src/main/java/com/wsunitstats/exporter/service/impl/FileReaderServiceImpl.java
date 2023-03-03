@@ -37,9 +37,10 @@ public class FileReaderServiceImpl implements FileReaderService {
     private static final String LUA_ARRAY_DELIMITER = "\\s*,\\s*";
     private static final Pattern LUA_COMMENTS_PATTERN = Pattern.compile("--[^\n\t\"]*$", Pattern.MULTILINE);
     private static final Pattern NEW_LINE_PATTERN = Pattern.compile("[\n\t\r]*", Pattern.MULTILINE);
+    private static final String LOC_FILENAME_SUFFIX = ".loc";
 
     @Override
-    public GameplayFileModel readGameplayJson(String path) throws FileReadingException {
+    public GameplayFileModel readGameplayJson(String path) {
         LOG.debug("Reading json gameplay file at path: {}", path);
         try (FileReader fileReader = new FileReader(path)) {
             ObjectMapper mapper = new ObjectMapper();
@@ -50,15 +51,34 @@ public class FileReaderServiceImpl implements FileReaderService {
     }
 
     @Override
-    public LocalizationFileModel readLocalization(String path) throws FileReadingException {
-        LOG.debug("Reading localization file at path: {}", path);
-        try (Scanner scanner = new Scanner(new File(path))) {
+    public List<LocalizationFileModel> readLocalizations(String... folderPaths) {
+        List<LocalizationFileModel> localizationFileModels = new ArrayList<>();
+        for (String folderPath : folderPaths) {
+            LOG.debug("Reading localization files at path: {}", folderPath);
+            File folder = new File(folderPath);
+            if (folder.isDirectory()) {
+                File[] locFiles = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(LOC_FILENAME_SUFFIX));
+                if (locFiles != null) {
+                    Arrays.stream(locFiles)
+                            .map(this::readLocalization)
+                            .forEach(localizationFileModels::add);
+                }
+            }
+        }
+        return localizationFileModels;
+    }
+
+    @Override
+    public LocalizationFileModel readLocalization(File file) {
+        LOG.debug("Reading localization file at path: {}", file.getPath());
+        try (Scanner scanner = new Scanner(file)) {
             LocalizationFileModel localizationModel = new LocalizationFileModel();
             Map<String, List<String>> localizationValues = new HashMap<>();
             scanner.findAll(LOC_VALUE_PATTERN)
                     .forEach(match -> localizationValues.put(match.group(1),
                             Arrays.asList(match.group(2).split(LOC_INDEX_REGEX))));
             localizationModel.setValues(localizationValues);
+            localizationModel.setFilename(file.getName());
             return localizationModel;
         } catch (IOException e) {
             throw new FileReadingException("Reading localization file failed", e);
@@ -66,7 +86,7 @@ public class FileReaderServiceImpl implements FileReaderService {
     }
 
     @Override
-    public SessionInitFileModel readSessionInitLua(String path) throws FileReadingException {
+    public SessionInitFileModel readSessionInitLua(String path) {
         LOG.debug("Reading session/init.lua file at path: {}", path);
         SessionInitFileModel sessionInitModel = new SessionInitFileModel();
         sessionInitModel.setAll(readLuaArrays(path, SessionInitFileModel.ARRAY_NAMES));
@@ -74,14 +94,14 @@ public class FileReaderServiceImpl implements FileReaderService {
     }
 
     @Override
-    public MainStartupFileModel readMainStartupLua(String path) throws FileReadingException {
+    public MainStartupFileModel readMainStartupLua(String path) {
         LOG.debug("Reading main/startup.lua file at path: {}", path);
         MainStartupFileModel mainStartupModel = new MainStartupFileModel();
         mainStartupModel.setAll(readLuaArrays(path, MainStartupFileModel.ARRAY_NAMES));
         return mainStartupModel;
     }
 
-    private List<List<String>> readLuaArrays(String path, List<String> arrayNames) throws FileReadingException {
+    private List<List<String>> readLuaArrays(String path, List<String> arrayNames) {
         try {
             List<List<String>> lists = new ArrayList<>();
             byte[] bytes = Files.readAllBytes(Paths.get(path));
