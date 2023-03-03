@@ -1,20 +1,37 @@
 package com.wsunitstats.model;
 
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+
 import java.util.List;
 import java.util.Map;
 
-public class LocalizationModel {
+@Entity(name = "localization")
+public class LocalizationModel extends PersistentObject {
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> nationNames;
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> researchNames;
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> researchTexts;
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> unitNames;
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> unitTexts;
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> unitTagNames;
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> unitSearchTagNames;
+    @ElementCollection(fetch = FetchType.EAGER)
     private Map<Integer, String> envNames;
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> envTagNames;
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> envSearchTagNames;
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> ageNames;
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> resourceNames;
 
     public List<String> getNationNames() {

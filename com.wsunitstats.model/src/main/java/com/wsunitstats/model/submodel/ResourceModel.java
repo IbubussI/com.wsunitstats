@@ -1,7 +1,12 @@
 package com.wsunitstats.model.submodel;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class ResourceModel {
     private String resource;
+    @Column(name="value_")
     private int value;
 
     public String getResource() {

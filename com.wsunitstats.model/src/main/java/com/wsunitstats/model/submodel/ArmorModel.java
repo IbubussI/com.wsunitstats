@@ -1,6 +1,11 @@
 package com.wsunitstats.model.submodel;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class ArmorModel {
+    @Column(name="value_")
     private Double value;
     private Integer probability;
 

@@ -1,7 +1,9 @@
 package com.wsunitstats.model.submodel;
 
-public class TransportingModel {
+import jakarta.persistence.Embeddable;
 
+@Embeddable
+public class TransportingModel {
     private Integer ownSize;
     private Integer carrySize;
     private Boolean onlyInfantry;
