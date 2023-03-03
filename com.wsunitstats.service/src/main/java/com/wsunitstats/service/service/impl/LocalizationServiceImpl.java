@@ -1,14 +1,19 @@
 package com.wsunitstats.service.service.impl;
 
 import com.wsunitstats.model.LocalizationModel;
+import com.wsunitstats.service.repository.LocalizationRepository;
 import com.wsunitstats.service.service.LocalizationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
 public class LocalizationServiceImpl implements LocalizationService {
+    @Autowired
+    private LocalizationRepository localizationRepository;
 
     private static final Pattern LOCALIZATION_KEY_PATTERN = Pattern.compile("<\\*([a-zA-Z0-9/]+)>");
     private static final String LOCALIZATION_MULTI_KEY_DELIMITER = "/";
@@ -33,5 +38,20 @@ public class LocalizationServiceImpl implements LocalizationService {
         }
         matcher.appendTail(output);
         return output.toString();
+    }
+
+    @Override
+    public boolean updateLocalizationModel(LocalizationModel localizationModel, boolean overwrite) {
+        if (!localizationRepository.existsByLocale(localizationModel.getLocale()) || overwrite) {
+            localizationRepository.save(localizationModel);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void setLocalizationData(List<LocalizationModel> localizationModels) {
+        localizationRepository.deleteAll();
+        localizationRepository.saveAll(localizationModels);
     }
 }

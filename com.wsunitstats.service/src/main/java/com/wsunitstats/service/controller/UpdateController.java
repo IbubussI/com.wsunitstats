@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wsunitstats.model.LocalizationModel;
 import com.wsunitstats.model.UnitModel;
-import com.wsunitstats.service.repository.LocalizationRepository;
-import com.wsunitstats.service.repository.UnitRepository;
+import com.wsunitstats.service.service.LocalizationService;
+import com.wsunitstats.service.service.UnitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
@@ -30,18 +31,17 @@ public class UpdateController {
     private static final String INVALID_JSON = "Given json doesn't match expected data model";
 
     @Autowired
-    private UnitRepository unitRepository;
+    private UnitService unitService;
 
     @Autowired
-    private LocalizationRepository localizationRepository;
+    private LocalizationService localizationService;
 
     @PostMapping(path = "/model/gameplay", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateGameplay(@RequestBody String data) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             List<UnitModel> units = Arrays.asList(mapper.readValue(data, UnitModel[].class));
-            unitRepository.deleteAll();
-            unitRepository.saveAll(units);
+            unitService.setUnits(units);
             return new ResponseEntity<>(OK, HttpStatus.OK);
         } catch (JsonProcessingException ex) {
             LOG.debug("Can't process requested json", ex);
@@ -53,9 +53,8 @@ public class UpdateController {
     public ResponseEntity<String> updateLocalizationBulk(@RequestBody String data) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            List<LocalizationModel> localizations = Arrays.asList(mapper.readValue(data, LocalizationModel[].class));
-            localizationRepository.deleteAll();
-            localizationRepository.saveAll(localizations);
+            List<LocalizationModel> localizationModels = Arrays.asList(mapper.readValue(data, LocalizationModel[].class));
+            localizationService.setLocalizationData(localizationModels);
             return new ResponseEntity<>(OK, HttpStatus.OK);
         } catch (JsonProcessingException ex) {
             LOG.debug("Can't process requested json", ex);
@@ -64,15 +63,15 @@ public class UpdateController {
     }
 
     @PostMapping(path = "/model/localization", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> updateLocalization(@RequestBody String data) {
+    public ResponseEntity<String> updateLocalization(@RequestParam(required = false) boolean forceResubmission, @RequestBody String data) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            LocalizationModel localization = mapper.readValue(data, LocalizationModel.class);
-            if (localizationRepository.existsByLocale(localization.getLocale())) {
+            LocalizationModel localizationModel = mapper.readValue(data, LocalizationModel.class);
+            if (localizationService.updateLocalizationModel(localizationModel, forceResubmission)) {
+                return new ResponseEntity<>(OK, HttpStatus.OK);
+            } else {
                 return new ResponseEntity<>(ALREADY_EXISTS, HttpStatus.OK);
             }
-            localizationRepository.save(localization);
-            return new ResponseEntity<>(OK, HttpStatus.OK);
         } catch (JsonProcessingException ex) {
             return new ResponseEntity<>(INVALID_JSON, HttpStatus.BAD_REQUEST);
         }
