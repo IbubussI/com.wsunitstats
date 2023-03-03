@@ -1,5 +1,8 @@
 package com.wsunitstats.model.submodel;
 
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class GatherModel {
     private Double bagSize;
     private Double findTargetDistance;

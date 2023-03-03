@@ -1,7 +1,9 @@
 package com.wsunitstats.model;
 
-public abstract class GenericEntityModel {
+import jakarta.persistence.MappedSuperclass;
 
+@MappedSuperclass
+public abstract class GenericEntityModel extends PersistentObject {
     protected int gameId;
     protected String name;
     protected String imageUrl;

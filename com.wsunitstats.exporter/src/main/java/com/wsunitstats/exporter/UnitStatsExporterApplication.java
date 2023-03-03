@@ -70,7 +70,7 @@ public class UnitStatsExporterApplication {
             List<UnitModel> unitModels = unitModelResolverService.resolveFromJsonModel(fileContainer);
             String json = exporterService.exportToJson(unitModels);
             String localizedJson = localizationService.localize(json, localizationFileModel);
-            ResponseEntity<String> response = restService.postJson(localizedJson, "http://localhost:8080/upload/model");
+            ResponseEntity<String> response = restService.postJson(localizedJson, "http://localhost:8080/upload/model/gameplay");
             System.out.println(response.getStatusCode().value());
         }
     }

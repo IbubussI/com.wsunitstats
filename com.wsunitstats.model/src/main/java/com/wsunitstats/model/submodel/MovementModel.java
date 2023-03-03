@@ -1,7 +1,9 @@
 package com.wsunitstats.model.submodel;
 
-public class MovementModel {
+import jakarta.persistence.Embeddable;
 
+@Embeddable
+public class MovementModel {
     private Integer speed;
     private Double rotationSpeed;
 

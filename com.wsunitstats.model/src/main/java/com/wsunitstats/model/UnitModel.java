@@ -5,23 +5,35 @@ import com.wsunitstats.model.submodel.ResourceModel;
 import com.wsunitstats.model.submodel.ArmorModel;
 import com.wsunitstats.model.submodel.GatherModel;
 import com.wsunitstats.model.submodel.TransportingModel;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 
 import java.util.List;
 
+@Entity(name = "unit")
 public class UnitModel extends GenericEntityModel {
     //Unit traits
     protected Double size;
+
+    @ElementCollection(fetch = FetchType.EAGER)
     protected List<ArmorModel> armor;
 
     //Movable unit traits
+    @Embedded
     protected MovementModel movement;
+    @Embedded
     protected TransportingModel transporting;
 
     //Worker traits
+    @ElementCollection(fetch = FetchType.EAGER)
     protected List<GatherModel> gather;
 
     //Building traits
+    @ElementCollection(fetch = FetchType.EAGER)
     protected List<ResourceModel> initCost;
+    @ElementCollection(fetch = FetchType.EAGER)
     protected List<ResourceModel> fullCost;
 
     public Double getSize() {
