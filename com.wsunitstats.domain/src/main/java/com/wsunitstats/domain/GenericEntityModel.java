@@ -1,4 +1,4 @@
-package com.wsunitstats.model;
+package com.wsunitstats.domain;
 
 import jakarta.persistence.MappedSuperclass;
 

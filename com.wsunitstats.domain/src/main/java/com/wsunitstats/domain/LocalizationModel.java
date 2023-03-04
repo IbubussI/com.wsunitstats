@@ -1,6 +1,6 @@
-package com.wsunitstats.model;
+package com.wsunitstats.domain;
 
-import com.wsunitstats.model.submodel.LocalizationEntry;
+import com.wsunitstats.domain.submodel.LocalizationEntry;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

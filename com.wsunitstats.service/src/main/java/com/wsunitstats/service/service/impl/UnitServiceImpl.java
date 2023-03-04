@@ -1,6 +1,6 @@
 package com.wsunitstats.service.service.impl;
 
-import com.wsunitstats.model.UnitModel;
+import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.service.repository.UnitRepository;
 import com.wsunitstats.service.service.UnitService;
 import org.springframework.beans.factory.annotation.Autowired;

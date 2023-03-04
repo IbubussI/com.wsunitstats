@@ -26,13 +26,14 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.wsunitstats.utils.Constants.LOCALIZATION_MULTI_VALUE_DELIMITER_REGEX;
+
 @Service
 public class FileReaderServiceImpl implements FileReaderService {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileReaderServiceImpl.class);
 
     private static final Pattern LOC_VALUE_PATTERN = Pattern.compile("^<\\*([^<>]*)>(.*)$", Pattern.MULTILINE);
-    private static final String LOC_INDEX_REGEX = "\\|";
     private static final String LUA_ARRAY_REGEX = "%s\\s*=\\s*\\{";
     private static final String LUA_ARRAY_DELIMITER = "\\s*,\\s*";
     private static final Pattern LUA_COMMENTS_PATTERN = Pattern.compile("--[^\n\t\"]*$", Pattern.MULTILINE);
@@ -76,7 +77,7 @@ public class FileReaderServiceImpl implements FileReaderService {
             Map<String, List<String>> localizationValues = new HashMap<>();
             scanner.findAll(LOC_VALUE_PATTERN)
                     .forEach(match -> localizationValues.put(match.group(1),
-                            Arrays.asList(match.group(2).split(LOC_INDEX_REGEX))));
+                            Arrays.asList(match.group(2).split(LOCALIZATION_MULTI_VALUE_DELIMITER_REGEX))));
             localizationModel.setValues(localizationValues);
             localizationModel.setFilename(file.getName());
             return localizationModel;

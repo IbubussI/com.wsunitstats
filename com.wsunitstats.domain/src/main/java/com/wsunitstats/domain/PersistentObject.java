@@ -1,4 +1,4 @@
-package com.wsunitstats.model;
+package com.wsunitstats.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.GeneratedValue;

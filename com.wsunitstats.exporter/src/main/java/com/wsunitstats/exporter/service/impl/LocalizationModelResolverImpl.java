@@ -2,8 +2,8 @@ package com.wsunitstats.exporter.service.impl;
 
 import com.wsunitstats.exporter.model.localization.LocalizationFileModel;
 import com.wsunitstats.exporter.service.LocalizationModelResolver;
-import com.wsunitstats.model.LocalizationModel;
-import com.wsunitstats.model.submodel.LocalizationEntry;
+import com.wsunitstats.domain.LocalizationModel;
+import com.wsunitstats.domain.submodel.LocalizationEntry;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

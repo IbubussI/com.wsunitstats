@@ -1,6 +1,6 @@
 package com.wsunitstats.service.repository;
 
-import com.wsunitstats.model.LocalizationModel;
+import com.wsunitstats.domain.LocalizationModel;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
