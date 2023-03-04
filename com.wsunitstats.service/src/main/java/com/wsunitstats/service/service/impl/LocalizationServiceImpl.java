@@ -17,6 +17,7 @@ public class LocalizationServiceImpl implements LocalizationService {
 
     private static final Pattern LOCALIZATION_KEY_PATTERN = Pattern.compile("<\\*([a-zA-Z0-9/]+)>");
     private static final String LOCALIZATION_MULTI_KEY_DELIMITER = "/";
+    private static final String LOCALIZATION_KEY_TEMPLATE = "<*%s>";
 
     @Override
     public String localize(String input, LocalizationModel localizationModel) {
@@ -53,5 +54,12 @@ public class LocalizationServiceImpl implements LocalizationService {
     public void setLocalizationData(List<LocalizationModel> localizationModels) {
         localizationRepository.deleteAll();
         localizationRepository.saveAll(localizationModels);
+    }
+
+    @Override
+    public List<String> getKeysForValues(List<String> values, String locale) {
+        return localizationRepository.findKeysByValues(locale, values).stream()
+                .map(value -> String.format(LOCALIZATION_KEY_TEMPLATE, value))
+                .toList();
     }
 }

@@ -25,4 +25,9 @@ public interface LocalizationService {
      * Any previous localization data is removed
      */
     void setLocalizationData(List<LocalizationModel> localizationModels);
+
+    /**
+     * Returns all keys that match given value at given locale
+     */
+    List<String> getKeysForValues(List<String> values, String locale);
 }

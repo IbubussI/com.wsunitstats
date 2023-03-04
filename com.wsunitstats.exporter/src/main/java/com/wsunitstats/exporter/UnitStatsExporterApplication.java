@@ -24,7 +24,10 @@ import org.springframework.stereotype.Component;
 
 import java.io.FileWriter;
 import java.io.Writer;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SpringBootApplication
 public class UnitStatsExporterApplication {
@@ -75,10 +78,21 @@ public class UnitStatsExporterApplication {
 
             String unitsJson = exporterService.exportToJson(unitModels);
             String locJson = exporterService.exportToJson(localizationModels);
-            ResponseEntity<String> gameplayResponse = restService.postJson(unitsJson, "http://localhost:8080/upload/model/gameplay");
-            ResponseEntity<String> locResponse = restService.postJson(locJson, "http://localhost:8080/upload/model/localization/bulk");
+            //ResponseEntity<String> gameplayResponse = restService.postJson("http://localhost:8080/upload/model/gameplay", unitsJson);
+            //ResponseEntity<String> locResponse = restService.postJson("http://localhost:8080/upload/model/localization/bulk", locJson);
+            //System.out.println("gameplay submitted response: " + gameplayResponse.getStatusCode().value() + " " + gameplayResponse.getBody());
+            //System.out.println("localization submitted response: " + locResponse.getStatusCode().value() + " " + locResponse.getBody());
+
+            Map<String, List<String>> getParams = new HashMap<>();
+            getParams.put("names", List.of("Spearmen"));
+            getParams.put("locale", List.of("en"));
+            getParams.put("sort", List.of("name"));
+            getParams.put("sortDir", List.of("asc"));
+            getParams.put("page", List.of("0"));
+            getParams.put("size", List.of("5"));
+
+            ResponseEntity<String> gameplayResponse = restService.get("http://localhost:8080/get/units", getParams);
             System.out.println("gameplay submitted response: " + gameplayResponse.getStatusCode().value() + " " + gameplayResponse.getBody());
-            System.out.println("localization submitted response: " + locResponse.getStatusCode().value() + " " + locResponse.getBody());
         }
     }
 
