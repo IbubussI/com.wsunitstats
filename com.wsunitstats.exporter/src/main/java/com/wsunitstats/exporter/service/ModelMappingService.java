@@ -7,15 +7,15 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportingJsonMod
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.model.LocalizationKeyModel;
-import com.wsunitstats.model.submodel.ArmorModel;
-import com.wsunitstats.model.submodel.GatherModel;
-import com.wsunitstats.model.submodel.MovementModel;
-import com.wsunitstats.model.submodel.ResourceModel;
-import com.wsunitstats.model.submodel.TransportingModel;
+import com.wsunitstats.domain.submodel.ArmorModel;
+import com.wsunitstats.domain.submodel.GatherModel;
+import com.wsunitstats.domain.submodel.MovementModel;
+import com.wsunitstats.domain.submodel.ResourceModel;
+import com.wsunitstats.domain.submodel.TransportingModel;
 
 import java.util.List;
 
-public interface ObjectMappingService {
+public interface ModelMappingService {
     ArmorModel map(ArmorJsonModel.Entry source, int probabilitiesSum);
 
     GatherModel map(GatherJsonModel source, LocalizationKeyModel localization);

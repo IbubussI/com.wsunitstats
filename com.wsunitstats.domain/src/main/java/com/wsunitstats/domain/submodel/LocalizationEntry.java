@@ -1,6 +1,6 @@
-package com.wsunitstats.model.submodel;
+package com.wsunitstats.domain.submodel;
 
-import com.wsunitstats.model.PersistentObject;
+import com.wsunitstats.domain.PersistentObject;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;

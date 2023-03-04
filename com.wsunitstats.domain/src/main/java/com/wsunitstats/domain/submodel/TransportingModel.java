@@ -1,4 +1,4 @@
-package com.wsunitstats.model.submodel;
+package com.wsunitstats.domain.submodel;
 
 import jakarta.persistence.Embeddable;
 

@@ -1,4 +1,4 @@
-package com.wsunitstats.exporter.service;
+package com.wsunitstats.domain.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 

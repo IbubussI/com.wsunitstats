@@ -1,10 +1,10 @@
-package com.wsunitstats.model;
+package com.wsunitstats.domain;
 
-import com.wsunitstats.model.submodel.MovementModel;
-import com.wsunitstats.model.submodel.ResourceModel;
-import com.wsunitstats.model.submodel.ArmorModel;
-import com.wsunitstats.model.submodel.GatherModel;
-import com.wsunitstats.model.submodel.TransportingModel;
+import com.wsunitstats.domain.submodel.MovementModel;
+import com.wsunitstats.domain.submodel.ResourceModel;
+import com.wsunitstats.domain.submodel.ArmorModel;
+import com.wsunitstats.domain.submodel.GatherModel;
+import com.wsunitstats.domain.submodel.TransportingModel;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;

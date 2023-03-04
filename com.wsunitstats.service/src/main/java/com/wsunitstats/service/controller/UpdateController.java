@@ -2,8 +2,8 @@ package com.wsunitstats.service.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wsunitstats.model.LocalizationModel;
-import com.wsunitstats.model.UnitModel;
+import com.wsunitstats.domain.LocalizationModel;
+import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.service.service.LocalizationService;
 import com.wsunitstats.service.service.UnitService;
 import org.slf4j.Logger;

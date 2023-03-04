@@ -17,7 +17,8 @@
     <modules>
         <module>com.wsunitstats.exporter</module>
         <module>com.wsunitstats.service</module>
-        <module>com.wsunitstats.model</module>
+        <module>com.wsunitstats.domain</module>
+        <module>com.wsunitstats.utils</module>
     </modules>
 
     <properties>

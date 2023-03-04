@@ -1,6 +1,6 @@
 package com.wsunitstats.service.repository;
 
-import com.wsunitstats.model.UnitModel;
+import com.wsunitstats.domain.UnitModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;

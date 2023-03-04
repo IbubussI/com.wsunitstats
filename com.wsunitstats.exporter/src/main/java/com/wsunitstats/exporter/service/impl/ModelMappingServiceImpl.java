@@ -6,14 +6,14 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.MovementJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportingJsonModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
-import com.wsunitstats.exporter.service.ObjectMappingService;
+import com.wsunitstats.exporter.service.ModelMappingService;
 import com.wsunitstats.exporter.util.Util;
 import com.wsunitstats.exporter.model.LocalizationKeyModel;
-import com.wsunitstats.model.submodel.ArmorModel;
-import com.wsunitstats.model.submodel.GatherModel;
-import com.wsunitstats.model.submodel.MovementModel;
-import com.wsunitstats.model.submodel.ResourceModel;
-import com.wsunitstats.model.submodel.TransportingModel;
+import com.wsunitstats.domain.submodel.ArmorModel;
+import com.wsunitstats.domain.submodel.GatherModel;
+import com.wsunitstats.domain.submodel.MovementModel;
+import com.wsunitstats.domain.submodel.ResourceModel;
+import com.wsunitstats.domain.submodel.TransportingModel;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,14 +27,15 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.wsunitstats.utils.Constants.LOCALIZATION_MULTI_KEY_DELIMITER;
+
 @Service
-public class ObjectMappingServiceImpl implements ObjectMappingService {
-    private static final Logger LOG = LoggerFactory.getLogger(ObjectMappingServiceImpl.class);
+public class ModelMappingServiceImpl implements ModelMappingService {
+    private static final Logger LOG = LoggerFactory.getLogger(ModelMappingServiceImpl.class);
 
     private static final Pattern LOCALIZATION_PATTERN = Pattern.compile("^localize\\(\"(<\\*[a-zA-Z0-9/]+>)\"\\)$", Pattern.MULTILINE);
     private static final Pattern MAP_ENTRY_PATTERN = Pattern.compile("^\\[(\\d*)]=localize(\"(<\\*[a-zA-Z0-9/]+>)\")$", Pattern.MULTILINE);
     private static final int PROBABILITY_MAX = 100;
-    private static final String NATION_DELIMITER = "/";
     private static final int RESOURCES_COUNT = 3;
 
     @Override
@@ -167,21 +168,12 @@ public class ObjectMappingServiceImpl implements ObjectMappingService {
         List<String> result = new ArrayList<>();
         for (int i = 0; i < rawNationNames.size(); ++i) {
             String ir1 = rawNationNames.get(i);
-            String ir2 = null;
             if (ir1.contains("{")) {
-                ++i;
-                ir2 = rawNationNames.get(i);
+                ++i; // skip ir2 value
                 ir1 = ir1.replace("{", StringUtils.EMPTY);
-                ir2 = ir2.replace("}", StringUtils.EMPTY);
             }
             String nationName;
-            if (ir2 != null) {
-                nationName = convertToLocalizationTag(ir1) +
-                        NATION_DELIMITER +
-                        convertToLocalizationTag(ir2);
-            } else {
-                nationName = convertToLocalizationTag(ir1);
-            }
+            nationName = convertToLocalizationTag(ir1);
             result.add(nationName);
         }
         return result;

@@ -8,13 +8,13 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.UnitJsonModel;
 import com.wsunitstats.exporter.model.json.main.MainFileModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
-import com.wsunitstats.exporter.service.ObjectMappingService;
+import com.wsunitstats.exporter.service.ModelMappingService;
 import com.wsunitstats.exporter.service.UnitModelResolverService;
 import com.wsunitstats.exporter.util.Util;
 import com.wsunitstats.exporter.model.LocalizationKeyModel;
-import com.wsunitstats.model.UnitModel;
-import com.wsunitstats.model.submodel.ArmorModel;
-import com.wsunitstats.model.submodel.GatherModel;
+import com.wsunitstats.domain.UnitModel;
+import com.wsunitstats.domain.submodel.ArmorModel;
+import com.wsunitstats.domain.submodel.GatherModel;
 import com.wsunitstats.exporter.model.UnitResolvingFileContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
     private static final String NIL = "nil";
 
     @Autowired
-    private ObjectMappingService mappingService;
+    private ModelMappingService mappingService;
 
     @Override
     public List<UnitModel> resolveFromJsonModel(UnitResolvingFileContainer rootContainer) {

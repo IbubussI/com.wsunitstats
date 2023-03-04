@@ -1,9 +1,9 @@
-package com.wsunitstats.exporter.service.impl;
+package com.wsunitstats.domain.service.impl;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wsunitstats.exporter.service.ModelExporterService;
+import com.wsunitstats.domain.service.ModelExporterService;
 import org.springframework.stereotype.Service;
 
 @Service

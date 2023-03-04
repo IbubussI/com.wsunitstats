@@ -1,6 +1,6 @@
 package com.wsunitstats.service.service.impl;
 
-import com.wsunitstats.model.LocalizationModel;
+import com.wsunitstats.domain.LocalizationModel;
 import com.wsunitstats.service.repository.LocalizationRepository;
 import com.wsunitstats.service.service.LocalizationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +10,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.wsunitstats.utils.Constants.LOCALIZATION_MULTI_KEY_DELIMITER;
+
 @Service
 public class LocalizationServiceImpl implements LocalizationService {
     @Autowired
     private LocalizationRepository localizationRepository;
 
     private static final Pattern LOCALIZATION_KEY_PATTERN = Pattern.compile("<\\*([a-zA-Z0-9/]+)>");
-    private static final String LOCALIZATION_MULTI_KEY_DELIMITER = "/";
     private static final String LOCALIZATION_KEY_TEMPLATE = "<*%s>";
 
     @Override

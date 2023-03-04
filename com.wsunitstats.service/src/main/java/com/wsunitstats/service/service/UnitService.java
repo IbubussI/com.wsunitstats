@@ -1,6 +1,6 @@
 package com.wsunitstats.service.service;
 
-import com.wsunitstats.model.UnitModel;
+import com.wsunitstats.domain.UnitModel;
 
 import java.util.List;
 

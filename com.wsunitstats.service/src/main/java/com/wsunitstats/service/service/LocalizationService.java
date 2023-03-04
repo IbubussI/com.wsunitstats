@@ -1,6 +1,6 @@
 package com.wsunitstats.service.service;
 
-import com.wsunitstats.model.LocalizationModel;
+import com.wsunitstats.domain.LocalizationModel;
 
 import java.util.List;
 
