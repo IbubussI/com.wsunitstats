@@ -1,14 +1,4 @@
 
-    create table LocalizationEntry (
-       id bigint not null auto_increment,
-        primary key (id)
-    ) engine=InnoDB;
-
-    create table LocalizationEntry_localizedValues (
-       LocalizationEntry_id bigint not null,
-        localizedValues varchar(1000)
-    ) engine=InnoDB;
-
     create table LocalizationModel (
        id bigint not null auto_increment,
         locale varchar(255),
@@ -17,7 +7,7 @@
 
     create table LocalizationModel_entries (
        LocalizationModel_id bigint not null,
-        entries_id bigint not null,
+        entries varchar(255),
         entries_KEY varchar(255) not null,
         primary key (LocalizationModel_id, entries_KEY)
     ) engine=InnoDB;
@@ -68,19 +58,6 @@
 
     alter table LocalizationModel 
        add constraint UK_toseld3cxq1bwh4699h5o48je unique (locale);
-
-    alter table LocalizationModel_entries 
-       add constraint UK_r0wkotrje2x4f3y80btk2g2og unique (entries_id);
-
-    alter table LocalizationEntry_localizedValues 
-       add constraint FKmd9iwh077r899254oi56wxmuo 
-       foreign key (LocalizationEntry_id) 
-       references LocalizationEntry (id);
-
-    alter table LocalizationModel_entries 
-       add constraint FKad8ko7caoey2ojqlp8y9q6ju2 
-       foreign key (entries_id) 
-       references LocalizationEntry (id);
 
     alter table LocalizationModel_entries 
        add constraint FKm4exc3s2ci29yebyl9o2tvk4t 

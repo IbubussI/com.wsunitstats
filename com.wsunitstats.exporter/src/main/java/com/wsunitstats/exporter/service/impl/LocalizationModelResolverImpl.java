@@ -3,13 +3,16 @@ package com.wsunitstats.exporter.service.impl;
 import com.wsunitstats.exporter.model.localization.LocalizationFileModel;
 import com.wsunitstats.exporter.service.LocalizationModelResolver;
 import com.wsunitstats.domain.LocalizationModel;
-import com.wsunitstats.domain.submodel.LocalizationEntry;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.wsunitstats.utils.Constants.CLOSING_ANGLE_BRACKET;
+import static com.wsunitstats.utils.Constants.LOCALIZATION_INDEX_DELIMITER;
 
 @Service
 public class LocalizationModelResolverImpl implements LocalizationModelResolver {
@@ -19,12 +22,18 @@ public class LocalizationModelResolverImpl implements LocalizationModelResolver 
     public LocalizationModel resolveFromJsonModel(LocalizationFileModel localizationFileModel) {
         LocalizationModel localizationModel = new LocalizationModel();
         localizationModel.setLocale(getLocaleFromFilename(localizationFileModel.getFilename()));
-        Map<String, LocalizationEntry> entryMap = new HashMap<>();
-        localizationFileModel.getValues().forEach((key, value) -> {
-            LocalizationEntry localizationEntry = new LocalizationEntry();
-            localizationEntry.setLocalizedValues(value);
-            entryMap.put(key, localizationEntry);
-        });
+        Map<String, String> entryMap = new HashMap<>();
+        for (Map.Entry<String, List<String>> mapEntry : localizationFileModel.getValues().entrySet()) {
+            List<String> list = mapEntry.getValue();
+            int listSize = list.size();
+            for (int i = 0; i < listSize; ++i) {
+                StringBuilder key = new StringBuilder(mapEntry.getKey());
+                if (listSize > 1) {
+                    key.insert(key.indexOf(CLOSING_ANGLE_BRACKET), LOCALIZATION_INDEX_DELIMITER + i);
+                }
+                entryMap.put(key.toString(), list.get(i));
+            }
+        }
         localizationModel.setEntries(entryMap);
         return localizationModel;
     }
