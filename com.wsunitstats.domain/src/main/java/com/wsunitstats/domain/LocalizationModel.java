@@ -1,11 +1,9 @@
 package com.wsunitstats.domain;
 
-import com.wsunitstats.domain.submodel.LocalizationEntry;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
 
 import java.util.Map;
 
@@ -13,23 +11,18 @@ import java.util.Map;
 public class LocalizationModel extends PersistentObject {
     @Column(unique = true)
     private String locale;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Map<String, LocalizationEntry> entries;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Map<String, String> entries;
 
     /**
      * Tries to find localized value. Returns given key if value not found
      *
      * @param key   key to find value for
-     * @param index index of value within the given key
-     * @return localized value or given key if there are no values
-     * for such a key or index is out of bounds
+     * @return localized value or given key if there are no values for such a key
      */
-    public String getValue(String key, int index) {
-        LocalizationEntry entry = entries.get(key);
-        if (entry == null || entry.getLocalizedValues().size() < index + 1) {
-            return key;
-        }
-        return entry.getLocalizedValues().get(index);
+    public String getValue(String key) {
+        String entry = entries.get(key);
+        return entry != null ? entry : key;
     }
 
     public String getLocale() {
@@ -40,11 +33,11 @@ public class LocalizationModel extends PersistentObject {
         this.locale = locale;
     }
 
-    public Map<String, LocalizationEntry> getEntries() {
+    public Map<String, String> getEntries() {
         return entries;
     }
 
-    public void setEntries(Map<String, LocalizationEntry> entries) {
+    public void setEntries(Map<String, String> entries) {
         this.entries = entries;
     }
 
@@ -52,7 +45,7 @@ public class LocalizationModel extends PersistentObject {
     public String toString() {
         return "LocalizationModel{" +
                 "locale='" + locale + '\'' +
-                ", values=" + entries +
+                ", entries=" + entries +
                 '}';
     }
 }

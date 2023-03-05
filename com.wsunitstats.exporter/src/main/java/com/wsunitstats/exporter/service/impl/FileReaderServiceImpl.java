@@ -33,7 +33,7 @@ public class FileReaderServiceImpl implements FileReaderService {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileReaderServiceImpl.class);
 
-    private static final Pattern LOC_VALUE_PATTERN = Pattern.compile("^<\\*([^<>]*)>(.*)$", Pattern.MULTILINE);
+    private static final Pattern LOC_VALUE_PATTERN = Pattern.compile("^(<\\*[^<>]*>)(.*)$", Pattern.MULTILINE);
     private static final String LUA_ARRAY_REGEX = "%s\\s*=\\s*\\{";
     private static final String LUA_ARRAY_DELIMITER = "\\s*,\\s*";
     private static final Pattern LUA_COMMENTS_PATTERN = Pattern.compile("--[^\n\t\"]*$", Pattern.MULTILINE);
