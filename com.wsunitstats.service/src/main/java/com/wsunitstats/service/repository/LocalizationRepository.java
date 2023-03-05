@@ -10,6 +10,8 @@ import java.util.List;
 public interface LocalizationRepository extends CrudRepository<LocalizationModel, Long> {
     boolean existsByLocale(String locale);
 
+    LocalizationModel findByLocale(String locale);
+
     @Query(nativeQuery = true, value = """
             SELECT entries_KEY FROM localizationmodel_entries
             WHERE LocalizationModel_id = (SELECT id FROM localizationmodel WHERE locale = :locale)
