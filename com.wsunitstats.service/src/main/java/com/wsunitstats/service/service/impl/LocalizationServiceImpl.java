@@ -18,7 +18,8 @@ public class LocalizationServiceImpl implements LocalizationService {
     private static final Pattern LOCALIZATION_KEY_PATTERN = Pattern.compile("<\\*[a-zA-Z0-9/]+>");
 
     @Override
-    public String localize(String input, LocalizationModel localizationModel) {
+    public String localize(String input, String locale) {
+        LocalizationModel localizationModel = localizationRepository.findByLocale(locale);
         Matcher matcher = LOCALIZATION_KEY_PATTERN.matcher(input);
         StringBuilder output = new StringBuilder();
         while (matcher.find()) {

@@ -10,7 +10,7 @@ public interface LocalizationService {
      *
      * @return localized input
      */
-    String localize(String input, LocalizationModel localizationModel);
+    String localize(String input, String locale);
 
     /**
      * Add given localization model to repository

@@ -40,7 +40,7 @@ public class GetController {
                                                   @RequestParam int size) {
         List<String> nameKeys = localizationService.getKeysForValues(names, locale);
         List<UnitModel> units = unitService.getUnitsByNames(nameKeys, sort, sortDir, page, size);
-        return getJson(units);
+        return getJson(units, true, locale);
     }
 
     @GetMapping(path = "/units", params = "nations")
@@ -50,15 +50,17 @@ public class GetController {
                                                     @RequestParam String sortDir,
                                                     @RequestParam int page,
                                                     @RequestParam int size) {
-
         List<String> nationKeys = localizationService.getKeysForValues(nations, locale);
         List<UnitModel> units = unitService.getUnitsByNations(nationKeys, sort, sortDir, page, size);
-        return getJson(units);
+        return getJson(units, true, locale);
     }
 
-    private ResponseEntity<String> getJson(List<?> units) {
+    private ResponseEntity<String> getJson(List<?> units, boolean localize, String locale) {
         try {
             String json = exporterService.exportToJson(units);
+            if (localize) {
+                json = localizationService.localize(json, locale);
+            }
             return new ResponseEntity<>(json, HttpStatus.OK);
         } catch (JsonProcessingException ex) {
             LOG.error("Json export error", ex);
