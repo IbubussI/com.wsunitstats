@@ -3,6 +3,7 @@ package com.wsunitstats.service.repository;
 import com.wsunitstats.domain.UnitModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -16,4 +17,11 @@ public interface UnitRepository extends CrudRepository<UnitModel, Long>, PagingA
     List<UnitModel> findByGameIdIn(List<Integer> ids, Pageable pageable);
 
     Page<UnitModel> findAll(Pageable pageable);
+
+    @Query(nativeQuery = true, value = """
+            SELECT COLUMN_NAME
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_NAME = 'unit'
+            """)
+    List<String> getColumnNames();
 }

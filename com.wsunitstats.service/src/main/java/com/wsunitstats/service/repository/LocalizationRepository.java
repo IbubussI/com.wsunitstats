@@ -18,4 +18,9 @@ public interface LocalizationRepository extends CrudRepository<LocalizationModel
             AND entries IN (:values)
             """)
     List<String> findKeysByValues(@Param("locale") String locale, @Param("values") List<String> values);
+
+    @Query(nativeQuery = true, value = """
+            SELECT locale FROM localizationmodel
+            """)
+    List<String> getLocaleNames();
 }
