@@ -1,6 +1,5 @@
 package com.wsunitstats.exporter.service;
 
-import com.wsunitstats.exporter.exception.FileReadingException;
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;

@@ -12,6 +12,7 @@ public class LocalizationModel extends PersistentObject {
     @Column(unique = true)
     private String locale;
     @ElementCollection(fetch = FetchType.EAGER)
+    @Column(length=1000)
     private Map<String, String> entries;
 
     /**

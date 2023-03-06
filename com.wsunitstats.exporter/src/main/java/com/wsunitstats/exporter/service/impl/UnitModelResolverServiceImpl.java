@@ -15,7 +15,7 @@ import com.wsunitstats.exporter.model.LocalizationKeyModel;
 import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.domain.submodel.ArmorModel;
 import com.wsunitstats.domain.submodel.GatherModel;
-import com.wsunitstats.exporter.model.UnitResolvingFileContainer;
+import com.wsunitstats.exporter.model.FileModelWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +31,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
     private ModelMappingService mappingService;
 
     @Override
-    public List<UnitModel> resolveFromJsonModel(UnitResolvingFileContainer rootContainer) {
+    public List<UnitModel> resolveFromJsonModel(FileModelWrapper rootContainer) {
         GameplayFileModel gameplayModel = rootContainer.getGameplayFileModel();
         MainFileModel mainModel = rootContainer.getMainFileModel();
         MainStartupFileModel startupModel = rootContainer.getMainStartupFileModel();

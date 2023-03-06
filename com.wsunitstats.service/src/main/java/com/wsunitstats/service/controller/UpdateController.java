@@ -36,7 +36,7 @@ public class UpdateController {
     @Autowired
     private LocalizationService localizationService;
 
-    @PostMapping(path = "/model/gameplay", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/units", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateGameplay(@RequestBody String data) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -49,7 +49,7 @@ public class UpdateController {
         }
     }
 
-    @PostMapping(path = "/model/localization/bulk", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/localization/bulk", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateLocalizationBulk(@RequestBody String data) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -62,7 +62,7 @@ public class UpdateController {
         }
     }
 
-    @PostMapping(path = "/model/localization", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/localization", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateLocalization(@RequestParam(required = false) boolean forceResubmission, @RequestBody String data) {
         try {
             ObjectMapper mapper = new ObjectMapper();
