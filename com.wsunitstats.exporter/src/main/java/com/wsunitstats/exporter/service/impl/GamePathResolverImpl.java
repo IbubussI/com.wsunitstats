@@ -18,7 +18,8 @@ import java.nio.file.Files;
 import java.util.Map;
 
 @Service
-@PropertySource(value = "classpath:exporter.properties", ignoreResourceNotFound = true)
+@PropertySource(value = "classpath:exporter.properties")
+@PropertySource(value = "file:config/exporter.properties")
 public class GamePathResolverImpl implements GamePathResolver {
     private static final Logger LOG = LogManager.getLogger(GamePathResolverImpl.class);
 
