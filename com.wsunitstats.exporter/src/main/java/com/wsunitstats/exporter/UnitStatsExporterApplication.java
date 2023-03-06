@@ -1,11 +1,13 @@
 package com.wsunitstats.exporter;
 
+import com.wsunitstats.exporter.model.FilePathWrapper;
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
-import com.wsunitstats.exporter.model.UnitResolvingFileContainer;
+import com.wsunitstats.exporter.model.FileModelWrapper;
 import com.wsunitstats.exporter.model.localization.LocalizationFileModel;
 import com.wsunitstats.exporter.service.FileReaderService;
+import com.wsunitstats.exporter.service.GamePathResolver;
 import com.wsunitstats.exporter.service.LocalizationModelResolver;
 import com.wsunitstats.domain.service.ModelExporterService;
 import com.wsunitstats.exporter.service.RestService;
@@ -33,12 +35,6 @@ public class UnitStatsExporterApplication {
 
     @Component
     public static class ExporterRunner implements CommandLineRunner {
-
-        private static final String PATH_GAMEPLAY = "game-files/gameplay.json";
-        private static final String PATH_LOCALIZATION = "game-files/";
-        private static final String PATH_SESSION_INIT = "game-files/init.lua";
-        private static final String PATH_MAIN_STARTUP = "game-files/startup.lua";
-
         @Autowired
         private FileReaderService fileReaderService;
 
@@ -54,14 +50,19 @@ public class UnitStatsExporterApplication {
         @Autowired
         private RestService restService;
 
+        @Autowired
+        private GamePathResolver gamePathResolver;
+
         @Override
         public void run(String... args) throws Exception {
-            GameplayFileModel gameplayFileModel = fileReaderService.readGameplayJson(PATH_GAMEPLAY);
-            SessionInitFileModel sessionInitFileModel = fileReaderService.readSessionInitLua(PATH_SESSION_INIT);
-            MainStartupFileModel startupFileModel = fileReaderService.readMainStartupLua(PATH_MAIN_STARTUP);
-            List<LocalizationFileModel> localizationFileModels = fileReaderService.readLocalizations(PATH_LOCALIZATION);
+            FilePathWrapper filePathWrapper = gamePathResolver.resolve();
 
-            UnitResolvingFileContainer fileContainer = new UnitResolvingFileContainer();
+            GameplayFileModel gameplayFileModel = fileReaderService.readGameplayJson(filePathWrapper.getGameplayFilePath());
+            SessionInitFileModel sessionInitFileModel = fileReaderService.readSessionInitLua(filePathWrapper.getSessionInitFilePath());
+            MainStartupFileModel startupFileModel = fileReaderService.readMainStartupLua(filePathWrapper.getMainStartupFilePath());
+            List<LocalizationFileModel> localizationFileModels = fileReaderService.readLocalizations(filePathWrapper.getLocalizationFolderPath());
+
+            FileModelWrapper fileContainer = new FileModelWrapper();
             fileContainer.setGameplayFileModel(gameplayFileModel);
             fileContainer.setMainFileModel(null);
             fileContainer.setMainStartupFileModel(startupFileModel);
@@ -74,8 +75,8 @@ public class UnitStatsExporterApplication {
 
             String unitsJson = exporterService.exportToJson(unitModels);
             String locJson = exporterService.exportToJson(localizationModels);
-            ResponseEntity<String> gameplayResponse = restService.postJson("http://localhost:8080/upload/model/gameplay", unitsJson);
-            ResponseEntity<String> locResponse = restService.postJson("http://localhost:8080/upload/model/localization/bulk", locJson);
+            ResponseEntity<String> gameplayResponse = restService.postJson("http://localhost:8080/upload/units", unitsJson);
+            ResponseEntity<String> locResponse = restService.postJson("http://localhost:8080/upload/localization/bulk", locJson);
             System.out.println("gameplay submitted response: " + gameplayResponse.getStatusCode().value() + "\n" + gameplayResponse.getBody());
             System.out.println("localization submitted response: " + locResponse.getStatusCode().value() + "\n" + locResponse.getBody());
 

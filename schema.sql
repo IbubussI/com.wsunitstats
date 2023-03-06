@@ -7,7 +7,7 @@
 
     create table LocalizationModel_entries (
        LocalizationModel_id bigint not null,
-        entries varchar(255),
+        entries varchar(1000),
         entries_KEY varchar(255) not null,
         primary key (LocalizationModel_id, entries_KEY)
     ) engine=InnoDB;

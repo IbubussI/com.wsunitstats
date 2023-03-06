@@ -5,7 +5,7 @@ import com.wsunitstats.exporter.model.json.main.MainFileModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 
-public class UnitResolvingFileContainer {
+public class FileModelWrapper {
 
     private GameplayFileModel gameplayFileModel;
     private MainFileModel mainFileModel;
