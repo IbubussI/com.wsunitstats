@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Service
 @PropertySource(value = "classpath:exporter.properties")
-@PropertySource(value = "file:config/exporter.properties")
+@PropertySource(value = "file:config/exporter.properties", ignoreResourceNotFound = true)
 public class GamePathResolverImpl implements GamePathResolver {
     private static final Logger LOG = LogManager.getLogger(GamePathResolverImpl.class);
 
