@@ -1,5 +1,6 @@
 package com.wsunitstats.exporter;
 
+import com.wsunitstats.exporter.service.LocalizationService;
 import com.wsunitstats.exporter.model.FilePathWrapper;
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
@@ -25,6 +26,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.io.FileWriter;
+import java.io.Writer;
 import java.util.List;
 
 @SpringBootApplication
@@ -38,6 +41,9 @@ public class UnitStatsExporterApplication {
     public static class ExporterRunner implements CommandLineRunner {
         private static final Logger LOG = LogManager.getLogger(ExporterRunner.class);
 
+        private static final String GOAL_SEND = "send";
+        private static final String GOAL_PRINT = "file";
+
         @Autowired
         private FileReaderService fileReaderService;
         @Autowired
@@ -50,13 +56,23 @@ public class UnitStatsExporterApplication {
         private RestService restService;
         @Autowired
         private GamePathResolver gamePathResolver;
+        @Autowired
+        private LocalizationService localizationService;
 
-        @Value("${com.wsunitstats.service.host}")
+        @Value("${com.wsunitstats.exporter.host}")
         private String uploadHost;
-        @Value("${com.wsunitstats.service.upload.units}")
+        @Value("${com.wsunitstats.exporter.upload.units}")
         private String uploadUnitsUriPath;
-        @Value("${com.wsunitstats.service.upload.localization}")
+        @Value("${com.wsunitstats.exporter.upload.localization}")
         private String uploadLocalizationUriPath;
+        @Value("${com.wsunitstats.exporter.file.name}")
+        private String fileName;
+        @Value("${com.wsunitstats.exporter.goals}")
+        private List<String> goals;
+        @Value("${com.wsunitstats.exporter.file.pretty}")
+        private boolean filePretty;
+        @Value("${com.wsunitstats.exporter.file.locale}")
+        private String fileLocale;
 
         @Override
         public void run(String... args) throws Exception {
@@ -78,12 +94,29 @@ public class UnitStatsExporterApplication {
                     .map(locFile -> localizationModelResolver.resolveFromJsonModel(locFile))
                     .toList();
 
-            String unitsJson = exporterService.exportToJson(unitModels);
-            String locJson = exporterService.exportToJson(localizationModels);
-            ResponseEntity<String> gameplayResponse = restService.postJson(uploadHost + uploadUnitsUriPath, unitsJson);
-            ResponseEntity<String> locResponse = restService.postJson(uploadHost + uploadLocalizationUriPath, locJson);
-            LOG.info("Gameplay submitted: HTTP {} : {}", gameplayResponse.getStatusCode().value(), gameplayResponse.getBody());
-            LOG.info("Localization submitted: HTTP {} : {}", locResponse.getStatusCode().value(), locResponse.getBody());
+            if (goals.contains(GOAL_SEND)) {
+                String unitsJson = exporterService.exportToJson(unitModels);
+                String locJson = exporterService.exportToJson(localizationModels);
+                ResponseEntity<String> gameplayResponse = restService.postJson(uploadHost + uploadUnitsUriPath, unitsJson);
+                ResponseEntity<String> locResponse = restService.postJson(uploadHost + uploadLocalizationUriPath, locJson);
+                LOG.info("Gameplay submitted: HTTP {} : {}", gameplayResponse.getStatusCode().value(), gameplayResponse.getBody());
+                LOG.info("Localization submitted: HTTP {} : {}", locResponse.getStatusCode().value(), locResponse.getBody());
+            }
+            if (goals.contains(GOAL_PRINT)) {
+                try (Writer fileWriter = new FileWriter(fileName, false)) {
+                    String unitsJson = filePretty
+                            ? exporterService.exportToPrettyJson(unitModels)
+                            : exporterService.exportToJson(unitModels);
+                    LocalizationModel localizationModel = localizationModels.stream()
+                            .filter(locModel -> locModel.getLocale().equals(fileLocale))
+                            .findAny()
+                            .orElse(null);
+                    String unitsJsonLocalized = localizationService.localize(unitsJson, localizationModel);
+                    fileWriter.write(unitsJsonLocalized);
+                    fileWriter.flush();
+                    LOG.info("Json was written to file: {}", fileName);
+                }
+            }
         }
     }
 }

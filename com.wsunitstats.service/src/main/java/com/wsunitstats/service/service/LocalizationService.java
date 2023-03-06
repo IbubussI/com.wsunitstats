@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface LocalizationService {
     /**
-     * Replace all localization tags with values from given localization model
+     * Replace all localization tags with values
      *
      * @return localized input
      */

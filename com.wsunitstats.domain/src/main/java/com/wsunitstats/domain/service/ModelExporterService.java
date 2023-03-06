@@ -10,4 +10,12 @@ public interface ModelExporterService {
      * @return json string
      */
     <T> String exportToJson(T model) throws JsonProcessingException;
+
+    /**
+     * Exports given model to readable json representation
+     *
+     * @param model model to be exported to json
+     * @return readable json string
+     */
+    <T> String exportToPrettyJson(T model) throws JsonProcessingException;
 }
