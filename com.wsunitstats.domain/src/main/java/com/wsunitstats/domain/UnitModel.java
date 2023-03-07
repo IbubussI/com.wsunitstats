@@ -5,6 +5,7 @@ import com.wsunitstats.domain.submodel.ResourceModel;
 import com.wsunitstats.domain.submodel.ArmorModel;
 import com.wsunitstats.domain.submodel.GatherModel;
 import com.wsunitstats.domain.submodel.TransportingModel;
+import com.wsunitstats.domain.submodel.ability.AbilitiesModel;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -35,6 +36,8 @@ public class UnitModel extends GenericEntityModel {
     protected List<ResourceModel> initCost;
     @ElementCollection(fetch = FetchType.EAGER)
     protected List<ResourceModel> fullCost;
+
+    protected List<AbilitiesModel> abilities;
 
     public Double getSize() {
         return size;
@@ -90,6 +93,14 @@ public class UnitModel extends GenericEntityModel {
 
     public void setFullCost(List<ResourceModel> buildCost) {
         this.fullCost = buildCost;
+    }
+
+    public List<AbilitiesModel> getWork() {
+        return abilities;
+    }
+
+    public void setWork(List<AbilitiesModel> work) {
+        this.abilities = work;
     }
 
     @Override

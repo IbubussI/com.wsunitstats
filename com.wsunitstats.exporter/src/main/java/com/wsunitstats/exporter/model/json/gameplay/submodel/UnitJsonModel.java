@@ -1,12 +1,14 @@
 package com.wsunitstats.exporter.model.json.gameplay.submodel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
 
 import java.util.List;
 import java.util.Map;
 
 public class UnitJsonModel {
-    private List<Object> abilities;
+    private List<AbilityJsonModel> abilities;
     private Integer adjustToGround;
     private Map<String, Object> abilityOnAction;
     private Map<String, Object> agro;
@@ -47,7 +49,7 @@ public class UnitJsonModel {
     private Integer viewRange;
     private Integer weaponUseOnDeath;
     private List<Object> weapons;
-    private List<Object> work;
+    private List<WorkJsonModel> work;
 
     public Map<String, Object> getAbilityOnAction() {
         return abilityOnAction;
@@ -57,11 +59,11 @@ public class UnitJsonModel {
         this.abilityOnAction = abilityOnAction;
     }
 
-    public List<Object> getAbilities() {
+    public List<AbilityJsonModel> getAbilities() {
         return abilities;
     }
 
-    public void setAbilities(List<Object> abilities) {
+    public void setAbilities(List<AbilityJsonModel> abilities) {
         this.abilities = abilities;
     }
 
@@ -361,11 +363,11 @@ public class UnitJsonModel {
         this.weapons = weapons;
     }
 
-    public List<Object> getWork() {
+    public List<WorkJsonModel> getWork() {
         return work;
     }
 
-    public void setWork(List<Object> work) {
+    public void setWork(List<WorkJsonModel> work) {
         this.work = work;
     }
 
