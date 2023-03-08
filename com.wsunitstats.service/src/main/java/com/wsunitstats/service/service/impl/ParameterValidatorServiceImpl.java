@@ -16,7 +16,7 @@ public class ParameterValidatorServiceImpl implements ParameterValidatorService 
     private static final int PAGE_MIN = 0;
     private static final int PAGE_MAX = Integer.MAX_VALUE - 1;
     private static final int SIZE_MIN = 0;
-    private static final int SIZE_MAX = 200;
+    private static final int SIZE_MAX = 1000;
 
     @Autowired
     private LocalizationRepository localizationRepository;

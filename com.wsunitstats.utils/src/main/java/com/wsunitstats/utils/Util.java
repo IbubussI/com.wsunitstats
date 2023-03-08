@@ -1,4 +1,4 @@
-package com.wsunitstats.exporter.util;
+package com.wsunitstats.utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,5 +42,25 @@ public class Util {
             result.add(intList1.get(i) + intList2.get(i));
         }
         return result;
+    }
+
+    /**
+     * Check if two lists are equal. Default equals behavior except
+     * if one of lists is null and other is empty it returns true instead of false.
+     */
+    public static boolean equalsNullable(List<?> list1, List<?> list2) {
+        if (list1 != null) {
+            if (list2 != null) {
+                return Objects.equals(list1, list2);
+            } else {
+                return list1.isEmpty();
+            }
+        } else {
+            if (list2 != null) {
+                return list2.isEmpty();
+            } else {
+                return true;
+            }
+        }
     }
 }

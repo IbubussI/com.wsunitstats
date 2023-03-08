@@ -13,14 +13,14 @@ public interface LocalizationRepository extends CrudRepository<LocalizationModel
     LocalizationModel findByLocale(String locale);
 
     @Query(nativeQuery = true, value = """
-            SELECT entries_KEY FROM localizationmodel_entries
-            WHERE LocalizationModel_id = (SELECT id FROM localizationmodel WHERE locale = :locale)
+            SELECT entries_KEY FROM localization_entries
+            WHERE localization_id = (SELECT id FROM localization WHERE locale = :locale)
             AND entries IN (:values)
             """)
     List<String> findKeysByValues(@Param("locale") String locale, @Param("values") List<String> values);
 
     @Query(nativeQuery = true, value = """
-            SELECT locale FROM localizationmodel
+            SELECT locale FROM localization
             """)
     List<String> getLocaleNames();
 }

@@ -5,15 +5,23 @@ import com.wsunitstats.domain.submodel.ResourceModel;
 import com.wsunitstats.domain.submodel.ArmorModel;
 import com.wsunitstats.domain.submodel.GatherModel;
 import com.wsunitstats.domain.submodel.TransportingModel;
-import com.wsunitstats.domain.submodel.ability.AbilitiesModel;
+import com.wsunitstats.domain.submodel.ability.AbilityModel;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
 @Entity(name = "unit")
+@Getter
+@Setter
+@ToString
 public class UnitModel extends GenericEntityModel {
     //Unit traits
     protected Double size;
@@ -37,86 +45,6 @@ public class UnitModel extends GenericEntityModel {
     @ElementCollection(fetch = FetchType.EAGER)
     protected List<ResourceModel> fullCost;
 
-    protected List<AbilitiesModel> abilities;
-
-    public Double getSize() {
-        return size;
-    }
-
-    public void setSize(Double size) {
-        this.size = size;
-    }
-
-    public List<ArmorModel> getArmor() {
-        return armor;
-    }
-
-    public void setArmor(List<ArmorModel> armor) {
-        this.armor = armor;
-    }
-
-    public MovementModel getMovement() {
-        return movement;
-    }
-
-    public void setMovement(MovementModel speed) {
-        this.movement = speed;
-    }
-
-    public TransportingModel getTransporting() {
-        return transporting;
-    }
-
-    public void setTransporting(TransportingModel transportSize) {
-        this.transporting = transportSize;
-    }
-
-    public List<GatherModel> getGather() {
-        return gather;
-    }
-
-    public void setGather(List<GatherModel> gather) {
-        this.gather = gather;
-    }
-
-    public List<ResourceModel> getInitCost() {
-        return initCost;
-    }
-
-    public void setInitCost(List<ResourceModel> initCost) {
-        this.initCost = initCost;
-    }
-
-    public List<ResourceModel> getFullCost() {
-        return fullCost;
-    }
-
-    public void setFullCost(List<ResourceModel> buildCost) {
-        this.fullCost = buildCost;
-    }
-
-    public List<AbilitiesModel> getWork() {
-        return abilities;
-    }
-
-    public void setWork(List<AbilitiesModel> work) {
-        this.abilities = work;
-    }
-
-    @Override
-    public String toString() {
-        return "UnitModel{" +
-                "size=" + size +
-                ", armor=" + armor +
-                ", movement=" + movement +
-                ", transporting=" + transporting +
-                ", gather=" + gather +
-                ", initCost=" + initCost +
-                ", fullCost=" + fullCost +
-                ", gameId=" + gameId +
-                ", name='" + name + '\'' +
-                ", imageUrl='" + imageUrl + '\'' +
-                ", nation='" + nation + '\'' +
-                '}';
-    }
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    protected List<AbilityModel> abilities;
 }
