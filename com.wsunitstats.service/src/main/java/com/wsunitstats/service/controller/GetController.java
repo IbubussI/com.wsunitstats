@@ -2,7 +2,7 @@ package com.wsunitstats.service.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wsunitstats.domain.UnitModel;
-import com.wsunitstats.domain.service.ModelExporterService;
+import com.wsunitstats.utils.service.ModelExporterService;
 import com.wsunitstats.service.exception.InvalidParameterException;
 import com.wsunitstats.service.service.LocalizationService;
 import com.wsunitstats.service.service.ParameterValidatorService;
