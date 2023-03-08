@@ -3,15 +3,15 @@
        id bigint not null auto_increment,
         abilityType varchar(255),
         count_ integer,
-        duration integer,
+        duration float(53),
         entityId integer,
         entityName varchar(255),
-        lifeTime integer,
-        makeTime integer,
+        lifeTime float(53),
+        makeTime float(53),
         researchesAll bit,
         unitsAll bit,
         reserveLimit integer,
-        reserveTime integer,
+        reserveTime float(53),
         primary key (id)
     ) engine=InnoDB;
 
