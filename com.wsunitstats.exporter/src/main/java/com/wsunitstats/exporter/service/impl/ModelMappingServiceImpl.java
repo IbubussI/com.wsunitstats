@@ -159,12 +159,12 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         abilityModel.setEntityName(getAbilityEntityName(abilityType, entityId, createEnvSource, envSources, localization));
         abilityModel.setCount(getEnvCount(abilityData, abilityType, entityId, createEnvSource));
         abilityModel.setCost(getWorkCost(workSource, localization));
-        abilityModel.setLifeTime(abilityData.getLifeTime());
-        abilityModel.setMakeTime(workReserve != null ? workSource.getMaketime() : null);
-        abilityModel.setDuration(abilityData.getDuration());
+        abilityModel.setLifeTime(Util.intToDoubleShift(abilityData.getLifeTime()));
+        abilityModel.setMakeTime(workReserve != null ? Util.intToDoubleShift(workSource.getMaketime()) : null);
+        abilityModel.setDuration(Util.intToDoubleShift(abilityData.getDuration()));
         abilityModel.setRequirements(getRequirements(abilitySource.getRequirements(), localization));
         abilityModel.setReserveLimit(workReserve != null ? workReserve.getLimit() : null);
-        abilityModel.setReserveTime(workReserve != null ? workReserve.getTime() : null);
+        abilityModel.setReserveTime(workReserve != null ? Util.intToDoubleShift(workReserve.getTime()) : null);
         return abilityModel;
     }
 

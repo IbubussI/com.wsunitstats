@@ -23,16 +23,16 @@ public class AbilityModel extends PersistentObject {
     private String abilityType;
     @Column(name = "count_")
     private Integer count;
-    private Integer duration;
-    private Integer lifeTime;
+    private Double duration;
+    private Double lifeTime;
 
     @Embedded
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = RequirementsModel.class)
     private RequirementsModel requirements;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<ResourceModel> cost;
-    private Integer makeTime;
+    private Double makeTime;
 
     private Integer reserveLimit;
-    private Integer reserveTime;
+    private Double reserveTime;
 }
