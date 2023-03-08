@@ -48,7 +48,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     private static final Logger LOG = LoggerFactory.getLogger(ModelMappingServiceImpl.class);
 
     private static final Pattern LOCALIZATION_PATTERN = Pattern.compile("^localize\\(\"(<\\*[a-zA-Z0-9/]+>)\"\\)$", Pattern.MULTILINE);
-    private static final Pattern MAP_ENTRY_PATTERN = Pattern.compile("^\\[(\\d*)]=localize(\"(<\\*[a-zA-Z0-9/]+>)\")$", Pattern.MULTILINE);
+    private static final Pattern MAP_ENTRY_PATTERN = Pattern.compile("^\\[(\\d*)]=localize\\(\"(<\\*[a-zA-Z0-9/]+>)\"\\)$", Pattern.MULTILINE);
     private static final int PROBABILITY_MAX = 100;
     private static final int RESOURCES_COUNT = 3;
 
