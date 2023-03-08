@@ -1,11 +1,11 @@
-package com.wsunitstats.domain.service.impl;
+package com.wsunitstats.utils.service.impl;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wsunitstats.domain.service.ModelExporterService;
+import com.wsunitstats.utils.service.ModelExporterService;
 import org.springframework.stereotype.Service;
 
 @Service

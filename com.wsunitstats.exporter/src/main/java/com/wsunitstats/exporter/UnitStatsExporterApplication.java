@@ -10,7 +10,7 @@ import com.wsunitstats.exporter.model.localization.LocalizationFileModel;
 import com.wsunitstats.exporter.service.FileReaderService;
 import com.wsunitstats.exporter.service.GamePathResolver;
 import com.wsunitstats.exporter.service.LocalizationModelResolver;
-import com.wsunitstats.domain.service.ModelExporterService;
+import com.wsunitstats.utils.service.ModelExporterService;
 import com.wsunitstats.exporter.service.RestService;
 import com.wsunitstats.exporter.service.UnitModelResolverService;
 import com.wsunitstats.domain.LocalizationModel;
