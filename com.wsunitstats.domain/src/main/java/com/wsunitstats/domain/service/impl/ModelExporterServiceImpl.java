@@ -13,14 +13,14 @@ public class ModelExporterServiceImpl implements ModelExporterService {
     @Override
     public <T> String exportToJson(T model) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         return mapper.writeValueAsString(model);
     }
 
     @Override
     public <T> String exportToPrettyJson(T model) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         DefaultPrettyPrinter prettyWriter = new DefaultPrettyPrinter();
         DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("\t", DefaultIndenter.SYS_LF);
         prettyWriter.indentObjectsWith(indenter);

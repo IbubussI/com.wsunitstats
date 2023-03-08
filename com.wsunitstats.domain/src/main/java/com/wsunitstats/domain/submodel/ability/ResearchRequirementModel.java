@@ -1,5 +1,8 @@
 package com.wsunitstats.domain.submodel.ability;
 
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class ResearchRequirementModel {
     private int researchId;
     private String researchName;

@@ -80,7 +80,7 @@ public class GetController {
                                            @RequestParam(defaultValue = "id") String sort,
                                            @RequestParam(defaultValue = "asc") String sortDir,
                                            @RequestParam(defaultValue = "0") Integer page,
-                                           @RequestParam(defaultValue = "50") Integer size) {
+                                           @RequestParam(defaultValue = "1000") Integer size) {
         try {
             parameterValidatorService.validateStandard(locale, sort, sortDir, page, size);
             List<UnitModel> units = unitService.getUnitsAll(sort, sortDir, page, size);

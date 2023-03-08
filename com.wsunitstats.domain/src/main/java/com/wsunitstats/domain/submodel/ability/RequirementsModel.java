@@ -1,52 +1,43 @@
 package com.wsunitstats.domain.submodel.ability;
 
+import com.wsunitstats.utils.Util;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.FetchType;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.util.List;
+import java.util.Objects;
 
+@Embeddable
+@Getter
+@Setter
+@ToString
 public class RequirementsModel {
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<UnitRequirementModel> units;
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<ResearchRequirementModel> researches;
-    private boolean researchesAll;
-    private boolean unitsAll;
+    private Boolean researchesAll;
+    private Boolean unitsAll;
 
-    public List<UnitRequirementModel> getUnits() {
-        return units;
-    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RequirementsModel that = (RequirementsModel) o;
 
-    public void setUnits(List<UnitRequirementModel> units) {
-        this.units = units;
-    }
-
-    public List<ResearchRequirementModel> getResearches() {
-        return researches;
-    }
-
-    public void setResearches(List<ResearchRequirementModel> researches) {
-        this.researches = researches;
-    }
-
-    public boolean isResearchesAll() {
-        return researchesAll;
-    }
-
-    public void setResearchesAll(boolean researchesAll) {
-        this.researchesAll = researchesAll;
-    }
-
-    public boolean isUnitsAll() {
-        return unitsAll;
-    }
-
-    public void setUnitsAll(boolean unitsAll) {
-        this.unitsAll = unitsAll;
+        //Required because empty PersistBag returned by repository instead of null
+        return Util.equalsNullable(units, that.units)
+                && Util.equalsNullable(researches, that.researches)
+                && Objects.equals(researchesAll, that.researchesAll)
+                && Objects.equals(unitsAll, that.unitsAll);
     }
 
     @Override
-    public String toString() {
-        return "RequirementsModel{" +
-                "units=" + units +
-                ", researches=" + researches +
-                ", researchesAll=" + researchesAll +
-                ", unitsAll=" + unitsAll +
-                '}';
+    public int hashCode() {
+        return Objects.hash(units, researches, researchesAll, unitsAll);
     }
 }

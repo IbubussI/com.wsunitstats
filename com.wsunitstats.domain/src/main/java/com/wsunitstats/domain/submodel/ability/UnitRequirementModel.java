@@ -1,8 +1,11 @@
 package com.wsunitstats.domain.submodel.ability;
 
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class UnitRequirementModel {
     private int unitId;
-    private String unitName;
+    private String unitName; // To be removed
     private Integer min;
     private Integer max;
 

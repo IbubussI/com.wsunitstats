@@ -4,10 +4,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Map;
 
-@Entity
+@Entity(name = "localization")
+@Getter
+@Setter
+@ToString
 public class LocalizationModel extends PersistentObject {
     @Column(unique = true)
     private String locale;
@@ -24,29 +30,5 @@ public class LocalizationModel extends PersistentObject {
     public String getValue(String key) {
         String entry = entries.get(key);
         return entry != null ? entry : key;
-    }
-
-    public String getLocale() {
-        return locale;
-    }
-
-    public void setLocale(String locale) {
-        this.locale = locale;
-    }
-
-    public Map<String, String> getEntries() {
-        return entries;
-    }
-
-    public void setEntries(Map<String, String> entries) {
-        this.entries = entries;
-    }
-
-    @Override
-    public String toString() {
-        return "LocalizationModel{" +
-                "locale='" + locale + '\'' +
-                ", entries=" + entries +
-                '}';
     }
 }

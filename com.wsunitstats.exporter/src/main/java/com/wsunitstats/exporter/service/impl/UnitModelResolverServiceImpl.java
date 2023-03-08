@@ -1,30 +1,40 @@
 package com.wsunitstats.exporter.service.impl;
 
+import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.CreateEnvJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.EnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.ScenesJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.UnitJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
 import com.wsunitstats.exporter.model.json.main.MainFileModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.service.ModelMappingService;
 import com.wsunitstats.exporter.service.UnitModelResolverService;
-import com.wsunitstats.exporter.util.Util;
+import com.wsunitstats.utils.Util;
 import com.wsunitstats.exporter.model.LocalizationKeyModel;
 import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.domain.submodel.ArmorModel;
 import com.wsunitstats.domain.submodel.GatherModel;
 import com.wsunitstats.exporter.model.FileModelWrapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 @Service
 public class UnitModelResolverServiceImpl implements UnitModelResolverService {
+    private static final Logger LOG = LogManager.getLogger(UnitModelResolverServiceImpl.class);
     private static final String NIL = "nil";
 
     @Autowired
@@ -39,12 +49,18 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
 
         LocalizationKeyModel localizationModel = mappingService.map(sessionInitModel, startupModel);
 
-        Map<Integer, UnitJsonModel> unitJsonMap = gameplayModel.getScenes().getUnits();
+        ScenesJsonModel scenes = gameplayModel.getScenes();
+        Map<Integer, UnitJsonModel> unitMap = scenes.getUnits();
+        Map<Integer, EnvJsonModel> envMap = scenes.getEnvs();
+
         List<UnitModel> result = new ArrayList<>();
-        for (Map.Entry<Integer, UnitJsonModel> entry : unitJsonMap.entrySet()) {
+        for (Map.Entry<Integer, UnitJsonModel> entry : unitMap.entrySet()) {
             Integer id = entry.getKey();
             UnitJsonModel unitJsonModel = entry.getValue();
             BuildJsonModel buildJsonModel = findUnitBuildObject(gameplayModel, id);
+            List<AbilityJsonModel> abilities = unitJsonModel.getAbilities();
+            List<WorkJsonModel> works = unitJsonModel.getWork();
+            List<CreateEnvJsonModel> createEnvs = unitJsonModel.getCreateEnvs();
             UnitModel unit = new UnitModel();
 
             // Generic traits
@@ -63,6 +79,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             // Unit traits
             unit.setArmor(getArmorList(unitJsonModel.getArmor()));
             unit.setSize(Util.intToDoubleShift(unitJsonModel.getSize()));
+            unit.setAbilities(getAbilitiesList(abilities, works, createEnvs, envMap, localizationModel));
 
             // Movable traits
             unit.setMovement(mappingService.map(unitJsonModel.getMovement()));
@@ -84,7 +101,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
     }
 
     private List<GatherModel> getGatherList(List<GatherJsonModel> gatherList, LocalizationKeyModel localizationModel) {
-        return gatherList == null ? null :
+        return gatherList == null ? new ArrayList<>() :
                 gatherList.stream()
                         .map(gatherJsonModel -> mappingService.map(gatherJsonModel, localizationModel))
                         .toList();
@@ -95,8 +112,8 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
         List<ArmorJsonModel.Entry> entries = armorJsonModel.getData();
         int probabilitiesSum = Util.sum(armorJsonModel.getData().stream().map(ArmorJsonModel.Entry::getProbability).toList());
         return entries.stream()
-                        .map(entry -> mappingService.map(entry, probabilitiesSum))
-                        .toList();
+                .map(entry -> mappingService.map(entry, probabilitiesSum))
+                .toList();
     }
 
     private String getUnitNation(SessionInitFileModel sessionInitModel, LocalizationKeyModel localizationModel, int unitId) {
@@ -105,4 +122,20 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
         return nationId == null ? null : localizationModel.getNationNames().get(nationId);
     }
 
+    private List<AbilityModel> getAbilitiesList(List<AbilityJsonModel> abilitiesList,
+                                                List<WorkJsonModel> workList,
+                                                List<CreateEnvJsonModel> createEnvs,
+                                                Map<Integer, EnvJsonModel> envs,
+                                                LocalizationKeyModel localizationModel) {
+        return abilitiesList == null ? new ArrayList<>() :
+                IntStream.range(0, abilitiesList.size())
+                .mapToObj(i -> {
+                    WorkJsonModel workModel = workList.stream()
+                            .filter(work -> i == work.getAbility())
+                            .findFirst()
+                            .orElse(null);
+                    return mappingService.map(abilitiesList.get(i), workModel, createEnvs, envs, localizationModel);
+                })
+                .toList();
+    }
 }
