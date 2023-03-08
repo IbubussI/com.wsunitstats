@@ -1,7 +1,0 @@
-startup.lua = scripts/warselection/compiled/main
-init.lua = scripts/warselection/compiled/interfaces/session
-
-gameplay.json = project/warselection
-main.json = project/warselection
-
-en.loc = project/warselection/localization
