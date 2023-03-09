@@ -1,6 +1,6 @@
 package com.wsunitstats.exporter.model.json.gameplay.submodel;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -15,9 +15,8 @@ public class TurretJsonModel {
     private Integer defaultDirection;
     private Integer idleMode;
     private Map<String, Object> maxDeviation;
-    @JsonInclude
     private List<Integer> parentPoint;
     private Integer rotationSpeed;
     private Integer scale;
-    private List<Object> weapons;
+    private List<WeaponJsonModel> weapons;
 }

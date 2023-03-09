@@ -2,6 +2,7 @@ package com.wsunitstats.exporter.model.json.gameplay.submodel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
 import lombok.Getter;
 import lombok.Setter;
@@ -54,7 +55,7 @@ public class UnitJsonModel {
     private List<TurretJsonModel> turrets;
     private Integer viewRange;
     private Integer weaponUseOnDeath;
-    private List<Object> weapons;
+    private List<WeaponJsonModel> weapons;
     private List<WorkJsonModel> work;
 }
 
