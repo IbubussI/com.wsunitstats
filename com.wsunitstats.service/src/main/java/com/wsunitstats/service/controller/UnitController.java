@@ -2,6 +2,7 @@ package com.wsunitstats.service.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wsunitstats.domain.UnitModel;
+import com.wsunitstats.service.model.UnitOption;
 import com.wsunitstats.utils.service.ModelExporterService;
 import com.wsunitstats.service.exception.InvalidParameterException;
 import com.wsunitstats.service.service.LocalizationService;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,9 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/get")
-public class GetController {
-    private static final Logger LOG = LoggerFactory.getLogger(GetController.class);
+@RequestMapping(path = "/api")
+public class UnitController {
+    private static final Logger LOG = LoggerFactory.getLogger(UnitController.class);
 
     @Autowired
     private UnitService unitService;
@@ -49,7 +51,7 @@ public class GetController {
             LOG.error("Json export error", ex);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
-            LOG.error("Bad request parameter: {}", ex.getMessage());
+            LOG.error("Bad request: {}", ex.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -70,7 +72,7 @@ public class GetController {
             LOG.error("Json export error", ex);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
-            LOG.error("Bad request parameter: {}", ex.getMessage());
+            LOG.error("Bad request: {}", ex.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -89,7 +91,26 @@ public class GetController {
             LOG.error("Json export error", ex);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
-            LOG.error("Bad request parameter: {}", ex.getMessage());
+            LOG.error("Bad request: {}", ex.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @CrossOrigin
+    @GetMapping(path = "/units/options", params = "nameFilter")
+    public ResponseEntity<String> fetchUnitOptions(@RequestParam String nameFilter,
+                                                   @RequestParam(defaultValue = "en") String locale,
+                                                   @RequestParam(defaultValue = "30") Integer size) {
+        try {
+            parameterValidatorService.validateLocale(locale);
+            parameterValidatorService.validateSize(size);
+            List<UnitOption> unitOptions = unitService.getUnitOptionsByName(locale, nameFilter, size);
+            return getJson(unitOptions, true, locale);
+        } catch (JsonProcessingException ex) {
+            LOG.error("Json export error", ex);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (InvalidParameterException ex) {
+            LOG.error("Bad request: {}", ex.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
