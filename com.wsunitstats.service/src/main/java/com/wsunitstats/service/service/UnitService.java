@@ -1,6 +1,7 @@
 package com.wsunitstats.service.service;
 
 import com.wsunitstats.domain.UnitModel;
+import com.wsunitstats.service.model.UnitOption;
 
 import java.util.List;
 
@@ -12,6 +13,8 @@ public interface UnitService {
     List<UnitModel> getUnitsByNations(List<String> nations, String sort, String sortDir, int page, int size);
 
     List<UnitModel> getUnitsByGameIds(List<Integer> ids, String sort, String sortDir, int page, int size);
+
+    List<UnitOption> getUnitOptionsByName(String locale, String namePattern, int size);
 
     /**
      * Set given units to repository.

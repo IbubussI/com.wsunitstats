@@ -1,6 +1,7 @@
 package com.wsunitstats.service.service.impl;
 
 import com.wsunitstats.domain.UnitModel;
+import com.wsunitstats.service.model.UnitOption;
 import com.wsunitstats.service.repository.UnitRepository;
 import com.wsunitstats.service.service.UnitService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,9 @@ import java.util.List;
 
 @Service
 public class UnitServiceImpl implements UnitService {
+    private static final String OPTION_LIKE = "%%%s%%";
+    private static final String OPTION_NAME = "<*unitName%";
+
     @Autowired
     private UnitRepository unitRepository;
 
@@ -34,6 +38,11 @@ public class UnitServiceImpl implements UnitService {
     @Override
     public List<UnitModel> getUnitsByGameIds(List<Integer> ids, String sort, String sortDir, int page, int size) {
         return unitRepository.findByGameIdIn(ids, getPageable(sort, sortDir, page, size));
+    }
+
+    @Override
+    public List<UnitOption> getUnitOptionsByName(String locale, String namePattern, int size) {
+        return unitRepository.findByPatternContaining(locale, OPTION_NAME, String.format(OPTION_LIKE, namePattern), size);
     }
 
     @Override
