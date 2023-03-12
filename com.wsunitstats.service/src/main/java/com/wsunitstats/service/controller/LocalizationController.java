@@ -3,9 +3,8 @@ package com.wsunitstats.service.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wsunitstats.domain.LocalizationModel;
-import com.wsunitstats.service.exception.InvalidParameterException;
-import com.wsunitstats.service.model.UnitOption;
 import com.wsunitstats.service.service.LocalizationService;
+import com.wsunitstats.utils.service.ModelExporterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +33,8 @@ public class LocalizationController {
 
     @Autowired
     private LocalizationService localizationService;
+    @Autowired
+    private ModelExporterService exporterService;
 
     @PostMapping(path = "/upload/bulk", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateLocalizationBulk(@RequestBody String data) {
@@ -60,6 +61,19 @@ public class LocalizationController {
             }
         } catch (JsonProcessingException ex) {
             return new ResponseEntity<>(INVALID_JSON, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @CrossOrigin
+    @GetMapping(path = "/options")
+    public ResponseEntity<String> fetchLocaleOptions() {
+        try {
+            List<String> locales = localizationService.getLocaleNames();
+            String json = exporterService.exportToJson(locales);
+            return new ResponseEntity<>(json, HttpStatus.OK);
+        } catch (JsonProcessingException ex) {
+            LOG.error("Json export error", ex);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

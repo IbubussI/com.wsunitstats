@@ -46,6 +46,11 @@ public class UnitServiceImpl implements UnitService {
     }
 
     @Override
+    public List<String> getColumnNames() {
+        return unitRepository.getColumnNames();
+    }
+
+    @Override
     public void setUnits(List<UnitModel> unitModels) {
         unitRepository.deleteAll();
         unitRepository.saveAll(unitModels);

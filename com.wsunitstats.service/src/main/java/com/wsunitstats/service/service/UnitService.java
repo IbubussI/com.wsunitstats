@@ -16,6 +16,8 @@ public interface UnitService {
 
     List<UnitOption> getUnitOptionsByName(String locale, String namePattern, int size);
 
+    List<String> getColumnNames();
+
     /**
      * Set given units to repository.
      * Remove any previous data from units repository;

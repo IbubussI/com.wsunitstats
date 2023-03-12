@@ -1,9 +1,9 @@
 package com.wsunitstats.service.service.impl;
 
 import com.wsunitstats.service.exception.InvalidParameterException;
-import com.wsunitstats.service.repository.LocalizationRepository;
-import com.wsunitstats.service.repository.UnitRepository;
+import com.wsunitstats.service.service.LocalizationService;
 import com.wsunitstats.service.service.ParameterValidatorService;
+import com.wsunitstats.service.service.UnitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +19,9 @@ public class ParameterValidatorServiceImpl implements ParameterValidatorService 
     private static final int SIZE_MAX = 1000;
 
     @Autowired
-    private LocalizationRepository localizationRepository;
+    private LocalizationService localizationService;
     @Autowired
-    private UnitRepository unitRepository;
+    private UnitService unitService;
 
     @Override
     public void validateStandard(String locale, String sortBy, String sortDir, Integer page, Integer size) throws InvalidParameterException {
@@ -34,7 +34,7 @@ public class ParameterValidatorServiceImpl implements ParameterValidatorService 
 
     @Override
     public void validateLocale(String locale) throws InvalidParameterException {
-        List<String> locales = localizationRepository.getLocaleNames();
+        List<String> locales = localizationService.getLocaleNames();
         if (locale == null || locales.stream().noneMatch(locale::equalsIgnoreCase)) {
             throw new InvalidParameterException("Locale not found: " + locale);
         }
@@ -42,7 +42,7 @@ public class ParameterValidatorServiceImpl implements ParameterValidatorService 
 
     @Override
     public void validateSortBy(String sortBy) throws InvalidParameterException {
-        List<String> unitColumns = unitRepository.getColumnNames();
+        List<String> unitColumns = unitService.getColumnNames();
         if (sortBy == null || unitColumns.stream().noneMatch(sortBy::equalsIgnoreCase)) {
             throw new InvalidParameterException("Illegal sortBy parameter: " + sortBy);
         }

@@ -30,4 +30,6 @@ public interface LocalizationService {
      * Returns all keys that match given value at given locale
      */
     List<String> getKeysForValues(List<String> values, String locale);
+
+    List<String> getLocaleNames();
 }

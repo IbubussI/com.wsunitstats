@@ -49,4 +49,9 @@ public class LocalizationServiceImpl implements LocalizationService {
     public List<String> getKeysForValues(List<String> values, String locale) {
         return localizationRepository.findKeysByValues(locale, values);
     }
+
+    @Override
+    public List<String> getLocaleNames() {
+        return localizationRepository.getLocaleNames();
+    }
 }
