@@ -1,6 +1,7 @@
 package com.wsunitstats.service.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.service.model.UnitOption;
 import com.wsunitstats.utils.service.ModelExporterService;
@@ -12,19 +13,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/api")
+@RequestMapping(path = "/api/units")
 public class UnitController {
     private static final Logger LOG = LoggerFactory.getLogger(UnitController.class);
+
+    private static final String OK = "ok";
+    private static final String INVALID_JSON = "Given json doesn't match expected data model";
 
     @Autowired
     private UnitService unitService;
@@ -35,7 +43,7 @@ public class UnitController {
     @Autowired
     private ParameterValidatorService parameterValidatorService;
 
-    @GetMapping(path = "/units", params = "names")
+    @GetMapping(params = "names")
     public ResponseEntity<String> getUnitsByNames(@RequestParam List<String> names,
                                                   @RequestParam(defaultValue = "en") String locale,
                                                   @RequestParam(defaultValue = "id") String sort,
@@ -56,7 +64,7 @@ public class UnitController {
         }
     }
 
-    @GetMapping(path = "/units", params = "nations")
+    @GetMapping(params = "nations")
     public ResponseEntity<String> getUnitsByNations(@RequestParam List<String> nations,
                                                     @RequestParam(defaultValue = "en") String locale,
                                                     @RequestParam(defaultValue = "id") String sort,
@@ -77,7 +85,7 @@ public class UnitController {
         }
     }
 
-    @GetMapping(path = "/units")
+    @GetMapping
     public ResponseEntity<String> getUnits(@RequestParam(defaultValue = "en") String locale,
                                            @RequestParam(defaultValue = "id") String sort,
                                            @RequestParam(defaultValue = "asc") String sortDir,
@@ -97,7 +105,7 @@ public class UnitController {
     }
 
     @CrossOrigin
-    @GetMapping(path = "/units/options", params = "nameFilter")
+    @GetMapping(path = "/options", params = "nameFilter")
     public ResponseEntity<String> fetchUnitOptions(@RequestParam String nameFilter,
                                                    @RequestParam(defaultValue = "en") String locale,
                                                    @RequestParam(defaultValue = "30") Integer size) {
@@ -112,6 +120,19 @@ public class UnitController {
         } catch (InvalidParameterException ex) {
             LOG.error("Bad request: {}", ex.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(path = "/upload", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> updateGameplay(@RequestBody String data) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            List<UnitModel> units = Arrays.asList(mapper.readValue(data, UnitModel[].class));
+            unitService.setUnits(units);
+            return new ResponseEntity<>(OK, HttpStatus.OK);
+        } catch (JsonProcessingException ex) {
+            LOG.debug("Can't process requested json", ex);
+            return new ResponseEntity<>(INVALID_JSON, HttpStatus.BAD_REQUEST);
         }
     }
 
