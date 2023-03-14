@@ -1,6 +1,7 @@
 package com.wsunitstats.domain.submodel.weapon;
 
 import com.wsunitstats.domain.PersistentObject;
+import com.wsunitstats.domain.submodel.DistanceModel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;

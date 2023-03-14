@@ -2,10 +2,11 @@ package com.wsunitstats.exporter.service;
 
 import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
+import com.wsunitstats.domain.submodel.ability.OnActionModel;
 import com.wsunitstats.domain.submodel.ability.RequirementsModel;
 import com.wsunitstats.domain.submodel.weapon.BuffModel;
 import com.wsunitstats.domain.submodel.weapon.DamageModel;
-import com.wsunitstats.domain.submodel.weapon.DistanceModel;
+import com.wsunitstats.domain.submodel.DistanceModel;
 import com.wsunitstats.domain.submodel.weapon.ProjectileModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
@@ -17,6 +18,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.ProjectileJsonModel
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportingJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TurretJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityOnActionJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.RequirementsJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.BuffJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.DistanceJsonModel;
@@ -47,13 +49,17 @@ public interface ModelMappingService {
 
     LocalizationKeyModel map(SessionInitFileModel sessionInitSource, MainStartupFileModel mainStartupSource);
 
-    AbilityModel map(AbilityJsonModel abilitySource,
+    AbilityModel map(int abilityIndex,
+                     AbilityJsonModel abilitySource,
                      WorkJsonModel workSource,
                      List<CreateEnvJsonModel> createEnvSource,
-                     Map<Integer, EnvJsonModel> envSources,
+                     AbilityOnActionJsonModel onActionSource,
+                     Map<Integer, EnvJsonModel> envSource,
                      LocalizationKeyModel localization);
 
     RequirementsModel map(RequirementsJsonModel source, LocalizationKeyModel localization);
+
+    OnActionModel map(AbilityOnActionJsonModel onActionSource);
 
     WeaponModel map(WeaponJsonModel weaponSource, Map<Integer, ProjectileJsonModel> projectileSource, LocalizationKeyModel localization);
 

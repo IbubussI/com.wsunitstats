@@ -2,6 +2,7 @@ package com.wsunitstats.exporter.model.json.gameplay.submodel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityOnActionJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
 import lombok.Getter;
@@ -17,7 +18,7 @@ import java.util.Map;
 public class UnitJsonModel {
     private List<AbilityJsonModel> abilities;
     private Integer adjustToGround;
-    private Map<String, Object> abilityOnAction;
+    private AbilityOnActionJsonModel abilityOnAction;
     private Map<String, Object> agro;
     private List<AirfieldJsonModel> airfields;
     private Map<String, Object> airplane;

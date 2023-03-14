@@ -35,4 +35,6 @@ public class AbilityModel extends PersistentObject {
 
     private Integer reserveLimit;
     private Double reserveTime;
+    @Embedded
+    private OnActionModel onAction;
 }

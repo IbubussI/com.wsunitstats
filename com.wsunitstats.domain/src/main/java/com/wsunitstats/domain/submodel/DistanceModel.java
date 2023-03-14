@@ -1,4 +1,4 @@
-package com.wsunitstats.domain.submodel.weapon;
+package com.wsunitstats.domain.submodel;
 
 import jakarta.persistence.Embeddable;
 import lombok.Getter;

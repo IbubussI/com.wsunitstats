@@ -14,6 +14,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.ScenesJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TurretJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.UnitJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityOnActionJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
 import com.wsunitstats.exporter.model.json.main.MainFileModel;
@@ -66,6 +67,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             List<CreateEnvJsonModel> createEnvs = unitJsonModel.getCreateEnvs();
             List<WeaponJsonModel> weapons = unitJsonModel.getWeapons();
             List<TurretJsonModel> turrets = unitJsonModel.getTurrets();
+            AbilityOnActionJsonModel onAction = unitJsonModel.getAbilityOnAction();
             UnitModel unit = new UnitModel();
 
             // Generic traits
@@ -84,7 +86,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             // Unit traits
             unit.setArmor(getArmorList(unitJsonModel.getArmor()));
             unit.setSize(Util.intToDoubleShift(unitJsonModel.getSize()));
-            unit.setAbilities(getAbilitiesList(abilities, works, createEnvs, envMap, localizationModel));
+            unit.setAbilities(getAbilitiesList(abilities, works, createEnvs, onAction, envMap, localizationModel));
             unit.setWeapons(getWeaponsList(weapons, projectileMap, localizationModel));
             unit.setTurrets(getTurretList(turrets, projectileMap, localizationModel));
 
@@ -132,6 +134,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
     private List<AbilityModel> getAbilitiesList(List<AbilityJsonModel> abilitiesList,
                                                 List<WorkJsonModel> workList,
                                                 List<CreateEnvJsonModel> createEnvs,
+                                                AbilityOnActionJsonModel onAction,
                                                 Map<Integer, EnvJsonModel> envs,
                                                 LocalizationKeyModel localizationModel) {
         return abilitiesList == null ? new ArrayList<>() :
@@ -141,7 +144,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
                                     .filter(work -> i == work.getAbility())
                                     .findFirst()
                                     .orElse(null);
-                            return mappingService.map(abilitiesList.get(i), workModel, createEnvs, envs, localizationModel);
+                            return mappingService.map(i, abilitiesList.get(i), workModel, createEnvs, onAction, envs, localizationModel);
                         })
                         .toList();
     }

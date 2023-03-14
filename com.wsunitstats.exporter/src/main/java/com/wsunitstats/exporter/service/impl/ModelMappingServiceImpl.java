@@ -2,12 +2,13 @@ package com.wsunitstats.exporter.service.impl;
 
 import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
+import com.wsunitstats.domain.submodel.ability.OnActionModel;
 import com.wsunitstats.domain.submodel.ability.RequirementsModel;
 import com.wsunitstats.domain.submodel.ability.ResearchRequirementModel;
 import com.wsunitstats.domain.submodel.ability.UnitRequirementModel;
 import com.wsunitstats.domain.submodel.weapon.BuffModel;
 import com.wsunitstats.domain.submodel.weapon.DamageModel;
-import com.wsunitstats.domain.submodel.weapon.DistanceModel;
+import com.wsunitstats.domain.submodel.DistanceModel;
 import com.wsunitstats.domain.submodel.weapon.ProjectileModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
@@ -20,6 +21,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportingJsonMod
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TurretJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityDataJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityOnActionJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.RequirementsJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.UnitRequirementJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.BuffJsonModel;
@@ -159,10 +161,12 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public AbilityModel map(AbilityJsonModel abilitySource,
+    public AbilityModel map(int abilityIndex,
+                            AbilityJsonModel abilitySource,
                             WorkJsonModel workSource,
                             List<CreateEnvJsonModel> createEnvSource,
-                            Map<Integer, EnvJsonModel> envSources,
+                            AbilityOnActionJsonModel onActionSource,
+                            Map<Integer, EnvJsonModel> envSource,
                             LocalizationKeyModel localization) {
         if (abilitySource == null) {
             return null;
@@ -174,7 +178,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         int entityId = getAbilityEntityId(abilityData);
         abilityModel.setEntityId(entityId);
         abilityModel.setAbilityType(abilityType.getName());
-        abilityModel.setEntityName(getAbilityEntityName(abilityType, entityId, createEnvSource, envSources, localization));
+        abilityModel.setEntityName(getAbilityEntityName(abilityType, entityId, createEnvSource, envSource, localization));
         abilityModel.setCount(getEnvCount(abilityData, abilityType, entityId, createEnvSource));
         abilityModel.setCost(getWorkCost(workSource, localization));
         abilityModel.setLifeTime(Util.intToDoubleShift(abilityData.getLifeTime()));
@@ -183,6 +187,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         abilityModel.setRequirements(map(abilitySource.getRequirements(), localization));
         abilityModel.setReserveLimit(workReserve != null ? workReserve.getLimit() : null);
         abilityModel.setReserveTime(workReserve != null ? Util.intToDoubleShift(workReserve.getTime()) : null);
+        abilityModel.setOnAction(onActionSource == null || abilityIndex != onActionSource.getAbility() ? null : map(onActionSource));
         return abilityModel;
     }
 
@@ -220,6 +225,16 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         requirementsModel.setResearchesAll(requirementsSource.getResearchesAll());
         requirementsModel.setUnitsAll(requirementsSource.getUnitsAll());
         return requirementsModel;
+    }
+
+    @Override
+    public OnActionModel map(AbilityOnActionJsonModel onActionSource) {
+        OnActionModel onActionModel = new OnActionModel();
+        onActionModel.setDistance(map(onActionSource.getDistance()));
+        onActionModel.setEnabled(onActionSource.getEnabled());
+        onActionModel.setOnAgro(onActionSource.getOnAgro());
+        onActionModel.setRechargeTime(Util.intToDoubleShift(onActionSource.getRestore()));
+        return onActionModel;
     }
 
     @Override
