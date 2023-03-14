@@ -26,8 +26,6 @@ public class WeaponModel extends PersistentObject {
     private ProjectileModel projectile;
     private Double rechargePeriod;
     private Double spread;
-    // For flamethrowers damage area calculated by radius and angle
-    private Double angle;
     private String areaType;
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private BuffModel buff;

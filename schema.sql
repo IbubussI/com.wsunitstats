@@ -133,7 +133,6 @@
 
     create table weapon (
        id bigint not null auto_increment,
-        angle float(53),
         areaType varchar(255),
         attackTime integer,
         attacksPerAction integer not null,

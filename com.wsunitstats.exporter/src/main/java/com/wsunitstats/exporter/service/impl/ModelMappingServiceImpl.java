@@ -238,7 +238,6 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         weaponModel.setAttackTime(getSumTime(weaponSource.getDirectionAttacks().getDefaultValue().getPoints()));
 
         DamageJsonModel damageSource = weaponSource.getDamage();
-        weaponModel.setAngle(Util.intToDoubleShift(damageSource.getAngle()));
         Integer area = damageSource.getArea();
         weaponModel.setAreaType(area == null ? null : Constants.DamageAreaType.get(damageSource.getArea()).getName());
         weaponModel.setBuff(map(damageSource.getBuff(), localization));
