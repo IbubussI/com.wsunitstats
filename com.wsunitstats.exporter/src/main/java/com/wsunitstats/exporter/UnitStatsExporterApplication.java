@@ -95,16 +95,6 @@ public class UnitStatsExporterApplication {
             List<LocalizationModel> localizationModels = localizationFileModels.stream()
                     .map(locFile -> localizationModelResolver.resolveFromJsonModel(locFile))
                     .toList();
-            // send to server
-            if (goals.contains(GOAL_SEND)) {
-                String unitsJson = exporterService.exportToJson(unitModels);
-                String locJson = exporterService.exportToJson(localizationModels);
-                ResponseEntity<String> gameplayResponse = restService.postJson(uploadHost + uploadUnitsUriPath, unitsJson);
-                ResponseEntity<String> locResponse = restService.postJson(uploadHost + uploadLocalizationUriPath, locJson);
-                LOG.info("Gameplay submitted: HTTP {} : {}", gameplayResponse.getStatusCode().value(), gameplayResponse.getBody());
-                LOG.info("Localization submitted: HTTP {} : {}", locResponse.getStatusCode().value(), locResponse.getBody());
-            }
-
             // write to file
             if (goals.contains(GOAL_PRINT)) {
                 try (Writer fileWriter = new FileWriter(fileName, false)) {
@@ -122,6 +112,16 @@ public class UnitStatsExporterApplication {
                     fileWriter.flush();
                     LOG.info("Json was written to file: {}", fileName);
                 }
+            }
+
+            // send to server
+            if (goals.contains(GOAL_SEND)) {
+                String unitsJson = exporterService.exportToJson(unitModels);
+                String locJson = exporterService.exportToJson(localizationModels);
+                ResponseEntity<String> gameplayResponse = restService.postJson(uploadHost + uploadUnitsUriPath, unitsJson);
+                ResponseEntity<String> locResponse = restService.postJson(uploadHost + uploadLocalizationUriPath, locJson);
+                LOG.info("Gameplay submitted: HTTP {} : {}", gameplayResponse.getStatusCode().value(), gameplayResponse.getBody());
+                LOG.info("Localization submitted: HTTP {} : {}", locResponse.getStatusCode().value(), locResponse.getBody());
             }
         }
     }

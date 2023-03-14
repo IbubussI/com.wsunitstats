@@ -18,7 +18,7 @@ public class DamageJsonModel {
     private List<List<Integer>> damages;
     private Integer damagesCount;
     private Integer envDamage;
-    private Integer envsAffected;
+    private Long envsAffected;
     private Boolean fallingDamage;
     private Integer id;
     @JsonProperty("radius_")

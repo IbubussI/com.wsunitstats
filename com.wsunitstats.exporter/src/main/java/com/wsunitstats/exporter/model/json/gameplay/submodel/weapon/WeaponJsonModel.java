@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Map;
 
 @Getter
 @Setter
@@ -16,7 +15,7 @@ public class WeaponJsonModel {
     private Integer attackscount;
     private Integer charges;
     private DamageJsonModel damage;
-    private Map<String, Object> directionAttacks;
+    private DirectionAttacksJsonModel directionAttacks;
     private DistanceJsonModel distance;
     private Boolean enabled;
     private Integer finishHeight;

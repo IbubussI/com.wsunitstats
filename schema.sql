@@ -35,6 +35,19 @@
         unitName varchar(255)
     ) engine=InnoDB;
 
+    create table buff (
+       id bigint not null auto_increment,
+        buffId integer not null,
+        name varchar(255),
+        period float(53),
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table buff_affectedUnits (
+       buff_id bigint not null,
+        affectedUnits varchar(255)
+    ) engine=InnoDB;
+
     create table localization (
        id bigint not null auto_increment,
         locale varchar(255),
@@ -97,11 +110,55 @@
         value_ integer
     ) engine=InnoDB;
 
+    create table unit_weapons (
+       unit_id bigint not null,
+        weapons_id bigint not null
+    ) engine=InnoDB;
+
+    create table weapon (
+       id bigint not null auto_increment,
+        angle float(53),
+        areaType varchar(255),
+        attackTime integer,
+        attacksPerAction integer not null,
+        attacksPerAttack integer not null,
+        autoAttack bit,
+        charges integer,
+        damageFriendly bit,
+        damagesCount integer not null,
+        max float(53),
+        min float(53),
+        stop float(53),
+        enabled bit,
+        envDamage float(53),
+        projectileId integer,
+        projectileSpeed float(53),
+        projectileTimeToStartCollision float(53),
+        rechargePeriod float(53),
+        spread float(53),
+        buff_id bigint,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table weapon_damages (
+       weapon_id bigint not null,
+        damageType varchar(255),
+        damageValue float(53)
+    ) engine=InnoDB;
+
+    create table weapon_envsAffected (
+       weapon_id bigint not null,
+        envsAffected varchar(255)
+    ) engine=InnoDB;
+
     alter table localization 
        add constraint UK_j6j9h30eydn1rkg0etaayj2is unique (locale);
 
     alter table unit_abilities 
        add constraint UK_2dnabq70goecdxalenkbln4jn unique (abilities_id);
+
+    alter table unit_weapons 
+       add constraint UK_3b39kb4h68srfcl8gfjtp2tcc unique (weapons_id);
 
     alter table ability_cost 
        add constraint FKb3ofn2mr8w0b0k6nu2772nx2h 
@@ -117,6 +174,11 @@
        add constraint FKkhvs4vetcidxnnavyrjhw9ewg 
        foreign key (ability_id) 
        references ability (id);
+
+    alter table buff_affectedUnits 
+       add constraint FKlt2pjb4aykbahesuxpedq3m4w 
+       foreign key (buff_id) 
+       references buff (id);
 
     alter table localization_entries 
        add constraint FKr54j8wvwxlrjqi4dqbej7no3g 
@@ -152,3 +214,28 @@
        add constraint FKq197ldvju58yrb8ey0w6aqqmh 
        foreign key (unit_id) 
        references unit (id);
+
+    alter table unit_weapons 
+       add constraint FK3bc4v6flq9t0eein702x13uct 
+       foreign key (weapons_id) 
+       references weapon (id);
+
+    alter table unit_weapons 
+       add constraint FKi5u8i79qq0pc2tbd8f41fl9or 
+       foreign key (unit_id) 
+       references unit (id);
+
+    alter table weapon 
+       add constraint FK6yy30tce8ofl4tynr0sb2t5es 
+       foreign key (buff_id) 
+       references buff (id);
+
+    alter table weapon_damages 
+       add constraint FK1b5roq2uelxn8iyepayi4cpk2 
+       foreign key (weapon_id) 
+       references weapon (id);
+
+    alter table weapon_envsAffected 
+       add constraint FK3agcghm3ile11w5pq7iygvwnf 
+       foreign key (weapon_id) 
+       references weapon (id);
