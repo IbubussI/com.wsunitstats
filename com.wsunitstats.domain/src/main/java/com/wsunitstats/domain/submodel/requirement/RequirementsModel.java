@@ -1,4 +1,4 @@
-package com.wsunitstats.domain.submodel.ability;
+package com.wsunitstats.domain.submodel.requirement;
 
 import com.wsunitstats.utils.Util;
 import jakarta.persistence.ElementCollection;

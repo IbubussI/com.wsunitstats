@@ -3,6 +3,7 @@ package com.wsunitstats.domain.submodel.ability;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.wsunitstats.domain.PersistentObject;
 import com.wsunitstats.domain.submodel.ResourceModel;
+import com.wsunitstats.domain.submodel.requirement.RequirementsModel;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;

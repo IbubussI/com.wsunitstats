@@ -1,5 +1,6 @@
 package com.wsunitstats.exporter.model.json.gameplay.submodel.ability;
 
+import com.wsunitstats.exporter.model.json.gameplay.submodel.requirement.RequirementsJsonModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
