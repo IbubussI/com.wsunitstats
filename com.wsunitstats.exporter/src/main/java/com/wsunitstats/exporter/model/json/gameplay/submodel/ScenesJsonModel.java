@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.wsunitstats.exporter.service.serializer.EnvJsonModelDeserializer;
 import com.wsunitstats.exporter.service.serializer.IndexedArrayDataModelSerializer;
+import com.wsunitstats.exporter.service.serializer.ProjectileJsonModelDeserializer;
 import com.wsunitstats.exporter.service.serializer.UnitJsonModelDeserializer;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +22,9 @@ public class ScenesJsonModel {
     private Map<Integer, EnvJsonModel> envs;
     private List<Object> layers;
     private Integer pathFindTime;
-    private List<Object> projectiles;
+    @JsonDeserialize(using = ProjectileJsonModelDeserializer.class)
+    @JsonSerialize(using = IndexedArrayDataModelSerializer.class)
+    private Map<Integer, ProjectileJsonModel> projectiles;
     @JsonDeserialize(using = UnitJsonModelDeserializer.class)
     @JsonSerialize(using = IndexedArrayDataModelSerializer.class)
     private Map<Integer, UnitJsonModel> units;

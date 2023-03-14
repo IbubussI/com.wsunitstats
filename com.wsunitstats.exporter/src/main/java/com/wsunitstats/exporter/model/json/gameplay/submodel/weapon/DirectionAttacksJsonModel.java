@@ -4,11 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
-public class BuffJsonModel {
-    private Integer period;
-    private Integer research;
-    private Long targetsTags;
+public class DirectionAttacksJsonModel {
+    private List<Object> container;
+    private DirectionAttacksDefaultValueJsonModel defaultValue;
 }

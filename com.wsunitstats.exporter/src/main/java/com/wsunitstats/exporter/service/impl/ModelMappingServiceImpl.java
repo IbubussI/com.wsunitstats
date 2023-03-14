@@ -4,21 +4,33 @@ import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.ability.RequirementsModel;
 import com.wsunitstats.domain.submodel.ability.ResearchRequirementModel;
 import com.wsunitstats.domain.submodel.ability.UnitRequirementModel;
+import com.wsunitstats.domain.submodel.weapon.BuffModel;
+import com.wsunitstats.domain.submodel.weapon.DamageModel;
+import com.wsunitstats.domain.submodel.weapon.DistanceModel;
+import com.wsunitstats.domain.submodel.weapon.ProjectileModel;
+import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.CreateEnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.EnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.MovementJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.ProjectileJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportingJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityDataJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.RequirementsJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.UnitRequirementJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.BuffJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.DamageJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.DirectionAttacksPointJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.DistanceJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkReserveJsonModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.service.ModelMappingService;
+import com.wsunitstats.utils.Constants;
 import com.wsunitstats.utils.Util;
 import com.wsunitstats.exporter.model.LocalizationKeyModel;
 import com.wsunitstats.domain.submodel.ArmorModel;
@@ -37,10 +49,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.IntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.wsunitstats.utils.Constants.AbilityType.CREATE_ENV;
+import static com.wsunitstats.utils.Constants.GENERIC_UNIT_TAG;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 @Service
@@ -83,13 +96,13 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         gatherModel.setPerSecond(Util.intToDoubleTick(source.getPertick()));
         gatherModel.setFindTargetDistance(Util.intToDoubleShift(source.getFindtargetdistance()));
         gatherModel.setPutDistance(Util.intToDoubleShift(source.getPutdistance()));
-        gatherModel.setEnv(localization.getEnvSearchTagNames().get(getBitPosition(source.getEnvtags())));
+        gatherModel.setEnv(localization.getEnvSearchTagNames().get(Util.getLastPositiveBitIndex(source.getEnvtags())));
         gatherModel.setResource(localization.getResourceNames().get(source.getResource()));
         return gatherModel;
     }
 
     @Override
-    public List<ResourceModel> map(List<Integer> source, LocalizationKeyModel localization) {
+    public List<ResourceModel> mapResources(List<Integer> source, LocalizationKeyModel localization) {
         List<ResourceModel> resources = new ArrayList<>();
         if (source != null && !source.isEmpty()) {
             for (int i = 0; i < RESOURCES_COUNT; ++i) {
@@ -149,6 +162,9 @@ public class ModelMappingServiceImpl implements ModelMappingService {
                             List<CreateEnvJsonModel> createEnvSource,
                             Map<Integer, EnvJsonModel> envSources,
                             LocalizationKeyModel localization) {
+        if (abilitySource == null) {
+            return null;
+        }
         AbilityModel abilityModel = new AbilityModel();
         AbilityType abilityType = getAbilityType(abilitySource);
         AbilityDataJsonModel abilityData = abilitySource.getData();
@@ -162,10 +178,144 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         abilityModel.setLifeTime(Util.intToDoubleShift(abilityData.getLifeTime()));
         abilityModel.setMakeTime(workReserve != null ? Util.intToDoubleShift(workSource.getMaketime()) : null);
         abilityModel.setDuration(Util.intToDoubleShift(abilityData.getDuration()));
-        abilityModel.setRequirements(getRequirements(abilitySource.getRequirements(), localization));
+        abilityModel.setRequirements(map(abilitySource.getRequirements(), localization));
         abilityModel.setReserveLimit(workReserve != null ? workReserve.getLimit() : null);
         abilityModel.setReserveTime(workReserve != null ? Util.intToDoubleShift(workReserve.getTime()) : null);
         return abilityModel;
+    }
+
+    @Override
+    public RequirementsModel map(RequirementsJsonModel requirementsSource, LocalizationKeyModel localization) {
+        if (requirementsSource == null) {
+            return null;
+        }
+        RequirementsModel requirementsModel = new RequirementsModel();
+        List<Integer> researches = requirementsSource.getResearches();
+        List<ResearchRequirementModel> researchRequirementModels = emptyIfNull(researches)
+                .stream()
+                .map(researchId -> {
+                    ResearchRequirementModel result = new ResearchRequirementModel();
+                    result.setResearchId(researchId);
+                    result.setResearchName(localization.getResearchNames().get(researchId));
+                    return result;
+                })
+                .toList();
+        List<UnitRequirementJsonModel> units = requirementsSource.getUnits();
+        List<UnitRequirementModel> unitRequirementModels = emptyIfNull(units)
+                .stream()
+                .map(unitJson -> {
+                    UnitRequirementModel result = new UnitRequirementModel();
+                    int id = unitJson.getType();
+                    result.setMax(unitJson.getMax());
+                    result.setMin(unitJson.getMin());
+                    result.setUnitId(id);
+                    result.setUnitName(localization.getUnitNames().get(id));
+                    return result;
+                })
+                .toList();
+        requirementsModel.setResearches(researchRequirementModels);
+        requirementsModel.setUnits(unitRequirementModels);
+        requirementsModel.setResearchesAll(requirementsSource.getResearchesAll());
+        requirementsModel.setUnitsAll(requirementsSource.getUnitsAll());
+        return requirementsModel;
+    }
+
+    @Override
+    public WeaponModel map(WeaponJsonModel weaponSource, Map<Integer, ProjectileJsonModel> projectileSource, LocalizationKeyModel localization) {
+        if (weaponSource == null) {
+            return null;
+        }
+        WeaponModel weaponModel = new WeaponModel();
+        weaponModel.setAutoAttack(weaponSource.getAutoAttack());
+        weaponModel.setDistance(map(weaponSource.getDistance()));
+        weaponModel.setEnabled(weaponSource.getEnabled());
+        Integer projectileId = weaponSource.getProjectile();
+        weaponModel.setProjectile(projectileId == null ? null : map(projectileId, projectileSource.get(projectileId)));
+        weaponModel.setRechargePeriod(Util.intToDoubleShift(weaponSource.getRechargePeriod()));
+        weaponModel.setSpread(Util.intToPercent(weaponSource.getSpread()));
+        weaponModel.setAttackTime(getSumTime(weaponSource.getDirectionAttacks().getDefaultValue().getPoints()));
+
+        DamageJsonModel damageSource = weaponSource.getDamage();
+        weaponModel.setAngle(Util.intToDoubleShift(damageSource.getAngle()));
+        Integer area = damageSource.getArea();
+        weaponModel.setAreaType(area == null ? null : Constants.DamageAreaType.get(damageSource.getArea()).getName());
+        weaponModel.setBuff(map(damageSource.getBuff(), localization));
+        weaponModel.setDamageFriendly(damageSource.getDamageFriendly());
+        weaponModel.setDamages(mapDamages(damageSource.getDamages(), localization));
+        weaponModel.setDamagesCount(getMultipliable(damageSource.getDamagesCount()));
+        weaponModel.setEnvDamage(Util.intToDoubleShift(damageSource.getEnvDamage()));
+        weaponModel.setEnvsAffected(getTags(damageSource.getEnvsAffected(), i -> localization.getEnvSearchTagNames().get(i)));
+
+        weaponModel.setDamagesCount(getMultipliable(damageSource.getDamagesCount()));
+        weaponModel.setCharges(weaponSource.getCharges());
+        weaponModel.setAttacksPerAttack(getMultipliable(weaponSource.getAttackscount()));
+        // size should be always > 1
+        weaponModel.setAttacksPerAction(weaponSource.getDirectionAttacks().getDefaultValue().getPoints().size());
+        return weaponModel;
+    }
+
+    @Override
+    public List<DamageModel> mapDamages(List<List<Integer>> damagesSource, LocalizationKeyModel localization) {
+        List<DamageModel> damages = new ArrayList<>();
+        for (List<Integer> damageList : damagesSource) {
+            if (damageList.size() != 2) {
+                continue;
+            }
+            int unitTag = damageList.get(0);
+            int value = damageList.get(1);
+
+            DamageModel damage = new DamageModel();
+            damage.setType(unitTag == 0 ? Constants.BASIC_DAMAGE_TYPE : localization.getUnitTagNames().get(unitTag - 1));
+            damage.setValue(Util.intToDoubleShift(value));
+            damages.add(damage);
+        }
+        return damages;
+    }
+
+    @Override
+    public DistanceModel map(DistanceJsonModel distanceSource) {
+        if (distanceSource == null) {
+            return null;
+        }
+        DistanceModel distanceModel = new DistanceModel();
+        distanceModel.setMax(Util.intToDoubleShift(distanceSource.getMax()));
+        distanceModel.setMin(Util.intToDoubleShift(distanceSource.getMin()));
+        distanceModel.setStop(Util.intToDoubleShift(distanceSource.getStop()));
+        return distanceModel;
+    }
+
+    @Override
+    public ProjectileModel map(int id, ProjectileJsonModel projectileSource) {
+        if (projectileSource == null) {
+            return null;
+        }
+        ProjectileModel projectileModel = new ProjectileModel();
+        projectileModel.setGameId(id);
+        projectileModel.setSpeed(Util.intToDoubleSpeed(projectileSource.getSpeed()));
+        projectileModel.setTimeToStartCollision(Util.intToDoubleShift(projectileSource.getCollisionTimeToStart()));
+        return projectileModel;
+    }
+
+    @Override
+    public BuffModel map(BuffJsonModel buffSource, LocalizationKeyModel localization) {
+        if (buffSource == null) {
+            return null;
+        }
+        BuffModel buffModel = new BuffModel();
+        buffModel.setBuffId(buffSource.getResearch());
+        buffModel.setName(localization.getResearchNames().get(buffSource.getResearch()));
+        buffModel.setPeriod(Util.intToDoubleShift(buffSource.getPeriod()));
+        List<String> tags = getTags(buffSource.getTargetsTags(), i -> {
+            // Unit tags shifted by 1 for some reason
+            // i.e. tag with index 1 has id 2 in game file
+            // all units contain tag with value 0
+            if (i == 0) {
+                return GENERIC_UNIT_TAG;
+            }
+            return localization.getUnitTagNames().get(i - 1);
+        });
+        buffModel.setAffectedUnits(tags);
+        return buffModel;
     }
 
     /**
@@ -218,15 +368,6 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         return result;
     }
 
-    private int getBitPosition(int i) {
-        int pos = 0;
-        while (i != 1) {
-            i = i >> 1;
-            pos++;
-        }
-        return pos;
-    }
-
     private int getAbilityEntityId(AbilityDataJsonModel abilityData) {
         Integer id = abilityData.getId();
         Integer research = abilityData.getResearch();
@@ -272,7 +413,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     private Integer getEnvCount(AbilityDataJsonModel abilityData, AbilityType abilityType, int entityId, List<CreateEnvJsonModel> createEnvSource) {
         Integer count = abilityData.getCount();
         //case for wheat
-        if (count == null && abilityType == CREATE_ENV) {
+        if (count == null && abilityType == AbilityType.CREATE_ENV) {
             count = createEnvSource.get(entityId).getCount();
         }
         return count;
@@ -292,48 +433,34 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         List<Integer> costStart = workSource.getCostStart();
 
         if (costOrder != null && costProcess == null && costStart == null) {
-            return map(costOrder, localization);
+            return mapResources(costOrder, localization);
         } else if (costOrder == null && costProcess != null && costStart == null) {
-            return map(costProcess, localization);
+            return mapResources(costProcess, localization);
         } else if (costOrder == null && costProcess == null && costStart != null) {
-            return map(costStart, localization);
+            return mapResources(costStart, localization);
         } else {
             return new ArrayList<>();
         }
     }
 
-    private RequirementsModel getRequirements(RequirementsJsonModel requirementsSource, LocalizationKeyModel localization) {
-        if (requirementsSource == null) {
-            return null;
+    private int getMultipliable(Integer i) {
+        return i == null ? 1 : i;
+    }
+
+    private int getSumTime(List<DirectionAttacksPointJsonModel> points) {
+        return points.stream()
+                .mapToInt(DirectionAttacksPointJsonModel::getTime)
+                .sum();
+    }
+
+    private List<String> getTags(Long tags, IntFunction<String> valueGetter) {
+        List<String> tagValues = new ArrayList<>();
+        if (tags != null) {
+            List<Integer> tagIds = Util.getPositiveBitIndices(tags);
+            for (int tagId : tagIds) {
+                tagValues.add(valueGetter.apply(tagId));
+            }
         }
-        RequirementsModel requirementsModel = new RequirementsModel();
-        List<Integer> researches = requirementsSource.getResearches();
-        List<ResearchRequirementModel> researchRequirementModels = emptyIfNull(researches)
-                .stream()
-                .map(researchId -> {
-                    ResearchRequirementModel result = new ResearchRequirementModel();
-                    result.setResearchId(researchId);
-                    result.setResearchName(localization.getResearchNames().get(researchId));
-                    return result;
-                })
-                .toList();
-        List<UnitRequirementJsonModel> units = requirementsSource.getUnits();
-        List<UnitRequirementModel> unitRequirementModels = emptyIfNull(units)
-                .stream()
-                .map(unitJson -> {
-                    UnitRequirementModel result = new UnitRequirementModel();
-                    int id = unitJson.getType();
-                    result.setMax(unitJson.getMax());
-                    result.setMin(unitJson.getMin());
-                    result.setUnitId(id);
-                    result.setUnitName(localization.getUnitNames().get(id));
-                    return result;
-                })
-                .toList();
-        requirementsModel.setResearches(researchRequirementModels);
-        requirementsModel.setUnits(unitRequirementModels);
-        requirementsModel.setResearchesAll(requirementsSource.getResearchesAll());
-        requirementsModel.setUnitsAll(requirementsSource.getUnitsAll());
-        return requirementsModel;
+        return tagValues;
     }
 }

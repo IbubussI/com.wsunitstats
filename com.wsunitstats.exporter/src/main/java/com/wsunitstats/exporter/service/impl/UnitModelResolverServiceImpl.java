@@ -1,15 +1,18 @@
 package com.wsunitstats.exporter.service.impl;
 
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
+import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.CreateEnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.EnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.ProjectileJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ScenesJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.UnitJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
 import com.wsunitstats.exporter.model.json.main.MainFileModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
@@ -22,8 +25,6 @@ import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.domain.submodel.ArmorModel;
 import com.wsunitstats.domain.submodel.GatherModel;
 import com.wsunitstats.exporter.model.FileModelWrapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,6 @@ import java.util.stream.IntStream;
 
 @Service
 public class UnitModelResolverServiceImpl implements UnitModelResolverService {
-    private static final Logger LOG = LogManager.getLogger(UnitModelResolverServiceImpl.class);
     private static final String NIL = "nil";
 
     @Autowired
@@ -52,6 +52,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
         ScenesJsonModel scenes = gameplayModel.getScenes();
         Map<Integer, UnitJsonModel> unitMap = scenes.getUnits();
         Map<Integer, EnvJsonModel> envMap = scenes.getEnvs();
+        Map<Integer, ProjectileJsonModel> projectileMap = scenes.getProjectiles();
 
         List<UnitModel> result = new ArrayList<>();
         for (Map.Entry<Integer, UnitJsonModel> entry : unitMap.entrySet()) {
@@ -61,6 +62,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             List<AbilityJsonModel> abilities = unitJsonModel.getAbilities();
             List<WorkJsonModel> works = unitJsonModel.getWork();
             List<CreateEnvJsonModel> createEnvs = unitJsonModel.getCreateEnvs();
+            List<WeaponJsonModel> weapons = unitJsonModel.getWeapons();
             UnitModel unit = new UnitModel();
 
             // Generic traits
@@ -71,15 +73,16 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
 
             // Build traits
             if (buildJsonModel != null) {
-                unit.setInitCost(mappingService.map(buildJsonModel.getCostInit(), localizationModel));
+                unit.setInitCost(mappingService.mapResources(buildJsonModel.getCostInit(), localizationModel));
                 List<Integer> fullCost = Util.add(buildJsonModel.getCostInit(), buildJsonModel.getCostBuilding());
-                unit.setFullCost(mappingService.map(fullCost, localizationModel));
+                unit.setFullCost(mappingService.mapResources(fullCost, localizationModel));
             }
 
             // Unit traits
             unit.setArmor(getArmorList(unitJsonModel.getArmor()));
             unit.setSize(Util.intToDoubleShift(unitJsonModel.getSize()));
             unit.setAbilities(getAbilitiesList(abilities, works, createEnvs, envMap, localizationModel));
+            unit.setWeapons(getWeaponsList(weapons, projectileMap, localizationModel));
 
             // Movable traits
             unit.setMovement(mappingService.map(unitJsonModel.getMovement()));
@@ -129,13 +132,20 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
                                                 LocalizationKeyModel localizationModel) {
         return abilitiesList == null ? new ArrayList<>() :
                 IntStream.range(0, abilitiesList.size())
-                .mapToObj(i -> {
-                    WorkJsonModel workModel = workList.stream()
-                            .filter(work -> i == work.getAbility())
-                            .findFirst()
-                            .orElse(null);
-                    return mappingService.map(abilitiesList.get(i), workModel, createEnvs, envs, localizationModel);
-                })
-                .toList();
+                        .mapToObj(i -> {
+                            WorkJsonModel workModel = workList.stream()
+                                    .filter(work -> i == work.getAbility())
+                                    .findFirst()
+                                    .orElse(null);
+                            return mappingService.map(abilitiesList.get(i), workModel, createEnvs, envs, localizationModel);
+                        })
+                        .toList();
+    }
+
+    private List<WeaponModel> getWeaponsList(List<WeaponJsonModel> weaponList, Map<Integer, ProjectileJsonModel> projectiles, LocalizationKeyModel localizationModel) {
+        return weaponList == null ? new ArrayList<>() :
+                weaponList.stream()
+                        .map(entry -> mappingService.map(entry, projectiles, localizationModel))
+                        .toList();
     }
 }

@@ -1,22 +1,31 @@
 package com.wsunitstats.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.UnaryOperator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Util {
     private Util() {
         //Utility class
     }
 
+    public static final Pattern LOCALIZATION_KEY_PATTERN = Pattern.compile("<\\*[a-zA-Z0-9/]+>");
     public static final double TICK_RATE_MULTIPLIER = 50d;
-    public static final double FLOAT_VALUE_MULTIPLIER = 1000d;
+    public static final double DOUBLE_VALUE_MULTIPLIER = 1000d;
+    public static final double SPEED_VALUE_MULTIPLIER = 1_000_000d;
+    public static final double PERCENT_VALUE_MULTIPLIER = 10d;
+    public static final int LONG_SIZE = 64;
 
     public static Double intToDoubleShift(Integer value) {
         if (value == null) {
             return null;
         }
-        return value / FLOAT_VALUE_MULTIPLIER;
+        return value / DOUBLE_VALUE_MULTIPLIER;
     }
 
     public static Double intToDoubleTick(Integer value) {
@@ -24,6 +33,20 @@ public class Util {
             return null;
         }
         return value / TICK_RATE_MULTIPLIER;
+    }
+
+    public static Double intToDoubleSpeed(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        return value / SPEED_VALUE_MULTIPLIER;
+    }
+
+    public static Double intToPercent(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        return value / PERCENT_VALUE_MULTIPLIER;
     }
 
     public static int sum(List<Integer> list) {
@@ -62,5 +85,54 @@ public class Util {
                 return true;
             }
         }
+    }
+
+    /**
+     * Replaces all occurrences of localization pattern in given input string
+     * with value, returned by given localization function.
+     * Removes all curly braces from localized values.
+     *
+     * @param input                string to be localized
+     * @param localizationFunction function to get localization value by key, found in given input
+     * @return localized string
+     */
+    public static String localizeAll(String input, UnaryOperator<String> localizationFunction) {
+        Matcher matcher = LOCALIZATION_KEY_PATTERN.matcher(input);
+        StringBuilder output = new StringBuilder();
+        while (matcher.find()) {
+            String localized = localizationFunction.apply(matcher.group());
+            String cleared = clearCurlyBraces(localized);
+            matcher.appendReplacement(output, cleared);
+        }
+        matcher.appendTail(output);
+        return output.toString();
+    }
+
+    /**
+     * Removes all curly braces (both left and right) from given input string
+     */
+    public static String clearCurlyBraces(String input) {
+        return input.replaceAll("[{}]", StringUtils.EMPTY);
+    }
+
+    public static int getLastPositiveBitIndex(int bits) {
+        if (bits == 0) {
+            return 0;
+        }
+        int i = 0;
+        for (; bits != 1; ++i) {
+            bits = bits >> 1;
+        }
+        return i;
+    }
+
+    public static List<Integer> getPositiveBitIndices(long bits) {
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < LONG_SIZE; ++i) {
+            if ((bits & 1L << i) != 0) {
+                indices.add(i);
+            }
+        }
+        return indices;
     }
 }

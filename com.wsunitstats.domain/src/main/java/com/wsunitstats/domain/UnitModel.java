@@ -6,6 +6,7 @@ import com.wsunitstats.domain.submodel.ArmorModel;
 import com.wsunitstats.domain.submodel.GatherModel;
 import com.wsunitstats.domain.submodel.TransportingModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
+import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
@@ -47,4 +48,7 @@ public class UnitModel extends GenericEntityModel {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     protected List<AbilityModel> abilities;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    protected List<WeaponModel> weapons;
 }

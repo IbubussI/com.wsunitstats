@@ -7,6 +7,10 @@ import lombok.ToString;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Allows to get localization key by game entity id (through list index).
+ * Example: localizationKeyModel.getNationNames().get(nationId), which returns <*nationName...>
+ */
 @Getter
 @Setter
 @ToString
