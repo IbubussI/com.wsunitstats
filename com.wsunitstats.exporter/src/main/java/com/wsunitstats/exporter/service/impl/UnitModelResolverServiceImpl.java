@@ -1,5 +1,6 @@
 package com.wsunitstats.exporter.service.impl;
 
+import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileModel;
@@ -10,6 +11,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.EnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ProjectileJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ScenesJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.TurretJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.UnitJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
@@ -63,6 +65,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             List<WorkJsonModel> works = unitJsonModel.getWork();
             List<CreateEnvJsonModel> createEnvs = unitJsonModel.getCreateEnvs();
             List<WeaponJsonModel> weapons = unitJsonModel.getWeapons();
+            List<TurretJsonModel> turrets = unitJsonModel.getTurrets();
             UnitModel unit = new UnitModel();
 
             // Generic traits
@@ -83,6 +86,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             unit.setSize(Util.intToDoubleShift(unitJsonModel.getSize()));
             unit.setAbilities(getAbilitiesList(abilities, works, createEnvs, envMap, localizationModel));
             unit.setWeapons(getWeaponsList(weapons, projectileMap, localizationModel));
+            unit.setTurrets(getTurretList(turrets, projectileMap, localizationModel));
 
             // Movable traits
             unit.setMovement(mappingService.map(unitJsonModel.getMovement()));
@@ -142,9 +146,20 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
                         .toList();
     }
 
-    private List<WeaponModel> getWeaponsList(List<WeaponJsonModel> weaponList, Map<Integer, ProjectileJsonModel> projectiles, LocalizationKeyModel localizationModel) {
+    private List<WeaponModel> getWeaponsList(List<WeaponJsonModel> weaponList,
+                                             Map<Integer, ProjectileJsonModel> projectiles,
+                                             LocalizationKeyModel localizationModel) {
         return weaponList == null ? new ArrayList<>() :
                 weaponList.stream()
+                        .map(entry -> mappingService.map(entry, projectiles, localizationModel))
+                        .toList();
+    }
+
+    private List<TurretModel> getTurretList(List<TurretJsonModel> turretList,
+                                            Map<Integer, ProjectileJsonModel> projectiles,
+                                            LocalizationKeyModel localizationModel) {
+        return turretList == null ? new ArrayList<>() :
+                turretList.stream()
                         .map(entry -> mappingService.map(entry, projectiles, localizationModel))
                         .toList();
     }

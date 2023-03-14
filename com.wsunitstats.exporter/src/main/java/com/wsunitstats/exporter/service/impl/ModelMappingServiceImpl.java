@@ -1,5 +1,6 @@
 package com.wsunitstats.exporter.service.impl;
 
+import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.ability.RequirementsModel;
 import com.wsunitstats.domain.submodel.ability.ResearchRequirementModel;
@@ -16,6 +17,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.MovementJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ProjectileJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportingJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.TurretJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityDataJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.RequirementsJsonModel;
@@ -316,6 +318,22 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         });
         buffModel.setAffectedUnits(tags);
         return buffModel;
+    }
+
+    @Override
+    public TurretModel map(TurretJsonModel turretSource,
+                           Map<Integer, ProjectileJsonModel> projectileSource,
+                           LocalizationKeyModel localization) {
+        if (turretSource == null) {
+            return null;
+        }
+        TurretModel turretModel = new TurretModel();
+        turretModel.setRotationSpeed(Util.intToDoubleShift(turretSource.getRotationSpeed()));
+        turretModel.setWeapons(turretSource.getWeapons().stream()
+                .map(weaponSource -> map(weaponSource, projectileSource, localization))
+                .toList()
+        );
+        return turretModel;
     }
 
     /**

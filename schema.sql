@@ -61,6 +61,17 @@
         primary key (localization_id, entries_KEY)
     ) engine=InnoDB;
 
+    create table turret (
+       id bigint not null auto_increment,
+        rotationSpeed float(53),
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table turret_weapons (
+       turret_id bigint not null,
+        weapons_id bigint not null
+    ) engine=InnoDB;
+
     create table unit (
        id bigint not null auto_increment,
         gameId integer not null,
@@ -110,6 +121,11 @@
         value_ integer
     ) engine=InnoDB;
 
+    create table unit_turrets (
+       unit_id bigint not null,
+        turrets_id bigint not null
+    ) engine=InnoDB;
+
     create table unit_weapons (
        unit_id bigint not null,
         weapons_id bigint not null
@@ -154,8 +170,14 @@
     alter table localization 
        add constraint UK_j6j9h30eydn1rkg0etaayj2is unique (locale);
 
+    alter table turret_weapons 
+       add constraint UK_lpc37ouangmk2yok9jhvm7b9m unique (weapons_id);
+
     alter table unit_abilities 
        add constraint UK_2dnabq70goecdxalenkbln4jn unique (abilities_id);
+
+    alter table unit_turrets 
+       add constraint UK_6bnwk424et96dlv8tqwn6k4my unique (turrets_id);
 
     alter table unit_weapons 
        add constraint UK_3b39kb4h68srfcl8gfjtp2tcc unique (weapons_id);
@@ -185,6 +207,16 @@
        foreign key (localization_id) 
        references localization (id);
 
+    alter table turret_weapons 
+       add constraint FKbype15yhrf2iaqggdpdyqe8ma 
+       foreign key (weapons_id) 
+       references weapon (id);
+
+    alter table turret_weapons 
+       add constraint FK9j6evv6dfxh6ixk4p14c8eqsk 
+       foreign key (turret_id) 
+       references turret (id);
+
     alter table unit_abilities 
        add constraint FKdqpqykv4fpbyi8ijw0hrdj1p2 
        foreign key (abilities_id) 
@@ -212,6 +244,16 @@
 
     alter table unit_initCost 
        add constraint FKq197ldvju58yrb8ey0w6aqqmh 
+       foreign key (unit_id) 
+       references unit (id);
+
+    alter table unit_turrets 
+       add constraint FK1e34tbe06ytka6rxhyk94ureo 
+       foreign key (turrets_id) 
+       references turret (id);
+
+    alter table unit_turrets 
+       add constraint FKkpo3wj8apny9kovltul68ct9w 
        foreign key (unit_id) 
        references unit (id);
 

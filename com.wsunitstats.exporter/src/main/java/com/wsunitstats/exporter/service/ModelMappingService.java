@@ -1,5 +1,6 @@
 package com.wsunitstats.exporter.service;
 
+import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.ability.RequirementsModel;
 import com.wsunitstats.domain.submodel.weapon.BuffModel;
@@ -14,6 +15,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.MovementJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ProjectileJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportingJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.TurretJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.RequirementsJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.BuffJsonModel;
@@ -31,7 +33,6 @@ import com.wsunitstats.domain.submodel.TransportingModel;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.IntFunction;
 
 public interface ModelMappingService {
     ArmorModel map(ArmorJsonModel.Entry source, int probabilitiesSum);
@@ -63,4 +64,8 @@ public interface ModelMappingService {
     ProjectileModel map(int id, ProjectileJsonModel projectileSource);
 
     BuffModel map(BuffJsonModel buffSource, LocalizationKeyModel localization);
+
+    TurretModel map(TurretJsonModel turretSource,
+                    Map<Integer, ProjectileJsonModel> projectileSource,
+                    LocalizationKeyModel localization);
 }
