@@ -49,7 +49,7 @@ public class UnitJsonModel {
     private Integer searchTags;
     private Integer size;
     private Integer storageMultiplier;
-    private Map<String, Object> supply;
+    private SupplyJsonModel supply;
     private Integer tags;
     private Integer threat;
     private TransportingJsonModel transporting;

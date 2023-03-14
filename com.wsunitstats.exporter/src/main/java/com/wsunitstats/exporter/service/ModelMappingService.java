@@ -1,5 +1,6 @@
 package com.wsunitstats.exporter.service;
 
+import com.wsunitstats.domain.submodel.SupplyModel;
 import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.ability.OnActionModel;
@@ -15,6 +16,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.EnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.MovementJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ProjectileJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.SupplyJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportingJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TurretJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
@@ -74,4 +76,6 @@ public interface ModelMappingService {
     TurretModel map(TurretJsonModel turretSource,
                     Map<Integer, ProjectileJsonModel> projectileSource,
                     LocalizationKeyModel localization);
+
+    SupplyModel map(SupplyJsonModel supplySource);
 }

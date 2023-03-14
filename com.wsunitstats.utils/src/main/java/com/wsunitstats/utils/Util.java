@@ -16,37 +16,30 @@ public class Util {
 
     public static final Pattern LOCALIZATION_KEY_PATTERN = Pattern.compile("<\\*[a-zA-Z0-9/]+>");
     public static final double TICK_RATE_MULTIPLIER = 50d;
-    public static final double DOUBLE_VALUE_MULTIPLIER = 1000d;
+    public static final double SHIFT_VALUE_MULTIPLIER = 1000d;
     public static final double SPEED_VALUE_MULTIPLIER = 1_000_000d;
     public static final double PERCENT_VALUE_MULTIPLIER = 10d;
+    public static final double POPULATION_VALUE_MULTIPLIER = 10d;
     public static final int LONG_SIZE = 64;
 
     public static Double intToDoubleShift(Integer value) {
-        if (value == null) {
-            return null;
-        }
-        return value / DOUBLE_VALUE_MULTIPLIER;
+        return divide(value, SHIFT_VALUE_MULTIPLIER);
     }
 
     public static Double intToDoubleTick(Integer value) {
-        if (value == null) {
-            return null;
-        }
-        return value / TICK_RATE_MULTIPLIER;
+        return divide(value, TICK_RATE_MULTIPLIER);
     }
 
     public static Double intToDoubleSpeed(Integer value) {
-        if (value == null) {
-            return null;
-        }
-        return value / SPEED_VALUE_MULTIPLIER;
+        return divide(value, SPEED_VALUE_MULTIPLIER);
     }
 
     public static Double intToPercent(Integer value) {
-        if (value == null) {
-            return null;
-        }
-        return value / PERCENT_VALUE_MULTIPLIER;
+        return divide(value, PERCENT_VALUE_MULTIPLIER);
+    }
+
+    public static Double intToSupply(Integer value) {
+        return divide(value, POPULATION_VALUE_MULTIPLIER);
     }
 
     public static int sum(List<Integer> list) {
@@ -134,5 +127,12 @@ public class Util {
             }
         }
         return indices;
+    }
+
+    private static Double divide(Integer value, double divider) {
+        if (value == null) {
+            return null;
+        }
+        return value / divider;
     }
 }

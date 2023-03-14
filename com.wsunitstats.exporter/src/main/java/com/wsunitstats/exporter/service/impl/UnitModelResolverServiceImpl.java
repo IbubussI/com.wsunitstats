@@ -22,6 +22,7 @@ import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.service.ModelMappingService;
 import com.wsunitstats.exporter.service.UnitModelResolverService;
+import com.wsunitstats.utils.Constants;
 import com.wsunitstats.utils.Util;
 import com.wsunitstats.exporter.model.LocalizationKeyModel;
 import com.wsunitstats.domain.UnitModel;
@@ -35,6 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
+
+import static com.wsunitstats.utils.Constants.LIVESTOCK_LIMIT;
 
 @Service
 public class UnitModelResolverServiceImpl implements UnitModelResolverService {
@@ -89,6 +92,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             unit.setAbilities(getAbilitiesList(abilities, works, createEnvs, onAction, envMap, localizationModel));
             unit.setWeapons(getWeaponsList(weapons, projectileMap, localizationModel));
             unit.setTurrets(getTurretList(turrets, projectileMap, localizationModel));
+            unit.setSupply(mappingService.map(unitJsonModel.getSupply()));
 
             // Movable traits
             unit.setMovement(mappingService.map(unitJsonModel.getMovement()));
@@ -97,6 +101,9 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             // Worker traits
             unit.setGather(getGatherList(unitJsonModel.getGather(), localizationModel));
 
+            if(Constants.LIVESTOCK_IDS.contains(id)) {
+                unit.setLimit(LIVESTOCK_LIMIT);
+            }
             result.add(unit);
         }
         return result;

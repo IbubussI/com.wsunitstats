@@ -1,5 +1,6 @@
 package com.wsunitstats.exporter.service.impl;
 
+import com.wsunitstats.domain.submodel.SupplyModel;
 import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.ability.OnActionModel;
@@ -17,6 +18,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.EnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.MovementJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ProjectileJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.SupplyJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportingJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TurretJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityDataJsonModel;
@@ -348,6 +350,17 @@ public class ModelMappingServiceImpl implements ModelMappingService {
                 .toList()
         );
         return turretModel;
+    }
+
+    @Override
+    public SupplyModel map(SupplyJsonModel supplySource) {
+        if (supplySource == null) {
+            return null;
+        }
+        SupplyModel supplyModel = new SupplyModel();
+        supplyModel.setConsume(Util.intToSupply(supplySource.getCost()));
+        supplyModel.setProduce(Util.intToSupply(supplySource.getTakes()));
+        return supplyModel;
     }
 
     /**

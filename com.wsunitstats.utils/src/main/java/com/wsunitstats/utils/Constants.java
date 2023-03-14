@@ -1,5 +1,7 @@
 package com.wsunitstats.utils;
 
+import java.util.List;
+
 public class Constants {
     private Constants() {
         // Utility class
@@ -18,6 +20,9 @@ public class Constants {
 
     public static final String BASIC_DAMAGE_TYPE = "Base";
     public static final String GENERIC_UNIT_TAG = "Unit";
+
+    public static final int LIVESTOCK_LIMIT = 50;
+    public static final List<Integer> LIVESTOCK_IDS = List.of(62, 130);
 
     public enum AbilityType {
         UNDEFINED(-1, UNDEF),
