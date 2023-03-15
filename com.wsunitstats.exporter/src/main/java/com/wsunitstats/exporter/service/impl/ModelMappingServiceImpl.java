@@ -1,5 +1,7 @@
 package com.wsunitstats.exporter.service.impl;
 
+import com.wsunitstats.domain.submodel.BuildingModel;
+import com.wsunitstats.domain.submodel.IncomeModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
 import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
@@ -13,14 +15,17 @@ import com.wsunitstats.domain.submodel.DistanceModel;
 import com.wsunitstats.domain.submodel.weapon.ProjectileModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.CreateEnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.EnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.IncomeJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.MovementJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ProjectileJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.SupplyJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportingJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TurretJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.UnitJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityDataJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityOnActionJsonModel;
@@ -354,13 +359,39 @@ public class ModelMappingServiceImpl implements ModelMappingService {
 
     @Override
     public SupplyModel map(SupplyJsonModel supplySource) {
-        if (supplySource == null) {
+        if (supplySource == null || (supplySource.getCost() == null && supplySource.getTakes() == null)) {
             return null;
         }
         SupplyModel supplyModel = new SupplyModel();
         supplyModel.setConsume(Util.intToSupply(supplySource.getCost()));
         supplyModel.setProduce(Util.intToSupply(supplySource.getTakes()));
         return supplyModel;
+    }
+
+    @Override
+    public BuildingModel map(UnitJsonModel unitSource, BuildJsonModel buildSource, LocalizationKeyModel localization) {
+        if (buildSource == null) {
+            return null;
+        }
+        BuildingModel buildingModel = new BuildingModel();
+        buildingModel.setIncome(map(unitSource.getIncome(), localization));
+        buildingModel.setHealCost(mapResources(unitSource.getHealMeCost(), localization));
+        buildingModel.setRequirements(map(buildSource.getRequirements(), localization));
+        buildingModel.setInitCost(mapResources(buildSource.getCostInit(), localization));
+        List<Integer> fullCost = Util.add(buildSource.getCostInit(), buildSource.getCostBuilding());
+        buildingModel.setFullCost(mapResources(fullCost, localization));
+        return buildingModel;
+    }
+
+    @Override
+    public IncomeModel map(IncomeJsonModel incomeSource, LocalizationKeyModel localization) {
+        if (incomeSource == null) {
+            return null;
+        }
+        IncomeModel incomeModel = new IncomeModel();
+        incomeModel.setValue(mapResources(incomeSource.getValue(), localization));
+        incomeModel.setPeriod(Util.intToDoubleShift(incomeSource.getPeriod()));
+        return incomeModel;
     }
 
     /**

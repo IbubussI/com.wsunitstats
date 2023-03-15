@@ -54,6 +54,52 @@
         affectedUnits varchar(255)
     ) engine=InnoDB;
 
+    create table building (
+       id bigint not null auto_increment,
+        period float(53),
+        researchesAll bit,
+        unitsAll bit,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table building_fullCost (
+       building_id bigint not null,
+        resource varchar(255),
+        value_ integer
+    ) engine=InnoDB;
+
+    create table building_healCost (
+       building_id bigint not null,
+        resource varchar(255),
+        value_ integer
+    ) engine=InnoDB;
+
+    create table building_initCost (
+       building_id bigint not null,
+        resource varchar(255),
+        value_ integer
+    ) engine=InnoDB;
+
+    create table building_researches (
+       building_id bigint not null,
+        researchId integer not null,
+        researchName varchar(255)
+    ) engine=InnoDB;
+
+    create table building_units (
+       building_id bigint not null,
+        max integer,
+        min integer,
+        unitId integer not null,
+        unitName varchar(255)
+    ) engine=InnoDB;
+
+    create table building_value (
+       building_id bigint not null,
+        resource varchar(255),
+        value_ integer
+    ) engine=InnoDB;
+
     create table localization (
        id bigint not null auto_increment,
         locale varchar(255),
@@ -93,6 +139,7 @@
         carrySize integer,
         onlyInfantry bit,
         ownSize integer,
+        build_id bigint,
         primary key (id)
     ) engine=InnoDB;
 
@@ -107,12 +154,6 @@
         value_ float(53)
     ) engine=InnoDB;
 
-    create table unit_fullCost (
-       unit_id bigint not null,
-        resource varchar(255),
-        value_ integer
-    ) engine=InnoDB;
-
     create table unit_gather (
        unit_id bigint not null,
         bagSize float(53),
@@ -122,12 +163,6 @@
         perSecond float(53),
         putDistance float(53),
         resource varchar(255)
-    ) engine=InnoDB;
-
-    create table unit_initCost (
-       unit_id bigint not null,
-        resource varchar(255),
-        value_ integer
     ) engine=InnoDB;
 
     create table unit_turrets (
@@ -210,6 +245,36 @@
        foreign key (buff_id) 
        references buff (id);
 
+    alter table building_fullCost 
+       add constraint FK530g1mcloh1hsow7pqxotr3be 
+       foreign key (building_id) 
+       references building (id);
+
+    alter table building_healCost 
+       add constraint FKrj88x3frstuwr0afh533xaxgn 
+       foreign key (building_id) 
+       references building (id);
+
+    alter table building_initCost 
+       add constraint FK6bpif8pi2oq47tp8bupl3vmx 
+       foreign key (building_id) 
+       references building (id);
+
+    alter table building_researches 
+       add constraint FK161nem93qskfomm3jpdar0i81 
+       foreign key (building_id) 
+       references building (id);
+
+    alter table building_units 
+       add constraint FK6964irkx8f1eb2ht3ktfeg55c 
+       foreign key (building_id) 
+       references building (id);
+
+    alter table building_value 
+       add constraint FK1o2wsit1wkwmdexrqy3ywy50o 
+       foreign key (building_id) 
+       references building (id);
+
     alter table localization_entries 
        add constraint FKr54j8wvwxlrjqi4dqbej7no3g 
        foreign key (localization_id) 
@@ -224,6 +289,11 @@
        add constraint FK9j6evv6dfxh6ixk4p14c8eqsk 
        foreign key (turret_id) 
        references turret (id);
+
+    alter table unit 
+       add constraint FKmhv6iim3sgulonx10kirbatqy 
+       foreign key (build_id) 
+       references building (id);
 
     alter table unit_abilities 
        add constraint FKdqpqykv4fpbyi8ijw0hrdj1p2 
@@ -240,18 +310,8 @@
        foreign key (unit_id) 
        references unit (id);
 
-    alter table unit_fullCost 
-       add constraint FK32pdb1pf247m481pn1cdi0qxa 
-       foreign key (unit_id) 
-       references unit (id);
-
     alter table unit_gather 
        add constraint FK3xbxp13iydr0j4eulw7im6qrn 
-       foreign key (unit_id) 
-       references unit (id);
-
-    alter table unit_initCost 
-       add constraint FKq197ldvju58yrb8ey0w6aqqmh 
        foreign key (unit_id) 
        references unit (id);
 

@@ -80,11 +80,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             unit.setNation(getUnitNation(sessionInitModel, localizationModel, id));
 
             // Build traits
-            if (buildJsonModel != null) {
-                unit.setInitCost(mappingService.mapResources(buildJsonModel.getCostInit(), localizationModel));
-                List<Integer> fullCost = Util.add(buildJsonModel.getCostInit(), buildJsonModel.getCostBuilding());
-                unit.setFullCost(mappingService.mapResources(fullCost, localizationModel));
-            }
+            unit.setBuild(mappingService.map(unitJsonModel, buildJsonModel, localizationModel));
 
             // Unit traits
             unit.setArmor(getArmorList(unitJsonModel.getArmor()));

@@ -1,5 +1,6 @@
 package com.wsunitstats.exporter.model.json.gameplay.submodel;
 
+import com.wsunitstats.exporter.model.json.gameplay.submodel.requirement.RequirementsJsonModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,7 +18,7 @@ public class BuildJsonModel {
     private List<Integer> costInit;
     private Integer health;
     private Integer locationEnvTags;
-    private Object requirements;
+    private RequirementsJsonModel requirements;
     private Integer unit;
     private Boolean wall;
     private Map<String, Object> wallData;

@@ -1,7 +1,7 @@
 package com.wsunitstats.domain;
 
+import com.wsunitstats.domain.submodel.BuildingModel;
 import com.wsunitstats.domain.submodel.MovementModel;
-import com.wsunitstats.domain.submodel.ResourceModel;
 import com.wsunitstats.domain.submodel.ArmorModel;
 import com.wsunitstats.domain.submodel.GatherModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
@@ -16,6 +16,7 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -38,6 +39,9 @@ public class UnitModel extends GenericEntityModel {
     @ElementCollection(fetch = FetchType.EAGER)
     protected List<ArmorModel> armor;
 
+    //protected Integer viewRange;
+    //protected Integer health;
+
     //Movable unit traits
     @Embedded
     protected MovementModel movement;
@@ -49,12 +53,11 @@ public class UnitModel extends GenericEntityModel {
     //Worker traits
     @ElementCollection(fetch = FetchType.EAGER)
     protected List<GatherModel> gather;
+    //protected ... building; - include building speed hp/sec for 1 worker
 
     //Building traits
-    @ElementCollection(fetch = FetchType.EAGER)
-    protected List<ResourceModel> initCost;
-    @ElementCollection(fetch = FetchType.EAGER)
-    protected List<ResourceModel> fullCost;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    protected BuildingModel build;
 
     // Goats and fowls
     @Column(name = "limit_")

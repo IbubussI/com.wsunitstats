@@ -32,7 +32,7 @@ public class UnitJsonModel {
     private Integer danceDuration;
     private List<GatherJsonModel> gather;
     private Map<String, Object> heal;
-    private List<Object> healMeCost;
+    private List<Integer> healMeCost;
     private Integer health;
     private Integer hiddenInFows;
     private MovementJsonModel movement;
