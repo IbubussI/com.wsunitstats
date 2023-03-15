@@ -1,7 +1,9 @@
 package com.wsunitstats.exporter.service;
 
+import com.wsunitstats.domain.submodel.AirplaneModel;
 import com.wsunitstats.domain.submodel.BuildingModel;
 import com.wsunitstats.domain.submodel.IncomeModel;
+import com.wsunitstats.domain.submodel.SubmarineDepthModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
 import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
@@ -26,6 +28,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.TurretJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.UnitJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityOnActionJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.air.AirplaneJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.requirement.RequirementsJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.BuffJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.DistanceJsonModel;
@@ -42,6 +45,7 @@ import com.wsunitstats.domain.submodel.TransportingModel;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.IntFunction;
 
 public interface ModelMappingService {
     ArmorModel map(ArmorJsonModel.Entry source, int probabilitiesSum);
@@ -87,4 +91,18 @@ public interface ModelMappingService {
     BuildingModel map(UnitJsonModel unitSource, BuildJsonModel buildSource, LocalizationKeyModel localization);
 
     IncomeModel map(IncomeJsonModel incomeSource, LocalizationKeyModel localization);
+
+    AirplaneModel mapAirplane(AirplaneJsonModel airplaneSource, LocalizationKeyModel localization);
+
+    SubmarineDepthModel mapSubmarine(AirplaneJsonModel submarineSource);
+
+    /**
+     * Works fine for all tags except unit tags. Use {@link ModelMappingService#mapUnitTags} for them
+     */
+    List<String> mapTags(Long tags, IntFunction<String> valueGetter);
+
+    /**
+     * Use this for unit tags
+     */
+    List<String> mapUnitTags(Long tags, LocalizationKeyModel localization);
 }

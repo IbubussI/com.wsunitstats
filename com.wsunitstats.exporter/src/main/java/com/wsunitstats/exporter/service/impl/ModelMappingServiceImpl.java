@@ -1,7 +1,9 @@
 package com.wsunitstats.exporter.service.impl;
 
+import com.wsunitstats.domain.submodel.AirplaneModel;
 import com.wsunitstats.domain.submodel.BuildingModel;
 import com.wsunitstats.domain.submodel.IncomeModel;
+import com.wsunitstats.domain.submodel.SubmarineDepthModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
 import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
@@ -29,6 +31,8 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.UnitJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityDataJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityOnActionJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.air.AerodromeJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.air.AirplaneJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.requirement.RequirementsJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.requirement.UnitRequirementJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.BuffJsonModel;
@@ -267,7 +271,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         weaponModel.setDamages(mapDamages(damageSource.getDamages(), localization));
         weaponModel.setDamagesCount(getMultipliable(damageSource.getDamagesCount()));
         weaponModel.setEnvDamage(Util.intToDoubleShift(damageSource.getEnvDamage()));
-        weaponModel.setEnvsAffected(getTags(damageSource.getEnvsAffected(), i -> localization.getEnvSearchTagNames().get(i)));
+        weaponModel.setEnvsAffected(mapTags(damageSource.getEnvsAffected(), i -> localization.getEnvSearchTagNames().get(i)));
 
         weaponModel.setDamagesCount(getMultipliable(damageSource.getDamagesCount()));
         weaponModel.setCharges(weaponSource.getCharges());
@@ -328,16 +332,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         buffModel.setBuffId(buffSource.getResearch());
         buffModel.setName(localization.getResearchNames().get(buffSource.getResearch()));
         buffModel.setPeriod(Util.intToDoubleShift(buffSource.getPeriod()));
-        List<String> tags = getTags(buffSource.getTargetsTags(), i -> {
-            // Unit tags shifted by 1 for some reason
-            // i.e. tag with index 1 has id 2 in game file
-            // all units contain tag with value 0
-            if (i == 0) {
-                return GENERIC_UNIT_TAG;
-            }
-            return localization.getUnitTagNames().get(i - 1);
-        });
-        buffModel.setAffectedUnits(tags);
+        buffModel.setAffectedUnits(mapUnitTags(buffSource.getTargetsTags(), localization));
         return buffModel;
     }
 
@@ -392,6 +387,64 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         incomeModel.setValue(mapResources(incomeSource.getValue(), localization));
         incomeModel.setPeriod(Util.intToDoubleShift(incomeSource.getPeriod()));
         return incomeModel;
+    }
+
+    @Override
+    public AirplaneModel mapAirplane(AirplaneJsonModel airplaneSource, LocalizationKeyModel localization) {
+        // check if airplane model does not belong to submarine
+        if (airplaneSource == null || airplaneSource.getHeightAboveSurface() <= 1) {
+            return null;
+        }
+        AirplaneModel airplaneModel = new AirplaneModel();
+        airplaneModel.setFlyTime(Util.intToDoubleShift(airplaneSource.getFuel()));
+        airplaneModel.setKamikaze(airplaneSource.getMoveAsFallDown());
+        airplaneModel.setFlyHeight(Util.intToDoubleShift(airplaneSource.getHeightAboveSurface()));
+        airplaneModel.setAscensionSpeed(airplaneSource.getAscensionalRate());
+        AerodromeJsonModel aerodromeSource = airplaneSource.getAerodrome();
+        if (aerodromeSource != null) {
+            airplaneModel.setAerodromeTags(mapTags(aerodromeSource.getTags(), i -> localization.getUnitSearchTagNames().get(i)));
+            airplaneModel.setHealingSpeed(Util.intToDoubleTick(aerodromeSource.getHealingSpeed()));
+            Double rechargePeriod = Util.intToDoubleShift(aerodromeSource.getRechargingPeriod());
+            airplaneModel.setRechargingSpeed(rechargePeriod == null ? null : 1d / rechargePeriod);
+            airplaneModel.setRefuelingSpeed(Util.intToDoubleTick(aerodromeSource.getRefuelingSpeed()));
+        }
+        return airplaneModel;
+    }
+
+    @Override
+    public SubmarineDepthModel mapSubmarine(AirplaneJsonModel submarineSource) {
+        // check if airplane model belongs to submarine
+        if (submarineSource == null || submarineSource.getHeightAboveSurface() > 1) {
+            return null;
+        }
+        SubmarineDepthModel submarineModel = new SubmarineDepthModel();
+        submarineModel.setUnderwaterTime(Util.intToDoubleShift(submarineSource.getFuel()));
+        submarineModel.setAbilityOnFuelEnd(submarineSource.getWorkOnFuelEnd());
+        submarineModel.setSwimDepth(Util.intToDoubleShift(submarineSource.getHeightAboveSurface()));
+        submarineModel.setAscensionSpeed(submarineSource.getAscensionalRate());
+        return submarineModel;
+    }
+
+    @Override
+    public List<String> mapTags(Long tags, IntFunction<String> valueGetter) {
+        List<String> tagValues = new ArrayList<>();
+        if (tags != null) {
+            List<Integer> tagIds = Util.getPositiveBitIndices(tags);
+            for (int tagId : tagIds) {
+                tagValues.add(valueGetter.apply(tagId));
+            }
+        }
+        return tagValues;
+    }
+
+    /**
+     * Unit tags are shifted by 1 for some reason
+     * i.e. tag with index 1 has id 2 in game file
+     * all units contain tag with value 0
+     */
+    @Override
+    public List<String> mapUnitTags(Long tags, LocalizationKeyModel localization) {
+        return mapTags(tags, i -> i == 0 ? GENERIC_UNIT_TAG : localization.getUnitTagNames().get(i - 1));
     }
 
     /**
@@ -527,16 +580,5 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         return points.stream()
                 .mapToInt(DirectionAttacksPointJsonModel::getTime)
                 .sum();
-    }
-
-    private List<String> getTags(Long tags, IntFunction<String> valueGetter) {
-        List<String> tagValues = new ArrayList<>();
-        if (tags != null) {
-            List<Integer> tagIds = Util.getPositiveBitIndices(tags);
-            for (int tagId : tagIds) {
-                tagValues.add(valueGetter.apply(tagId));
-            }
-        }
-        return tagValues;
     }
 }

@@ -3,6 +3,8 @@ package com.wsunitstats.exporter.model.json.gameplay.submodel;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityOnActionJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.air.AirfieldJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.air.AirplaneJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
 import lombok.Getter;
@@ -21,7 +23,7 @@ public class UnitJsonModel {
     private AbilityOnActionJsonModel abilityOnAction;
     private Map<String, Object> agro;
     private List<AirfieldJsonModel> airfields;
-    private Map<String, Object> airplane;
+    private AirplaneJsonModel airplane;
     @JsonProperty("armor_")
     private ArmorJsonModel armor;
     private Map<String, Object> attackReaction;
@@ -46,11 +48,11 @@ public class UnitJsonModel {
     private Boolean receiveFriendlyDamage;
     @JsonProperty("scale_")
     private Integer scale;
-    private Integer searchTags;
+    private Long searchTags;
     private Integer size;
     private Integer storageMultiplier;
     private SupplyJsonModel supply;
-    private Integer tags;
+    private Long tags;
     private Integer threat;
     private TransportingJsonModel transporting;
     private List<TurretJsonModel> turrets;

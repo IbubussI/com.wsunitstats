@@ -41,6 +41,23 @@
         unitName varchar(255)
     ) engine=InnoDB;
 
+    create table airplane (
+       id bigint not null auto_increment,
+        ascensionSpeed integer,
+        flyHeight float(53),
+        flyTime float(53),
+        healingSpeed float(53),
+        kamikaze bit,
+        rechargingSpeed float(53),
+        refuelingSpeed float(53),
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table airplane_aerodromeTags (
+       airplane_id bigint not null,
+        aerodromeTags varchar(255)
+    ) engine=InnoDB;
+
     create table buff (
        id bigint not null auto_increment,
         buffId integer not null,
@@ -113,6 +130,15 @@
         primary key (localization_id, entries_KEY)
     ) engine=InnoDB;
 
+    create table submarine (
+       id bigint not null auto_increment,
+        abilityOnFuelEnd integer,
+        ascensionSpeed integer,
+        swimDepth float(53),
+        underwaterTime float(53),
+        primary key (id)
+    ) engine=InnoDB;
+
     create table turret (
        id bigint not null auto_increment,
         rotationSpeed float(53),
@@ -139,7 +165,9 @@
         carrySize integer,
         onlyInfantry bit,
         ownSize integer,
+        airplane_id bigint,
         build_id bigint,
+        submarine_id bigint,
         primary key (id)
     ) engine=InnoDB;
 
@@ -240,6 +268,11 @@
        foreign key (ability_id) 
        references ability (id);
 
+    alter table airplane_aerodromeTags 
+       add constraint FKd6vjkgk3tlo4uccgrgiq2hekt 
+       foreign key (airplane_id) 
+       references airplane (id);
+
     alter table buff_affectedUnits 
        add constraint FKlt2pjb4aykbahesuxpedq3m4w 
        foreign key (buff_id) 
@@ -291,9 +324,19 @@
        references turret (id);
 
     alter table unit 
+       add constraint FKbaj6y3adblqhqgkbu1vxpxn8k 
+       foreign key (airplane_id) 
+       references airplane (id);
+
+    alter table unit 
        add constraint FKmhv6iim3sgulonx10kirbatqy 
        foreign key (build_id) 
        references building (id);
+
+    alter table unit 
+       add constraint FKehsumcw6v6v43sjog4r65cqos 
+       foreign key (submarine_id) 
+       references submarine (id);
 
     alter table unit_abilities 
        add constraint FKdqpqykv4fpbyi8ijw0hrdj1p2 

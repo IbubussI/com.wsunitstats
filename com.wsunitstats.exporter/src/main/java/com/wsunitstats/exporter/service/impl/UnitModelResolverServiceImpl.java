@@ -15,6 +15,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.TurretJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.UnitJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityOnActionJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.air.AirplaneJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
 import com.wsunitstats.exporter.model.json.main.MainFileModel;
@@ -64,13 +65,6 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
         for (Map.Entry<Integer, UnitJsonModel> entry : unitMap.entrySet()) {
             Integer id = entry.getKey();
             UnitJsonModel unitJsonModel = entry.getValue();
-            BuildJsonModel buildJsonModel = findUnitBuildObject(gameplayModel, id);
-            List<AbilityJsonModel> abilities = unitJsonModel.getAbilities();
-            List<WorkJsonModel> works = unitJsonModel.getWork();
-            List<CreateEnvJsonModel> createEnvs = unitJsonModel.getCreateEnvs();
-            List<WeaponJsonModel> weapons = unitJsonModel.getWeapons();
-            List<TurretJsonModel> turrets = unitJsonModel.getTurrets();
-            AbilityOnActionJsonModel onAction = unitJsonModel.getAbilityOnAction();
             UnitModel unit = new UnitModel();
 
             // Generic traits
@@ -78,16 +72,27 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             unit.setName(localizationModel.getUnitNames().get(id));
             //unit.setImageUrl();
             unit.setNation(getUnitNation(sessionInitModel, localizationModel, id));
+            unit.setViewRange(Util.intToDoubleShift(unitJsonModel.getViewRange()));
+            unit.setHealth(Util.intToDoubleShift(unitJsonModel.getHealth()));
+            unit.setTags(mappingService.mapUnitTags(unitJsonModel.getTags(), localizationModel));
+            unit.setSearchTags(mappingService.mapTags(unitJsonModel.getSearchTags(), i -> localizationModel.getUnitSearchTagNames().get(i)));
+            unit.setWeaponOnDeath(unitJsonModel.getWeaponUseOnDeath());
+            unit.setControllable(unitJsonModel.getControllable());
 
             // Build traits
-            unit.setBuild(mappingService.map(unitJsonModel, buildJsonModel, localizationModel));
+            unit.setBuild(mappingService.map(unitJsonModel, findUnitBuildObject(gameplayModel, id), localizationModel));
 
             // Unit traits
             unit.setArmor(getArmorList(unitJsonModel.getArmor()));
             unit.setSize(Util.intToDoubleShift(unitJsonModel.getSize()));
-            unit.setAbilities(getAbilitiesList(abilities, works, createEnvs, onAction, envMap, localizationModel));
-            unit.setWeapons(getWeaponsList(weapons, projectileMap, localizationModel));
-            unit.setTurrets(getTurretList(turrets, projectileMap, localizationModel));
+            unit.setAbilities(getAbilitiesList(unitJsonModel.getAbilities(),
+                    unitJsonModel.getWork(),
+                    unitJsonModel.getCreateEnvs(),
+                    unitJsonModel.getAbilityOnAction(),
+                    envMap,
+                    localizationModel));
+            unit.setWeapons(getWeaponsList(unitJsonModel.getWeapons(), projectileMap, localizationModel));
+            unit.setTurrets(getTurretList(unitJsonModel.getTurrets(), projectileMap, localizationModel));
             unit.setSupply(mappingService.map(unitJsonModel.getSupply()));
 
             // Movable traits
@@ -97,7 +102,13 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             // Worker traits
             unit.setGather(getGatherList(unitJsonModel.getGather(), localizationModel));
 
-            if(Constants.LIVESTOCK_IDS.contains(id)) {
+            AirplaneJsonModel airplaneAndSubmarineModel = unitJsonModel.getAirplane();
+            // Airplane traits
+            unit.setAirplane(mappingService.mapAirplane(airplaneAndSubmarineModel, localizationModel));
+            // Submarine traits
+            unit.setSubmarine(mappingService.mapSubmarine(airplaneAndSubmarineModel));
+
+            if (Constants.LIVESTOCK_IDS.contains(id)) {
                 unit.setLimit(LIVESTOCK_LIMIT);
             }
             result.add(unit);

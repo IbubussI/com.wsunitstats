@@ -1,9 +1,11 @@
 package com.wsunitstats.domain;
 
+import com.wsunitstats.domain.submodel.AirplaneModel;
 import com.wsunitstats.domain.submodel.BuildingModel;
 import com.wsunitstats.domain.submodel.MovementModel;
 import com.wsunitstats.domain.submodel.ArmorModel;
 import com.wsunitstats.domain.submodel.GatherModel;
+import com.wsunitstats.domain.submodel.SubmarineDepthModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
 import com.wsunitstats.domain.submodel.TransportingModel;
 import com.wsunitstats.domain.submodel.TurretModel;
@@ -30,6 +32,8 @@ import java.util.List;
 public class UnitModel extends GenericEntityModel {
     //Unit traits
     protected Double size;
+    protected Double viewRange;
+    protected Double health;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     protected List<AbilityModel> abilities;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -38,9 +42,10 @@ public class UnitModel extends GenericEntityModel {
     protected List<TurretModel> turrets;
     @ElementCollection(fetch = FetchType.EAGER)
     protected List<ArmorModel> armor;
-
-    //protected Integer viewRange;
-    //protected Integer health;
+    protected List<String> tags;
+    protected List<String> searchTags;
+    protected Integer weaponOnDeath;
+    protected Boolean controllable;
 
     //Movable unit traits
     @Embedded
@@ -58,6 +63,14 @@ public class UnitModel extends GenericEntityModel {
     //Building traits
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     protected BuildingModel build;
+
+    // Jet traits
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    protected AirplaneModel airplane;
+
+    // Submarine traits
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    protected SubmarineDepthModel submarine;
 
     // Goats and fowls
     @Column(name = "limit_")

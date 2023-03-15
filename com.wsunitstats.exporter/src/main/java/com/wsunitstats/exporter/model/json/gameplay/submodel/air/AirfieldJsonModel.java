@@ -1,4 +1,4 @@
-package com.wsunitstats.exporter.model.json.gameplay.submodel;
+package com.wsunitstats.exporter.model.json.gameplay.submodel.air;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
