@@ -34,6 +34,11 @@ public class UnitModel extends GenericEntityModel {
     protected Double size;
     protected Double viewRange;
     protected Double health;
+    protected Double regenerationSpeed;
+    protected Integer weaponOnDeath;
+    protected Boolean controllable;
+    protected List<String> tags;
+    protected List<String> searchTags;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     protected List<AbilityModel> abilities;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -42,10 +47,6 @@ public class UnitModel extends GenericEntityModel {
     protected List<TurretModel> turrets;
     @ElementCollection(fetch = FetchType.EAGER)
     protected List<ArmorModel> armor;
-    protected List<String> tags;
-    protected List<String> searchTags;
-    protected Integer weaponOnDeath;
-    protected Boolean controllable;
 
     //Movable unit traits
     @Embedded

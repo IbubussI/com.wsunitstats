@@ -94,6 +94,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             unit.setWeapons(getWeaponsList(unitJsonModel.getWeapons(), projectileMap, localizationModel));
             unit.setTurrets(getTurretList(unitJsonModel.getTurrets(), projectileMap, localizationModel));
             unit.setSupply(mappingService.map(unitJsonModel.getSupply()));
+            unit.setRegenerationSpeed(Util.intToDoubleTick(unitJsonModel.getRegeneration()));
 
             // Movable traits
             unit.setMovement(mappingService.map(unitJsonModel.getMovement()));

@@ -111,7 +111,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         gatherModel.setPerSecond(Util.intToDoubleTick(source.getPertick()));
         gatherModel.setFindTargetDistance(Util.intToDoubleShift(source.getFindtargetdistance()));
         gatherModel.setPutDistance(Util.intToDoubleShift(source.getPutdistance()));
-        gatherModel.setEnv(localization.getEnvSearchTagNames().get(Util.getLastPositiveBitIndex(source.getEnvtags())));
+        gatherModel.setEnvTags(mapTags(source.getEnvtags(), i -> localization.getEnvSearchTagNames().get(i)));
         gatherModel.setResource(localization.getResourceNames().get(source.getResource()));
         return gatherModel;
     }

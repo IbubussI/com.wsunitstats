@@ -108,17 +108,6 @@ public class Util {
         return input.replaceAll("[{}]", StringUtils.EMPTY);
     }
 
-    public static int getLastPositiveBitIndex(int bits) {
-        if (bits == 0) {
-            return 0;
-        }
-        int i = 0;
-        for (; bits != 1; ++i) {
-            bits = bits >> 1;
-        }
-        return i;
-    }
-
     public static List<Integer> getPositiveBitIndices(long bits) {
         List<Integer> indices = new ArrayList<>();
         for (int i = 0; i < LONG_SIZE; ++i) {

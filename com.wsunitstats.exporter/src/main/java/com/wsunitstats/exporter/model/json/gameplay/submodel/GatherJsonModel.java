@@ -10,12 +10,12 @@ import lombok.ToString;
 public class GatherJsonModel {
     private Integer angle;
     private Integer bagsize;
-    private Integer envtags;
+    private Long envtags;
     private Integer findtargetdistance;
     private Integer gatherdistance;
     private Integer pertick;
     private Integer putdistance;
     private Integer resource;
-    private Integer storagetags;
-    private Integer unitTags;
+    private Long storagetags;
+    private Long unitTags;
 }
