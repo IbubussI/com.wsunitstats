@@ -57,7 +57,7 @@ public class UnitModel extends GenericEntityModel {
     protected SupplyModel supply;
 
     //Worker traits
-    @ElementCollection(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     protected List<GatherModel> gather;
     //protected ... building; - include building speed hp/sec for 1 worker
 

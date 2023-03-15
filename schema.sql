@@ -117,6 +117,22 @@
         value_ integer
     ) engine=InnoDB;
 
+    create table gather (
+       id bigint not null auto_increment,
+        bagSize float(53),
+        findTargetDistance float(53),
+        gatherDistance float(53),
+        perSecond float(53),
+        putDistance float(53),
+        resource varchar(255),
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table gather_envTags (
+       gather_id bigint not null,
+        envTags varchar(255)
+    ) engine=InnoDB;
+
     create table localization (
        id bigint not null auto_increment,
         locale varchar(255),
@@ -156,15 +172,22 @@
         imageUrl varchar(255),
         name varchar(255),
         nation varchar(255),
+        controllable bit,
+        health float(53),
         limit_ integer,
         rotationSpeed float(53),
         speed integer,
+        regenerationSpeed float(53),
+        searchTags varbinary(255),
         size float(53),
         consume float(53),
         produce float(53),
+        tags varbinary(255),
         carrySize integer,
         onlyInfantry bit,
         ownSize integer,
+        viewRange float(53),
+        weaponOnDeath integer,
         airplane_id bigint,
         build_id bigint,
         submarine_id bigint,
@@ -184,13 +207,7 @@
 
     create table unit_gather (
        unit_id bigint not null,
-        bagSize float(53),
-        env varchar(255),
-        findTargetDistance float(53),
-        gatherDistance float(53),
-        perSecond float(53),
-        putDistance float(53),
-        resource varchar(255)
+        gather_id bigint not null
     ) engine=InnoDB;
 
     create table unit_turrets (
@@ -246,6 +263,9 @@
 
     alter table unit_abilities 
        add constraint UK_2dnabq70goecdxalenkbln4jn unique (abilities_id);
+
+    alter table unit_gather 
+       add constraint UK_m9du0q7emwkeahfburk4n1d6p unique (gather_id);
 
     alter table unit_turrets 
        add constraint UK_6bnwk424et96dlv8tqwn6k4my unique (turrets_id);
@@ -308,6 +328,11 @@
        foreign key (building_id) 
        references building (id);
 
+    alter table gather_envTags 
+       add constraint FK22xc4voqbyj0h9qaih8vvcin3 
+       foreign key (gather_id) 
+       references gather (id);
+
     alter table localization_entries 
        add constraint FKr54j8wvwxlrjqi4dqbej7no3g 
        foreign key (localization_id) 
@@ -352,6 +377,11 @@
        add constraint FKj8su9390vg7e7lr7av9o1jsyq 
        foreign key (unit_id) 
        references unit (id);
+
+    alter table unit_gather 
+       add constraint FKfwqxjv6pe31y1ucik9sqr45je 
+       foreign key (gather_id) 
+       references gather (id);
 
     alter table unit_gather 
        add constraint FK3xbxp13iydr0j4eulw7im6qrn 

@@ -1,7 +1,8 @@
 package com.wsunitstats.domain.submodel;
 
+import com.wsunitstats.domain.PersistentObject;
 import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,11 +10,11 @@ import lombok.ToString;
 
 import java.util.List;
 
-@Embeddable
+@Entity(name = "gather")
 @Getter
 @Setter
 @ToString
-public class GatherModel {
+public class GatherModel extends PersistentObject {
     private Double bagSize;
     private Double findTargetDistance;
     private Double gatherDistance;
