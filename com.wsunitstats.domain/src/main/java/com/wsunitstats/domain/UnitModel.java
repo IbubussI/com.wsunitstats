@@ -13,8 +13,6 @@ import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
@@ -45,15 +43,15 @@ public class UnitModel extends GenericEntityModel {
     protected List<WeaponModel> weapons;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     protected List<TurretModel> turrets;
-    @ElementCollection(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     protected List<ArmorModel> armor;
 
     //Movable unit traits
-    @Embedded
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     protected MovementModel movement;
-    @Embedded
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     protected TransportingModel transporting;
-    @Embedded
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     protected SupplyModel supply;
 
     //Worker traits

@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.wsunitstats.domain.PersistentObject;
 import com.wsunitstats.domain.submodel.ResourceModel;
 import com.wsunitstats.domain.submodel.requirement.RequirementsModel;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -36,6 +38,6 @@ public class AbilityModel extends PersistentObject {
 
     private Integer reserveLimit;
     private Double reserveTime;
-    @Embedded
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private OnActionModel onAction;
 }

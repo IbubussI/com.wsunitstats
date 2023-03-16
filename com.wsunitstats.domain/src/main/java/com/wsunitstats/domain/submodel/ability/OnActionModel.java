@@ -1,23 +1,20 @@
 package com.wsunitstats.domain.submodel.ability;
 
+import com.wsunitstats.domain.PersistentObject;
 import com.wsunitstats.domain.submodel.DistanceModel;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
+
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+@Entity(name = "onaction")
 @Getter
 @Setter
 @ToString
-@Embeddable
-public class OnActionModel {
-    @Column(name = "onAction_Distance")
+public class OnActionModel extends PersistentObject {
     private DistanceModel distance;
-    @Column(name = "onAction_Enabled")
     private Boolean enabled;
-    @Column(name = "onAction_OnAgro")
     private Boolean onAgro;
-    @Column(name = "onAction_RechargeTime")
     private Double rechargeTime;
 }

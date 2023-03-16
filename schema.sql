@@ -8,16 +8,11 @@
         entityName varchar(255),
         lifeTime float(53),
         makeTime float(53),
-        max float(53),
-        min float(53),
-        stop float(53),
-        onAction_Enabled bit,
-        onAction_OnAgro bit,
-        onAction_RechargeTime float(53),
         researchesAll bit,
         unitsAll bit,
         reserveLimit integer,
         reserveTime float(53),
+        onAction_id bigint,
         primary key (id)
     ) engine=InnoDB;
 
@@ -56,6 +51,13 @@
     create table airplane_aerodromeTags (
        airplane_id bigint not null,
         aerodromeTags varchar(255)
+    ) engine=InnoDB;
+
+    create table armor (
+       id bigint not null auto_increment,
+        probability integer,
+        value_ float(53),
+        primary key (id)
     ) engine=InnoDB;
 
     create table buff (
@@ -146,12 +148,45 @@
         primary key (localization_id, entries_KEY)
     ) engine=InnoDB;
 
+    create table movement (
+       id bigint not null auto_increment,
+        rotationSpeed float(53),
+        speed integer,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table onaction (
+       id bigint not null auto_increment,
+        max float(53),
+        min float(53),
+        stop float(53),
+        enabled bit,
+        onAgro bit,
+        rechargeTime float(53),
+        primary key (id)
+    ) engine=InnoDB;
+
     create table submarine (
        id bigint not null auto_increment,
         abilityOnFuelEnd integer,
         ascensionSpeed integer,
         swimDepth float(53),
         underwaterTime float(53),
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table supply (
+       id bigint not null auto_increment,
+        consume float(53),
+        produce float(53),
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table transporting (
+       id bigint not null auto_increment,
+        carrySize integer,
+        onlyInfantry bit,
+        ownSize integer,
         primary key (id)
     ) engine=InnoDB;
 
@@ -175,22 +210,18 @@
         controllable bit,
         health float(53),
         limit_ integer,
-        rotationSpeed float(53),
-        speed integer,
         regenerationSpeed float(53),
         searchTags varbinary(255),
         size float(53),
-        consume float(53),
-        produce float(53),
         tags varbinary(255),
-        carrySize integer,
-        onlyInfantry bit,
-        ownSize integer,
         viewRange float(53),
         weaponOnDeath integer,
         airplane_id bigint,
         build_id bigint,
+        movement_id bigint,
         submarine_id bigint,
+        supply_id bigint,
+        transporting_id bigint,
         primary key (id)
     ) engine=InnoDB;
 
@@ -201,8 +232,7 @@
 
     create table unit_armor (
        unit_id bigint not null,
-        probability integer,
-        value_ float(53)
+        armor_id bigint not null
     ) engine=InnoDB;
 
     create table unit_gather (
@@ -264,6 +294,9 @@
     alter table unit_abilities 
        add constraint UK_2dnabq70goecdxalenkbln4jn unique (abilities_id);
 
+    alter table unit_armor 
+       add constraint UK_imexy7twea6jra8pe4lyd2a1h unique (armor_id);
+
     alter table unit_gather 
        add constraint UK_m9du0q7emwkeahfburk4n1d6p unique (gather_id);
 
@@ -272,6 +305,11 @@
 
     alter table unit_weapons 
        add constraint UK_3b39kb4h68srfcl8gfjtp2tcc unique (weapons_id);
+
+    alter table ability 
+       add constraint FK3yo3vt5xhee64g8e1xsrx9u9a 
+       foreign key (onAction_id) 
+       references onaction (id);
 
     alter table ability_cost 
        add constraint FKb3ofn2mr8w0b0k6nu2772nx2h 
@@ -359,9 +397,24 @@
        references building (id);
 
     alter table unit 
+       add constraint FKctvfg8wv8pp2iqr1ww9qgdbka 
+       foreign key (movement_id) 
+       references movement (id);
+
+    alter table unit 
        add constraint FKehsumcw6v6v43sjog4r65cqos 
        foreign key (submarine_id) 
        references submarine (id);
+
+    alter table unit 
+       add constraint FKgdgwiufrmt7dsdhnto19akjt3 
+       foreign key (supply_id) 
+       references supply (id);
+
+    alter table unit 
+       add constraint FKkqlsof7950shjongpppug3k7l 
+       foreign key (transporting_id) 
+       references transporting (id);
 
     alter table unit_abilities 
        add constraint FKdqpqykv4fpbyi8ijw0hrdj1p2 
@@ -372,6 +425,11 @@
        add constraint FKiqwtjo6ves1bnntqi6x979ep5 
        foreign key (unit_id) 
        references unit (id);
+
+    alter table unit_armor 
+       add constraint FK5tcqtqjurnuyb6tnrqagb9xth 
+       foreign key (armor_id) 
+       references armor (id);
 
     alter table unit_armor 
        add constraint FKj8su9390vg7e7lr7av9o1jsyq 

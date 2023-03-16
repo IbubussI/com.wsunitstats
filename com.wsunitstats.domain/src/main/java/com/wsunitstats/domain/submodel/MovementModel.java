@@ -1,15 +1,16 @@
 package com.wsunitstats.domain.submodel;
 
-import jakarta.persistence.Embeddable;
+import com.wsunitstats.domain.PersistentObject;
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Embeddable
+@Entity(name = "movement")
 @Getter
 @Setter
 @ToString
-public class MovementModel {
+public class MovementModel extends PersistentObject {
     private Integer speed;
     private Double rotationSpeed;
 }
