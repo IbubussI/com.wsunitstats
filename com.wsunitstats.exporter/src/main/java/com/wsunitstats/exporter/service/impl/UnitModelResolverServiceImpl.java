@@ -1,11 +1,13 @@
 package com.wsunitstats.exporter.service.impl;
 
+import com.wsunitstats.domain.submodel.ConstructionModel;
 import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildingJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.CreateEnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.EnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
@@ -72,12 +74,6 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             unit.setName(localizationModel.getUnitNames().get(id));
             //unit.setImageUrl();
             unit.setNation(getUnitNation(sessionInitModel, localizationModel, id));
-            unit.setViewRange(Util.intToDoubleShift(unitJsonModel.getViewRange()));
-            unit.setHealth(Util.intToDoubleShift(unitJsonModel.getHealth()));
-            unit.setTags(mappingService.mapUnitTags(unitJsonModel.getTags(), localizationModel));
-            unit.setSearchTags(mappingService.mapTags(unitJsonModel.getSearchTags(), i -> localizationModel.getUnitSearchTagNames().get(i)));
-            unit.setWeaponOnDeath(unitJsonModel.getWeaponUseOnDeath());
-            unit.setControllable(unitJsonModel.getControllable());
 
             // Build traits
             unit.setBuild(mappingService.map(unitJsonModel, findUnitBuildObject(gameplayModel, id), localizationModel));
@@ -95,6 +91,16 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             unit.setTurrets(getTurretList(unitJsonModel.getTurrets(), projectileMap, localizationModel));
             unit.setSupply(mappingService.map(unitJsonModel.getSupply()));
             unit.setRegenerationSpeed(Util.intToDoubleTick(unitJsonModel.getRegeneration()));
+            unit.setViewRange(Util.intToDoubleShift(unitJsonModel.getViewRange()));
+            unit.setHealth(Util.intToDoubleShift(unitJsonModel.getHealth()));
+            unit.setTags(mappingService.mapUnitTags(unitJsonModel.getTags(), localizationModel));
+            unit.setSearchTags(mappingService.mapTags(unitJsonModel.getSearchTags(), i -> localizationModel.getUnitSearchTagNames().get(i)));
+            unit.setWeaponOnDeath(unitJsonModel.getWeaponUseOnDeath());
+            unit.setControllable(unitJsonModel.getControllable());
+            unit.setLifetime(Util.intToDoubleShift(unitJsonModel.getLifeTime()));
+            unit.setParentMustIdle(unitJsonModel.getParentMustIdle());
+            unit.setReceiveFriendlyDamage(unitJsonModel.getReceiveFriendlyDamage());
+            unit.setThreat(unitJsonModel.getThreat());
 
             // Movable traits
             unit.setMovement(mappingService.map(unitJsonModel.getMovement()));
@@ -102,6 +108,8 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
 
             // Worker traits
             unit.setGather(getGatherList(unitJsonModel.getGather(), localizationModel));
+            unit.setHeal(mappingService.map(unitJsonModel.getHeal(), localizationModel));
+            unit.setConstruction(getConstructionList(unitJsonModel.getBuilding()));
 
             AirplaneJsonModel airplaneAndSubmarineModel = unitJsonModel.getAirplane();
             // Airplane traits
@@ -179,6 +187,13 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
         return turretList == null ? new ArrayList<>() :
                 turretList.stream()
                         .map(entry -> mappingService.map(entry, projectiles, localizationModel))
+                        .toList();
+    }
+
+    private List<ConstructionModel> getConstructionList(List<BuildingJsonModel> buildingList) {
+        return buildingList == null ? new ArrayList<>() :
+                buildingList.stream()
+                        .map(mappingService::map)
                         .toList();
     }
 }

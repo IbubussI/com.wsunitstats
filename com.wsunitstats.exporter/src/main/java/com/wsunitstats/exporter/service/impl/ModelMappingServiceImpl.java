@@ -2,6 +2,8 @@ package com.wsunitstats.exporter.service.impl;
 
 import com.wsunitstats.domain.submodel.AirplaneModel;
 import com.wsunitstats.domain.submodel.BuildingModel;
+import com.wsunitstats.domain.submodel.ConstructionModel;
+import com.wsunitstats.domain.submodel.HealModel;
 import com.wsunitstats.domain.submodel.IncomeModel;
 import com.wsunitstats.domain.submodel.SubmarineDepthModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
@@ -18,9 +20,11 @@ import com.wsunitstats.domain.submodel.weapon.ProjectileModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildingJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.CreateEnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.EnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.HealJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.IncomeJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.MovementJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ProjectileJsonModel;
@@ -69,6 +73,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.wsunitstats.utils.Constants.GENERIC_UNIT_TAG;
+import static com.wsunitstats.utils.Constants.INIT_HEALTH_MODIFIER;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 @Service
@@ -375,6 +380,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         buildingModel.setInitCost(mapResources(buildSource.getCostInit(), localization));
         List<Integer> fullCost = Util.add(buildSource.getCostInit(), buildSource.getCostBuilding());
         buildingModel.setFullCost(mapResources(fullCost, localization));
+        buildingModel.setInitHealth(getInitHealth(unitSource.getHealth(), buildSource.getHealth()));
         return buildingModel;
     }
 
@@ -445,6 +451,30 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     @Override
     public List<String> mapUnitTags(Long tags, LocalizationKeyModel localization) {
         return mapTags(tags, i -> i == 0 ? GENERIC_UNIT_TAG : localization.getUnitTagNames().get(i - 1));
+    }
+
+    @Override
+    public HealModel map(HealJsonModel healSource, LocalizationKeyModel localization) {
+        if (healSource == null) {
+            return null;
+        }
+        HealModel healModel = new HealModel();
+        healModel.setDistance(Util.intToDoubleShift(healSource.getDistance()));
+        healModel.setTargetTags(mapUnitTags(healSource.getTargetTags(), localization));
+        healModel.setPerSecond(Util.intToDoubleTick(healSource.getPerTick()));
+        return healModel;
+    }
+
+    @Override
+    public ConstructionModel map(BuildingJsonModel buildingSource) {
+        if (buildingSource == null) {
+            return null;
+        }
+        ConstructionModel constructionModel = new ConstructionModel();
+        constructionModel.setId(buildingSource.getId());
+        constructionModel.setDistance(Util.intToDoubleShift(buildingSource.getDistance()));
+        constructionModel.setConstructionSpeed(getConstructionSpeed(buildingSource.getProgress()));
+        return constructionModel;
     }
 
     /**
@@ -580,5 +610,27 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         return points.stream()
                 .mapToInt(DirectionAttacksPointJsonModel::getTime)
                 .sum();
+    }
+
+    /**
+     * initial_hp = hp/100*health_param*1.5
+     */
+    private Double getInitHealth(Integer fullHealth, Integer healthParam) {
+        if (fullHealth == null || healthParam == null) {
+            return null;
+        }
+        double healthPerPercent = Util.intToDoubleShift(fullHealth) / 100d;
+        return healthPerPercent * Util.intToDoubleShift(healthParam) * INIT_HEALTH_MODIFIER;
+    }
+
+    /**
+     * time = (hp-initial_hp)*progress/tickRate, s (not used here, JFI)
+     * speed = 1/progress*tickRate, %/sec
+     */
+    private Double getConstructionSpeed(Integer progress) {
+        if (progress == null) {
+            return null;
+        }
+        return Util.intToDoubleShift(progress) * Constants.BUILD_SPEED_MODIFIER;
     }
 }

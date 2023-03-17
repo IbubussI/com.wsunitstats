@@ -27,13 +27,13 @@ public class UnitJsonModel {
     @JsonProperty("armor_")
     private ArmorJsonModel armor;
     private Map<String, Object> attackReaction;
-    private List<Object> building;
+    private List<BuildingJsonModel> building;
     private Boolean controllable;
     private List<Object> corpses;
     private List<CreateEnvJsonModel> createEnvs;
     private Integer danceDuration;
     private List<GatherJsonModel> gather;
-    private Map<String, Object> heal;
+    private HealJsonModel heal;
     private List<Integer> healMeCost;
     private Integer health;
     private Integer hiddenInFows;

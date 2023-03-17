@@ -2,6 +2,8 @@ package com.wsunitstats.exporter.service;
 
 import com.wsunitstats.domain.submodel.AirplaneModel;
 import com.wsunitstats.domain.submodel.BuildingModel;
+import com.wsunitstats.domain.submodel.ConstructionModel;
+import com.wsunitstats.domain.submodel.HealModel;
 import com.wsunitstats.domain.submodel.IncomeModel;
 import com.wsunitstats.domain.submodel.SubmarineDepthModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
@@ -16,9 +18,11 @@ import com.wsunitstats.domain.submodel.weapon.ProjectileModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildingJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.CreateEnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.EnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.HealJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.IncomeJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.MovementJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ProjectileJsonModel;
@@ -105,4 +109,8 @@ public interface ModelMappingService {
      * Use this for unit tags
      */
     List<String> mapUnitTags(Long tags, LocalizationKeyModel localization);
+
+    HealModel map(HealJsonModel healSource, LocalizationKeyModel localization);
+
+    ConstructionModel map(BuildingJsonModel buildingSource);
 }

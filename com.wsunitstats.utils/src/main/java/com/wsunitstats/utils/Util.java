@@ -7,39 +7,30 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Util {
     private Util() {
         //Utility class
     }
 
-    public static final Pattern LOCALIZATION_KEY_PATTERN = Pattern.compile("<\\*[a-zA-Z0-9/]+>");
-    public static final double TICK_RATE_MULTIPLIER = 50d;
-    public static final double SHIFT_VALUE_MULTIPLIER = 1000d;
-    public static final double SPEED_VALUE_MULTIPLIER = 1_000_000d;
-    public static final double PERCENT_VALUE_MULTIPLIER = 10d;
-    public static final double POPULATION_VALUE_MULTIPLIER = 10d;
-    public static final int LONG_SIZE = 64;
-
     public static Double intToDoubleShift(Integer value) {
-        return divide(value, SHIFT_VALUE_MULTIPLIER);
+        return divide(value, Constants.SHIFT_VALUE_MULTIPLIER);
     }
 
     public static Double intToDoubleTick(Integer value) {
-        return divide(value, TICK_RATE_MULTIPLIER);
+        return divide(value, Constants.TICK_RATE_MULTIPLIER);
     }
 
     public static Double intToDoubleSpeed(Integer value) {
-        return divide(value, SPEED_VALUE_MULTIPLIER);
+        return divide(value, Constants.PROJECTILE_SPEED_VALUE_MULTIPLIER);
     }
 
     public static Double intToPercent(Integer value) {
-        return divide(value, PERCENT_VALUE_MULTIPLIER);
+        return divide(value, Constants.PERCENT_VALUE_MULTIPLIER);
     }
 
     public static Double intToSupply(Integer value) {
-        return divide(value, POPULATION_VALUE_MULTIPLIER);
+        return divide(value, Constants.POPULATION_VALUE_MULTIPLIER);
     }
 
     public static int sum(List<Integer> list) {
@@ -90,7 +81,7 @@ public class Util {
      * @return localized string
      */
     public static String localizeAll(String input, UnaryOperator<String> localizationFunction) {
-        Matcher matcher = LOCALIZATION_KEY_PATTERN.matcher(input);
+        Matcher matcher = Constants.LOCALIZATION_KEY_PATTERN.matcher(input);
         StringBuilder output = new StringBuilder();
         while (matcher.find()) {
             String localized = localizationFunction.apply(matcher.group());
@@ -110,7 +101,7 @@ public class Util {
 
     public static List<Integer> getPositiveBitIndices(long bits) {
         List<Integer> indices = new ArrayList<>();
-        for (int i = 0; i < LONG_SIZE; ++i) {
+        for (int i = 0; i < Constants.LONG_SIZE; ++i) {
             if ((bits & 1L << i) != 0) {
                 indices.add(i);
             }

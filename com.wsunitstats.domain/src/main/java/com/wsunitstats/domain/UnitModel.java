@@ -2,6 +2,8 @@ package com.wsunitstats.domain;
 
 import com.wsunitstats.domain.submodel.AirplaneModel;
 import com.wsunitstats.domain.submodel.BuildingModel;
+import com.wsunitstats.domain.submodel.ConstructionModel;
+import com.wsunitstats.domain.submodel.HealModel;
 import com.wsunitstats.domain.submodel.MovementModel;
 import com.wsunitstats.domain.submodel.ArmorModel;
 import com.wsunitstats.domain.submodel.GatherModel;
@@ -28,50 +30,57 @@ import java.util.List;
 @Setter
 @ToString
 public class UnitModel extends GenericEntityModel {
-    //Unit traits
-    protected Double size;
-    protected Double viewRange;
-    protected Double health;
-    protected Double regenerationSpeed;
-    protected Integer weaponOnDeath;
-    protected Boolean controllable;
-    protected List<String> tags;
-    protected List<String> searchTags;
+    // Unit traits
+    private Double size;
+    private Double viewRange;
+    private Double health;
+    private Double regenerationSpeed;
+    private Integer weaponOnDeath;
+    private Boolean controllable;
+    private List<String> tags;
+    private List<String> searchTags;
+    private Double lifetime;
+    private Boolean parentMustIdle;
+    private Boolean receiveFriendlyDamage;
+    private Integer threat;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    protected List<AbilityModel> abilities;
+    private List<AbilityModel> abilities;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    protected List<WeaponModel> weapons;
+    private List<WeaponModel> weapons;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    protected List<TurretModel> turrets;
+    private List<TurretModel> turrets;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    protected List<ArmorModel> armor;
+    private List<ArmorModel> armor;
 
-    //Movable unit traits
+    // Movable unit traits
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    protected MovementModel movement;
+    private MovementModel movement;
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    protected TransportingModel transporting;
+    private TransportingModel transporting;
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    protected SupplyModel supply;
+    private SupplyModel supply;
 
-    //Worker traits
+    // Worker traits
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    protected List<GatherModel> gather;
-    //protected ... building; - include building speed hp/sec for 1 worker
-
-    //Building traits
+    private List<GatherModel> gather;
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    protected BuildingModel build;
+    private HealModel heal;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<ConstructionModel> construction;
+
+    // Building traits
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private BuildingModel build;
 
     // Jet traits
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    protected AirplaneModel airplane;
+    private AirplaneModel airplane;
 
     // Submarine traits
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    protected SubmarineDepthModel submarine;
+    private SubmarineDepthModel submarine;
 
     // Goats and fowls
     @Column(name = "limit_")
-    protected Integer limit;
+    private Integer limit;
 }

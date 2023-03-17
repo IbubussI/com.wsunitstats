@@ -1,11 +1,24 @@
 package com.wsunitstats.utils;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class Constants {
     private Constants() {
         // Utility class
     }
+
+    public static final Pattern LOCALIZATION_KEY_PATTERN = Pattern.compile("<\\*[a-zA-Z0-9/]+>");
+    public static final double TICK_RATE_MULTIPLIER = 50d;
+    public static final double SHIFT_VALUE_MULTIPLIER = 1000d;
+    public static final double PROJECTILE_SPEED_VALUE_MULTIPLIER = 1_000_000d;
+    public static final double PERCENT_VALUE_MULTIPLIER = 10d;
+    public static final double POPULATION_VALUE_MULTIPLIER = 10d;
+    public static final int LONG_SIZE = 64;
+    public static final int LIVESTOCK_LIMIT = 50;
+    public static final List<Integer> LIVESTOCK_IDS = List.of(62, 130);
+    public static final double INIT_HEALTH_MODIFIER = 1.5; // calculated by experiment
+    public static final double BUILD_SPEED_MODIFIER = 0.238095; // calculated by experiment
 
     private static final String UNDEF = "N/A";
 
@@ -20,9 +33,6 @@ public class Constants {
 
     public static final String BASIC_DAMAGE_TYPE = "Base";
     public static final String GENERIC_UNIT_TAG = "Unit";
-
-    public static final int LIVESTOCK_LIMIT = 50;
-    public static final List<Integer> LIVESTOCK_IDS = List.of(62, 130);
 
     public enum AbilityType {
         UNDEFINED(-1, UNDEF),

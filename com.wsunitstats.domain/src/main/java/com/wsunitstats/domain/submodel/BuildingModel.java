@@ -26,8 +26,9 @@ public class BuildingModel extends PersistentObject {
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = RequirementsModel.class)
     private RequirementsModel requirements;
     @ElementCollection(fetch = FetchType.EAGER)
-    protected List<ResourceModel> healCost;
+    private List<ResourceModel> healCost;
     @Embedded
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = IncomeModel.class)
-    protected IncomeModel income;
+    private IncomeModel income;
+    private Double initHealth;
 }

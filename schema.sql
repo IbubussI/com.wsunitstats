@@ -76,6 +76,7 @@
     create table building (
        id bigint not null auto_increment,
         period float(53),
+        initHealth float(53),
         researchesAll bit,
         unitsAll bit,
         primary key (id)
@@ -119,6 +120,13 @@
         value_ integer
     ) engine=InnoDB;
 
+    create table construction (
+       id bigint not null auto_increment,
+        constructionSpeed float(53),
+        distance float(53),
+        primary key (id)
+    ) engine=InnoDB;
+
     create table gather (
        id bigint not null auto_increment,
         bagSize float(53),
@@ -133,6 +141,18 @@
     create table gather_envTags (
        gather_id bigint not null,
         envTags varchar(255)
+    ) engine=InnoDB;
+
+    create table heal (
+       id bigint not null auto_increment,
+        distance float(53),
+        perSecond float(53),
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table heal_targetTags (
+       heal_id bigint not null,
+        targetTags varchar(255)
     ) engine=InnoDB;
 
     create table localization (
@@ -209,15 +229,20 @@
         nation varchar(255),
         controllable bit,
         health float(53),
+        lifetime float(53),
         limit_ integer,
+        parentMustIdle bit,
+        receiveFriendlyDamage bit,
         regenerationSpeed float(53),
         searchTags varbinary(255),
         size float(53),
         tags varbinary(255),
+        threat integer,
         viewRange float(53),
         weaponOnDeath integer,
         airplane_id bigint,
         build_id bigint,
+        heal_id bigint,
         movement_id bigint,
         submarine_id bigint,
         supply_id bigint,
@@ -233,6 +258,11 @@
     create table unit_armor (
        unit_id bigint not null,
         armor_id bigint not null
+    ) engine=InnoDB;
+
+    create table unit_construction (
+       unit_id bigint not null,
+        construction_id bigint not null
     ) engine=InnoDB;
 
     create table unit_gather (
@@ -296,6 +326,9 @@
 
     alter table unit_armor 
        add constraint UK_imexy7twea6jra8pe4lyd2a1h unique (armor_id);
+
+    alter table unit_construction 
+       add constraint UK_cf8jhs84voi31sfos291n2941 unique (construction_id);
 
     alter table unit_gather 
        add constraint UK_m9du0q7emwkeahfburk4n1d6p unique (gather_id);
@@ -371,6 +404,11 @@
        foreign key (gather_id) 
        references gather (id);
 
+    alter table heal_targetTags 
+       add constraint FKo3bdaxloq89mnf94d5l628un0 
+       foreign key (heal_id) 
+       references heal (id);
+
     alter table localization_entries 
        add constraint FKr54j8wvwxlrjqi4dqbej7no3g 
        foreign key (localization_id) 
@@ -395,6 +433,11 @@
        add constraint FKmhv6iim3sgulonx10kirbatqy 
        foreign key (build_id) 
        references building (id);
+
+    alter table unit 
+       add constraint FKm4ynt1c03h75d12tnfpwds9pd 
+       foreign key (heal_id) 
+       references heal (id);
 
     alter table unit 
        add constraint FKctvfg8wv8pp2iqr1ww9qgdbka 
@@ -433,6 +476,16 @@
 
     alter table unit_armor 
        add constraint FKj8su9390vg7e7lr7av9o1jsyq 
+       foreign key (unit_id) 
+       references unit (id);
+
+    alter table unit_construction 
+       add constraint FK51g1s82lg885be767qx72deqr 
+       foreign key (construction_id) 
+       references construction (id);
+
+    alter table unit_construction 
+       add constraint FK73m1yfplbh4bthjj4sbksmx1n 
        foreign key (unit_id) 
        references unit (id);
 
