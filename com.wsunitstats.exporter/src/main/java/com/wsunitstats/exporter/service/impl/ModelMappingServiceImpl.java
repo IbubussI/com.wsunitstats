@@ -471,7 +471,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
             return null;
         }
         ConstructionModel constructionModel = new ConstructionModel();
-        constructionModel.setId(buildingSource.getId());
+        constructionModel.setBuildId(buildingSource.getId());
         constructionModel.setDistance(Util.intToDoubleShift(buildingSource.getDistance()));
         constructionModel.setConstructionSpeed(getConstructionSpeed(buildingSource.getProgress()));
         return constructionModel;

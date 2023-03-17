@@ -122,6 +122,7 @@
 
     create table construction (
        id bigint not null auto_increment,
+        buildId integer,
         constructionSpeed float(53),
         distance float(53),
         primary key (id)

@@ -12,7 +12,7 @@ import lombok.ToString;
 @ToString
 public class ConstructionModel extends PersistentObject {
 	private Double distance;
-    private Integer id;
+    private Integer buildId;
     // %/sec
     private Double constructionSpeed;
 }
