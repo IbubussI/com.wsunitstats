@@ -1,14 +1,16 @@
 package com.wsunitstats.exporter;
 
+import com.wsunitstats.exporter.model.json.main.MainFileJsonModel;
+import com.wsunitstats.exporter.service.ImageService;
 import com.wsunitstats.exporter.service.LocalizationService;
 import com.wsunitstats.exporter.model.FilePathWrapper;
-import com.wsunitstats.exporter.model.json.gameplay.GameplayFileModel;
+import com.wsunitstats.exporter.model.json.gameplay.GameplayFileJsonModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.model.FileModelWrapper;
 import com.wsunitstats.exporter.model.localization.LocalizationFileModel;
 import com.wsunitstats.exporter.service.FileReaderService;
-import com.wsunitstats.exporter.service.GamePathResolver;
+import com.wsunitstats.exporter.service.FilePathResolver;
 import com.wsunitstats.exporter.service.LocalizationModelResolver;
 import com.wsunitstats.utils.service.ModelExporterService;
 import com.wsunitstats.exporter.service.RestService;
@@ -26,9 +28,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.List;
+import java.util.Map;
 
 @SpringBootApplication
 @ComponentScan({"com.wsunitstats.*"})
@@ -55,9 +61,11 @@ public class UnitStatsExporterApplication {
         @Autowired
         private RestService restService;
         @Autowired
-        private GamePathResolver gamePathResolver;
+        private FilePathResolver filePathResolver;
         @Autowired
         private LocalizationService localizationService;
+        @Autowired
+        private ImageService imageService;
 
         @Value("${com.wsunitstats.exporter.host}")
         private String uploadHost;
@@ -65,6 +73,8 @@ public class UnitStatsExporterApplication {
         private String uploadUnitsUriPath;
         @Value("${com.wsunitstats.exporter.upload.localization}")
         private String uploadLocalizationUriPath;
+        @Value("${com.wsunitstats.exporter.upload.images}")
+        private String imagesUriPath;
         @Value("${com.wsunitstats.exporter.goals}")
         private List<String> goals;
         @Value("${com.wsunitstats.exporter.file.name}")
@@ -75,19 +85,23 @@ public class UnitStatsExporterApplication {
         private String fileLocale;
         @Value("${com.wsunitstats.exporter.file.localize}")
         private boolean fileLocalize;
+        @Value("${com.wsunitstats.exporter.image.file.extension}")
+        private String imageExtension;
 
         @Override
         public void run(String... args) throws Exception {
-            FilePathWrapper filePathWrapper = gamePathResolver.resolve();
+            FilePathWrapper filePathWrapper = filePathResolver.resolve();
 
-            GameplayFileModel gameplayFileModel = fileReaderService.readGameplayJson(filePathWrapper.getGameplayFilePath());
+            GameplayFileJsonModel gameplayFileModel = fileReaderService.readJson(filePathWrapper.getGameplayFilePath(), GameplayFileJsonModel.class);
+            MainFileJsonModel mainFileModel = fileReaderService.readJson(filePathWrapper.getMainFilePath(), MainFileJsonModel.class);
             SessionInitFileModel sessionInitFileModel = fileReaderService.readSessionInitLua(filePathWrapper.getSessionInitFilePath());
             MainStartupFileModel startupFileModel = fileReaderService.readMainStartupLua(filePathWrapper.getMainStartupFilePath());
             List<LocalizationFileModel> localizationFileModels = fileReaderService.readLocalizations(filePathWrapper.getLocalizationFolderPath());
+            Map<String, BufferedImage> images = imageService.readImages(mainFileModel.getGlobalContent(), filePathWrapper.getRootFolderPath());
 
             FileModelWrapper fileContainer = new FileModelWrapper();
             fileContainer.setGameplayFileModel(gameplayFileModel);
-            fileContainer.setMainFileModel(null);
+            fileContainer.setMainFileModel(mainFileModel);
             fileContainer.setMainStartupFileModel(startupFileModel);
             fileContainer.setSessionInitFileModel(sessionInitFileModel);
 
@@ -95,6 +109,7 @@ public class UnitStatsExporterApplication {
             List<LocalizationModel> localizationModels = localizationFileModels.stream()
                     .map(locFile -> localizationModelResolver.resolveFromJsonModel(locFile))
                     .toList();
+
             // write to file
             if (goals.contains(GOAL_PRINT)) {
                 try (Writer fileWriter = new FileWriter(fileName, false)) {
@@ -118,10 +133,19 @@ public class UnitStatsExporterApplication {
             if (goals.contains(GOAL_SEND)) {
                 String unitsJson = exporterService.exportToJson(unitModels);
                 String locJson = exporterService.exportToJson(localizationModels);
+
                 ResponseEntity<String> gameplayResponse = restService.postJson(uploadHost + uploadUnitsUriPath, unitsJson);
-                ResponseEntity<String> locResponse = restService.postJson(uploadHost + uploadLocalizationUriPath, locJson);
                 LOG.info("Gameplay submitted: HTTP {} : {}", gameplayResponse.getStatusCode().value(), gameplayResponse.getBody());
+                ResponseEntity<String> locResponse = restService.postJson(uploadHost + uploadLocalizationUriPath, locJson);
                 LOG.info("Localization submitted: HTTP {} : {}", locResponse.getStatusCode().value(), locResponse.getBody());
+
+                for (Map.Entry<String, BufferedImage> entry : images.entrySet()) {
+                    String filename = entry.getKey();
+                    ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
+                    ImageIO.write(entry.getValue(), "png", imageOutputStream);
+                    ResponseEntity<String> imagesResponse = restService.postFile(uploadHost + "/api/files/upload/icon", filename, imageOutputStream.toByteArray());
+                    LOG.info("Image {} submitted: HTTP {} : {}", filename, imagesResponse.getStatusCode().value(), imagesResponse.getBody());
+                }
             }
         }
     }

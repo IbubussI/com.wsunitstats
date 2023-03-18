@@ -12,7 +12,7 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString
-public class GameplayFileModel {
+public class GameplayFileJsonModel {
     private List<BuildJsonModel> build;
     private Integer defaultFormationInterval;
     private Integer defaultFormationType;

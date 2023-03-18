@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class IndexedArrayDataModelDeserializer<T> extends JsonDeserializer<Map<Integer, T>> {
-
     protected abstract Class<T> getValueClass();
 
     @Override

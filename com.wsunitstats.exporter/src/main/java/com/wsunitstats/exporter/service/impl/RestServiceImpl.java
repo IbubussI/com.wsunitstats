@@ -8,9 +8,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +24,32 @@ public class RestServiceImpl implements RestService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(json, headers);
+        return restTemplate.postForEntity(uri, request, String.class);
+    }
+
+    @Override
+    public ResponseEntity<String> postFiles(String uri, Map<String, byte[]> files) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        for (Map.Entry<String, byte[]> entry : files.entrySet()) {
+            body.add("file", Base64.getEncoder().encodeToString(entry.getValue()));
+            body.add("fileName", entry.getKey());
+        }
+        HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
+        return restTemplate.postForEntity(uri, request, String.class);
+    }
+
+    @Override
+    public ResponseEntity<String> postFile(String uri, String filename, byte[] fileContent) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
+        map.add("file", Base64.getEncoder().encodeToString(fileContent));
+        map.add("fileName", filename);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         return restTemplate.postForEntity(uri, request, String.class);
     }
 

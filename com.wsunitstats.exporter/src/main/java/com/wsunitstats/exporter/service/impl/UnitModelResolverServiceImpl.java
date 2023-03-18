@@ -4,7 +4,7 @@ import com.wsunitstats.domain.submodel.ConstructionModel;
 import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
-import com.wsunitstats.exporter.model.json.gameplay.GameplayFileModel;
+import com.wsunitstats.exporter.model.json.gameplay.GameplayFileJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildingJsonModel;
@@ -20,7 +20,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityOnAc
 import com.wsunitstats.exporter.model.json.gameplay.submodel.air.AirplaneJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
-import com.wsunitstats.exporter.model.json.main.MainFileModel;
+import com.wsunitstats.exporter.model.json.main.MainFileJsonModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.service.ModelMappingService;
@@ -51,8 +51,8 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
 
     @Override
     public List<UnitModel> resolveFromJsonModel(FileModelWrapper rootContainer) {
-        GameplayFileModel gameplayModel = rootContainer.getGameplayFileModel();
-        MainFileModel mainModel = rootContainer.getMainFileModel();
+        GameplayFileJsonModel gameplayModel = rootContainer.getGameplayFileModel();
+        MainFileJsonModel mainModel = rootContainer.getMainFileModel();
         MainStartupFileModel startupModel = rootContainer.getMainStartupFileModel();
         SessionInitFileModel sessionInitModel = rootContainer.getSessionInitFileModel();
 
@@ -125,7 +125,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
         return result;
     }
 
-    private BuildJsonModel findUnitBuildObject(GameplayFileModel gameplayJsonModel, int unitId) {
+    private BuildJsonModel findUnitBuildObject(GameplayFileJsonModel gameplayJsonModel, int unitId) {
         return gameplayJsonModel.getBuild().stream()
                 .filter(buildJsonModel -> buildJsonModel.getUnit() == unitId)
                 .findFirst()

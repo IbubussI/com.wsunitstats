@@ -32,3 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 /game-files/
+/output/
+/units.json
+/files/

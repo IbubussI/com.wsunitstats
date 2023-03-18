@@ -2,7 +2,6 @@ package com.wsunitstats.exporter.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wsunitstats.exporter.exception.FileReadingException;
-import com.wsunitstats.exporter.model.json.gameplay.GameplayFileModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.service.FileReaderService;
@@ -30,7 +29,6 @@ import static com.wsunitstats.utils.Constants.LOCALIZATION_MULTI_VALUE_DELIMITER
 
 @Service
 public class FileReaderServiceImpl implements FileReaderService {
-
     private static final Logger LOG = LoggerFactory.getLogger(FileReaderServiceImpl.class);
 
     private static final Pattern LOC_VALUE_PATTERN = Pattern.compile("^(<\\*[^<>]*>)(.*)$", Pattern.MULTILINE);
@@ -41,11 +39,11 @@ public class FileReaderServiceImpl implements FileReaderService {
     private static final String LOC_FILENAME_SUFFIX = ".loc";
 
     @Override
-    public GameplayFileModel readGameplayJson(String path) {
+    public <T> T readJson(String path, Class<T> clazz) {
         LOG.debug("Reading json gameplay file at path: {}", path);
         try (FileReader fileReader = new FileReader(path)) {
             ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(fileReader, GameplayFileModel.class);
+            return mapper.readValue(fileReader, clazz);
         } catch (IOException e) {
             throw new FileReadingException("Reading json file failed", e);
         }

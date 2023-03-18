@@ -8,6 +8,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class FilePathWrapper {
+    private String rootFolderPath;
     private String gameplayFilePath;
     private String mainFilePath;
     private String localizationFolderPath;

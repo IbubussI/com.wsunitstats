@@ -5,6 +5,6 @@ import com.wsunitstats.exporter.model.FilePathWrapper;
 
 import java.io.IOException;
 
-public interface GamePathResolver {
+public interface FilePathResolver {
     FilePathWrapper resolve() throws IOException, GameFilesResolvingException;
 }

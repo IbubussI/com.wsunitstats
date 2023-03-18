@@ -4,7 +4,7 @@ import com.wsunitstats.exporter.exception.GameFilesResolvingException;
 import com.wsunitstats.exporter.jvdf.VDFNode;
 import com.wsunitstats.exporter.jvdf.VDFParser;
 import com.wsunitstats.exporter.model.FilePathWrapper;
-import com.wsunitstats.exporter.service.GamePathResolver;
+import com.wsunitstats.exporter.service.FilePathResolver;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,8 +20,8 @@ import java.util.Map;
 @Service
 @PropertySource(value = "classpath:exporter.properties")
 @PropertySource(value = "file:config/exporter.properties", ignoreResourceNotFound = true)
-public class GamePathResolverImpl implements GamePathResolver {
-    private static final Logger LOG = LogManager.getLogger(GamePathResolverImpl.class);
+public class FilePathResolverImpl implements FilePathResolver {
+    private static final Logger LOG = LogManager.getLogger(FilePathResolverImpl.class);
 
     private static final String REG_QUERY = "reg query";
     private static final String REG_VALUE = "/v";
@@ -45,6 +45,8 @@ public class GamePathResolverImpl implements GamePathResolver {
     private String steamWSPath;
     @Value("${com.wsunitstats.exporter.warselection.app.id}")
     private String steamWSAppId;
+    @Value("${com.wsunitstats.exporter.warselection.root.folder}")
+    private String wsRootFolderPath;
     @Value("${com.wsunitstats.exporter.warselection.gameplay.file}")
     private String wsGameplayFilePath;
     @Value("${com.wsunitstats.exporter.warselection.main.file}")
@@ -72,23 +74,27 @@ public class GamePathResolverImpl implements GamePathResolver {
         LOG.debug("Resolved WS root directory: {}", gameDirPath);
 
         FilePathWrapper result = new FilePathWrapper();
-        String wsGameplayAbsFilePath = gameDirPath + wsGameplayFilePath;
+        String wsRootAbsFolderPath = gameDirPath + wsRootFolderPath;
+        validateFile(wsRootAbsFolderPath);
+        result.setRootFolderPath(wsRootAbsFolderPath);
+
+        String wsGameplayAbsFilePath = wsRootAbsFolderPath + wsGameplayFilePath;
         validateFile(wsGameplayAbsFilePath);
         result.setGameplayFilePath(wsGameplayAbsFilePath);
 
-        String wsMainAbsFilePath = gameDirPath + wsMainFilePath;
+        String wsMainAbsFilePath = wsRootAbsFolderPath + wsMainFilePath;
         validateFile(wsMainAbsFilePath);
         result.setMainFilePath(wsMainAbsFilePath);
 
-        String wsLocalizationAbsFolderPath = gameDirPath + wsLocalizationFolderPath;
+        String wsLocalizationAbsFolderPath = wsRootAbsFolderPath + wsLocalizationFolderPath;
         validateFile(wsLocalizationAbsFolderPath);
         result.setLocalizationFolderPath(wsLocalizationAbsFolderPath);
 
-        String wsInterfacesSessionInitAbsFilePath = gameDirPath + wsInterfacesSessionInitFilePath;
+        String wsInterfacesSessionInitAbsFilePath = wsRootAbsFolderPath + wsInterfacesSessionInitFilePath;
         validateFile(wsInterfacesSessionInitAbsFilePath);
         result.setSessionInitFilePath(wsInterfacesSessionInitAbsFilePath);
 
-        String wsMainStartupAbsFilePath = gameDirPath + wsMainStartupFilePath;
+        String wsMainStartupAbsFilePath = wsRootAbsFolderPath + wsMainStartupFilePath;
         validateFile(wsMainStartupAbsFilePath);
         result.setMainStartupFilePath(wsMainStartupAbsFilePath);
         return result;

@@ -131,7 +131,7 @@ public class UnitController {
             unitService.setUnits(units);
             return new ResponseEntity<>(OK, HttpStatus.OK);
         } catch (JsonProcessingException ex) {
-            LOG.debug("Can't process requested json", ex);
+            LOG.error("Can't process requested json", ex);
             return new ResponseEntity<>(INVALID_JSON, HttpStatus.BAD_REQUEST);
         }
     }
