@@ -28,20 +28,6 @@ public class RestServiceImpl implements RestService {
     }
 
     @Override
-    public ResponseEntity<String> postFiles(String uri, Map<String, byte[]> files) {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        for (Map.Entry<String, byte[]> entry : files.entrySet()) {
-            body.add("file", Base64.getEncoder().encodeToString(entry.getValue()));
-            body.add("fileName", entry.getKey());
-        }
-        HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
-        return restTemplate.postForEntity(uri, request, String.class);
-    }
-
-    @Override
     public ResponseEntity<String> postFile(String uri, String filename, byte[] fileContent) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();

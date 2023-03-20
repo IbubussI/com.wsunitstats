@@ -16,8 +16,6 @@ public interface RestService {
      * Send POST request with given files body to given URI
      * @return {@link ResponseEntity} of executed request
      */
-    ResponseEntity<String> postFiles(String uri, Map<String, byte[]> files);
-
     ResponseEntity<String> postFile(String uri, String filename, byte[] file);
 
     /**
