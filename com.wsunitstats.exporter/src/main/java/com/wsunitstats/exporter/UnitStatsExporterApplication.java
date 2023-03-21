@@ -7,7 +7,7 @@ import com.wsunitstats.exporter.model.FilePathWrapper;
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileJsonModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
-import com.wsunitstats.exporter.model.FileModelWrapper;
+import com.wsunitstats.exporter.model.SourceModelWrapper;
 import com.wsunitstats.exporter.model.localization.LocalizationFileModel;
 import com.wsunitstats.exporter.service.FileReaderService;
 import com.wsunitstats.exporter.service.FilePathResolver;
@@ -75,6 +75,8 @@ public class UnitStatsExporterApplication {
         private String uploadLocalizationUriPath;
         @Value("${com.wsunitstats.exporter.upload.images}")
         private String imagesUriPath;
+        @Value("${com.wsunitstats.exporter.images.unit.path.template}")
+        private String imagesPathTemaplte;
         @Value("${com.wsunitstats.exporter.goals}")
         private List<String> goals;
         @Value("${com.wsunitstats.exporter.file.name}")
@@ -99,13 +101,14 @@ public class UnitStatsExporterApplication {
             List<LocalizationFileModel> localizationFileModels = fileReaderService.readLocalizations(filePathWrapper.getLocalizationFolderPath());
             Map<String, BufferedImage> images = imageService.readImages(mainFileModel.getGlobalContent(), filePathWrapper.getRootFolderPath());
 
-            FileModelWrapper fileContainer = new FileModelWrapper();
-            fileContainer.setGameplayFileModel(gameplayFileModel);
-            fileContainer.setMainFileModel(mainFileModel);
-            fileContainer.setMainStartupFileModel(startupFileModel);
-            fileContainer.setSessionInitFileModel(sessionInitFileModel);
+            SourceModelWrapper sourceContainer = new SourceModelWrapper();
+            sourceContainer.setGameplayFileModel(gameplayFileModel);
+            sourceContainer.setMainFileModel(mainFileModel);
+            sourceContainer.setMainStartupFileModel(startupFileModel);
+            sourceContainer.setSessionInitFileModel(sessionInitFileModel);
+            sourceContainer.setImages(images);
 
-            List<UnitModel> unitModels = unitModelResolverService.resolveFromJsonModel(fileContainer);
+            List<UnitModel> unitModels = unitModelResolverService.resolveFromJsonModel(sourceContainer, imagesPathTemaplte);
             List<LocalizationModel> localizationModels = localizationFileModels.stream()
                     .map(locFile -> localizationModelResolver.resolveFromJsonModel(locFile))
                     .toList();

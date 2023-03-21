@@ -14,7 +14,7 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString
-public class FileModelWrapper {
+public class SourceModelWrapper {
     private Map<String, BufferedImage> images;
     private GameplayFileJsonModel gameplayFileModel;
     private MainFileJsonModel mainFileModel;

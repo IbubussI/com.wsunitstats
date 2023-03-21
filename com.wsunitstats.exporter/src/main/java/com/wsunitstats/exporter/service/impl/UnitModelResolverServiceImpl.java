@@ -20,7 +20,6 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityOnAc
 import com.wsunitstats.exporter.model.json.gameplay.submodel.air.AirplaneJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
-import com.wsunitstats.exporter.model.json.main.MainFileJsonModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.service.ModelMappingService;
@@ -31,7 +30,7 @@ import com.wsunitstats.exporter.model.LocalizationKeyModel;
 import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.domain.submodel.ArmorModel;
 import com.wsunitstats.domain.submodel.GatherModel;
-import com.wsunitstats.exporter.model.FileModelWrapper;
+import com.wsunitstats.exporter.model.SourceModelWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,9 +49,8 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
     private ModelMappingService mappingService;
 
     @Override
-    public List<UnitModel> resolveFromJsonModel(FileModelWrapper rootContainer) {
+    public List<UnitModel> resolveFromJsonModel(SourceModelWrapper rootContainer, String imagePathTemplate) {
         GameplayFileJsonModel gameplayModel = rootContainer.getGameplayFileModel();
-        MainFileJsonModel mainModel = rootContainer.getMainFileModel();
         MainStartupFileModel startupModel = rootContainer.getMainStartupFileModel();
         SessionInitFileModel sessionInitModel = rootContainer.getSessionInitFileModel();
 
@@ -72,7 +70,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             // Generic traits
             unit.setGameId(id);
             unit.setName(localizationModel.getUnitNames().get(id));
-            //unit.setImageUrl();
+            unit.setImagePath(String.format(imagePathTemplate, id));
             unit.setNation(getUnitNation(sessionInitModel, localizationModel, id));
 
             // Build traits
