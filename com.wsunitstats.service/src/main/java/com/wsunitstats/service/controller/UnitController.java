@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -124,7 +123,6 @@ public class UnitController {
         }
     }
 
-    @CrossOrigin
     @GetMapping(path = "/options", params = "nameFilter")
     public ResponseEntity<String> fetchUnitOptions(@RequestParam String nameFilter,
                                                    @RequestParam(defaultValue = "en") String locale,
