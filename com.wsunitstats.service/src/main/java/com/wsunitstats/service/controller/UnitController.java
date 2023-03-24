@@ -85,7 +85,27 @@ public class UnitController {
         }
     }
 
-    @GetMapping
+    @GetMapping(params = "id")
+    public ResponseEntity<String> getUnitsByIds(@RequestParam(name = "id") List<Long> idList,
+                                                @RequestParam(defaultValue = "en") String locale,
+                                                @RequestParam(defaultValue = "id") String sort,
+                                                @RequestParam(defaultValue = "asc") String sortDir,
+                                                @RequestParam(defaultValue = "0") Integer page,
+                                                @RequestParam(defaultValue = "50") Integer size) {
+        try {
+            parameterValidatorService.validateLocale(locale);
+            List<UnitModel> units = unitService.getUnitsByIds(idList, sort, sortDir, page, size);
+            return getJson(units, true, locale);
+        } catch (JsonProcessingException ex) {
+            LOG.error("Json export error", ex);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (InvalidParameterException ex) {
+            LOG.error("Bad request: {}", ex.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "/all")
     public ResponseEntity<String> getUnits(@RequestParam(defaultValue = "en") String locale,
                                            @RequestParam(defaultValue = "id") String sort,
                                            @RequestParam(defaultValue = "asc") String sortDir,

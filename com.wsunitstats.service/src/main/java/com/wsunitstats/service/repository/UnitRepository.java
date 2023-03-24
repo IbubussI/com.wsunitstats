@@ -18,6 +18,8 @@ public interface UnitRepository extends CrudRepository<UnitModel, Long>, PagingA
 
     List<UnitModel> findByGameIdIn(List<Integer> ids, Pageable pageable);
 
+    List<UnitModel> findByIdIn(List<Long> ids, Pageable pageable);
+
     Page<UnitModel> findAll(Pageable pageable);
 
     @Query(nativeQuery = true, value = """

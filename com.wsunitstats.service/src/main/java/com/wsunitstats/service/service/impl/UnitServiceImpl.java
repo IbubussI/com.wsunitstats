@@ -36,6 +36,11 @@ public class UnitServiceImpl implements UnitService {
     }
 
     @Override
+    public List<UnitModel> getUnitsByIds(List<Long> ids, String sort, String sortDir, int page, int size) {
+        return unitRepository.findByIdIn(ids, getPageable(sort, sortDir, page, size));
+    }
+
+    @Override
     public List<UnitModel> getUnitsByGameIds(List<Integer> ids, String sort, String sortDir, int page, int size) {
         return unitRepository.findByGameIdIn(ids, getPageable(sort, sortDir, page, size));
     }
