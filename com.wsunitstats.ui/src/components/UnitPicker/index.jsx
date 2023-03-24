@@ -70,6 +70,8 @@ export const UnitPicker = ({ locale, onSelect }) => {
         setValue(newValue);
         if (newValue) {
           onSelect(newValue.id);
+        } else {
+          onSelect(null);
         }
       }}
       onInputChange={(event, newInputValue) => {

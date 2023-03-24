@@ -40,6 +40,7 @@ export const LocalePicker = ({onSelect}) => {
           id="locale-select"
           value={value}
           label="Locale"
+          MenuProps={{ PaperProps: { sx: { maxHeight: 190 } } }}
           onChange={(event) => {
             setValue(event.target.value);
             onSelect(event.target.value);
