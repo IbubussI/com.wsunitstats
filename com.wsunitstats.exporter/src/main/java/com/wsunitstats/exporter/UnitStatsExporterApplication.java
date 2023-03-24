@@ -75,8 +75,6 @@ public class UnitStatsExporterApplication {
         private String uploadLocalizationUriPath;
         @Value("${com.wsunitstats.exporter.upload.images}")
         private String imagesUriPath;
-        @Value("${com.wsunitstats.exporter.images.unit.path.template}")
-        private String imagesPathTemaplte;
         @Value("${com.wsunitstats.exporter.goals}")
         private List<String> goals;
         @Value("${com.wsunitstats.exporter.file.name}")
@@ -108,7 +106,7 @@ public class UnitStatsExporterApplication {
             sourceContainer.setSessionInitFileModel(sessionInitFileModel);
             sourceContainer.setImages(images);
 
-            List<UnitModel> unitModels = unitModelResolverService.resolveFromJsonModel(sourceContainer, imagesPathTemaplte);
+            List<UnitModel> unitModels = unitModelResolverService.resolveFromJsonModel(sourceContainer);
             List<LocalizationModel> localizationModels = localizationFileModels.stream()
                     .map(locFile -> localizationModelResolver.resolveFromJsonModel(locFile))
                     .toList();
@@ -145,7 +143,7 @@ public class UnitStatsExporterApplication {
                 for (Map.Entry<String, BufferedImage> entry : images.entrySet()) {
                     String filename = entry.getKey();
                     ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
-                    ImageIO.write(entry.getValue(), "png", imageOutputStream);
+                    ImageIO.write(entry.getValue(), imageExtension, imageOutputStream);
                     ResponseEntity<String> imagesResponse = restService.postFile(uploadHost + "/api/files/upload/icon", filename, imageOutputStream.toByteArray());
                     LOG.info("Image {} submitted: HTTP {} : {}", filename, imagesResponse.getStatusCode().value(), imagesResponse.getBody());
                 }

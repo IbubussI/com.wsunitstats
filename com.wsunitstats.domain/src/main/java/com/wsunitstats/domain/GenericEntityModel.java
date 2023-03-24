@@ -12,6 +12,6 @@ import lombok.ToString;
 public abstract class GenericEntityModel extends PersistentObject {
     protected int gameId;
     protected String name;
-    protected String imagePath;
+    protected String image;
     protected String nation;
 }

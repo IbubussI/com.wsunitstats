@@ -32,6 +32,8 @@ import com.wsunitstats.domain.submodel.ArmorModel;
 import com.wsunitstats.domain.submodel.GatherModel;
 import com.wsunitstats.exporter.model.SourceModelWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -42,14 +44,19 @@ import java.util.stream.IntStream;
 import static com.wsunitstats.utils.Constants.LIVESTOCK_LIMIT;
 
 @Service
+@PropertySource(value = "classpath:exporter.properties")
+@PropertySource(value = "file:config/exporter.properties", ignoreResourceNotFound = true)
 public class UnitModelResolverServiceImpl implements UnitModelResolverService {
     private static final String NIL = "nil";
 
     @Autowired
     private ModelMappingService mappingService;
 
+    @Value("${com.wsunitstats.exporter.image.file.extension}")
+    private String imageExtension;
+
     @Override
-    public List<UnitModel> resolveFromJsonModel(SourceModelWrapper rootContainer, String imagePathTemplate) {
+    public List<UnitModel> resolveFromJsonModel(SourceModelWrapper rootContainer) {
         GameplayFileJsonModel gameplayModel = rootContainer.getGameplayFileModel();
         MainStartupFileModel startupModel = rootContainer.getMainStartupFileModel();
         SessionInitFileModel sessionInitModel = rootContainer.getSessionInitFileModel();
@@ -70,7 +77,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             // Generic traits
             unit.setGameId(id);
             unit.setName(localizationModel.getUnitNames().get(id));
-            unit.setImagePath(String.format(imagePathTemplate, id));
+            unit.setImage("unit" + id + "." + imageExtension);
             unit.setNation(getUnitNation(sessionInitModel, localizationModel, id));
 
             // Build traits

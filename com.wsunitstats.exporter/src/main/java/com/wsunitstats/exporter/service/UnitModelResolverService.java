@@ -6,5 +6,5 @@ import com.wsunitstats.domain.UnitModel;
 import java.util.List;
 
 public interface UnitModelResolverService {
-    List<UnitModel> resolveFromJsonModel(SourceModelWrapper rootContainer, String imagesPathTemplate);
+    List<UnitModel> resolveFromJsonModel(SourceModelWrapper rootContainer);
 }

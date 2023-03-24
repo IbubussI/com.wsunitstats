@@ -225,7 +225,7 @@
     create table unit (
        id bigint not null auto_increment,
         gameId integer not null,
-        imageUrl varchar(255),
+        image varchar(255),
         name varchar(255),
         nation varchar(255),
         controllable bit,
