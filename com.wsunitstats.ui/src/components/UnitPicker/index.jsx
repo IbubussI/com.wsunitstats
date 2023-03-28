@@ -18,7 +18,7 @@ export const UnitPicker = ({ locale, onSelect }) => {
     () =>
       debounce((name, locale, callback) => {
         if (name) {
-          fetch(Constants.HOST + Constants.UNIT_OPTIONS_API + new URLSearchParams({
+          fetch(Constants.HOST + Constants.UNIT_OPTIONS_API + '?' + new URLSearchParams({
             nameFilter: name,
             locale: locale
           }))
@@ -66,6 +66,11 @@ export const UnitPicker = ({ locale, onSelect }) => {
       filterSelectedOptions
       value={value}
       noOptionsText="No options"
+      componentsProps={{
+        paper: {
+          elevation: 4
+        }
+      }}
       onChange={(event, newValue) => {
         setValue(newValue);
         if (newValue) {
@@ -77,13 +82,11 @@ export const UnitPicker = ({ locale, onSelect }) => {
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);
       }}
-      renderInput={({ inputProps, ...params }) => {
-        const readOnly = value ? true : false;
+      renderInput={({ ...params }) => {
         return (
           <TextField
             {...params}
             label="Type the Unit name"
-            inputProps={{ ...inputProps, readOnly: readOnly }}
             fullWidth
           />
         );
