@@ -10,13 +10,14 @@ export const ViewLayout = ({ unitId, locale }) => {
     let active = true;
     if (active) {
       if (unitId) {
-        if (!locale) {
-          locale = '';
+        let actualLocale = ''
+        if (locale) {
+          actualLocale = locale;
         }
 
         fetch(Constants.HOST + Constants.UNIT_DATA_API + '?' + new URLSearchParams({
           id: unitId,
-          locale: locale
+          locale: actualLocale
         }))
           .then((response) => response.json())
           .then((unit) => {
@@ -39,7 +40,7 @@ export const ViewLayout = ({ unitId, locale }) => {
     return (
       <div className="view-layout-root">
         <h2>{unit.name}</h2>
-        <img className="view-layout-image" src={`/files/images/${unit.image}`} />
+        <img className="view-layout-image" src={`/files/images/${unit.image}`} alt=""/>
         <div className="view-layout-stats">
           <UnitStats unit={unit} />
         </div>
