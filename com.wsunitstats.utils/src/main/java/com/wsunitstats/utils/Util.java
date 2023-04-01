@@ -85,8 +85,7 @@ public class Util {
         StringBuilder output = new StringBuilder();
         while (matcher.find()) {
             String localized = localizationFunction.apply(matcher.group());
-            String cleared = clearCurlyBraces(localized);
-            matcher.appendReplacement(output, cleared);
+            matcher.appendReplacement(output, localized);
         }
         matcher.appendTail(output);
         return output.toString();
