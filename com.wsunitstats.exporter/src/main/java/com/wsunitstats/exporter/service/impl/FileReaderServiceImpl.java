@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -70,7 +71,7 @@ public class FileReaderServiceImpl implements FileReaderService {
     @Override
     public LocalizationFileModel readLocalization(File file) {
         LOG.debug("Reading localization file at path: {}", file.getPath());
-        try (Scanner scanner = new Scanner(file)) {
+        try (Scanner scanner = new Scanner(file, StandardCharsets.UTF_8)) {
             LocalizationFileModel localizationModel = new LocalizationFileModel();
             Map<String, List<String>> localizationValues = new HashMap<>();
             scanner.findAll(LOC_VALUE_PATTERN)
