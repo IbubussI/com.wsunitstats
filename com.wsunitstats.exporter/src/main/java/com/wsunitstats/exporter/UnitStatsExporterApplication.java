@@ -90,8 +90,11 @@ public class UnitStatsExporterApplication {
 
         @Override
         public void run(String... args) throws Exception {
+            LOG.info("Resolving game files...");
             FilePathWrapper filePathWrapper = filePathResolver.resolve();
+            LOG.info("Game files resolved at the next folder: [{}] ", filePathWrapper.getRootFolderPath());
 
+            LOG.info("Reading game files...");
             GameplayFileJsonModel gameplayFileModel = fileReaderService.readJson(filePathWrapper.getGameplayFilePath(), GameplayFileJsonModel.class);
             MainFileJsonModel mainFileModel = fileReaderService.readJson(filePathWrapper.getMainFilePath(), MainFileJsonModel.class);
             SessionInitFileModel sessionInitFileModel = fileReaderService.readSessionInitLua(filePathWrapper.getSessionInitFilePath());
@@ -106,6 +109,7 @@ public class UnitStatsExporterApplication {
             sourceContainer.setSessionInitFileModel(sessionInitFileModel);
             sourceContainer.setImages(images);
 
+            LOG.info("Transforming files to data-model...");
             List<UnitModel> unitModels = unitModelResolverService.resolveFromJsonModel(sourceContainer);
             List<LocalizationModel> localizationModels = localizationFileModels.stream()
                     .map(locFile -> localizationModelResolver.resolveFromJsonModel(locFile))
@@ -113,33 +117,43 @@ public class UnitStatsExporterApplication {
 
             // write to file
             if (goals.contains(GOAL_PRINT)) {
+                LOG.info("==========Write to file task==========");
+                LOG.info("File path: {}", fileName);
                 try (Writer fileWriter = new FileWriter(fileName, false)) {
+                    LOG.info("Converting to json...");
                     String unitsJson = filePretty
                             ? exporterService.exportToPrettyJson(unitModels)
                             : exporterService.exportToJson(unitModels);
                     if (fileLocalize) {
+                        LOG.info("Localizing...");
+                        LOG.info("Locale: {}", fileLocale);
                         LocalizationModel localizationModel = localizationModels.stream()
                                 .filter(locModel -> locModel.getLocale().equals(fileLocale))
                                 .findAny()
                                 .orElse(null);
                         unitsJson = localizationService.localize(unitsJson, localizationModel);
                     }
+                    LOG.info("Writing to file...");
                     fileWriter.write(unitsJson);
                     fileWriter.flush();
-                    LOG.info("Json was written to file: {}", fileName);
                 }
             }
 
             // send to server
             if (goals.contains(GOAL_SEND)) {
+                LOG.info("==========Send to endpoint task==========");
+                LOG.info("Endpoint host address: {}", uploadHost);
                 String unitsJson = exporterService.exportToJson(unitModels);
                 String locJson = exporterService.exportToJson(localizationModels);
 
+                LOG.info("Sending units data to endpoint...");
                 ResponseEntity<String> gameplayResponse = restService.postJson(uploadHost + uploadUnitsUriPath, unitsJson);
-                LOG.info("Gameplay submitted: HTTP {} : {}", gameplayResponse.getStatusCode().value(), gameplayResponse.getBody());
+                LOG.info("Units data submitted: HTTP {} : {}", gameplayResponse.getStatusCode().value(), gameplayResponse.getBody());
+                LOG.info("Sending localization data to endpoint...");
                 ResponseEntity<String> locResponse = restService.postJson(uploadHost + uploadLocalizationUriPath, locJson);
-                LOG.info("Localization submitted: HTTP {} : {}", locResponse.getStatusCode().value(), locResponse.getBody());
+                LOG.info("Localization data submitted: HTTP {} : {}", locResponse.getStatusCode().value(), locResponse.getBody());
 
+                LOG.info("Sending images to endpoint...");
                 for (Map.Entry<String, BufferedImage> entry : images.entrySet()) {
                     String filename = entry.getKey();
                     ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
@@ -148,6 +162,7 @@ public class UnitStatsExporterApplication {
                     LOG.info("Image {} submitted: HTTP {} : {}", filename, imagesResponse.getStatusCode().value(), imagesResponse.getBody());
                 }
             }
+            LOG.info("All tasks successfully completed");
         }
     }
 }
