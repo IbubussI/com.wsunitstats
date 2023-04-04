@@ -7,16 +7,22 @@ import java.util.Map;
 
 public interface RestService {
     /**
+     * Authenticates by given credentials and returns authentication token
+     * @return {@link ResponseEntity} of executed request
+     */
+    ResponseEntity<String> getAuthToken(String authEndpointUri, String username, String password);
+
+    /**
      * Send POST request with given JSON body to given URI
      * @return {@link ResponseEntity} of executed request
      */
-    ResponseEntity<String> postJson(String uri, String json);
+    ResponseEntity<String> postJson(String uri, String json, String authToken);
 
     /**
      * Send POST request with given files body to given URI
      * @return {@link ResponseEntity} of executed request
      */
-    ResponseEntity<String> postFile(String uri, String filename, byte[] file);
+    ResponseEntity<String> postFile(String uri, String filename, byte[] file, String authToken);
 
     /**
      * Send GET request body to given URI

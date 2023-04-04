@@ -14,4 +14,8 @@ public interface ParameterValidatorService {
     void validatePage(Integer page) throws InvalidParameterException;
 
     void validateSize(Integer size) throws InvalidParameterException;
+
+    void validateUsername(String username) throws InvalidParameterException;
+
+    void validatePassword(String password) throws InvalidParameterException;
 }

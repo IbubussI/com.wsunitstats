@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class ParameterValidatorServiceImpl implements ParameterValidatorService {
@@ -17,6 +19,8 @@ public class ParameterValidatorServiceImpl implements ParameterValidatorService 
     private static final int PAGE_MAX = Integer.MAX_VALUE - 1;
     private static final int SIZE_MIN = 0;
     private static final int SIZE_MAX = 1000;
+    private static final Pattern USERNAME_PATTERN = Pattern.compile("\\w{4,30}");
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("\\w{4,30}");
 
     @Autowired
     private LocalizationService localizationService;
@@ -66,6 +70,22 @@ public class ParameterValidatorServiceImpl implements ParameterValidatorService 
     public void validateSize(Integer size) throws InvalidParameterException {
         if (!(size != null && size <= SIZE_MAX && size >= SIZE_MIN)) {
             throw new InvalidParameterException("Illegal size parameter: " + size);
+        }
+    }
+
+    @Override
+    public void validateUsername(String username) throws InvalidParameterException {
+        Matcher matcher = USERNAME_PATTERN.matcher(username);
+        if (!matcher.find() || matcher.start() != 0 || matcher.end() != username.length()) {
+            throw new InvalidParameterException("Illegal username: " + username);
+        }
+    }
+
+    @Override
+    public void validatePassword(String password) throws InvalidParameterException {
+        Matcher matcher = PASSWORD_PATTERN.matcher(password);
+        if (!matcher.find() || matcher.start() != 0 || matcher.end() != password.length()) {
+            throw new InvalidParameterException("Illegal password: " + password);
         }
     }
 }

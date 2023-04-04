@@ -36,6 +36,19 @@
         unitName varchar(255)
     ) engine=InnoDB;
 
+    create table account (
+       id bigint not null auto_increment,
+        password BINARY(60) not null,
+        username varchar(30) not null,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table account_roles (
+       account_id bigint not null,
+        roles_id bigint not null,
+        primary key (account_id, roles_id)
+    ) engine=InnoDB;
+
     create table airplane (
        id bigint not null auto_increment,
         ascensionSpeed integer,
@@ -187,6 +200,12 @@
         primary key (id)
     ) engine=InnoDB;
 
+    create table role (
+       id bigint not null auto_increment,
+        role varchar(30) not null,
+        primary key (id)
+    ) engine=InnoDB;
+
     create table submarine (
        id bigint not null auto_increment,
         abilityOnFuelEnd integer,
@@ -316,8 +335,14 @@
         envsAffected varchar(255)
     ) engine=InnoDB;
 
+    alter table account 
+       add constraint UK_gex1lmaqpg0ir5g1f5eftyaa1 unique (username);
+
     alter table localization 
        add constraint UK_j6j9h30eydn1rkg0etaayj2is unique (locale);
+
+    alter table role 
+       add constraint UK_bjxn5ii7v7ygwx39et0wawu0q unique (role);
 
     alter table turret_weapons 
        add constraint UK_lpc37ouangmk2yok9jhvm7b9m unique (weapons_id);
@@ -359,6 +384,16 @@
        add constraint FKkhvs4vetcidxnnavyrjhw9ewg 
        foreign key (ability_id) 
        references ability (id);
+
+    alter table account_roles 
+       add constraint FK70s9enq5d1oywl7v8vis5ke5w 
+       foreign key (roles_id) 
+       references role (id);
+
+    alter table account_roles 
+       add constraint FKtp61eta5i06bug3w1qr6286uf 
+       foreign key (account_id) 
+       references account (id);
 
     alter table airplane_aerodromeTags 
        add constraint FKd6vjkgk3tlo4uccgrgiq2hekt 

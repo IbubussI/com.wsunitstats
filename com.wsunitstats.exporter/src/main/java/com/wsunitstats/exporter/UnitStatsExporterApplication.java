@@ -1,5 +1,7 @@
 package com.wsunitstats.exporter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wsunitstats.exporter.model.json.main.MainFileJsonModel;
 import com.wsunitstats.exporter.service.ImageService;
 import com.wsunitstats.exporter.service.LocalizationService;
@@ -27,6 +29,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -67,8 +70,14 @@ public class UnitStatsExporterApplication {
         @Autowired
         private ImageService imageService;
 
-        @Value("${com.wsunitstats.exporter.host}")
+        @Value("${com.wsunitstats.exporter.upload.host}")
         private String uploadHost;
+        @Value("${com.wsunitstats.exporter.upload.auth.username}")
+        private String username;
+        @Value("${com.wsunitstats.exporter.upload.auth.password}")
+        private String password;
+        @Value("${com.wsunitstats.exporter.upload.auth}")
+        private String authUriPath;
         @Value("${com.wsunitstats.exporter.upload.units}")
         private String uploadUnitsUriPath;
         @Value("${com.wsunitstats.exporter.upload.localization}")
@@ -145,24 +154,37 @@ public class UnitStatsExporterApplication {
                 LOG.info("Endpoint host address: {}", uploadHost);
                 String unitsJson = exporterService.exportToJson(unitModels);
                 String locJson = exporterService.exportToJson(localizationModels);
+                try {
+                    LOG.info("Authorizing...");
+                    ResponseEntity<String> authTokenResponse = restService.getAuthToken(uploadHost + authUriPath, username, password);
+                    String authToken = parseToken(authTokenResponse.getBody());
+                    LOG.info("Sending units data to endpoint...");
+                    ResponseEntity<String> gameplayResponse = restService.postJson(uploadHost + uploadUnitsUriPath, unitsJson, authToken);
+                    LOG.info("Units data submitted: HTTP {} : {}", gameplayResponse.getStatusCode().value(), gameplayResponse.getBody());
+                    LOG.info("Sending localization data to endpoint...");
+                    ResponseEntity<String> locResponse = restService.postJson(uploadHost + uploadLocalizationUriPath, locJson, authToken);
+                    LOG.info("Localization data submitted: HTTP {} : {}", locResponse.getStatusCode().value(), locResponse.getBody());
 
-                LOG.info("Sending units data to endpoint...");
-                ResponseEntity<String> gameplayResponse = restService.postJson(uploadHost + uploadUnitsUriPath, unitsJson);
-                LOG.info("Units data submitted: HTTP {} : {}", gameplayResponse.getStatusCode().value(), gameplayResponse.getBody());
-                LOG.info("Sending localization data to endpoint...");
-                ResponseEntity<String> locResponse = restService.postJson(uploadHost + uploadLocalizationUriPath, locJson);
-                LOG.info("Localization data submitted: HTTP {} : {}", locResponse.getStatusCode().value(), locResponse.getBody());
-
-                LOG.info("Sending images to endpoint...");
-                for (Map.Entry<String, BufferedImage> entry : images.entrySet()) {
-                    String filename = entry.getKey();
-                    ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
-                    ImageIO.write(entry.getValue(), imageExtension, imageOutputStream);
-                    ResponseEntity<String> imagesResponse = restService.postFile(uploadHost + "/api/files/upload/icon", filename, imageOutputStream.toByteArray());
-                    LOG.info("Image {} submitted: HTTP {} : {}", filename, imagesResponse.getStatusCode().value(), imagesResponse.getBody());
+                    LOG.info("Sending images to endpoint...");
+                    for (Map.Entry<String, BufferedImage> entry : images.entrySet()) {
+                        String filename = entry.getKey();
+                        ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
+                        ImageIO.write(entry.getValue(), imageExtension, imageOutputStream);
+                        ResponseEntity<String> imagesResponse = restService.postFile(uploadHost + "/api/files/upload/icon", filename, imageOutputStream.toByteArray(), authToken);
+                        LOG.info("Image {} submitted: HTTP {} : {}", filename, imagesResponse.getStatusCode().value(), imagesResponse.getBody());
+                    }
+                } catch (HttpStatusCodeException ex) {
+                    LOG.error("HTTP request failed: HTTP {} : {}", ex.getStatusCode(), ex.getResponseBodyAsString());
                 }
             }
-            LOG.info("All tasks successfully completed");
+            LOG.info("All tasks completed. Exiting...");
+        }
+
+        private String parseToken(String authJsonResponse) throws JsonProcessingException {
+            return new ObjectMapper()
+                    .readTree(authJsonResponse)
+                    .get("bearerToken")
+                    .asText();
         }
     }
 }
