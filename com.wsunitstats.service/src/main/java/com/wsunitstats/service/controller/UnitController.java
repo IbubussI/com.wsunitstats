@@ -3,16 +3,14 @@ package com.wsunitstats.service.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wsunitstats.domain.UnitModel;
+import com.wsunitstats.service.exception.RestException;
 import com.wsunitstats.service.model.UnitOption;
 import com.wsunitstats.utils.service.ModelExporterService;
 import com.wsunitstats.service.exception.InvalidParameterException;
 import com.wsunitstats.service.service.LocalizationService;
 import com.wsunitstats.service.service.ParameterValidatorService;
 import com.wsunitstats.service.service.UnitService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,12 +26,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/units")
-public class UnitController {
-    private static final Logger LOG = LoggerFactory.getLogger(UnitController.class);
-
+public class UnitController extends JsonControllerSupport {
     private static final String OK = "ok";
     private static final String INVALID_JSON = "Given json doesn't match expected data model";
-
+    private static final String JSON_ERROR = "Json export error";
     @Autowired
     private UnitService unitService;
     @Autowired
@@ -56,11 +52,9 @@ public class UnitController {
             List<UnitModel> units = unitService.getUnitsByNames(nameKeys, sort, sortDir, page, size);
             return getJson(units, true, locale);
         } catch (JsonProcessingException ex) {
-            LOG.error("Json export error", ex);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
-            LOG.error("Bad request: {}", ex.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new RestException(ex, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -77,11 +71,9 @@ public class UnitController {
             List<UnitModel> units = unitService.getUnitsByNations(nationKeys, sort, sortDir, page, size);
             return getJson(units, true, locale);
         } catch (JsonProcessingException ex) {
-            LOG.error("Json export error", ex);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
-            LOG.error("Bad request: {}", ex.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new RestException(ex, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -97,11 +89,9 @@ public class UnitController {
             List<UnitModel> units = unitService.getUnitsByIds(idList, sort, sortDir, page, size);
             return getJson(units, true, locale);
         } catch (JsonProcessingException ex) {
-            LOG.error("Json export error", ex);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
-            LOG.error("Bad request: {}", ex.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new RestException(ex, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -116,11 +106,9 @@ public class UnitController {
             List<UnitModel> units = unitService.getUnitsAll(sort, sortDir, page, size);
             return getJson(units, true, locale);
         } catch (JsonProcessingException ex) {
-            LOG.error("Json export error", ex);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
-            LOG.error("Bad request: {}", ex.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new RestException(ex, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -134,11 +122,9 @@ public class UnitController {
             List<UnitOption> unitOptions = unitService.getUnitOptionsByName(locale, nameFilter, size);
             return getJson(unitOptions, true, locale);
         } catch (JsonProcessingException ex) {
-            LOG.error("Json export error", ex);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
-            LOG.error("Bad request: {}", ex.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new RestException(ex, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -150,8 +136,7 @@ public class UnitController {
             unitService.setUnits(units);
             return new ResponseEntity<>(OK, HttpStatus.OK);
         } catch (JsonProcessingException ex) {
-            LOG.error("Can't process requested json", ex);
-            return new ResponseEntity<>(INVALID_JSON, HttpStatus.BAD_REQUEST);
+            throw new RestException(INVALID_JSON, ex, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -160,8 +145,6 @@ public class UnitController {
         if (localize) {
             json = localizationService.localize(json, locale);
         }
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        return new ResponseEntity<>(json, headers, HttpStatus.OK);
+        return getStringJsonResponseEntity(json, HttpStatus.OK);
     }
 }

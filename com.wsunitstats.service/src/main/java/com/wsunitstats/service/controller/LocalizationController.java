@@ -3,10 +3,9 @@ package com.wsunitstats.service.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wsunitstats.domain.LocalizationModel;
+import com.wsunitstats.service.exception.RestException;
 import com.wsunitstats.service.service.LocalizationService;
 import com.wsunitstats.utils.service.ModelExporterService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,9 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/locales")
-public class LocalizationController {
-    private static final Logger LOG = LoggerFactory.getLogger(LocalizationController.class);
-
+public class LocalizationController extends JsonControllerSupport {
     private static final String OK = "ok";
     private static final String ALREADY_EXISTS = "Given item already exists";
     private static final String INVALID_JSON = "Given json doesn't match expected data model";
@@ -43,8 +40,7 @@ public class LocalizationController {
             localizationService.setLocalizationData(localizationModels);
             return new ResponseEntity<>(OK, HttpStatus.OK);
         } catch (JsonProcessingException ex) {
-            LOG.debug("Can't process requested json", ex);
-            return new ResponseEntity<>(INVALID_JSON, HttpStatus.BAD_REQUEST);
+            throw new RestException(INVALID_JSON, ex, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -59,7 +55,7 @@ public class LocalizationController {
                 return new ResponseEntity<>(ALREADY_EXISTS, HttpStatus.OK);
             }
         } catch (JsonProcessingException ex) {
-            return new ResponseEntity<>(INVALID_JSON, HttpStatus.BAD_REQUEST);
+            throw new RestException(INVALID_JSON, ex, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -68,10 +64,9 @@ public class LocalizationController {
         try {
             List<String> locales = localizationService.getLocaleNames();
             String json = exporterService.exportToJson(locales);
-            return new ResponseEntity<>(json, HttpStatus.OK);
+            return getStringJsonResponseEntity(json, HttpStatus.OK);
         } catch (JsonProcessingException ex) {
-            LOG.error("Json export error", ex);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException("Json export error", ex, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

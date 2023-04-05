@@ -26,7 +26,9 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, "/api/*/upload/**")
                 .hasAuthority(Role.ROLE_ROOT.name())
-                .anyRequest()
+                .requestMatchers(HttpMethod.POST, "/api/authenticate")
+                .permitAll()
+                .requestMatchers(HttpMethod.GET)
                 .permitAll();
         return http.build();
     }

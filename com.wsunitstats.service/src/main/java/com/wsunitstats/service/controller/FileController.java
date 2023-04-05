@@ -1,8 +1,7 @@
 package com.wsunitstats.service.controller;
 
+import com.wsunitstats.service.exception.RestException;
 import com.wsunitstats.service.service.FileService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -21,7 +20,6 @@ import java.util.Base64;
 @PropertySource(value = "classpath:service.properties")
 @PropertySource(value = "file:config/service.properties", ignoreResourceNotFound = true)
 public class FileController {
-    private static final Logger LOG = LoggerFactory.getLogger(FileController.class);
     private static final String OK = "ok";
 
     @Autowired
@@ -36,8 +34,7 @@ public class FileController {
             fileService.saveFile(imagesPath, fileName, Base64.getDecoder().decode(file));
             return new ResponseEntity<>(OK, HttpStatus.OK);
         } catch (IOException ex) {
-            LOG.error("Can't persist files", ex);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException("Can't persist files", ex, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -5,10 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.wsunitstats.service.exception.InvalidParameterException;
+import com.wsunitstats.service.exception.RestException;
 import com.wsunitstats.service.service.AuthService;
 import com.wsunitstats.service.service.ParameterValidatorService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class AuthenticationController {
-    private static final Logger LOG = LoggerFactory.getLogger(AuthenticationController.class);
-
+public class AuthenticationController extends JsonControllerSupport {
     @Autowired
     private AuthService authService;
     @Autowired
@@ -42,14 +39,13 @@ public class AuthenticationController {
                     new UsernamePasswordAuthenticationToken(username, password));
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String authToken = authService.getUserAuthToken(userDetails);
-            return new ResponseEntity<>(getResponseJsonPayload(authToken, userDetails), HttpStatus.OK);
+            return getStringJsonResponseEntity(getResponseJsonPayload(authToken, userDetails), HttpStatus.OK);
         } catch (JsonProcessingException ex) {
-            LOG.error("Json error", ex);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException("Json error", ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
-            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+            throw new RestException(ex, HttpStatus.BAD_REQUEST);
         } catch (AuthenticationException ex) {
-            return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+            throw new RestException(ex, HttpStatus.UNAUTHORIZED);
         }
     }
 
