@@ -1,10 +1,7 @@
 package com.wsunitstats.exporter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wsunitstats.exporter.model.json.main.MainFileJsonModel;
 import com.wsunitstats.exporter.service.ImageService;
-import com.wsunitstats.exporter.service.LocalizationService;
 import com.wsunitstats.exporter.model.FilePathWrapper;
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileJsonModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
@@ -14,8 +11,8 @@ import com.wsunitstats.exporter.model.localization.LocalizationFileModel;
 import com.wsunitstats.exporter.service.FileReaderService;
 import com.wsunitstats.exporter.service.FilePathResolver;
 import com.wsunitstats.exporter.service.LocalizationModelResolver;
-import com.wsunitstats.utils.service.ModelExporterService;
-import com.wsunitstats.exporter.service.RestService;
+import com.wsunitstats.exporter.task.ExecutionPayload;
+import com.wsunitstats.exporter.task.TaskExecutionPool;
 import com.wsunitstats.exporter.service.UnitModelResolverService;
 import com.wsunitstats.domain.LocalizationModel;
 import com.wsunitstats.domain.UnitModel;
@@ -27,15 +24,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpStatusCodeException;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.FileWriter;
-import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 
@@ -50,9 +41,6 @@ public class UnitStatsExporterApplication {
     public static class ExporterRunner implements CommandLineRunner {
         private static final Logger LOG = LogManager.getLogger(ExporterRunner.class);
 
-        private static final String GOAL_SEND = "send";
-        private static final String GOAL_PRINT = "file";
-
         @Autowired
         private FileReaderService fileReaderService;
         @Autowired
@@ -60,13 +48,9 @@ public class UnitStatsExporterApplication {
         @Autowired
         private LocalizationModelResolver localizationModelResolver;
         @Autowired
-        private ModelExporterService exporterService;
-        @Autowired
-        private RestService restService;
+        private TaskExecutionPool taskExecutionPool;
         @Autowired
         private FilePathResolver filePathResolver;
-        @Autowired
-        private LocalizationService localizationService;
         @Autowired
         private ImageService imageService;
 
@@ -78,27 +62,16 @@ public class UnitStatsExporterApplication {
         private String password;
         @Value("${com.wsunitstats.exporter.upload.auth}")
         private String authUriPath;
-        @Value("${com.wsunitstats.exporter.upload.units}")
-        private String uploadUnitsUriPath;
-        @Value("${com.wsunitstats.exporter.upload.localization}")
-        private String uploadLocalizationUriPath;
-        @Value("${com.wsunitstats.exporter.upload.images}")
-        private String imagesUriPath;
-        @Value("${com.wsunitstats.exporter.goals}")
-        private List<String> goals;
-        @Value("${com.wsunitstats.exporter.file.name}")
-        private String fileName;
-        @Value("${com.wsunitstats.exporter.file.pretty}")
-        private boolean filePretty;
-        @Value("${com.wsunitstats.exporter.file.locale}")
-        private String fileLocale;
-        @Value("${com.wsunitstats.exporter.file.localize}")
-        private boolean fileLocalize;
-        @Value("${com.wsunitstats.exporter.image.file.extension}")
-        private String imageExtension;
+        @Value("${com.wsunitstats.exporter.tasks}")
+        private List<String> tasks;
 
         @Override
         public void run(String... args) throws Exception {
+            if (tasks.isEmpty()) {
+                LOG.error("No tasks configured");
+                return;
+            }
+
             LOG.info("Resolving game files...");
             FilePathWrapper filePathWrapper = filePathResolver.resolve();
             LOG.info("Game files resolved at the next folder: [{}] ", filePathWrapper.getRootFolderPath());
@@ -124,67 +97,17 @@ public class UnitStatsExporterApplication {
                     .map(locFile -> localizationModelResolver.resolveFromJsonModel(locFile))
                     .toList();
 
-            // write to file
-            if (goals.contains(GOAL_PRINT)) {
-                LOG.info("==========Write to file task==========");
-                LOG.info("File path: {}", fileName);
-                try (Writer fileWriter = new FileWriter(fileName, false)) {
-                    LOG.info("Converting to json...");
-                    String unitsJson = filePretty
-                            ? exporterService.exportToPrettyJson(unitModels)
-                            : exporterService.exportToJson(unitModels);
-                    if (fileLocalize) {
-                        LOG.info("Localizing...");
-                        LOG.info("Locale: {}", fileLocale);
-                        LocalizationModel localizationModel = localizationModels.stream()
-                                .filter(locModel -> locModel.getLocale().equals(fileLocale))
-                                .findAny()
-                                .orElse(null);
-                        unitsJson = localizationService.localize(unitsJson, localizationModel);
-                    }
-                    LOG.info("Writing to file...");
-                    fileWriter.write(unitsJson);
-                    fileWriter.flush();
-                }
-            }
-
-            // send to server
-            if (goals.contains(GOAL_SEND)) {
-                LOG.info("==========Send to endpoint task==========");
-                LOG.info("Endpoint host address: {}", uploadHost);
-                String unitsJson = exporterService.exportToJson(unitModels);
-                String locJson = exporterService.exportToJson(localizationModels);
-                try {
-                    LOG.info("Authorizing...");
-                    ResponseEntity<String> authTokenResponse = restService.getAuthToken(uploadHost + authUriPath, username, password);
-                    String authToken = parseToken(authTokenResponse.getBody());
-                    LOG.info("Sending units data to endpoint...");
-                    ResponseEntity<String> gameplayResponse = restService.postJson(uploadHost + uploadUnitsUriPath, unitsJson, authToken);
-                    LOG.info("Units data submitted: HTTP {} : {}", gameplayResponse.getStatusCode().value(), gameplayResponse.getBody());
-                    LOG.info("Sending localization data to endpoint...");
-                    ResponseEntity<String> locResponse = restService.postJson(uploadHost + uploadLocalizationUriPath, locJson, authToken);
-                    LOG.info("Localization data submitted: HTTP {} : {}", locResponse.getStatusCode().value(), locResponse.getBody());
-
-                    LOG.info("Sending images to endpoint...");
-                    for (Map.Entry<String, BufferedImage> entry : images.entrySet()) {
-                        String filename = entry.getKey();
-                        ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
-                        ImageIO.write(entry.getValue(), imageExtension, imageOutputStream);
-                        ResponseEntity<String> imagesResponse = restService.postFile(uploadHost + "/api/files/upload/icon", filename, imageOutputStream.toByteArray(), authToken);
-                        LOG.info("Image {} submitted: HTTP {} : {}", filename, imagesResponse.getStatusCode().value(), imagesResponse.getBody());
-                    }
-                } catch (HttpStatusCodeException ex) {
-                    LOG.error("HTTP request failed: HTTP {} : {}", ex.getStatusCode(), ex.getResponseBodyAsString());
-                }
-            }
-            LOG.info("All tasks completed. Exiting...");
-        }
-
-        private String parseToken(String authJsonResponse) throws JsonProcessingException {
-            return new ObjectMapper()
-                    .readTree(authJsonResponse)
-                    .get("bearerToken")
-                    .asText();
+            LOG.info("Executing configured tasks...");
+            ExecutionPayload payload = new ExecutionPayload();
+            payload.setUnits(unitModels);
+            payload.setLocalization(localizationModels);
+            payload.setImages(images);
+            payload.setHostname(uploadHost);
+            payload.setAuthPath(authUriPath);
+            payload.setUsername(username);
+            payload.setPassword(password);
+            taskExecutionPool.executeTasks(tasks, payload);
+            LOG.info("Exiting...");
         }
     }
 }
