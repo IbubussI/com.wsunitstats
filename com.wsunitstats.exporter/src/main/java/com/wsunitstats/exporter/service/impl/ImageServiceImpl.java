@@ -1,13 +1,12 @@
 package com.wsunitstats.exporter.service.impl;
 
-import com.wsunitstats.exporter.model.ImageModel;
 import com.wsunitstats.exporter.model.json.main.MainFileJsonModel;
 import com.wsunitstats.exporter.model.json.main.submodel.GlobalContentJsonModel;
 import com.wsunitstats.exporter.model.json.main.submodel.ImageJsonModel;
 import com.wsunitstats.exporter.model.json.main.submodel.TextureJsonModel;
 import com.wsunitstats.exporter.model.json.main.submodel.VisualSessionContentJsonModel;
-import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.service.ImageService;
+import com.wsunitstats.utils.Constants.ResourceIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,69 +32,77 @@ public class ImageServiceImpl implements ImageService {
     private String imageExtension;
 
     @Override
-    public Map<String, ImageModel> resolveResourceImages(MainFileJsonModel mainFileJsonModel,
-                                                         SessionInitFileModel sessionInitFileModel,
-                                                         String rootFolderPath) {
-        VisualSessionContentJsonModel visualSessionContentJsonModel = mainFileJsonModel.getVisualSessionContent();
-        Map<Integer, ImageJsonModel> imageJsonModels = visualSessionContentJsonModel.getImages();
-        Map<Integer, TextureJsonModel> textureJsonModels = visualSessionContentJsonModel.getTextures();
-        List<Integer> imageIds = sessionInitFileModel.getResourceIcons().stream()
-                .map(Integer::parseInt)
-                .toList();
-        Map<Integer, String> imageNames = IntStream.range(0, imageIds.size()).boxed()
-                .collect(Collectors.toMap(imageIds::get, id -> "resource" + id + "." + imageExtension));
-        Map<Integer, BufferedImage> textures = readTextures(rootFolderPath, textureJsonModels);
-        return readImages(imageJsonModels, textures, imageNames, false);
+    public Map<String, BufferedImage> resolveImages(MainFileJsonModel mainFileJsonModel, String rootFolderPath) {
+        Map<String, BufferedImage> result = new HashMap<>();
+        readVisualSessionContentImages(result, mainFileJsonModel, rootFolderPath);
+        readGlobalContentImages(result, mainFileJsonModel, rootFolderPath);
+        return result;
     }
 
     @Override
-    public Map<String, ImageModel> resolveUnitImages(MainFileJsonModel mainFileJsonModel,
-                                                     String rootFolderPath) {
+    public String getImageName(String type, int id) {
+        return type + id + "." + imageExtension;
+    }
+
+    private void readVisualSessionContentImages(Map<String, BufferedImage> result,
+                                                MainFileJsonModel mainFileJsonModel,
+                                                String rootFolderPath) {
+        VisualSessionContentJsonModel visualSessionContentJsonModel = mainFileJsonModel.getVisualSessionContent();
+        Map<Integer, ImageJsonModel> imageJsonModels = visualSessionContentJsonModel.getImages();
+        Map<Integer, TextureJsonModel> textureJsonModels = visualSessionContentJsonModel.getTextures();
+
+        // Resource images
+        Map<Integer, String> imageNames = IntStream.range(0, ResourceIcon.values().length).boxed()
+                .collect(Collectors.toMap(imageGameId -> ResourceIcon.getByGameId(imageGameId).getImageId(),
+                        imageGameId -> getImageName("resource", imageGameId)));
+
+        Map<Integer, BufferedImage> textures = readTextures(rootFolderPath, textureJsonModels);
+        readImages(result, imageJsonModels, textures, imageNames, true);
+    }
+
+    private void readGlobalContentImages(Map<String, BufferedImage> result,
+                                         MainFileJsonModel mainFileJsonModel,
+                                         String rootFolderPath) {
         GlobalContentJsonModel globalContentJsonModel = mainFileJsonModel.getGlobalContent();
         Map<Integer, ImageJsonModel> imageJsonModels = globalContentJsonModel.getImages();
         Map<Integer, TextureJsonModel> textureJsonModels = globalContentJsonModel.getTextures();
         Map<Integer, String> imageNames = globalContentJsonModel.getImagesNames();
         Map<Integer, BufferedImage> textures = readTextures(rootFolderPath, textureJsonModels);
-        return readImages(imageJsonModels, textures, imageNames, true);
+        readImages(result, imageJsonModels, textures, imageNames, false);
     }
 
-    @Override
-    public String getImageName(Map<String, ImageModel> images, int id) {
-        return images.entrySet().stream()
-                .filter(entry -> entry.getValue().getId() == id)
-                .map(Map.Entry::getKey)
-                .findAny()
-                .orElse(null);
-    }
-
-    private Map<String, ImageModel> readImages(Map<Integer, ImageJsonModel> imageJsonModels,
-                                               Map<Integer, BufferedImage> textures,
-                                               Map<Integer, String> imagesNames,
-                                               boolean isGuiFormat) {
-        Map<String, ImageModel> result = new HashMap<>();
-        imagesNames.forEach((key, entry) -> {
-            ImageJsonModel imageJsonModel = imageJsonModels.get(key);
-            int textureId = imageJsonModel.getTexture();
-            BufferedImage texture = textures.get(textureId);
-            List<Double> pos = imageJsonModel.getPos();
-            List<Double> size = imageJsonModel.getSize();
-            double xOffset = 0.0;
-            double yOffset = 0.0;
-            if (pos != null) {
-                xOffset = pos.get(0);
-                yOffset = pos.get(1);
-            }
-            double xSize = size.get(0);
-            double ySize = size.get(1);
-            BufferedImage icon = getIcon(texture, xOffset, yOffset, xSize, ySize, isGuiFormat);
-            if (entry != null) {
-                ImageModel imageModel = new ImageModel();
-                imageModel.setId(key);
-                imageModel.setImage(icon);
-                result.put(entry, imageModel);
-            }
-        });
-        return result;
+    /**
+     * @param result            map to store results, where key - image name, value - image that was read
+     * @param imageJsonModels   map, where key - IMAGE ID, value - image json data
+     * @param textures          map, where key - TEXTURE ID, value - texture image
+     * @param imagesNames       map, where key - IMAGE ID, value - image name (should be unique)
+     * @param isPositiveYOffset true if images with positive y-offset,
+     *                          false if images with negative y-offset
+     */
+    private void readImages(Map<String, BufferedImage> result,
+                            Map<Integer, ImageJsonModel> imageJsonModels,
+                            Map<Integer, BufferedImage> textures,
+                            Map<Integer, String> imagesNames,
+                            boolean isPositiveYOffset) {
+        imagesNames.entrySet().stream()
+                .filter(entry -> entry.getValue() != null)
+                .forEach(entry -> {
+                    ImageJsonModel imageJsonModel = imageJsonModels.get(entry.getKey());
+                    int textureId = imageJsonModel.getTexture();
+                    BufferedImage texture = textures.get(textureId);
+                    List<Double> pos = imageJsonModel.getPos();
+                    List<Double> size = imageJsonModel.getSize();
+                    double xOffset = 0.0;
+                    double yOffset = 0.0;
+                    if (pos != null) {
+                        xOffset = pos.get(0);
+                        yOffset = pos.get(1);
+                    }
+                    double xSize = size.get(0);
+                    double ySize = size.get(1);
+                    BufferedImage icon = getIcon(texture, xOffset, yOffset, xSize, ySize, isPositiveYOffset);
+                    result.put(entry.getValue(), icon);
+                });
     }
 
     private Map<Integer, BufferedImage> readTextures(String rootFolderPath, Map<Integer, TextureJsonModel> textureJsonModels) {
@@ -122,18 +129,15 @@ public class ImageServiceImpl implements ImageService {
         return textures;
     }
 
-    /**
-     * Gui images stored with negative y size
-     */
-    private BufferedImage getIcon(BufferedImage icon, double xOffset, double yOffset, double xSize, double ySize, boolean isGuiFormat) {
+    private BufferedImage getIcon(BufferedImage icon, double xOffset, double yOffset, double xSize, double ySize, boolean isPositiveYOffset) {
         int width = icon.getWidth();
         int height = icon.getHeight();
         int x = (int) Math.round(xOffset * width);
         int y;
-        if (isGuiFormat) {
-            y = (int) Math.round((1 - yOffset) * height);
-        } else {
+        if (isPositiveYOffset) {
             y = (int) Math.round(yOffset * height);
+        } else {
+            y = (int) Math.round((1 - yOffset) * height);
         }
         int w = (int) Math.round(xSize * width);
         int h = (int) Math.round(Math.abs(ySize) * height);

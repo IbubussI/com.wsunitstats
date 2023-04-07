@@ -101,4 +101,46 @@ public class Constants {
             return UNDEFINED;
         }
     }
+
+    public enum ResourceIcon {
+        FOOD(0, 579),
+        WOOD(1, 580),
+        METAL(2, 584),
+        GOLD(3, 581),
+        FUEL(4, 582);
+
+        private final int gameId;
+        private final int imageId;
+
+        ResourceIcon(int gameId, int imageId) {
+            this.gameId = gameId;
+            this.imageId = imageId;
+        }
+
+        public int getGameId() {
+            return gameId;
+        }
+
+        public int getImageId() {
+            return imageId;
+        }
+
+        public static ResourceIcon getByGameId(int gameId) {
+            for (ResourceIcon resourceIconMappings : ResourceIcon.values()) {
+                if (resourceIconMappings.getGameId() == gameId) {
+                    return resourceIconMappings;
+                }
+            }
+            throw new IllegalArgumentException("Resource icon not found for gameId:" + gameId);
+        }
+
+        public static ResourceIcon getByImageId(int imageId) {
+            for (ResourceIcon resourceIconMappings : ResourceIcon.values()) {
+                if (resourceIconMappings.getGameId() == imageId) {
+                    return resourceIconMappings;
+                }
+            }
+            throw new IllegalArgumentException("Resource icon not found for imageId:" + imageId);
+        }
+    }
 }

@@ -18,8 +18,7 @@ public class SessionInitFileModel {
             "unitNames",
             "unitTexts",
             "envNames",
-            "ageNames",
-            "resourceIcons"
+            "ageNames"
     );
 
     private List<String> unitNations;
@@ -30,10 +29,9 @@ public class SessionInitFileModel {
     private List<String> unitTexts;
     private List<String> envNames;
     private List<String> ageNames;
-    private List<String> resourceIcons;
 
     public void setAll(List<List<String>> lists) {
-        if (lists.size() == 9) {
+        if (lists.size() == 8) {
             unitNations = lists.get(0);
             nationNames = lists.get(1);
             researchNames = lists.get(2);
@@ -42,7 +40,6 @@ public class SessionInitFileModel {
             unitTexts = lists.get(5);
             envNames = lists.get(6);
             ageNames = lists.get(7);
-            resourceIcons = lists.get(8);
         }
     }
 }

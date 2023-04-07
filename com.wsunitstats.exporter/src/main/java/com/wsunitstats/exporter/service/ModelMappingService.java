@@ -16,7 +16,6 @@ import com.wsunitstats.domain.submodel.weapon.DamageModel;
 import com.wsunitstats.domain.submodel.DistanceModel;
 import com.wsunitstats.domain.submodel.weapon.ProjectileModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
-import com.wsunitstats.exporter.model.ImageModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildingJsonModel;
@@ -57,7 +56,7 @@ public interface ModelMappingService {
 
     GatherModel map(GatherJsonModel source, LocalizationKeyModel localization);
 
-    List<ResourceModel> mapResources(Map<String, ImageModel> resourceImages, List<Integer> source, LocalizationKeyModel localization);
+    List<ResourceModel> mapResources(List<Integer> source, LocalizationKeyModel localization);
 
     TransportingModel map(TransportingJsonModel source);
 
@@ -71,8 +70,7 @@ public interface ModelMappingService {
                      List<CreateEnvJsonModel> createEnvSource,
                      AbilityOnActionJsonModel onActionSource,
                      Map<Integer, EnvJsonModel> envSource,
-                     LocalizationKeyModel localization,
-                     Map<String, ImageModel> resourceImages);
+                     LocalizationKeyModel localization);
 
     RequirementsModel map(RequirementsJsonModel source, LocalizationKeyModel localization);
 
@@ -94,9 +92,9 @@ public interface ModelMappingService {
 
     SupplyModel map(SupplyJsonModel supplySource);
 
-    BuildingModel map(Map<String, ImageModel> resourceImages, UnitJsonModel unitSource, BuildJsonModel buildSource, LocalizationKeyModel localization);
+    BuildingModel map(UnitJsonModel unitSource, BuildJsonModel buildSource, LocalizationKeyModel localization);
 
-    IncomeModel map(Map<String, ImageModel> resourceImages, IncomeJsonModel incomeSource, LocalizationKeyModel localization);
+    IncomeModel map(IncomeJsonModel incomeSource, LocalizationKeyModel localization);
 
     AirplaneModel mapAirplane(AirplaneJsonModel airplaneSource, LocalizationKeyModel localization);
 

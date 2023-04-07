@@ -1,6 +1,5 @@
 package com.wsunitstats.exporter;
 
-import com.wsunitstats.exporter.model.ImageModel;
 import com.wsunitstats.exporter.model.json.main.MainFileJsonModel;
 import com.wsunitstats.exporter.service.ImageService;
 import com.wsunitstats.exporter.model.FilePathWrapper;
@@ -27,7 +26,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
 
@@ -83,20 +82,13 @@ public class UnitStatsExporterApplication {
             SessionInitFileModel sessionInitFileModel = fileReaderService.readSessionInitLua(filePathWrapper.getSessionInitFilePath());
             MainStartupFileModel startupFileModel = fileReaderService.readMainStartupLua(filePathWrapper.getMainStartupFilePath());
             List<LocalizationFileModel> localizationFileModels = fileReaderService.readLocalizations(filePathWrapper.getLocalizationFolderPath());
-
-            Map<String, ImageModel> unitImages = imageService.resolveUnitImages(mainFileModel, filePathWrapper.getRootFolderPath());
-            Map<String, ImageModel> resourceImages = imageService.resolveResourceImages(mainFileModel, sessionInitFileModel, filePathWrapper.getRootFolderPath());
-            Map<String, ImageModel> allImages = new HashMap<>();
-            allImages.putAll(unitImages);
-            allImages.putAll(resourceImages);
+            Map<String, BufferedImage> images = imageService.resolveImages(mainFileModel, filePathWrapper.getRootFolderPath());
 
             SourceModelWrapper sourceContainer = new SourceModelWrapper();
             sourceContainer.setGameplayFileModel(gameplayFileModel);
             sourceContainer.setMainFileModel(mainFileModel);
             sourceContainer.setMainStartupFileModel(startupFileModel);
             sourceContainer.setSessionInitFileModel(sessionInitFileModel);
-            sourceContainer.setUnitImages(unitImages);
-            sourceContainer.setResourceImages(resourceImages);
 
             LOG.info("Transforming files to data-model...");
             List<UnitModel> unitModels = unitModelResolverService.resolveFromJsonModel(sourceContainer);
@@ -108,7 +100,7 @@ public class UnitStatsExporterApplication {
             ExecutionPayload payload = new ExecutionPayload();
             payload.setUnits(unitModels);
             payload.setLocalization(localizationModels);
-            payload.setImages(allImages);
+            payload.setImages(images);
             payload.setHostname(uploadHost);
             payload.setAuthPath(authUriPath);
             payload.setUsername(username);
