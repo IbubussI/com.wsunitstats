@@ -22,14 +22,18 @@ public class TaskExecutionPool {
         tasks.forEach(task -> this.tasks.put(task.getName(), task));
     }
 
-    public void executeTasks(List<String> taskNames, ExecutionPayload payload) throws TaskExecutionException {
+    public void executeTasks(List<String> taskNames, ExecutionPayload payload) {
         for (String taskName : taskNames) {
-            ExecutionTask task = tasks.get(taskName);
-            if (task != null) {
-                LOG.info("Executing {} task", taskName);
-                task.execute(payload);
-            } else {
-                LOG.error("Task {} not found", taskName);
+            try {
+                ExecutionTask task = tasks.get(taskName);
+                if (task != null) {
+                    LOG.info("Executing {} task", taskName);
+                    task.execute(payload);
+                } else {
+                    LOG.error("Task {} not found", taskName);
+                }
+            } catch (TaskExecutionException ex) {
+                LOG.error("Task execution failed with exception: {}", ex.getMessage());
             }
         }
         LOG.info("Task execution completed");

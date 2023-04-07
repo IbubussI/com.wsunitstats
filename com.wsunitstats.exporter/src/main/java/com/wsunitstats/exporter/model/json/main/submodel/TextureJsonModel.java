@@ -11,7 +11,12 @@ import java.util.List;
 @ToString
 public class TextureJsonModel {
     private Boolean mipmap;
+    private String name;
     private Integer purpose;
+    private Boolean repeat;
+    private List<Integer> size;
+    private Boolean smooth;
     private Integer source;
-    private List<List<String>> urls;
+    private Integer target;
+    private List<Object> urls;
 }

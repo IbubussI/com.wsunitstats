@@ -14,4 +14,5 @@ public class ResourceModel {
     private String resource;
     @Column(name="value_")
     private int value;
+    private String image;
 }

@@ -4,6 +4,7 @@ import com.wsunitstats.domain.submodel.ConstructionModel;
 import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
+import com.wsunitstats.exporter.model.ImageModel;
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
@@ -22,6 +23,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonMo
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
+import com.wsunitstats.exporter.service.ImageService;
 import com.wsunitstats.exporter.service.ModelMappingService;
 import com.wsunitstats.exporter.service.UnitModelResolverService;
 import com.wsunitstats.utils.Constants;
@@ -51,6 +53,8 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
 
     @Autowired
     private ModelMappingService mappingService;
+    @Autowired
+    private ImageService imageService;
 
     @Value("${com.wsunitstats.exporter.image.file.extension}")
     private String imageExtension;
@@ -61,12 +65,15 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
         MainStartupFileModel startupModel = rootContainer.getMainStartupFileModel();
         SessionInitFileModel sessionInitModel = rootContainer.getSessionInitFileModel();
 
+
         LocalizationKeyModel localizationModel = mappingService.map(sessionInitModel, startupModel);
 
         ScenesJsonModel scenes = gameplayModel.getScenes();
         Map<Integer, UnitJsonModel> unitMap = scenes.getUnits();
         Map<Integer, EnvJsonModel> envMap = scenes.getEnvs();
         Map<Integer, ProjectileJsonModel> projectileMap = scenes.getProjectiles();
+        Map<String, ImageModel> resourceImages = rootContainer.getResourceImages();
+        Map<String, ImageModel> unitImages = rootContainer.getResourceImages();
 
         List<UnitModel> result = new ArrayList<>();
         for (Map.Entry<Integer, UnitJsonModel> entry : unitMap.entrySet()) {
@@ -77,11 +84,11 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             // Generic traits
             unit.setGameId(id);
             unit.setName(localizationModel.getUnitNames().get(id));
-            unit.setImage("unit" + id + "." + imageExtension);
+            unit.setImage(imageService.getImageName(unitImages, id));
             unit.setNation(getUnitNation(sessionInitModel, localizationModel, id));
 
             // Build traits
-            unit.setBuild(mappingService.map(unitJsonModel, findUnitBuildObject(gameplayModel, id), localizationModel));
+            unit.setBuild(mappingService.map(resourceImages, unitJsonModel, findUnitBuildObject(gameplayModel, id), localizationModel));
 
             // Unit traits
             unit.setArmor(getArmorList(unitJsonModel.getArmor()));
@@ -91,7 +98,8 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
                     unitJsonModel.getCreateEnvs(),
                     unitJsonModel.getAbilityOnAction(),
                     envMap,
-                    localizationModel));
+                    localizationModel,
+                    resourceImages));
             unit.setWeapons(getWeaponsList(unitJsonModel.getWeapons(), projectileMap, localizationModel));
             unit.setTurrets(getTurretList(unitJsonModel.getTurrets(), projectileMap, localizationModel));
             unit.setSupply(mappingService.map(unitJsonModel.getSupply()));
@@ -164,7 +172,8 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
                                                 List<CreateEnvJsonModel> createEnvs,
                                                 AbilityOnActionJsonModel onAction,
                                                 Map<Integer, EnvJsonModel> envs,
-                                                LocalizationKeyModel localizationModel) {
+                                                LocalizationKeyModel localizationModel,
+                                                Map<String, ImageModel> resourceImages) {
         return abilitiesList == null ? new ArrayList<>() :
                 IntStream.range(0, abilitiesList.size())
                         .mapToObj(i -> {
@@ -172,7 +181,7 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
                                     .filter(work -> i == work.getAbility())
                                     .findFirst()
                                     .orElse(null);
-                            return mappingService.map(i, abilitiesList.get(i), workModel, createEnvs, onAction, envs, localizationModel);
+                            return mappingService.map(i, abilitiesList.get(i), workModel, createEnvs, onAction, envs, localizationModel, resourceImages);
                         })
                         .toList();
     }

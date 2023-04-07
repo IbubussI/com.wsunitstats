@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
 
-public class RestUploadTask {
+public abstract class RestUploadTask {
     private static final Logger LOG = LogManager.getLogger(RestUploadTask.class);
 
     protected String getAuthToken(RestService restService, ExecutionPayload payload) throws JsonProcessingException {

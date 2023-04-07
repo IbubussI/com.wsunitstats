@@ -18,6 +18,7 @@ import com.wsunitstats.domain.submodel.weapon.DamageModel;
 import com.wsunitstats.domain.submodel.DistanceModel;
 import com.wsunitstats.domain.submodel.weapon.ProjectileModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
+import com.wsunitstats.exporter.model.ImageModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildingJsonModel;
@@ -48,6 +49,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkReserveJsonModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
+import com.wsunitstats.exporter.service.ImageService;
 import com.wsunitstats.exporter.service.ModelMappingService;
 import com.wsunitstats.utils.Constants;
 import com.wsunitstats.utils.Util;
@@ -61,6 +63,7 @@ import com.wsunitstats.utils.Constants.AbilityType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -84,6 +87,9 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     private static final Pattern MAP_ENTRY_PATTERN = Pattern.compile("^\\[(\\d*)]=localize\\(\"(<\\*[a-zA-Z0-9/]+>)\"\\)$", Pattern.MULTILINE);
     private static final int PROBABILITY_MAX = 100;
     private static final int RESOURCES_COUNT = 3;
+
+    @Autowired
+    private ImageService imageService;
 
     @Override
     public ArmorModel map(ArmorJsonModel.Entry source, int probabilitiesSum) {
@@ -122,13 +128,19 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public List<ResourceModel> mapResources(List<Integer> source, LocalizationKeyModel localization) {
+    public List<ResourceModel> mapResources(Map<String, ImageModel> resourceImages, List<Integer> source, LocalizationKeyModel localization) {
         List<ResourceModel> resources = new ArrayList<>();
         if (source != null && !source.isEmpty()) {
             for (int i = 0; i < RESOURCES_COUNT; ++i) {
                 ResourceModel resource = new ResourceModel();
                 resource.setResource(localization.getResourceNames().get(i));
                 resource.setValue(Util.intToDoubleShift(source.get(i)).intValue());
+                int iconIndex = i;
+                // resourceIcons in init.lua have different index for metal
+                if (iconIndex == 2) {
+                    iconIndex = 4;
+                }
+                resource.setImage(imageService.getImageName(resourceImages, iconIndex));
                 resources.add(resource);
             }
         }
@@ -183,7 +195,8 @@ public class ModelMappingServiceImpl implements ModelMappingService {
                             List<CreateEnvJsonModel> createEnvSource,
                             AbilityOnActionJsonModel onActionSource,
                             Map<Integer, EnvJsonModel> envSource,
-                            LocalizationKeyModel localization) {
+                            LocalizationKeyModel localization,
+                            Map<String, ImageModel> resourceImages) {
         if (abilitySource == null) {
             return null;
         }
@@ -196,7 +209,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         abilityModel.setAbilityType(abilityType.getName());
         abilityModel.setEntityName(getAbilityEntityName(abilityType, entityId, createEnvSource, envSource, localization));
         abilityModel.setCount(getEnvCount(abilityData, abilityType, entityId, createEnvSource));
-        abilityModel.setCost(getWorkCost(workSource, localization));
+        abilityModel.setCost(getWorkCost(resourceImages, workSource, localization));
         abilityModel.setLifeTime(Util.intToDoubleShift(abilityData.getLifeTime()));
         abilityModel.setMakeTime(workReserve != null ? Util.intToDoubleShift(workSource.getMaketime()) : null);
         abilityModel.setDuration(Util.intToDoubleShift(abilityData.getDuration()));
@@ -369,28 +382,28 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public BuildingModel map(UnitJsonModel unitSource, BuildJsonModel buildSource, LocalizationKeyModel localization) {
+    public BuildingModel map(Map<String, ImageModel> resourceImages, UnitJsonModel unitSource, BuildJsonModel buildSource, LocalizationKeyModel localization) {
         if (buildSource == null) {
             return null;
         }
         BuildingModel buildingModel = new BuildingModel();
-        buildingModel.setIncome(map(unitSource.getIncome(), localization));
-        buildingModel.setHealCost(mapResources(unitSource.getHealMeCost(), localization));
+        buildingModel.setIncome(map(resourceImages, unitSource.getIncome(), localization));
+        buildingModel.setHealCost(mapResources(resourceImages, unitSource.getHealMeCost(), localization));
         buildingModel.setRequirements(map(buildSource.getRequirements(), localization));
-        buildingModel.setInitCost(mapResources(buildSource.getCostInit(), localization));
+        buildingModel.setInitCost(mapResources(resourceImages, buildSource.getCostInit(), localization));
         List<Integer> fullCost = Util.add(buildSource.getCostInit(), buildSource.getCostBuilding());
-        buildingModel.setFullCost(mapResources(fullCost, localization));
+        buildingModel.setFullCost(mapResources(resourceImages, fullCost, localization));
         buildingModel.setInitHealth(getInitHealth(unitSource.getHealth(), buildSource.getHealth()));
         return buildingModel;
     }
 
     @Override
-    public IncomeModel map(IncomeJsonModel incomeSource, LocalizationKeyModel localization) {
+    public IncomeModel map(Map<String, ImageModel> resourceImages, IncomeJsonModel incomeSource, LocalizationKeyModel localization) {
         if (incomeSource == null) {
             return null;
         }
         IncomeModel incomeModel = new IncomeModel();
-        incomeModel.setValue(mapResources(incomeSource.getValue(), localization));
+        incomeModel.setValue(mapResources(resourceImages, incomeSource.getValue(), localization));
         incomeModel.setPeriod(Util.intToDoubleShift(incomeSource.getPeriod()));
         return incomeModel;
     }
@@ -583,7 +596,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         return AbilityType.get(typeId != null ? typeId : 0);
     }
 
-    private List<ResourceModel> getWorkCost(WorkJsonModel workSource, LocalizationKeyModel localization) {
+    private List<ResourceModel> getWorkCost(Map<String, ImageModel> resourceImages, WorkJsonModel workSource, LocalizationKeyModel localization) {
         if (workSource == null) {
             return new ArrayList<>();
         }
@@ -592,11 +605,11 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         List<Integer> costStart = workSource.getCostStart();
 
         if (costOrder != null && costProcess == null && costStart == null) {
-            return mapResources(costOrder, localization);
+            return mapResources(resourceImages, costOrder, localization);
         } else if (costOrder == null && costProcess != null && costStart == null) {
-            return mapResources(costProcess, localization);
+            return mapResources(resourceImages, costProcess, localization);
         } else if (costOrder == null && costProcess == null && costStart != null) {
-            return mapResources(costStart, localization);
+            return mapResources(resourceImages, costStart, localization);
         } else {
             return new ArrayList<>();
         }

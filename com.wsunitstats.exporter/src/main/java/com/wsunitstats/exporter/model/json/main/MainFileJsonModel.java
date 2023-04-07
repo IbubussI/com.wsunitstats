@@ -1,6 +1,7 @@
 package com.wsunitstats.exporter.model.json.main;
 
 import com.wsunitstats.exporter.model.json.main.submodel.GlobalContentJsonModel;
+import com.wsunitstats.exporter.model.json.main.submodel.VisualSessionContentJsonModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -20,6 +21,6 @@ public class MainFileJsonModel {
     private Object sound;
     private Object version;
     private Object visual;
-    private Object visualSessionContent;
+    private VisualSessionContentJsonModel visualSessionContent;
     private Object window;
 }

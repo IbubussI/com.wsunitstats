@@ -8,16 +8,16 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.awt.image.BufferedImage;
 import java.util.Map;
 
 @Getter
 @Setter
 @ToString
 public class SourceModelWrapper {
-    private Map<String, BufferedImage> images;
     private GameplayFileJsonModel gameplayFileModel;
     private MainFileJsonModel mainFileModel;
     private SessionInitFileModel sessionInitFileModel;
     private MainStartupFileModel mainStartupFileModel;
+    private Map<String, ImageModel> unitImages;
+    private Map<String, ImageModel> resourceImages;
 }

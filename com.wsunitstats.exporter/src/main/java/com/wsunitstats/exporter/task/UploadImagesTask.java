@@ -1,6 +1,7 @@
 package com.wsunitstats.exporter.task;
 
 import com.wsunitstats.exporter.exception.TaskExecutionException;
+import com.wsunitstats.exporter.model.ImageModel;
 import com.wsunitstats.exporter.service.RestService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
@@ -38,10 +38,10 @@ public class UploadImagesTask extends RestUploadTask implements ExecutionTask {
             String authToken = getAuthToken(restService, payload);
             String endpoint = payload.getHostname() + imagesUriPath;
             LOG.info("Sending images to {}", endpoint);
-            for (Map.Entry<String, BufferedImage> entry : payload.getImages().entrySet()) {
+            for (Map.Entry<String, ImageModel> entry : payload.getImages().entrySet()) {
                 String filename = entry.getKey();
                 ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
-                ImageIO.write(entry.getValue(), imageExtension, imageOutputStream);
+                ImageIO.write(entry.getValue().getImage(), imageExtension, imageOutputStream);
                 ResponseEntity<String> imagesResponse = restService.postFile(endpoint, filename, imageOutputStream.toByteArray(), authToken);
                 LOG.info("Image {} submitted: HTTP {} : {}", filename, imagesResponse.getStatusCode().value(), imagesResponse.getBody());
             }

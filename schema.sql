@@ -18,6 +18,7 @@
 
     create table ability_cost (
        ability_id bigint not null,
+        image varchar(255),
         resource varchar(255),
         value_ integer
     ) engine=InnoDB;
@@ -97,18 +98,21 @@
 
     create table building_fullCost (
        building_id bigint not null,
+        image varchar(255),
         resource varchar(255),
         value_ integer
     ) engine=InnoDB;
 
     create table building_healCost (
        building_id bigint not null,
+        image varchar(255),
         resource varchar(255),
         value_ integer
     ) engine=InnoDB;
 
     create table building_initCost (
        building_id bigint not null,
+        image varchar(255),
         resource varchar(255),
         value_ integer
     ) engine=InnoDB;
@@ -129,6 +133,7 @@
 
     create table building_value (
        building_id bigint not null,
+        image varchar(255),
         resource varchar(255),
         value_ integer
     ) engine=InnoDB;
