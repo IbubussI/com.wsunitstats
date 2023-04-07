@@ -4,6 +4,7 @@
   align-items: center;
   justify-content: center;
   padding: 15px;
+  flex: 1;
 }
 
 .view-layout-image {

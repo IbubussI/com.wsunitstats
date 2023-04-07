@@ -35,15 +35,22 @@ export const ViewLayout = ({ unitId, locale }) => {
   }, [unitId, locale]);
 
   if (!unit) {
-    return (null);
+    return (
+      <div className="view-layout-root">
+      </div>
+    );
   } else {
     return (
       <div className="view-layout-root">
-        <h2>{unit.name}</h2>
-        <img className="view-layout-image" src={`/files/images/${unit.image}`} alt=""/>
-        <div className="view-layout-stats">
-          <UnitStats unit={unit} />
-        </div>
+        {unit &&
+          <>
+            <h2>{unit.name}</h2>
+            <img className="view-layout-image" src={`/files/images/${unit.image}`} alt="" />
+            <div className="view-layout-stats">
+              <UnitStats unit={unit} />
+            </div>
+          </>
+        }
       </div>
     );
   }
