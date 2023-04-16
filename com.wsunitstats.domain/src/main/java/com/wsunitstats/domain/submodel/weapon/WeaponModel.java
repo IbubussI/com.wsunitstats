@@ -34,6 +34,7 @@ public class WeaponModel extends PersistentObject {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<DamageModel> damages;
     private Double envDamage;
+    private Double radius;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> envsAffected;
@@ -46,9 +47,13 @@ public class WeaponModel extends PersistentObject {
     private int attacksPerAttack;
     // For machine-guns
     private int attacksPerAction;
-
-    // Time of attack action. Overlaps with recharge time (both start at the same time)
-    // For single attack unit - time between attack queried and attack performed.
-    // For machine-guns - time to empty single cartridge
-    private Integer attackTime;
+    // Time between attack queried and attack performed.
+    // Overlaps with recharge time (both start at the same time)
+    private Double attackDelay;
+    // Time of attack action.
+    // Overlaps with recharge time (both start at the same time)
+    // Time to empty single cartridge for sequential multi-attack units
+    private Double attackTime;
+    // Average time for 1 shot for sequential multi-attack units
+    private Double avgShotTime;
 }

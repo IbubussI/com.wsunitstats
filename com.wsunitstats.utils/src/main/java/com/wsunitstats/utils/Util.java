@@ -17,6 +17,10 @@ public class Util {
         return divide(value, Constants.SHIFT_VALUE_MULTIPLIER);
     }
 
+    public static Double doubleToDoubleShift(Double value) {
+        return divide(value, Constants.SHIFT_VALUE_MULTIPLIER);
+    }
+
     public static Double intToDoubleTick(Integer value) {
         return divide(value, Constants.TICK_RATE_MULTIPLIER);
     }
@@ -109,6 +113,13 @@ public class Util {
     }
 
     private static Double divide(Integer value, double divider) {
+        if (value == null) {
+            return null;
+        }
+        return value / divider;
+    }
+
+    private static Double divide(Double value, double divider) {
         if (value == null) {
             return null;
         }

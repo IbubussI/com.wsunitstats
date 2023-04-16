@@ -25,13 +25,50 @@
   align-items: center;
 }
 
-@media only screen and (max-width: 700px) {
+.weapon-table {
+  width: 100%;
+}
+
+@media only screen and (max-width: 650px) {
+  .view-layout-root {
+    align-items: normal;
+  }
+  .view-layout-container {
+    width: 650px;
+  }
+}
+
+@media only screen and (min-width: 650px) and (max-width: 700px) {
+  .view-layout-container {
+    width: 95%;
+  }
+}
+
+@media only screen and (min-width: 700px) and (max-width: 800px) {
+  .view-layout-container {
+    width: 90%;
+  }
+}
+
+@media only screen and (min-width: 800px) and (max-width: 900px) {
   .view-layout-container {
     width: 80%;
   }
 }
 
-@media only screen and (min-width: 700px) {
+@media only screen and (min-width: 900px) and (max-width: 1100px) {
+  .view-layout-container {
+    width: 70%;
+  }
+}
+
+@media only screen and (min-width: 1100px) and (max-width: 1400px) {
+  .view-layout-container {
+    width: 60%;
+  }
+}
+
+@media only screen and (min-width: 1400px) {
   .view-layout-container {
     width: 50%;
   }

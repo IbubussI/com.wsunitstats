@@ -82,11 +82,13 @@ export const UnitPicker = ({ locale, onSelect }) => {
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);
       }}
-      renderInput={({ ...params }) => {
+      renderInput={({ inputProps, ...params }) => {
+        const readOnly = value ? true : false;
         return (
           <TextField
             {...params}
             label="Type the Unit name"
+            inputProps={{ ...inputProps, readOnly: readOnly }}
             fullWidth
           />
         );

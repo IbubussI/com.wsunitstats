@@ -73,6 +73,7 @@ import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 import static com.wsunitstats.utils.Constants.GENERIC_UNIT_TAG;
 import static com.wsunitstats.utils.Constants.INIT_HEALTH_MODIFIER;
@@ -272,23 +273,29 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         weaponModel.setProjectile(projectileId == null ? null : map(projectileId, projectileSource.get(projectileId)));
         weaponModel.setRechargePeriod(Util.intToDoubleShift(weaponSource.getRechargePeriod()));
         weaponModel.setSpread(Util.intToPercent(weaponSource.getSpread()));
-        weaponModel.setAttackTime(getSumTime(weaponSource.getDirectionAttacks().getDefaultValue().getPoints()));
+        List<DirectionAttacksPointJsonModel> points = weaponSource.getDirectionAttacks().getDefaultValue().getPoints();
+        Integer startTime = points.get(0).getTime();
+        Integer endTime = points.get(points.size() - 1).getTime();
+        // size should be always > 1
+        int attacksPerAction = weaponSource.getDirectionAttacks().getDefaultValue().getPoints().size();
+        weaponModel.setAttackDelay(Util.intToDoubleShift(startTime));
+        weaponModel.setAttackTime(Util.intToDoubleShift(endTime));
+        weaponModel.setAvgShotTime(Util.doubleToDoubleShift(getAvgShotTime(points)));
+        weaponModel.setAttacksPerAction(attacksPerAction);
+        weaponModel.setAttacksPerAttack(getMultipliable(weaponSource.getAttackscount()));
+        weaponModel.setCharges(weaponSource.getCharges());
+
 
         DamageJsonModel damageSource = weaponSource.getDamage();
-        Integer area = damageSource.getArea();
-        weaponModel.setAreaType(area == null ? null : Constants.DamageAreaType.get(damageSource.getArea()).getName());
+        weaponModel.setAreaType(Constants.DamageAreaType.get(damageSource.getArea()).getName());
         weaponModel.setBuff(map(damageSource.getBuff(), localization));
         weaponModel.setDamageFriendly(damageSource.getDamageFriendly());
         weaponModel.setDamages(mapDamages(damageSource.getDamages(), localization));
         weaponModel.setDamagesCount(getMultipliable(damageSource.getDamagesCount()));
         weaponModel.setEnvDamage(Util.intToDoubleShift(damageSource.getEnvDamage()));
         weaponModel.setEnvsAffected(mapTags(damageSource.getEnvsAffected(), i -> localization.getEnvSearchTagNames().get(i)));
-
+        weaponModel.setRadius(Util.intToDoubleShift(damageSource.getRadius()));
         weaponModel.setDamagesCount(getMultipliable(damageSource.getDamagesCount()));
-        weaponModel.setCharges(weaponSource.getCharges());
-        weaponModel.setAttacksPerAttack(getMultipliable(weaponSource.getAttackscount()));
-        // size should be always > 1
-        weaponModel.setAttacksPerAction(weaponSource.getDirectionAttacks().getDefaultValue().getPoints().size());
         return weaponModel;
     }
 
@@ -296,9 +303,6 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     public List<DamageModel> mapDamages(List<List<Integer>> damagesSource, LocalizationKeyModel localization) {
         List<DamageModel> damages = new ArrayList<>();
         for (List<Integer> damageList : damagesSource) {
-            if (damageList.size() != 2) {
-                continue;
-            }
             int unitTag = damageList.get(0);
             int value = damageList.get(1);
 
@@ -612,10 +616,22 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         return i == null ? 1 : i;
     }
 
-    private int getSumTime(List<DirectionAttacksPointJsonModel> points) {
-        return points.stream()
-                .mapToInt(DirectionAttacksPointJsonModel::getTime)
-                .sum();
+    private Double getAvgShotTime(List<DirectionAttacksPointJsonModel> points) {
+        double result = IntStream.range(0, points.size())
+                .map(i -> {
+                    int diff = 0;
+                    if (i < points.size() - 1) {
+                        diff = points.get(i + 1).getTime() - points.get(i).getTime();
+                    }
+                    return diff;
+                })
+                .average()
+                .orElse(0);
+        if (result > 0) {
+            return result;
+        } else {
+            return null;
+        }
     }
 
     /**

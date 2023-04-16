@@ -4,24 +4,33 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import './index.css';
+import { BasicPaper } from '../BasicPaper';
 
-const CustomPaper = (props) => {
-  return <Paper elevation={3} {...props} />;
-};
-
-export const StatsTable = ({ content }) => {
+export const StatsTable = ({ content, ariaLabel }) => {
   return (
-    <TableContainer component={CustomPaper}>
-      <Table aria-label="Unit Data" style={{ tableLayout: 'fixed' }}>
+    <TableContainer component={BasicPaper}>
+      <Table aria-label={ariaLabel} style={{ tableLayout: 'fixed' }}>
         <TableBody>
           {content.map((row) => {
             if (row) {
               return (
                 <TableRow
                   key={row.name}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  sx={[
+                    {
+                      '&:last-child td, &:last-child th': {
+                        border: 0
+                      },
+                    },
+                    {
+                      '& td': {
+                        paddingRight: '7px',
+                        paddingLeft: '7px',
+                        paddingTop: '10px',
+                        paddingBottom: '10px',
+                      },
+                    },
+                  ]}
                 >
                   <TableCell align="right">{row.name}</TableCell>
                   <TableCell>{row.value}</TableCell>

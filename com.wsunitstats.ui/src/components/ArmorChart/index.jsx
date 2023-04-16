@@ -1,20 +1,24 @@
+import * as React from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export const DoughnutPercentChart = ({content, valuePrefix}) => {
-  const labels = Array(content.length);
-  const probabilities = Array(content.length);
-  const values = Array(content.length);
-
-  for (let i = 0; i < content.length; ++i) {
-    let probability = content[i].probability;
-    let value = content[i].value;
-    labels[i] = `${probability}% : ${value}`;
-    probabilities[i] = probability;
-    values[i] = value;
-  }
+export const ArmorChart = ({content, valuePrefix}) => {
+  const [labels, probabilities, values, avg] = React.useMemo(() => {
+    let labels_ = Array(content.length);
+    let probabilities_ = Array(content.length);
+    let values_ = Array(content.length);
+    for (let i = 0; i < content.length; ++i) {
+      let probability = content[i].probability;
+      let value = content[i].value;
+      labels_[i] = `${probability}% : ${value}`;
+      probabilities_[i] = probability;
+      values_[i] = value;
+    }
+    let avg_ = findAverage(values_, probabilities_).toFixed(1);
+    return [labels_, probabilities_, values_, avg_];
+  }, [content]);
 
   const data = {
     labels: labels,
@@ -30,7 +34,7 @@ export const DoughnutPercentChart = ({content, valuePrefix}) => {
           'rgba(15, 132, 21, 1)',
         ],
         tooltip: {
-          titlePrefix: 'Thickness: ',
+          titlePrefix: valuePrefix,
           labelSuffix: '%',
         },
         centerText: "AVG",
@@ -39,7 +43,7 @@ export const DoughnutPercentChart = ({content, valuePrefix}) => {
   };
 
   const avgText = {
-    beforeDatasetsDraw(chart, args, pluginOptions) {
+    beforeDraw(chart) {
       const { ctx, data } = chart;
       let x = chart.getDatasetMeta(0).data[0].x;
       let y = chart.getDatasetMeta(0).data[0].y;
@@ -53,7 +57,7 @@ export const DoughnutPercentChart = ({content, valuePrefix}) => {
       ctx.font = 'bolder 20px sans-relief';
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(findAverage(dataset.dataValues, dataset.data), x, y + 10);
+      ctx.fillText(avg, x, y + 10);
     }
   }
 
@@ -75,15 +79,16 @@ export const DoughnutPercentChart = ({content, valuePrefix}) => {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'right'
+        position: 'right',
+        onClick: (e) => e.stopPropagation()
       },
       tooltip: {
         callbacks: {
           title: tooltipTitle,
           label: tooltipLabel,
         }
-      }
-    }
+      },
+    },
   }
 
   return (

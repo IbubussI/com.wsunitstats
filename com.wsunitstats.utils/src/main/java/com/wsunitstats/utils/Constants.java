@@ -92,7 +92,10 @@ public class Constants {
             return name;
         }
 
-        public static DamageAreaType get(int type) {
+        public static DamageAreaType get(Integer type) {
+            if (type == null) {
+                return SINGLE;
+            }
             for (DamageAreaType abilityType : DamageAreaType.values()) {
                 if (abilityType.getType() == type) {
                     return abilityType;
