@@ -27,7 +27,7 @@ public class ErrorController extends JsonControllerSupport {
         }
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", new Date());
-        body.put("status", status.ordinal());
+        body.put("status", status.value());
         body.put("error", status.getReasonPhrase());
         body.put("message", exception.getMessage());
         return getMapJsonResponseEntity(body, status);
