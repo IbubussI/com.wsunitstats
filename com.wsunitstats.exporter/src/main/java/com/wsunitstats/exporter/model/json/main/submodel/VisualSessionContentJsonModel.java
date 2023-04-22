@@ -19,11 +19,13 @@ public class VisualSessionContentJsonModel {
     private Object billboards;
     private Object cubeMaps;
     private Object decals;
+    private Object droplets;
     @JsonDeserialize(using = ImageJsonModelDeserializer.class)
     @JsonSerialize(using = IndexedArrayDataModelSerializer.class)
     private Map<Integer, ImageJsonModel> images;
     private Object interfaceBillboards;
     private Object lenses;
+    private Object light;
     private Object models;
     private Object precipitations;
     private Object targets;

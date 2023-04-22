@@ -37,6 +37,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.requirement.Require
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.BuffJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.DistanceJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
@@ -58,7 +59,7 @@ public interface ModelMappingService {
 
     List<ResourceModel> mapResources(List<Integer> source, LocalizationKeyModel localization);
 
-    TransportingModel map(TransportingJsonModel source);
+    TransportingModel map(TransportingJsonModel transportingSource, TransportJsonModel transportSource);
 
     MovementModel map(MovementJsonModel source);
 

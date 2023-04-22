@@ -164,8 +164,11 @@
 
     create table heal (
        id bigint not null auto_increment,
+        autoSearchTargetDistance float(53),
+        autoSearchTargetPeriod float(53),
         distance float(53),
         perSecond float(53),
+        searchNextDistance float(53),
         primary key (id)
     ) engine=InnoDB;
 

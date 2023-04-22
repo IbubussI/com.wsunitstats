@@ -35,12 +35,16 @@ public class RestServiceImpl implements RestService {
     }
 
     @Override
-    public ResponseEntity<String> postJson(String uri, String json, String authToken) {
+    public ResponseEntity<String> postJson(String uri, Map<String, List<String>> parameters, String json, String authToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(Base64.getEncoder().encodeToString(authToken.getBytes(StandardCharsets.UTF_8)));
+        String uriWithParams = UriComponentsBuilder.fromHttpUrl(uri)
+                .queryParams(new LinkedMultiValueMap<>(parameters))
+                .encode()
+                .toUriString();
         HttpEntity<String> request = new HttpEntity<>(json, headers);
-        return restTemplate.postForEntity(uri, request, String.class);
+        return restTemplate.postForEntity(uriWithParams, request, String.class);
     }
 
     @Override

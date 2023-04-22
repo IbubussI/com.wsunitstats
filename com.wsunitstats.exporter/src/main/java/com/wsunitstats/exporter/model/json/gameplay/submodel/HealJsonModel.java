@@ -12,5 +12,8 @@ public class HealJsonModel {
     private Integer distance;
     private Integer minimumTime;
     private Integer perTick;
+    private Integer searchNextDistance;
+    private Integer autoSearchTargetDistance;
+    private Integer autoSearchTargetPeriod;
     private Long targetTags;
 }

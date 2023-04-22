@@ -19,4 +19,7 @@ public class HealModel extends PersistentObject {
     private Double perSecond;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> targetTags;
+    private Double searchNextDistance;
+    private Double autoSearchTargetDistance;
+    private Double autoSearchTargetPeriod;
 }

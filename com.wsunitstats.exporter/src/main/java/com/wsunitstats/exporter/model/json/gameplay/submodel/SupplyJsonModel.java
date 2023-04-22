@@ -11,13 +11,8 @@ import java.util.List;
 @Setter
 @ToString
 public class SupplyJsonModel {
-    private Integer cost;
-    private Integer cost2;
     @JsonProperty("cost_")
     private List<Integer> costList;
-
-    private Integer takes;
-    private Integer takes2;
     @JsonProperty("takes_")
     private List<Integer> takesList;
 }

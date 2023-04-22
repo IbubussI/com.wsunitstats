@@ -22,7 +22,12 @@ public class LocalizationServiceImpl implements LocalizationService {
 
     @Override
     public boolean updateLocalizationModel(LocalizationModel localizationModel, boolean overwrite) {
-        if (!localizationRepository.existsByLocale(localizationModel.getLocale()) || overwrite) {
+        LocalizationModel entity = localizationRepository.findByLocale(localizationModel.getLocale());
+        if (entity == null) {
+            localizationRepository.save(localizationModel);
+            return true;
+        } else if (overwrite) {
+            localizationRepository.delete(entity);
             localizationRepository.save(localizationModel);
             return true;
         }

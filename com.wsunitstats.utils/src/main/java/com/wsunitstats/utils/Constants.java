@@ -40,8 +40,7 @@ public class Constants {
         RESEARCH(1, "Research"),
         TRANSFORM(2, "Transform"),
         CREATE_ENV(3, "Create env"),
-        BUFF(4, "Buff");
-
+        SPEED_BUFF(4, "Speed buff");
         private final int type;
         private final String name;
 

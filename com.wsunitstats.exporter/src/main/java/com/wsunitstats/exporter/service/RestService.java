@@ -16,7 +16,7 @@ public interface RestService {
      * Send POST request with given JSON body to given URI
      * @return {@link ResponseEntity} of executed request
      */
-    ResponseEntity<String> postJson(String uri, String json, String authToken);
+    ResponseEntity<String> postJson(String uri, Map<String, List<String>> parameters, String json, String authToken);
 
     /**
      * Send POST request with given files body to given URI

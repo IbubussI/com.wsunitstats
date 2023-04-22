@@ -5,12 +5,16 @@ import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.AbilityWrapperJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.AttackJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildingJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.CreateEnvJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.DeathabilityJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.EnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.MovementJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ProjectileJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ScenesJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TurretJsonModel;
@@ -81,43 +85,52 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             unit.setBuild(mappingService.map(unitJsonModel, findUnitBuildObject(gameplayModel, id), localizationModel));
 
             // Unit traits
-            unit.setArmor(getArmorList(unitJsonModel.getArmor()));
-            unit.setSize(Util.intToDoubleShift(unitJsonModel.getSize()));
-            unit.setAbilities(getAbilitiesList(unitJsonModel.getAbilities(),
-                    unitJsonModel.getWork(),
-                    unitJsonModel.getCreateEnvs(),
-                    unitJsonModel.getAbilityOnAction(),
-                    envMap,
-                    localizationModel));
-            unit.setWeapons(getWeaponsList(unitJsonModel.getWeapons(), projectileMap, localizationModel));
-            unit.setTurrets(getTurretList(unitJsonModel.getTurrets(), projectileMap, localizationModel));
-            unit.setSupply(mappingService.map(unitJsonModel.getSupply()));
-            unit.setRegenerationSpeed(Util.intToDoubleTick(unitJsonModel.getRegeneration()));
             unit.setViewRange(Util.intToDoubleShift(unitJsonModel.getViewRange()));
-            unit.setHealth(Util.intToDoubleShift(unitJsonModel.getHealth()));
             unit.setTags(mappingService.mapUnitTags(unitJsonModel.getTags(), localizationModel));
             unit.setSearchTags(mappingService.mapTags(unitJsonModel.getSearchTags(), i -> localizationModel.getUnitSearchTagNames().get(i)));
-            unit.setWeaponOnDeath(unitJsonModel.getWeaponUseOnDeath());
             unit.setControllable(unitJsonModel.getControllable());
-            unit.setLifetime(Util.intToDoubleShift(unitJsonModel.getLifeTime()));
             unit.setParentMustIdle(unitJsonModel.getParentMustIdle());
-            unit.setReceiveFriendlyDamage(unitJsonModel.getReceiveFriendlyDamage());
-            unit.setThreat(unitJsonModel.getThreat());
-
-            // Movable traits
-            unit.setMovement(mappingService.map(unitJsonModel.getMovement()));
-            unit.setTransporting(mappingService.map(unitJsonModel.getTransporting()));
-
-            // Worker traits
-            unit.setGather(getGatherList(unitJsonModel.getGather(), localizationModel));
             unit.setHeal(mappingService.map(unitJsonModel.getHeal(), localizationModel));
-            unit.setConstruction(getConstructionList(unitJsonModel.getBuilding()));
+            unit.setSize(Util.intToDoubleShift(unitJsonModel.getSize()));
 
-            AirplaneJsonModel airplaneAndSubmarineModel = unitJsonModel.getAirplane();
-            // Airplane traits
-            unit.setAirplane(mappingService.mapAirplane(airplaneAndSubmarineModel, localizationModel));
-            // Submarine traits
-            unit.setSubmarine(mappingService.mapSubmarine(airplaneAndSubmarineModel));
+            AbilityWrapperJsonModel ability = unitJsonModel.getAbility();
+            if (ability != null) {
+                unit.setAbilities(getAbilitiesList(ability,
+                        unitJsonModel.getCreateEnvs(),
+                        envMap,
+                        localizationModel));
+            }
+
+            DeathabilityJsonModel deathability = unitJsonModel.getDeathability();
+            if (deathability != null) {
+                unit.setArmor(getArmorList(deathability.getArmor()));
+                unit.setRegenerationSpeed(Util.intToDoubleTick(deathability.getRegeneration()));
+                unit.setThreat(deathability.getThreat());
+                unit.setReceiveFriendlyDamage(deathability.getReceiveFriendlyDamage());
+                unit.setLifetime(Util.intToDoubleShift(deathability.getLifeTime()));
+                unit.setHealth(Util.intToDoubleShift(deathability.getHealth()));
+            }
+
+            AttackJsonModel attack = unitJsonModel.getAttack();
+            if (attack != null) {
+                unit.setWeapons(getWeaponsList(attack.getWeapons(), projectileMap, localizationModel));
+                unit.setTurrets(getTurretList(attack.getTurrets(), projectileMap, localizationModel));
+                unit.setSupply(mappingService.map(unitJsonModel.getSupply()));
+                unit.setWeaponOnDeath(attack.getWeaponUseOnDeath());
+            }
+
+            MovementJsonModel movement = unitJsonModel.getMovement();
+            if (movement != null) {
+                AirplaneJsonModel airplaneAndSubmarineModel = movement.getAirplane();
+                unit.setAirplane(mappingService.mapAirplane(airplaneAndSubmarineModel, localizationModel));
+                unit.setSubmarine(mappingService.mapSubmarine(airplaneAndSubmarineModel));
+                unit.setTransporting(mappingService.map(movement.getTransporting(), unitJsonModel.getTransport()));
+                unit.setGather(getGatherList(movement.getGather(), localizationModel));
+                unit.setConstruction(getConstructionList(movement.getBuilding()));
+                unit.setMovement(mappingService.map(movement));
+            } else {
+                unit.setTransporting(mappingService.map(null, unitJsonModel.getTransport()));
+            }
 
             if (Constants.LIVESTOCK_IDS.contains(id)) {
                 unit.setLimit(LIVESTOCK_LIMIT);
@@ -156,15 +169,19 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
         return nationId == null ? null : localizationModel.getNationNames().get(nationId);
     }
 
-    private List<AbilityModel> getAbilitiesList(List<AbilityJsonModel> abilitiesList,
-                                                List<WorkJsonModel> workList,
+    private List<AbilityModel> getAbilitiesList(AbilityWrapperJsonModel ability,
                                                 List<CreateEnvJsonModel> createEnvs,
-                                                AbilityOnActionJsonModel onAction,
                                                 Map<Integer, EnvJsonModel> envs,
                                                 LocalizationKeyModel localizationModel) {
+        List<AbilityJsonModel> abilitiesList = ability.getAbilities();
+        List<WorkJsonModel> workList = ability.getWork();
+        AbilityOnActionJsonModel onAction = ability.getAbilityOnAction();
         return abilitiesList == null ? new ArrayList<>() :
                 IntStream.range(0, abilitiesList.size())
                         .mapToObj(i -> {
+                            if (workList == null) {
+                                return mappingService.map(i, abilitiesList.get(i), null, createEnvs, onAction, envs, localizationModel);
+                            }
                             WorkJsonModel workModel = workList.stream()
                                     .filter(work -> i == work.getAbility())
                                     .findFirst()

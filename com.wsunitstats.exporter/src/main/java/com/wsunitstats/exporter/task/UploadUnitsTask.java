@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+
 @Component
 public class UploadUnitsTask extends RestUploadTask implements ExecutionTask {
     private static final Logger LOG = LogManager.getLogger(UploadUnitsTask.class);
@@ -35,7 +37,7 @@ public class UploadUnitsTask extends RestUploadTask implements ExecutionTask {
             String unitsJson = exporterService.exportToJson(payload.getUnits());
             String endpoint = payload.getHostname() + uploadUnitsUriPath;
             LOG.info("Sending units data to {}", endpoint);
-            ResponseEntity<String> gameplayResponse = restService.postJson(endpoint, unitsJson, authToken);
+            ResponseEntity<String> gameplayResponse = restService.postJson(endpoint, new HashMap<>(), unitsJson, authToken);
             LOG.info("Units data submitted: HTTP {} : {}", gameplayResponse.getStatusCode().value(), gameplayResponse.getBody());
         } catch (Exception ex) {
             throw new TaskExecutionException(ex);

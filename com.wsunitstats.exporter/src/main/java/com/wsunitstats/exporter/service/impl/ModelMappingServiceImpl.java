@@ -22,6 +22,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildingJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.CreateEnvJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.DeathabilityJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.EnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.HealJsonModel;
@@ -44,6 +45,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.DamageJsonMo
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.DirectionAttacksPointJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.DistanceJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkReserveJsonModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
@@ -143,14 +145,15 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public TransportingModel map(TransportingJsonModel source) {
-        if (source == null) {
-            return null;
-        }
+    public TransportingModel map(TransportingJsonModel transportingSource, TransportJsonModel transportSource) {
         TransportingModel transportingModel = new TransportingModel();
-        transportingModel.setCarrySize(source.getVolume());
-        transportingModel.setOwnSize(source.getOwnVolume());
-        transportingModel.setOnlyInfantry(source.getUnitLimit() != null ? true : null);
+        if (transportSource != null) {
+            transportingModel.setCarrySize(transportSource.getVolume());
+            transportingModel.setOnlyInfantry(transportSource.getUnitLimit() != null ? true : null);
+        }
+        if (transportingSource != null) {
+            transportingModel.setOwnSize(transportingSource.getOwnVolume());
+        }
         return transportingModel;
     }
 
@@ -198,11 +201,13 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         AbilityType abilityType = getAbilityType(abilitySource);
         AbilityDataJsonModel abilityData = abilitySource.getData();
         WorkReserveJsonModel workReserve = workSource != null ? workSource.getReserve() : null;
-        int entityId = getAbilityEntityId(abilityData);
+        Integer entityId = getAbilityEntityId(abilityData);
         abilityModel.setEntityId(entityId);
         abilityModel.setAbilityType(abilityType.getName());
-        abilityModel.setEntityName(getAbilityEntityName(abilityType, entityId, createEnvSource, envSource, localization));
-        abilityModel.setCount(getEnvCount(abilityData, abilityType, entityId, createEnvSource));
+        if (entityId != null) {
+            abilityModel.setEntityName(getAbilityEntityName(abilityType, entityId, createEnvSource, envSource, localization));
+            abilityModel.setCount(getEnvCount(abilityData, abilityType, entityId, createEnvSource));
+        }
         abilityModel.setCost(getWorkCost(workSource, localization));
         abilityModel.setLifeTime(Util.intToDoubleShift(abilityData.getLifeTime()));
         abilityModel.setMakeTime(workReserve != null ? Util.intToDoubleShift(workSource.getMaketime()) : null);
@@ -369,12 +374,22 @@ public class ModelMappingServiceImpl implements ModelMappingService {
 
     @Override
     public SupplyModel map(SupplyJsonModel supplySource) {
-        if (supplySource == null || (supplySource.getCost() == null && supplySource.getTakes() == null)) {
+        if (supplySource == null) {
             return null;
         }
+        Integer cost = null;
+        Integer take = null;
+        List<Integer> costList = supplySource.getCostList();
+        List<Integer> takeList = supplySource.getTakesList();
+        if (costList != null && costList.size() > 0) {
+            cost = supplySource.getCostList().get(0);
+        }
+        if (takeList != null && takeList.size() > 0) {
+            take = supplySource.getTakesList().get(0);
+        }
         SupplyModel supplyModel = new SupplyModel();
-        supplyModel.setConsume(Util.intToSupply(supplySource.getCost()));
-        supplyModel.setProduce(Util.intToSupply(supplySource.getTakes()));
+        supplyModel.setConsume(Util.intToSupply(cost));
+        supplyModel.setProduce(Util.intToSupply(take));
         return supplyModel;
     }
 
@@ -385,12 +400,15 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         }
         BuildingModel buildingModel = new BuildingModel();
         buildingModel.setIncome(map(unitSource.getIncome(), localization));
-        buildingModel.setHealCost(mapResources(unitSource.getHealMeCost(), localization));
+        DeathabilityJsonModel deathability = unitSource.getDeathability();
+        if (deathability != null) {
+            buildingModel.setHealCost(mapResources(deathability.getHealMeCost(), localization));
+            buildingModel.setInitHealth(getInitHealth(deathability.getHealth(), buildSource.getHealth()));
+        }
         buildingModel.setRequirements(map(buildSource.getRequirements(), localization));
         buildingModel.setInitCost(mapResources(buildSource.getCostInit(), localization));
         List<Integer> fullCost = Util.add(buildSource.getCostInit(), buildSource.getCostBuilding());
         buildingModel.setFullCost(mapResources(fullCost, localization));
-        buildingModel.setInitHealth(getInitHealth(unitSource.getHealth(), buildSource.getHealth()));
         return buildingModel;
     }
 
@@ -472,6 +490,9 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         healModel.setDistance(Util.intToDoubleShift(healSource.getDistance()));
         healModel.setTargetTags(mapUnitTags(healSource.getTargetTags(), localization));
         healModel.setPerSecond(Util.intToDoubleTick(healSource.getPerTick()));
+        healModel.setSearchNextDistance(Util.intToDoubleShift(healSource.getSearchNextDistance()));
+        healModel.setAutoSearchTargetDistance(Util.intToDoubleShift(healSource.getAutoSearchTargetDistance()));
+        healModel.setAutoSearchTargetPeriod(Util.intToDoubleTick(healSource.getAutoSearchTargetPeriod()));
         return healModel;
     }
 
@@ -537,7 +558,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         return result;
     }
 
-    private int getAbilityEntityId(AbilityDataJsonModel abilityData) {
+    private Integer getAbilityEntityId(AbilityDataJsonModel abilityData) {
         Integer id = abilityData.getId();
         Integer research = abilityData.getResearch();
         Integer unit = abilityData.getUnit();
@@ -550,7 +571,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         if (id == null && research == null && unit != null) {
             return unit;
         }
-        throw new IllegalStateException("Ambiguous ID in AbilityDataJsonModel");
+        return null;
     }
 
     private String getAbilityEntityName(AbilityType abilityType,
@@ -562,7 +583,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
             case CREATE_UNIT, TRANSFORM -> {
                 return localization.getUnitNames().get(entityId);
             }
-            case RESEARCH, BUFF -> {
+            case RESEARCH, SPEED_BUFF -> {
                 return localization.getResearchNames().get(entityId);
             }
             case CREATE_ENV -> {

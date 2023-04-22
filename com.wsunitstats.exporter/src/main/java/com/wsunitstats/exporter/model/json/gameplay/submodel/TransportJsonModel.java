@@ -7,6 +7,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class TransportingJsonModel {
-    private Integer ownVolume;
+public class TransportJsonModel {
+    private Integer tags;
+    private Integer unitLimit;
+    private Integer volume;
 }

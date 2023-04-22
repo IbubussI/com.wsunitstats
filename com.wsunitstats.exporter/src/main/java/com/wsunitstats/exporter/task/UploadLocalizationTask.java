@@ -1,5 +1,6 @@
 package com.wsunitstats.exporter.task;
 
+import com.wsunitstats.domain.LocalizationModel;
 import com.wsunitstats.exporter.exception.TaskExecutionException;
 import com.wsunitstats.exporter.service.RestService;
 import com.wsunitstats.utils.service.ModelExporterService;
@@ -9,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class UploadLocalizationTask extends RestUploadTask implements ExecutionTask {
@@ -32,11 +37,16 @@ public class UploadLocalizationTask extends RestUploadTask implements ExecutionT
     public void execute(ExecutionPayload payload) throws TaskExecutionException {
         try {
             String authToken = getAuthToken(restService, payload);
-            String locJson = exporterService.exportToJson(payload.getLocalization());
+            List<LocalizationModel> localizationModels = payload.getLocalization();
             String endpoint = payload.getHostname() + uploadLocalizationUriPath;
+            Map<String, List<String>> parameters = new HashMap<>();
+            parameters.put("forceResubmission", List.of("true"));
             LOG.info("Sending localization data to {}", endpoint);
-            ResponseEntity<String> locResponse = restService.postJson(endpoint, locJson, authToken);
-            LOG.info("Localization data submitted: HTTP {} : {}", locResponse.getStatusCode().value(), locResponse.getBody());
+            for (LocalizationModel localizationModel : localizationModels) {
+                String locJson = exporterService.exportToJson(localizationModel);
+                ResponseEntity<String> locResponse = restService.postJson(endpoint, parameters, locJson, authToken);
+                LOG.info("Locale {} submitted: HTTP {} : {}", localizationModel.getLocale(), locResponse.getStatusCode().value(), locResponse.getBody());
+            }
         } catch (Exception ex) {
             throw new TaskExecutionException(ex);
         }
