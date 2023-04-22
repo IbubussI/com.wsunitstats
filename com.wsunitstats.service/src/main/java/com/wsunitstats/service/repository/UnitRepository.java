@@ -31,7 +31,7 @@ public interface UnitRepository extends CrudRepository<UnitModel, Long>, PagingA
 
     @Query(nativeQuery = true, value = """
             SELECT unit.name, unit.id, unit.nation FROM wsunitstats.localization_entries
-            LEFT JOIN wsunitstats.unit ON localization_entries.entries_KEY = unit.name
+            RIGHT JOIN wsunitstats.unit ON localization_entries.entries_KEY = unit.name
             WHERE localization_id = (SELECT id FROM wsunitstats.localization WHERE locale = :locale)
             AND entries_KEY LIKE :entryPattern
             AND entries LIKE :textPattern
