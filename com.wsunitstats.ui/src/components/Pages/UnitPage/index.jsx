@@ -40,6 +40,7 @@ export const UnitPage = () => {
           .catch(console.log);
       } else {
         setUnit(null);
+        setOption(null);
       }
     }
     return () => {
