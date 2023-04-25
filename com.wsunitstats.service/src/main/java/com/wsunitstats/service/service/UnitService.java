@@ -4,6 +4,7 @@ import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.service.model.UnitOption;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UnitService {
     List<UnitModel> getUnitsAll(String sort, String sortDir, int page, int size);
@@ -17,6 +18,8 @@ public interface UnitService {
     List<UnitModel> getUnitsByGameIds(List<Integer> ids, String sort, String sortDir, int page, int size);
 
     List<UnitOption> getUnitOptionsByName(String locale, String namePattern, int size);
+
+    Optional<UnitOption> getUnitOption(Long id);
 
     List<String> getColumnNames();
 

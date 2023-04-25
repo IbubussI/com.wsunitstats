@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/api/units")
@@ -78,7 +80,7 @@ public class UnitController extends JsonControllerSupport {
     }
 
     @GetMapping(params = "id")
-    public ResponseEntity<String> getUnitsByIds(@RequestParam(name = "id") List<Long> idList,
+    public ResponseEntity<String> getUnitsByIds(@RequestParam(name = "id") List<String> idList,
                                                 @RequestParam(defaultValue = "en") String locale,
                                                 @RequestParam(defaultValue = "id") String sort,
                                                 @RequestParam(defaultValue = "asc") String sortDir,
@@ -86,7 +88,11 @@ public class UnitController extends JsonControllerSupport {
                                                 @RequestParam(defaultValue = "50") Integer size) {
         try {
             parameterValidatorService.validateLocale(locale);
-            List<UnitModel> units = unitService.getUnitsByIds(idList, sort, sortDir, page, size);
+            List<Long> parsedIdList = parseIds(idList);
+            if (parsedIdList.size() == 0) {
+                throw new InvalidParameterException("Provided ID(s) not valid");
+            }
+            List<UnitModel> units = unitService.getUnitsByIds(parsedIdList, sort, sortDir, page, size);
             return getJson(units, true, locale);
         } catch (JsonProcessingException ex) {
             throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -128,6 +134,24 @@ public class UnitController extends JsonControllerSupport {
         }
     }
 
+    @GetMapping(path = "/option", params = "unitId")
+    public ResponseEntity<String> fetchUnitOptions(@RequestParam Long unitId,
+                                                   @RequestParam(defaultValue = "en") String locale) {
+        try {
+            parameterValidatorService.validateLocale(locale);
+            Optional<UnitOption> unitOption = unitService.getUnitOption(unitId);
+            if (unitOption.isPresent()) {
+                String json = localizationService.localize(exporterService.exportToJson(unitOption.get()), locale);
+                return getStringJsonResponseEntity(json, HttpStatus.OK);
+            }
+            throw new RestException("Unit with ID [" + unitId + "] not found", HttpStatus.BAD_REQUEST);
+        } catch (JsonProcessingException ex) {
+            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (InvalidParameterException ex) {
+            throw new RestException(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping(path = "/upload", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateGameplay(@RequestBody String data) {
         try {
@@ -138,6 +162,17 @@ public class UnitController extends JsonControllerSupport {
         } catch (JsonProcessingException ex) {
             throw new RestException(INVALID_JSON, ex, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    private List<Long> parseIds(List<String> idsParamList) {
+        List<Long> idList = new ArrayList<>();
+        for (String id : idsParamList) {
+            try {
+                idList.add(Long.parseLong(id));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return idList;
     }
 
     private ResponseEntity<String> getJson(List<?> units, boolean localize, String locale) throws JsonProcessingException {

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UnitServiceImpl implements UnitService {
@@ -48,6 +49,11 @@ public class UnitServiceImpl implements UnitService {
     @Override
     public List<UnitOption> getUnitOptionsByName(String locale, String namePattern, int size) {
         return unitRepository.findByPatternContaining(locale, OPTION_NAME, String.format(OPTION_LIKE, namePattern), size);
+    }
+
+    @Override
+    public Optional<UnitOption> getUnitOption(Long id) {
+        return unitRepository.findOptionById(id);
     }
 
     @Override

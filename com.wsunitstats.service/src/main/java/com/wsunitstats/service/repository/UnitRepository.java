@@ -10,6 +10,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UnitRepository extends CrudRepository<UnitModel, Long>, PagingAndSortingRepository<UnitModel, Long> {
     List<UnitModel> findByNameIn(List<String> names, Pageable pageable);
@@ -29,7 +30,7 @@ public interface UnitRepository extends CrudRepository<UnitModel, Long>, PagingA
             """)
     List<String> getColumnNames();
 
-    @Query(nativeQuery = true, value = """
+    @Query(nativeQuery = true,value = """
             SELECT unit.name, unit.id, unit.nation FROM wsunitstats.localization_entries
             RIGHT JOIN wsunitstats.unit ON localization_entries.entries_KEY = unit.name
             WHERE localization_id = (SELECT id FROM wsunitstats.localization WHERE locale = :locale)
@@ -42,4 +43,8 @@ public interface UnitRepository extends CrudRepository<UnitModel, Long>, PagingA
                                              @Param("entryPattern") String entryPattern,
                                              @Param("textPattern") String textPattern,
                                              @Param("size") int size);
+
+    @Query(nativeQuery = true,
+            value = "SELECT unit.name, unit.id, unit.nation FROM wsunitstats.unit WHERE id = :id")
+    Optional<UnitOption> findOptionById(@Param("id") Long id);
 }
