@@ -8,7 +8,15 @@ body {
 }
 
 #root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.page-root {
   min-height: 100vh;
+  padding: 28px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
 }
@@ -21,8 +29,33 @@ body {
   flex: 1;
 }
 
-@media only screen and (max-width: 650px) {
-  .body-root {
+@media only screen and (max-width: 700px) {
+  #root {
     align-items: normal;
+    width: fit-content;
+  }
+}
+
+@media only screen and (max-width: 720px) {
+  #root, .page-root {
+    width: 650px;
+  }
+}
+
+@media only screen and (min-width: 720px) and (max-width: 950px) {
+  .page-root {
+    width: 100%;
+  }
+}
+
+@media only screen and (min-width: 950px) and (max-width: 1350px) {
+  .page-root {
+    width: 78%;
+  }
+}
+
+@media only screen and (min-width: 1350px) {
+  .page-root {
+    width: 1000px;
   }
 }

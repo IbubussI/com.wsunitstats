@@ -6,10 +6,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import { BasicPaper } from 'components/Atoms/BasicPaper';
 
-export const StatsTable = ({ content, ariaLabel }) => {
+export const StatsTable = ({ content }) => {
   return (
     <TableContainer component={BasicPaper}>
-      <Table aria-label={ariaLabel} style={{ tableLayout: 'fixed' }}>
+      <Table style={{ tableLayout: 'fixed' }}>
         <TableBody>
           {content.map((row) => {
             if (row) {

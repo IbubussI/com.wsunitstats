@@ -12,14 +12,13 @@ const STATS_ROWS = 6;
 // 2*6 - 1 span for title
 const STATS_LENGTH = 11;
 
-export const WeaponTable = ({ turrets, weapons, ariaLabel }) => {
+export const WeaponTable = ({ turrets, weapons }) => {
   if (turrets || weapons) {
     return (
       <Stack component={BasicPaper} spacing={0.5} sx={{ padding: 1 }}>
         {weapons && weapons.map((weapon, index) => {
           return (
             <WeaponTableEntry
-              ariaLabel={ariaLabel}
               key={index}
               weapon={weapon}
               weaponType={getType(false, weapon)} />

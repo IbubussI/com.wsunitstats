@@ -41,7 +41,6 @@ export const UnitView = ({ unit }) => {
         <div className="common-table">
           <StatsTable
             content={getCommonProps(unit)}
-            ariaLabel='Common properties'
           />
         </div>
         {unit.armor?.length &&
@@ -61,7 +60,6 @@ export const UnitView = ({ unit }) => {
               <WeaponTable
                 weapons={unit.weapons}
                 turrets={unit.turrets}
-                ariaLabel='Weapons'
               />
             </div>
           </>}
