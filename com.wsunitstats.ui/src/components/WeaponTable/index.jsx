@@ -1,12 +1,11 @@
 import * as React from 'react';
-import Typography from '@mui/material/Typography';
 import { Box, Chip, Stack, Button } from '@mui/material';
-import { BasicPaper } from '../BasicPaper';
-import { FlexibleTable } from '../Atoms/FlexibleTable';
-import { ButtonTextRenderer, SubValueRenderer, TagListRenderer, TextRenderer } from '../Atoms/FlexibleTable/renderers';
-import { SecondaryDoubleTable } from '../Atoms/SecondaryDoubleTable';
-import { ButtonPopper } from "../Atoms/ButtonPopper";
-import { PopDoubleTable } from '../Atoms/PopDoubleTable';
+import { BasicPaper } from 'components/Atoms/BasicPaper';
+import { FlexibleTable } from 'components/Atoms/FlexibleTable';
+import { ButtonTextRenderer, SubValueRenderer, TagListRenderer, TextRenderer } from 'components/Atoms/FlexibleTable/renderers';
+import { SecondaryDoubleTable } from 'components/Atoms/SecondaryDoubleTable';
+import { ButtonPopper } from "components/Atoms/ButtonPopper";
+import { PopDoubleTable } from 'components/Atoms/PopDoubleTable';
 
 const STATS_COLUMNS = 2;
 const STATS_ROWS = 6;

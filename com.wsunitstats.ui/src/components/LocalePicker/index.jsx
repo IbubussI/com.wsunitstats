@@ -1,12 +1,12 @@
 import * as React from 'react';
-import * as Constants from '../../utils/Constants';
+import * as Constants from 'utils/Constants';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
-export const LocalePicker = ({onSelect}) => {
+export const LocalePicker = ({onSelect, currentLocale}) => {
   const [locales, setLocales] = React.useState([]);
   const [value, setValue] = React.useState('');
 
@@ -23,13 +23,18 @@ export const LocalePicker = ({onSelect}) => {
     }
 
     if (locales.length > 0) {
-      setValue(Constants.DEFAULT_LOCALE_OPTION);
+      let actualLocale = currentLocale;
+      if (!locales.includes(currentLocale)) {
+        actualLocale = Constants.DEFAULT_LOCALE_OPTION;
+        onSelect(actualLocale);
+      }
+      setValue(actualLocale);
     }
 
     return () => {
       active = false;
     };
-  }, [locales]);
+  }, [locales, currentLocale, onSelect]);
 
   return (
     <Box sx={{ width: 90, margin: '2px' }}>

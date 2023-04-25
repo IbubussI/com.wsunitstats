@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Constants from '../../utils/Constants';
+import * as Constants from 'utils/Constants';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -9,45 +9,58 @@ import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 import { debounce } from '@mui/material/utils';
 
-export const UnitPicker = ({ locale, onSelect }) => {
-  const [value, setValue] = React.useState(null);
+export const UnitPicker = ({ locale, onSelect, value, setValue }) => {
   const [inputValue, setInputValue] = React.useState('');
   const [options, setOptions] = React.useState([]);
 
-  const fetchHandler = React.useMemo(
-    () =>
-      debounce((name, locale, callback) => {
-        if (name) {
-          fetch(Constants.HOST + Constants.UNIT_OPTIONS_API + '?' + new URLSearchParams({
-            nameFilter: name,
-            locale: locale
-          }))
-            .then((response) => response.json())
-            .then(callback)
-            .catch(console.log);
-        }
-      }, 400),
+  const selectValue = React.useCallback((newValue) => {
+    if (Array.isArray(newValue)) {
+      newValue = null;
+    }
+    setValue(newValue);
+    if (newValue && newValue.id) {
+      onSelect(newValue.id);
+    } else {
+      onSelect(null);
+    }
+  }, [onSelect, setValue]);
+
+  const fetchHandler = React.useCallback(
+    (path, params, callback) => {
+      fetch(Constants.HOST + path + '?' + params)
+        .then((response) => response.ok ? response.json() : [])
+        .then(callback)
+        .catch(console.log);
+    },
     [],
   );
 
+  const debouncedFetchHandler = React.useMemo(
+    () => debounce(fetchHandler, 300),
+    [fetchHandler],
+  );
+
+  // update options on input text change
   React.useEffect(() => {
     let active = true;
-
-    if (inputValue === '') {
-      setOptions(value ? [value] : []);
-      return undefined;
-    }
-
-    fetchHandler(inputValue, locale, (results) => {
-      if (active) {
-        setOptions(results);
+    if (active) {
+      if (inputValue === '') {
+        // don't fetch for empty input
+        setOptions([]);
+      } else {
+        debouncedFetchHandler(Constants.UNIT_OPTIONS_API,
+          new URLSearchParams({
+            nameFilter: inputValue,
+            locale: locale
+          }),
+          (results) => setOptions(results)
+        );
       }
-    });
-
+    }
     return () => {
       active = false;
     };
-  }, [value, inputValue, fetchHandler, locale]);
+  }, [inputValue, debouncedFetchHandler, locale]);
 
   return (
     <Autocomplete
@@ -71,15 +84,10 @@ export const UnitPicker = ({ locale, onSelect }) => {
           elevation: 4
         }
       }}
-      onChange={(event, newValue) => {
-        setValue(newValue);
-        if (newValue) {
-          onSelect(newValue.id);
-        } else {
-          onSelect(null);
-        }
+      onChange={(_, newValue) => {
+        selectValue(newValue)
       }}
-      onInputChange={(event, newInputValue) => {
+      onInputChange={(_, newInputValue) => {
         setInputValue(newInputValue);
       }}
       renderInput={({ inputProps, ...params }) => {
