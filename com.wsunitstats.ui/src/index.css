@@ -29,16 +29,17 @@ body {
   flex: 1;
 }
 
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 360px) {
   #root {
     align-items: normal;
     width: fit-content;
   }
 }
 
-@media only screen and (max-width: 720px) {
-  #root, .page-root {
-    width: 650px;
+@media only screen and (max-width: 450px) {
+  .page-root {
+    padding-right: 12px;
+    padding-left: 12px;
   }
 }
 
@@ -50,7 +51,7 @@ body {
 
 @media only screen and (min-width: 950px) and (max-width: 1350px) {
   .page-root {
-    width: 78%;
+    width: 73%;
   }
 }
 

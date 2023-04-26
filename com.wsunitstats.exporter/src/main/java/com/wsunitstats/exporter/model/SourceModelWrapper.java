@@ -2,6 +2,7 @@ package com.wsunitstats.exporter.model;
 
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileJsonModel;
 import com.wsunitstats.exporter.model.json.main.MainFileJsonModel;
+import com.wsunitstats.exporter.model.json.visual.VisualFileJsonModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import lombok.Getter;
@@ -16,4 +17,5 @@ public class SourceModelWrapper {
     private MainFileJsonModel mainFileModel;
     private SessionInitFileModel sessionInitFileModel;
     private MainStartupFileModel mainStartupFileModel;
+    private VisualFileJsonModel visualFileModel;
 }

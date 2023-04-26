@@ -18,6 +18,7 @@ import com.wsunitstats.domain.submodel.weapon.DamageModel;
 import com.wsunitstats.domain.submodel.DistanceModel;
 import com.wsunitstats.domain.submodel.weapon.ProjectileModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
+import com.wsunitstats.exporter.model.GroundAttackDataWrapper;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildingJsonModel;
@@ -87,6 +88,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
 
     private static final Pattern LOCALIZATION_PATTERN = Pattern.compile("^localize\\(\"(<\\*[a-zA-Z0-9/]+>)\"\\)$", Pattern.MULTILINE);
     private static final Pattern MAP_ENTRY_PATTERN = Pattern.compile("^\\[(\\d*)]=localize\\(\"(<\\*[a-zA-Z0-9/]+>)\"\\)$", Pattern.MULTILINE);
+    private static final Pattern ATTACK_GROUND_PATTERN = Pattern.compile("\\{\"groundAttack\":\\[([0-9]+),([0-9]+)]}");
     private static final int PROBABILITY_MAX = 100;
     private static final int RESOURCES_COUNT = 3;
 
@@ -266,11 +268,18 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public WeaponModel map(WeaponJsonModel weaponSource, Map<Integer, ProjectileJsonModel> projectileSource, LocalizationKeyModel localization) {
+    public WeaponModel map(int weaponId,
+                           WeaponJsonModel weaponSource,
+                           Boolean attackGround,
+                           Map<Integer, ProjectileJsonModel> projectileSource,
+                           LocalizationKeyModel localization,
+                           boolean isTurret) {
         if (weaponSource == null) {
             return null;
         }
         WeaponModel weaponModel = new WeaponModel();
+        weaponModel.setWeaponId(weaponId);
+        weaponModel.setAttackGround(attackGround);
         weaponModel.setAutoAttack(weaponSource.getAutoAttack());
         weaponModel.setDistance(map(weaponSource.getDistance()));
         weaponModel.setEnabled(weaponSource.getEnabled());
@@ -290,7 +299,6 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         weaponModel.setAttacksPerAttack(getMultipliable(weaponSource.getAttackscount()));
         weaponModel.setCharges(weaponSource.getCharges());
 
-
         DamageJsonModel damageSource = weaponSource.getDamage();
         weaponModel.setAreaType(Constants.DamageAreaType.get(damageSource.getArea()).getName());
         weaponModel.setBuff(map(damageSource.getBuff(), localization));
@@ -301,6 +309,8 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         weaponModel.setEnvsAffected(mapTags(damageSource.getEnvsAffected(), i -> localization.getEnvSearchTagNames().get(i)));
         weaponModel.setRadius(Util.intToDoubleShift(damageSource.getRadius()));
         weaponModel.setDamagesCount(getMultipliable(damageSource.getDamagesCount()));
+
+        weaponModel.setWeaponType(getWeaponType(isTurret, weaponModel));
         return weaponModel;
     }
 
@@ -357,18 +367,14 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public TurretModel map(TurretJsonModel turretSource,
-                           Map<Integer, ProjectileJsonModel> projectileSource,
-                           LocalizationKeyModel localization) {
+    public TurretModel map(int turretId, TurretJsonModel turretSource, List<WeaponModel> turretWeapons) {
         if (turretSource == null) {
             return null;
         }
         TurretModel turretModel = new TurretModel();
+        turretModel.setTurretId(turretId);
         turretModel.setRotationSpeed(Util.intToDoubleShift(turretSource.getRotationSpeed()));
-        turretModel.setWeapons(turretSource.getWeapons().stream()
-                .map(weaponSource -> map(weaponSource, projectileSource, localization))
-                .toList()
-        );
+        turretModel.setWeapons(turretWeapons);
         return turretModel;
     }
 
@@ -506,6 +512,21 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         constructionModel.setDistance(Util.intToDoubleShift(buildingSource.getDistance()));
         constructionModel.setConstructionSpeed(getConstructionSpeed(buildingSource.getProgress()));
         return constructionModel;
+    }
+
+    @Override
+    public GroundAttackDataWrapper map(String attackGroundString) {
+        GroundAttackDataWrapper result = new GroundAttackDataWrapper();
+        if (attackGroundString != null) {
+            Matcher matcher = ATTACK_GROUND_PATTERN.matcher(attackGroundString);
+            if (matcher.find()) {
+                // as for now only one weapon can have ground attack
+                result.setAttackGround(true);
+                result.setWeaponTypeDescriptor(Integer.parseInt(matcher.group(1)));
+                result.setWeaponId(Integer.parseInt(matcher.group(2)) - 1);
+            }
+        }
+        return result;
     }
 
     /**
@@ -675,5 +696,15 @@ public class ModelMappingServiceImpl implements ModelMappingService {
             return null;
         }
         return Util.intToDoubleShift(progress) * Constants.BUILD_SPEED_MODIFIER;
+    }
+
+    private String getWeaponType(boolean isTurret, WeaponModel weaponModel) {
+        if (isTurret) {
+            return Constants.WeaponType.TURRET.getName();
+        } else if (weaponModel.getCharges() != null) {
+            return Constants.WeaponType.AERIAL_BOMB.getName();
+        } else {
+            return weaponModel.getSpread() != null ? Constants.WeaponType.RANGE.getName() : Constants.WeaponType.MELEE.getName();
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.wsunitstats.exporter;
 
 import com.wsunitstats.exporter.model.json.main.MainFileJsonModel;
+import com.wsunitstats.exporter.model.json.visual.VisualFileJsonModel;
 import com.wsunitstats.exporter.service.ImageService;
 import com.wsunitstats.exporter.model.FilePathWrapper;
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileJsonModel;
@@ -79,6 +80,7 @@ public class UnitStatsExporterApplication {
             LOG.info("Reading game files...");
             GameplayFileJsonModel gameplayFileModel = fileReaderService.readJson(filePathWrapper.getGameplayFilePath(), GameplayFileJsonModel.class);
             MainFileJsonModel mainFileModel = fileReaderService.readJson(filePathWrapper.getMainFilePath(), MainFileJsonModel.class);
+            VisualFileJsonModel visualFileModel = fileReaderService.readJson(filePathWrapper.getVisualFilePath(), VisualFileJsonModel.class);
             SessionInitFileModel sessionInitFileModel = fileReaderService.readSessionInitLua(filePathWrapper.getSessionInitFilePath());
             MainStartupFileModel startupFileModel = fileReaderService.readMainStartupLua(filePathWrapper.getMainStartupFilePath());
             List<LocalizationFileModel> localizationFileModels = fileReaderService.readLocalizations(filePathWrapper.getLocalizationFolderPath());
@@ -87,6 +89,7 @@ public class UnitStatsExporterApplication {
             SourceModelWrapper sourceContainer = new SourceModelWrapper();
             sourceContainer.setGameplayFileModel(gameplayFileModel);
             sourceContainer.setMainFileModel(mainFileModel);
+            sourceContainer.setVisualFileModel(visualFileModel);
             sourceContainer.setMainStartupFileModel(startupFileModel);
             sourceContainer.setSessionInitFileModel(sessionInitFileModel);
 

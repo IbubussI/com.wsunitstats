@@ -145,4 +145,21 @@ public class Constants {
             throw new IllegalArgumentException("Resource icon not found for imageId:" + imageId);
         }
     }
+
+    public enum WeaponType {
+        TURRET("Turret"),
+        RANGE("Range"),
+        MELEE("Melee"),
+        AERIAL_BOMB("Aerial bomb");
+
+        private final String name;
+
+        WeaponType(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
 }

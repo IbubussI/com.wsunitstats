@@ -4,6 +4,7 @@ import com.wsunitstats.domain.submodel.ConstructionModel;
 import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
+import com.wsunitstats.exporter.model.GroundAttackDataWrapper;
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.AbilityWrapperJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
@@ -24,6 +25,8 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityOnAc
 import com.wsunitstats.exporter.model.json.gameplay.submodel.air.AirplaneJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
+import com.wsunitstats.exporter.model.json.visual.VisualFileJsonModel;
+import com.wsunitstats.exporter.model.json.visual.submodel.UnitTypeJsonModel;
 import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
 import com.wsunitstats.exporter.service.ImageService;
@@ -58,14 +61,15 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
     @Override
     public List<UnitModel> resolveFromJsonModel(SourceModelWrapper rootContainer) {
         GameplayFileJsonModel gameplayModel = rootContainer.getGameplayFileModel();
+        VisualFileJsonModel visualModel = rootContainer.getVisualFileModel();
         MainStartupFileModel startupModel = rootContainer.getMainStartupFileModel();
         SessionInitFileModel sessionInitModel = rootContainer.getSessionInitFileModel();
-
 
         LocalizationKeyModel localizationModel = mappingService.map(sessionInitModel, startupModel);
 
         ScenesJsonModel scenes = gameplayModel.getScenes();
         Map<Integer, UnitJsonModel> unitMap = scenes.getUnits();
+        Map<Integer, UnitTypeJsonModel> unitTypeMap = visualModel.getUnitTypes();
         Map<Integer, EnvJsonModel> envMap = scenes.getEnvs();
         Map<Integer, ProjectileJsonModel> projectileMap = scenes.getProjectiles();
 
@@ -112,9 +116,10 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             }
 
             AttackJsonModel attack = unitJsonModel.getAttack();
+            String externalData = unitTypeMap.get(id).getExternalData();
             if (attack != null) {
-                unit.setWeapons(getWeaponsList(attack.getWeapons(), projectileMap, localizationModel));
-                unit.setTurrets(getTurretList(attack.getTurrets(), projectileMap, localizationModel));
+                unit.setWeapons(getWeaponsList(attack.getWeapons(), externalData, projectileMap, localizationModel, false));
+                unit.setTurrets(getTurretList(attack.getTurrets(), externalData, projectileMap, localizationModel));
                 unit.setSupply(mappingService.map(unitJsonModel.getSupply()));
                 unit.setWeaponOnDeath(attack.getWeaponUseOnDeath());
             }
@@ -192,21 +197,31 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
     }
 
     private List<WeaponModel> getWeaponsList(List<WeaponJsonModel> weaponList,
+                                             String attackGroundString,
                                              Map<Integer, ProjectileJsonModel> projectiles,
-                                             LocalizationKeyModel localizationModel) {
-        return weaponList == null ? new ArrayList<>() :
-                weaponList.stream()
-                        .map(entry -> mappingService.map(entry, projectiles, localizationModel))
-                        .toList();
+                                             LocalizationKeyModel localizationModel,
+                                             boolean isTurret) {
+        List<WeaponModel> result = new ArrayList<>();
+        if (weaponList != null) {
+            GroundAttackDataWrapper attackGroundData = mappingService.map(attackGroundString);
+            result = IntStream.range(0, weaponList.size())
+                    .mapToObj(index -> mappingService.map(index, weaponList.get(index), getAttackGround(attackGroundData, isTurret, index), projectiles, localizationModel, isTurret))
+                    .toList();
+        }
+        return result;
     }
 
     private List<TurretModel> getTurretList(List<TurretJsonModel> turretList,
+                                            String attackGroundString,
                                             Map<Integer, ProjectileJsonModel> projectiles,
                                             LocalizationKeyModel localizationModel) {
         return turretList == null ? new ArrayList<>() :
-                turretList.stream()
-                        .map(entry -> mappingService.map(entry, projectiles, localizationModel))
-                        .toList();
+                IntStream.range(0, turretList.size())
+                .mapToObj(index -> {
+                    TurretJsonModel turret = turretList.get(index);
+                    return mappingService.map(index, turret, getWeaponsList(turret.getWeapons(), attackGroundString, projectiles, localizationModel, true));
+                })
+                .toList();
     }
 
     private List<ConstructionModel> getConstructionList(List<BuildingJsonModel> buildingList) {
@@ -214,5 +229,17 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
                 buildingList.stream()
                         .map(mappingService::map)
                         .toList();
+    }
+
+    private boolean getAttackGround(GroundAttackDataWrapper attackGroundData, boolean isTurret, int weaponId) {
+        boolean attackGround = false;
+        if (attackGroundData.isAttackGround() && attackGroundData.getWeaponId() == weaponId) {
+            // if 'current-weapon-type' corresponds 'attack-ground-weapon-type'
+            if ((!isTurret && attackGroundData.getWeaponTypeDescriptor() == 0) ||
+                (isTurret && attackGroundData.getWeaponTypeDescriptor() == 1)) {
+                attackGround = true;
+            }
+        }
+        return attackGround;
     }
 }

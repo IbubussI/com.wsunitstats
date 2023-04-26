@@ -241,6 +241,7 @@
     create table turret (
        id bigint not null auto_increment,
         rotationSpeed float(53),
+        turretId integer not null,
         primary key (id)
     ) engine=InnoDB;
 
@@ -312,6 +313,7 @@
        id bigint not null auto_increment,
         areaType varchar(255),
         attackDelay float(53),
+        attackGround bit,
         attackTime float(53),
         attacksPerAction integer not null,
         attacksPerAttack integer not null,
@@ -331,6 +333,8 @@
         radius float(53),
         rechargePeriod float(53),
         spread float(53),
+        weaponId integer not null,
+        weaponType varchar(255),
         buff_id bigint,
         primary key (id)
     ) engine=InnoDB;

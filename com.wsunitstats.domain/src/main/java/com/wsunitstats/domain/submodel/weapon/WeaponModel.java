@@ -19,7 +19,10 @@ import java.util.List;
 @Setter
 @ToString
 public class WeaponModel extends PersistentObject {
+    private int weaponId;
+    private String weaponType;
     private Boolean autoAttack;
+    private Boolean attackGround;
     @Embedded
     private DistanceModel distance;
     private Boolean enabled;

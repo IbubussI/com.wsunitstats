@@ -3,6 +3,7 @@ import './index.css';
 import { StatsTable } from 'components/StatsTable';
 import { ArmorChart } from 'components/ArmorChart';
 import { WeaponTable } from 'components/WeaponTable';
+import { AbilityTable } from 'components/AbilityTable';
 
 export const UnitView = ({ unit }) => {
 
@@ -56,10 +57,19 @@ export const UnitView = ({ unit }) => {
         {(unit.weapons?.length || unit.turrets?.length) &&
           <>
             <h3>Weapons</h3>
-            <div className="weapon-table">
+            <div className="flex-table">
               <WeaponTable
                 weapons={unit.weapons}
                 turrets={unit.turrets}
+              />
+            </div>
+          </>}
+        {unit.abilities?.length &&
+          <>
+            <h3>Abilities</h3>
+            <div className="flex-table">
+              <AbilityTable
+                abilities={unit.abilities}
               />
             </div>
           </>}

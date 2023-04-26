@@ -16,6 +16,7 @@ import com.wsunitstats.domain.submodel.weapon.DamageModel;
 import com.wsunitstats.domain.submodel.DistanceModel;
 import com.wsunitstats.domain.submodel.weapon.ProjectileModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
+import com.wsunitstats.exporter.model.GroundAttackDataWrapper;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildingJsonModel;
@@ -77,7 +78,12 @@ public interface ModelMappingService {
 
     OnActionModel map(AbilityOnActionJsonModel onActionSource);
 
-    WeaponModel map(WeaponJsonModel weaponSource, Map<Integer, ProjectileJsonModel> projectileSource, LocalizationKeyModel localization);
+    WeaponModel map(int weaponId,
+                    WeaponJsonModel weaponSource,
+                    Boolean attackGround,
+                    Map<Integer, ProjectileJsonModel> projectileSource,
+                    LocalizationKeyModel localization,
+                    boolean isTurret);
 
     List<DamageModel> mapDamages(List<List<Integer>> damagesSource, LocalizationKeyModel localization);
 
@@ -87,9 +93,7 @@ public interface ModelMappingService {
 
     BuffModel map(BuffJsonModel buffSource, LocalizationKeyModel localization);
 
-    TurretModel map(TurretJsonModel turretSource,
-                    Map<Integer, ProjectileJsonModel> projectileSource,
-                    LocalizationKeyModel localization);
+    TurretModel map(int turretId, TurretJsonModel turretSource, List<WeaponModel> turretWeapons);
 
     SupplyModel map(SupplyJsonModel supplySource);
 
@@ -114,4 +118,6 @@ public interface ModelMappingService {
     HealModel map(HealJsonModel healSource, LocalizationKeyModel localization);
 
     ConstructionModel map(BuildingJsonModel buildingSource);
+
+    GroundAttackDataWrapper map(String attackGroundString);
 }

@@ -17,6 +17,7 @@ import java.util.List;
 @ToString
 @Entity(name = "turret")
 public class TurretModel extends PersistentObject {
+    private int turretId;
     private Double rotationSpeed;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<WeaponModel> weapons;

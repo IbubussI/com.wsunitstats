@@ -51,6 +51,8 @@ public class FilePathResolverImpl implements FilePathResolver {
     private String wsGameplayFilePath;
     @Value("${com.wsunitstats.exporter.warselection.main.file}")
     private String wsMainFilePath;
+    @Value("${com.wsunitstats.exporter.warselection.visual.file}")
+    private String wsVisualFilePath;
     @Value("${com.wsunitstats.exporter.warselection.localization.folder}")
     private String wsLocalizationFolderPath;
     @Value("${com.wsunitstats.exporter.warselection.interfaces.session.init.file}")
@@ -85,6 +87,10 @@ public class FilePathResolverImpl implements FilePathResolver {
         String wsMainAbsFilePath = wsRootAbsFolderPath + wsMainFilePath;
         validateFile(wsMainAbsFilePath);
         result.setMainFilePath(wsMainAbsFilePath);
+
+        String wsVisualAbsFilePath = wsRootAbsFolderPath + wsVisualFilePath;
+        validateFile(wsVisualAbsFilePath);
+        result.setVisualFilePath(wsVisualAbsFilePath);
 
         String wsLocalizationAbsFolderPath = wsRootAbsFolderPath + wsLocalizationFolderPath;
         validateFile(wsLocalizationAbsFolderPath);
