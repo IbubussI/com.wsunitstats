@@ -2,9 +2,10 @@ import { Box, Button, Chip, Stack, Avatar, Tooltip } from "@mui/material";
 import { ButtonTextRenderer, SubValueRenderer, TextRenderer } from "./renderers";
 import { ButtonPopper } from "../ButtonPopper";
 
-export const FlexibleTable = ({ columns, rows, data }) => {
+export const FlexibleTable = ({ columns, rows, data, minWidth }) => {
   return (
     <Box sx={{
+      minWidth: minWidth,
       display: 'grid',
       gridTemplateColumns: `repeat(${columns}, 1fr)`,
       gridTemplateRows: `repeat(${rows}, 1fr)`,
@@ -12,8 +13,7 @@ export const FlexibleTable = ({ columns, rows, data }) => {
       gridRowGap: '0px',
       gridAutoFlow: 'column',
       width: '100%',
-      '&>*:nth-of-type(n):hover': { backgroundColor: 'rgb(225, 225, 225)' },
-      '&>*:nth-of-type(even)': { },
+      '&>*:nth-of-type(n):hover': { backgroundColor: 'rgb(225, 225, 225)' }
     }}>
       {data.map((entry, index) => {
         let rowSpan = 'span ' + (entry.rowSpan ? entry.rowSpan : '1');
@@ -156,5 +156,5 @@ function isFillBackground(index, rows, column) {
 }
 
 function isEven(n) {
-  return n % 2 == 0;
+  return n % 2 === 0;
 }

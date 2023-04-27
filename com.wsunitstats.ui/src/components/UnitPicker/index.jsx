@@ -65,7 +65,7 @@ export const UnitPicker = ({ locale, onSelect, value, setValue }) => {
   return (
     <Autocomplete
       id="unit-select"
-      sx={{ width: 300, margin: '2px' }}
+      sx={{ width: '100%', margin: '2px' }}
       getOptionLabel={(option) =>
         typeof option === 'string' ? option : option.name
       }

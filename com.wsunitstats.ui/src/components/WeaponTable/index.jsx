@@ -73,17 +73,17 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
     {
       label: 'Attack delay',
       renderer: TextRenderer,
-      value: weapon.attackDelay && weapon.attackDelay.toFixed(3) + ', s',
+      value: weapon.attackDelay && weapon.attackDelay.toFixed(3) + ' sec',
     },
     {
       label: 'Attack time',
       renderer: TextRenderer,
-      value: weapon.attackTime && weapon.attackTime.toFixed(3) + ', s',
+      value: weapon.attackTime && weapon.attackTime.toFixed(3) + ' sec',
     },
     {
       label: 'Average shot time',
       renderer: TextRenderer,
-      value: weapon.avgShotTime && weapon.avgShotTime.toFixed(3) + ', s',
+      value: weapon.avgShotTime && weapon.avgShotTime.toFixed(3) + ' sec',
     }
   ].filter(element => element !== undefined);
 
@@ -96,7 +96,7 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
     {
       label: 'Duration',
       renderer: TextRenderer,
-      value: weapon.buff?.period,
+      value: weapon.buff?.period && weapon.buff?.period + " sec",
     },
     {
       label: 'Affected units',
@@ -218,7 +218,7 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
       renderer: FlexibleTableRow,
       childData: {
         label: 'Projectile inactive',
-        value: weapon.projectile?.timeToStartCollision && weapon.projectile?.timeToStartCollision + ', s'
+        value: weapon.projectile?.timeToStartCollision && weapon.projectile?.timeToStartCollision + ' sec'
       }
     },
   ].filter(element => element.childData.type !== undefined || (element.childData.value !== undefined && (!Array.isArray(element.childData.value) || element.childData.value.length > 0)));
@@ -238,7 +238,6 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
         alignItems='center'
         gap='4px'
         borderRight='3px solid rgb(85, 120, 218)'>
-
         <SecondaryDoubleTable
           label='Damage'
           headerSpan={2}
@@ -257,19 +256,20 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
           <InfoButtonPopper title='Env info' data={envData} />
         </Stack>
       </Stack>
-
       <Box sx={{
         width: '100%',
         height: 'max-content',
         display: 'flex',
         flexDirection: 'row',
-        padding: '3px'
+        padding: '3px',
+        overflow: 'auto',
       }}>
         <FlexibleTable
           columns={STATS_COLUMNS}
           rows={STATS_ROWS}
           data={statsData}
-          rowHeight='max-content' />
+          rowHeight='max-content'
+          minWidth='350px' />
       </Box>
     </Stack>
   );

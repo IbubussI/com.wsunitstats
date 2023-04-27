@@ -3,7 +3,6 @@ import './index.css';
 import { StatsTable } from 'components/StatsTable';
 import { ArmorChart } from 'components/ArmorChart';
 import { WeaponTable } from 'components/WeaponTable';
-import { AbilityTable } from 'components/AbilityTable';
 
 export const UnitView = ({ unit }) => {
 
@@ -64,15 +63,6 @@ export const UnitView = ({ unit }) => {
               />
             </div>
           </>}
-        {unit.abilities?.length &&
-          <>
-            <h3>Abilities</h3>
-            <div className="flex-table">
-              <AbilityTable
-                abilities={unit.abilities}
-              />
-            </div>
-          </>}
       </div>
     );
   } else {
@@ -84,7 +74,7 @@ function createRowData(name, valueObject, units) {
   if (valueObject != null) {
     let value = "";
     if (units) {
-      value = `${valueObject}, (${units})`;
+      value = `${valueObject} ${units}`;
     } else {
       value = valueObject.toString();
     }

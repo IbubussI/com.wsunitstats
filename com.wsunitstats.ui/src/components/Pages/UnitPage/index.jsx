@@ -2,7 +2,9 @@ import * as React from 'react';
 import { UnitView } from 'components/UnitView';
 import { useSearchParams } from 'react-router-dom';
 import * as Constants from 'utils/Constants';
-import { UnitForm } from './UnitForm';
+import { Stack } from '@mui/material';
+import { LocalePicker } from 'components/LocalePicker';
+import { UnitPicker } from 'components/UnitPicker';
 
 export const UnitPage = () => {
   const [option, setOption] = React.useState(null);
@@ -71,5 +73,29 @@ export const UnitPage = () => {
       />
       {unit ? <UnitView unit={unit} /> : <div>Waiting for your input...</div>}
     </>
+  );
+}
+
+export const UnitForm = ({onUnitIdChange, onLocaleChange, locale, option, setOption}) => {
+  return (
+    <Stack
+      sx={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: 'calc(10px + 2vmin)',
+        padding: '15px',
+        width: '100%',
+        maxWidth: '400px'
+      }}>
+      <LocalePicker
+        onSelect={onLocaleChange}
+        currentLocale={locale} />
+      <UnitPicker
+        locale={locale}
+        value={option}
+        setValue={setOption}
+        onSelect={onUnitIdChange} />
+    </Stack>
   );
 }
