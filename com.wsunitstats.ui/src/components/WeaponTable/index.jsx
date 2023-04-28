@@ -236,7 +236,6 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
       <Stack
         flex='1 1 20%'
         alignItems='center'
-        gap='4px'
         borderRight='3px solid rgb(85, 120, 218)'>
         <SecondaryDoubleTable
           label='Damage'

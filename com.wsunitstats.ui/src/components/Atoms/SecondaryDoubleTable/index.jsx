@@ -22,8 +22,8 @@ export const SecondaryDoubleTable = ({
       <Table style={{ tableLayout: 'auto', width: '100%', minWidth: tableWidth }}>
         <TableHead sx={{
           '& tr th': {
-            paddingTop: '8px',
-            paddingBottom: '8px'
+            paddingTop: '6px',
+            paddingBottom: '6px'
           },
         }}>
           <TableRow>
