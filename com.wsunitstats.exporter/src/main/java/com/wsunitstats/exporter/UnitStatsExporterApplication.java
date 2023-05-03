@@ -1,20 +1,10 @@
 package com.wsunitstats.exporter;
 
-import com.wsunitstats.exporter.model.json.main.MainFileJsonModel;
-import com.wsunitstats.exporter.model.json.visual.VisualFileJsonModel;
-import com.wsunitstats.exporter.service.ImageService;
-import com.wsunitstats.exporter.model.FilePathWrapper;
-import com.wsunitstats.exporter.model.json.gameplay.GameplayFileJsonModel;
-import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
-import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
-import com.wsunitstats.exporter.model.SourceModelWrapper;
-import com.wsunitstats.exporter.model.localization.LocalizationFileModel;
-import com.wsunitstats.exporter.service.FileReaderService;
-import com.wsunitstats.exporter.service.FilePathResolver;
+import com.wsunitstats.exporter.service.FileContentService;
 import com.wsunitstats.exporter.service.LocalizationModelResolver;
 import com.wsunitstats.exporter.task.ExecutionPayload;
 import com.wsunitstats.exporter.task.TaskExecutionPool;
-import com.wsunitstats.exporter.service.UnitModelResolverService;
+import com.wsunitstats.exporter.service.UnitModelResolver;
 import com.wsunitstats.domain.LocalizationModel;
 import com.wsunitstats.domain.UnitModel;
 import org.apache.logging.log4j.LogManager;
@@ -27,9 +17,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import java.awt.image.BufferedImage;
 import java.util.List;
-import java.util.Map;
 
 @SpringBootApplication
 @ComponentScan({"com.wsunitstats.*"})
@@ -43,17 +31,13 @@ public class UnitStatsExporterApplication {
         private static final Logger LOG = LogManager.getLogger(ExporterRunner.class);
 
         @Autowired
-        private FileReaderService fileReaderService;
-        @Autowired
-        private UnitModelResolverService unitModelResolverService;
+        private UnitModelResolver unitModelResolver;
         @Autowired
         private LocalizationModelResolver localizationModelResolver;
         @Autowired
         private TaskExecutionPool taskExecutionPool;
         @Autowired
-        private FilePathResolver filePathResolver;
-        @Autowired
-        private ImageService imageService;
+        private FileContentService fileContentService;
 
         @Value("${com.wsunitstats.exporter.upload.host}")
         private String uploadHost;
@@ -67,35 +51,15 @@ public class UnitStatsExporterApplication {
         private List<String> tasks;
 
         @Override
-        public void run(String... args) throws Exception {
+        public void run(String... args) {
             if (tasks.isEmpty()) {
                 LOG.error("No tasks configured");
                 return;
             }
 
-            LOG.info("Resolving game files...");
-            FilePathWrapper filePathWrapper = filePathResolver.resolve();
-            LOG.info("Game files resolved at the next folder: [{}] ", filePathWrapper.getRootFolderPath());
-
-            LOG.info("Reading game files...");
-            GameplayFileJsonModel gameplayFileModel = fileReaderService.readJson(filePathWrapper.getGameplayFilePath(), GameplayFileJsonModel.class);
-            MainFileJsonModel mainFileModel = fileReaderService.readJson(filePathWrapper.getMainFilePath(), MainFileJsonModel.class);
-            VisualFileJsonModel visualFileModel = fileReaderService.readJson(filePathWrapper.getVisualFilePath(), VisualFileJsonModel.class);
-            SessionInitFileModel sessionInitFileModel = fileReaderService.readSessionInitLua(filePathWrapper.getSessionInitFilePath());
-            MainStartupFileModel startupFileModel = fileReaderService.readMainStartupLua(filePathWrapper.getMainStartupFilePath());
-            List<LocalizationFileModel> localizationFileModels = fileReaderService.readLocalizations(filePathWrapper.getLocalizationFolderPath());
-            Map<String, BufferedImage> images = imageService.resolveImages(mainFileModel, filePathWrapper.getRootFolderPath());
-
-            SourceModelWrapper sourceContainer = new SourceModelWrapper();
-            sourceContainer.setGameplayFileModel(gameplayFileModel);
-            sourceContainer.setMainFileModel(mainFileModel);
-            sourceContainer.setVisualFileModel(visualFileModel);
-            sourceContainer.setMainStartupFileModel(startupFileModel);
-            sourceContainer.setSessionInitFileModel(sessionInitFileModel);
-
-            LOG.info("Transforming files to data-model...");
-            List<UnitModel> unitModels = unitModelResolverService.resolveFromJsonModel(sourceContainer);
-            List<LocalizationModel> localizationModels = localizationFileModels.stream()
+            LOG.info("Transforming files to data model...");
+            List<UnitModel> unitModels = unitModelResolver.resolve();
+            List<LocalizationModel> localizationModels = fileContentService.getLocalizationFileModels().stream()
                     .map(locFile -> localizationModelResolver.resolveFromJsonModel(locFile))
                     .toList();
 
@@ -103,7 +67,7 @@ public class UnitStatsExporterApplication {
             ExecutionPayload payload = new ExecutionPayload();
             payload.setUnits(unitModels);
             payload.setLocalization(localizationModels);
-            payload.setImages(images);
+            payload.setImages(fileContentService.getImages());
             payload.setHostname(uploadHost);
             payload.setAuthPath(authUriPath);
             payload.setUsername(username);

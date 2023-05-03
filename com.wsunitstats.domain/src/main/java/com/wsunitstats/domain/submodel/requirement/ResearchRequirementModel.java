@@ -11,6 +11,6 @@ import lombok.ToString;
 @ToString
 public class ResearchRequirementModel {
     private int researchId;
-    // TODO: remove (redundant for database pov - duplicates existing name)
     private String researchName;
+    private String researchImage;
 }

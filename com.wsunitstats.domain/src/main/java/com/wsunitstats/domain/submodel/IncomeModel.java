@@ -27,7 +27,7 @@ public class IncomeModel {
      * if given other object is null or contains only 'empty' fields (nulls or empty collections).
      * It is required because RequirementsModel is nullable and repository returns empty List instead of null
      * It is used by CUSTOM include type of Jackson as follows:
-     * new RequirementsModel().equals(_object to check if it is empty_)
+     * new IncomeModel().equals(_object to check if it is empty_)
      */
     @Override
     public boolean equals(Object o) {

@@ -14,7 +14,6 @@ import lombok.ToString;
 @ToString
 public class OnActionModel extends PersistentObject {
     private DistanceModel distance;
-    private Boolean enabled;
     private Boolean onAgro;
     private Double rechargeTime;
 }

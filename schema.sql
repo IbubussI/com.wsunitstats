@@ -1,11 +1,16 @@
 
     create table ability (
        id bigint not null auto_increment,
-        abilityType varchar(255),
+        abilityId integer not null,
+        abilityName varchar(255),
+        abilityType integer not null,
         count_ integer,
         duration float(53),
+        enabled bit not null,
         entityId integer,
+        entityImage varchar(255),
         entityName varchar(255),
+        entityNation varchar(255),
         lifeTime float(53),
         makeTime float(53),
         researchesAll bit,
@@ -20,21 +25,24 @@
        ability_id bigint not null,
         image varchar(255),
         resource varchar(255),
+        resourceId integer not null,
         value_ integer
     ) engine=InnoDB;
 
     create table ability_researches (
        ability_id bigint not null,
         researchId integer not null,
+        researchImage varchar(255),
         researchName varchar(255)
     ) engine=InnoDB;
 
     create table ability_units (
        ability_id bigint not null,
-        max integer,
-        min integer,
+        quantity varchar(255),
         unitId integer not null,
-        unitName varchar(255)
+        unitImage varchar(255),
+        unitName varchar(255),
+        unitNation varchar(255)
     ) engine=InnoDB;
 
     create table account (
@@ -100,6 +108,7 @@
        building_id bigint not null,
         image varchar(255),
         resource varchar(255),
+        resourceId integer not null,
         value_ integer
     ) engine=InnoDB;
 
@@ -107,6 +116,7 @@
        building_id bigint not null,
         image varchar(255),
         resource varchar(255),
+        resourceId integer not null,
         value_ integer
     ) engine=InnoDB;
 
@@ -114,27 +124,31 @@
        building_id bigint not null,
         image varchar(255),
         resource varchar(255),
+        resourceId integer not null,
         value_ integer
     ) engine=InnoDB;
 
     create table building_researches (
        building_id bigint not null,
         researchId integer not null,
+        researchImage varchar(255),
         researchName varchar(255)
     ) engine=InnoDB;
 
     create table building_units (
        building_id bigint not null,
-        max integer,
-        min integer,
+        quantity varchar(255),
         unitId integer not null,
-        unitName varchar(255)
+        unitImage varchar(255),
+        unitName varchar(255),
+        unitNation varchar(255)
     ) engine=InnoDB;
 
     create table building_value (
        building_id bigint not null,
         image varchar(255),
         resource varchar(255),
+        resourceId integer not null,
         value_ integer
     ) engine=InnoDB;
 
@@ -194,6 +208,7 @@
        id bigint not null auto_increment,
         rotationSpeed float(53),
         speed integer,
+        weight integer,
         primary key (id)
     ) engine=InnoDB;
 
@@ -202,7 +217,6 @@
         max float(53),
         min float(53),
         stop float(53),
-        enabled bit,
         onAgro bit,
         rechargeTime float(53),
         primary key (id)
@@ -311,6 +325,7 @@
 
     create table weapon (
        id bigint not null auto_increment,
+        angle float(53),
         areaType varchar(255),
         attackDelay float(53),
         attackGround bit,

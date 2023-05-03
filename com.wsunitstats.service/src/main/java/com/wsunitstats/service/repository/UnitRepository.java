@@ -31,7 +31,7 @@ public interface UnitRepository extends CrudRepository<UnitModel, Long>, PagingA
     List<String> getColumnNames();
 
     @Query(nativeQuery = true,value = """
-            SELECT unit.name, unit.id, unit.nation FROM wsunitstats.localization_entries
+            SELECT unit.name, unit.gameId, unit.id, unit.nation FROM wsunitstats.localization_entries
             RIGHT JOIN wsunitstats.unit ON localization_entries.entries_KEY = unit.name
             WHERE localization_id = (SELECT id FROM wsunitstats.localization WHERE locale = :locale)
             AND entries_KEY LIKE :entryPattern
@@ -45,6 +45,6 @@ public interface UnitRepository extends CrudRepository<UnitModel, Long>, PagingA
                                              @Param("size") int size);
 
     @Query(nativeQuery = true,
-            value = "SELECT unit.name, unit.id, unit.nation FROM wsunitstats.unit WHERE id = :id")
+            value = "SELECT unit.name, unit.gameId, unit.id, unit.nation FROM wsunitstats.unit WHERE id = :id")
     Optional<UnitOption> findOptionById(@Param("id") Long id);
 }

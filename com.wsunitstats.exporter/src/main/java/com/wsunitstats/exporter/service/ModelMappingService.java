@@ -1,10 +1,12 @@
 package com.wsunitstats.exporter.service;
 
+import com.wsunitstats.domain.EntityInfoModel;
 import com.wsunitstats.domain.submodel.AirplaneModel;
 import com.wsunitstats.domain.submodel.BuildingModel;
 import com.wsunitstats.domain.submodel.ConstructionModel;
 import com.wsunitstats.domain.submodel.HealModel;
 import com.wsunitstats.domain.submodel.IncomeModel;
+import com.wsunitstats.domain.submodel.ReserveModel;
 import com.wsunitstats.domain.submodel.SubmarineDepthModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
 import com.wsunitstats.domain.submodel.TurretModel;
@@ -16,12 +18,12 @@ import com.wsunitstats.domain.submodel.weapon.DamageModel;
 import com.wsunitstats.domain.submodel.DistanceModel;
 import com.wsunitstats.domain.submodel.weapon.ProjectileModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
+import com.wsunitstats.exporter.model.AbilityEntityInfoWrapper;
 import com.wsunitstats.exporter.model.GroundAttackDataWrapper;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildingJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.CreateEnvJsonModel;
-import com.wsunitstats.exporter.model.json.gameplay.submodel.EnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.HealJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.IncomeJsonModel;
@@ -40,68 +42,64 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.DistanceJson
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
-import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
-import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
-import com.wsunitstats.exporter.model.LocalizationKeyModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkReserveJsonModel;
 import com.wsunitstats.domain.submodel.ArmorModel;
 import com.wsunitstats.domain.submodel.GatherModel;
 import com.wsunitstats.domain.submodel.MovementModel;
 import com.wsunitstats.domain.submodel.ResourceModel;
 import com.wsunitstats.domain.submodel.TransportingModel;
+import com.wsunitstats.utils.Constants;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.IntFunction;
 
 public interface ModelMappingService {
     ArmorModel map(ArmorJsonModel.Entry source, int probabilitiesSum);
 
-    GatherModel map(GatherJsonModel source, LocalizationKeyModel localization);
+    GatherModel map(GatherJsonModel source);
 
-    List<ResourceModel> mapResources(List<Integer> source, LocalizationKeyModel localization);
+    List<ResourceModel> mapResources(List<Integer> source);
 
     TransportingModel map(TransportingJsonModel transportingSource, TransportJsonModel transportSource);
 
     MovementModel map(MovementJsonModel source);
 
-    LocalizationKeyModel map(SessionInitFileModel sessionInitSource, MainStartupFileModel mainStartupSource);
-
     AbilityModel map(int abilityIndex,
                      AbilityJsonModel abilitySource,
                      WorkJsonModel workSource,
                      List<CreateEnvJsonModel> createEnvSource,
-                     AbilityOnActionJsonModel onActionSource,
-                     Map<Integer, EnvJsonModel> envSource,
-                     LocalizationKeyModel localization);
+                     AbilityOnActionJsonModel onActionSource);
 
-    RequirementsModel map(RequirementsJsonModel source, LocalizationKeyModel localization);
+    EntityInfoModel map(AbilityEntityInfoWrapper entityInfo, Constants.AbilityType abilityType, List<CreateEnvJsonModel> createEnvSource);
+
+    ReserveModel map(WorkReserveJsonModel reserveSource);
+
+    RequirementsModel map(RequirementsJsonModel source);
 
     OnActionModel map(AbilityOnActionJsonModel onActionSource);
 
     WeaponModel map(int weaponId,
                     WeaponJsonModel weaponSource,
                     Boolean attackGround,
-                    Map<Integer, ProjectileJsonModel> projectileSource,
-                    LocalizationKeyModel localization,
                     boolean isTurret);
 
-    List<DamageModel> mapDamages(List<List<Integer>> damagesSource, LocalizationKeyModel localization);
+    List<DamageModel> mapDamages(List<List<Integer>> damagesSource);
 
     DistanceModel map(DistanceJsonModel distanceSource);
 
     ProjectileModel map(int id, ProjectileJsonModel projectileSource);
 
-    BuffModel map(BuffJsonModel buffSource, LocalizationKeyModel localization);
+    BuffModel map(BuffJsonModel buffSource);
 
     TurretModel map(int turretId, TurretJsonModel turretSource, List<WeaponModel> turretWeapons);
 
     SupplyModel map(SupplyJsonModel supplySource);
 
-    BuildingModel map(UnitJsonModel unitSource, BuildJsonModel buildSource, LocalizationKeyModel localization);
+    BuildingModel map(UnitJsonModel unitSource, BuildJsonModel buildSource);
 
-    IncomeModel map(IncomeJsonModel incomeSource, LocalizationKeyModel localization);
+    IncomeModel map(IncomeJsonModel incomeSource);
 
-    AirplaneModel mapAirplane(AirplaneJsonModel airplaneSource, LocalizationKeyModel localization);
+    AirplaneModel mapAirplane(AirplaneJsonModel airplaneSource);
 
     SubmarineDepthModel mapSubmarine(AirplaneJsonModel submarineSource);
 
@@ -113,9 +111,9 @@ public interface ModelMappingService {
     /**
      * Use this for unit tags
      */
-    List<String> mapUnitTags(Long tags, LocalizationKeyModel localization);
+    List<String> mapUnitTags(Long tags);
 
-    HealModel map(HealJsonModel healSource, LocalizationKeyModel localization);
+    HealModel map(HealJsonModel healSource);
 
     ConstructionModel map(BuildingJsonModel buildingSource);
 

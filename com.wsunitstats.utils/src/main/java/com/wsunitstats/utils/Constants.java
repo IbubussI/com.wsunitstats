@@ -9,6 +9,8 @@ public class Constants {
     }
 
     public static final Pattern LOCALIZATION_KEY_PATTERN = Pattern.compile("<\\*[a-zA-Z0-9/]+>");
+    public static final Pattern LOCALIZATION_PATTERN = Pattern.compile("^localize\\(\"(<\\*[a-zA-Z0-9/]+>)\"\\)$", Pattern.MULTILINE);
+    public static final Pattern LOCALIZATION_MAP_ENTRY_PATTERN = Pattern.compile("^\\[(\\d*)]=localize\\(\"(<\\*[a-zA-Z0-9/]+>)\"\\)$", Pattern.MULTILINE);
     public static final double TICK_RATE_MULTIPLIER = 50d;
     public static final double SHIFT_VALUE_MULTIPLIER = 1000d;
     public static final double PROJECTILE_SPEED_VALUE_MULTIPLIER = 1_000_000d;
@@ -19,6 +21,7 @@ public class Constants {
     public static final List<Integer> LIVESTOCK_IDS = List.of(62, 130);
     public static final double INIT_HEALTH_MODIFIER = 1.5; // calculated by experiment
     public static final double BUILD_SPEED_MODIFIER = 0.238095; // calculated by experiment
+    public static final int ACTIVE_RESOURCES = 3;
 
     private static final String UNDEF = "N/A";
 
@@ -33,6 +36,7 @@ public class Constants {
 
     public static final String BASIC_DAMAGE_TYPE = "Base";
     public static final String GENERIC_UNIT_TAG = "Unit";
+    public static final String NIL = "nil";
 
     public enum AbilityType {
         UNDEFINED(-1, UNDEF),
@@ -40,7 +44,7 @@ public class Constants {
         RESEARCH(1, "Research"),
         TRANSFORM(2, "Transform"),
         CREATE_ENV(3, "Create env"),
-        SPEED_BUFF(4, "Speed buff");
+        SPEED_BUFF(4, "Buff");
         private final int type;
         private final String name;
 
@@ -135,15 +139,6 @@ public class Constants {
             }
             throw new IllegalArgumentException("Resource icon not found for gameId:" + gameId);
         }
-
-        public static ResourceIcon getByImageId(int imageId) {
-            for (ResourceIcon resourceIconMappings : ResourceIcon.values()) {
-                if (resourceIconMappings.getGameId() == imageId) {
-                    return resourceIconMappings;
-                }
-            }
-            throw new IllegalArgumentException("Resource icon not found for imageId:" + imageId);
-        }
     }
 
     public enum WeaponType {
@@ -155,6 +150,40 @@ public class Constants {
         private final String name;
 
         WeaponType(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    public enum EntityType {
+        ENV("env"),
+        UNIT("unit"),
+        UPGRADE("upgrade"),
+        RESOURCE("resource");
+
+        private final String name;
+
+        EntityType(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    public enum QuantityType {
+        UNDEFINED(UNDEF),
+        FROM_TO("%s...%s"),
+        NOT_MORE_THAN("Not more than %s"),
+        NOT_LESS_THAN("Not less than %s");
+
+        private final String name;
+
+        QuantityType(String name) {
             this.name = name;
         }
 

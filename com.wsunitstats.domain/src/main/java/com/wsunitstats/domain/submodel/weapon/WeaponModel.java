@@ -31,6 +31,7 @@ public class WeaponModel extends PersistentObject {
     private Double rechargePeriod;
     private Double spread;
     private String areaType;
+    private Double angle;
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private BuffModel buff;
     private Boolean damageFriendly;

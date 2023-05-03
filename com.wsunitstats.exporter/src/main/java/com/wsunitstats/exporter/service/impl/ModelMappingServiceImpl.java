@@ -1,10 +1,12 @@
 package com.wsunitstats.exporter.service.impl;
 
+import com.wsunitstats.domain.EntityInfoModel;
 import com.wsunitstats.domain.submodel.AirplaneModel;
 import com.wsunitstats.domain.submodel.BuildingModel;
 import com.wsunitstats.domain.submodel.ConstructionModel;
 import com.wsunitstats.domain.submodel.HealModel;
 import com.wsunitstats.domain.submodel.IncomeModel;
+import com.wsunitstats.domain.submodel.ReserveModel;
 import com.wsunitstats.domain.submodel.SubmarineDepthModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
 import com.wsunitstats.domain.submodel.TurretModel;
@@ -18,6 +20,7 @@ import com.wsunitstats.domain.submodel.weapon.DamageModel;
 import com.wsunitstats.domain.submodel.DistanceModel;
 import com.wsunitstats.domain.submodel.weapon.ProjectileModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
+import com.wsunitstats.exporter.model.AbilityEntityInfoWrapper;
 import com.wsunitstats.exporter.model.GroundAttackDataWrapper;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
@@ -49,8 +52,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonMo
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkReserveJsonModel;
-import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
-import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
+import com.wsunitstats.exporter.service.FileContentService;
 import com.wsunitstats.exporter.service.ImageService;
 import com.wsunitstats.exporter.service.ModelMappingService;
 import com.wsunitstats.utils.Constants;
@@ -62,14 +64,14 @@ import com.wsunitstats.domain.submodel.MovementModel;
 import com.wsunitstats.domain.submodel.ResourceModel;
 import com.wsunitstats.domain.submodel.TransportingModel;
 import com.wsunitstats.utils.Constants.AbilityType;
-import org.apache.commons.lang3.StringUtils;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -78,22 +80,33 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
-import static com.wsunitstats.utils.Constants.GENERIC_UNIT_TAG;
-import static com.wsunitstats.utils.Constants.INIT_HEALTH_MODIFIER;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 @Service
 public class ModelMappingServiceImpl implements ModelMappingService {
     private static final Logger LOG = LoggerFactory.getLogger(ModelMappingServiceImpl.class);
 
-    private static final Pattern LOCALIZATION_PATTERN = Pattern.compile("^localize\\(\"(<\\*[a-zA-Z0-9/]+>)\"\\)$", Pattern.MULTILINE);
-    private static final Pattern MAP_ENTRY_PATTERN = Pattern.compile("^\\[(\\d*)]=localize\\(\"(<\\*[a-zA-Z0-9/]+>)\"\\)$", Pattern.MULTILINE);
     private static final Pattern ATTACK_GROUND_PATTERN = Pattern.compile("\\{\"groundAttack\":\\[([0-9]+),([0-9]+)]}");
     private static final int PROBABILITY_MAX = 100;
-    private static final int RESOURCES_COUNT = 3;
+
 
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private FileContentService fileContentService;
+
+    private LocalizationKeyModel localization;
+    private Map<Integer, EnvJsonModel> envMap;
+    private Map<Integer, ProjectileJsonModel> projectileMap;
+    private List<String> unitNations;
+
+    @PostConstruct
+    protected void postConstruct() {
+        localization = fileContentService.getLocalizationKeyModel();
+        envMap = fileContentService.getGameplayFileModel().getScenes().getEnvs();
+        projectileMap = fileContentService.getGameplayFileModel().getScenes().getProjectiles();
+        unitNations = fileContentService.getSessionInitFileModel().getUnitNations();
+    }
 
     @Override
     public ArmorModel map(ArmorJsonModel.Entry source, int probabilitiesSum) {
@@ -116,7 +129,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public GatherModel map(GatherJsonModel source, LocalizationKeyModel localization) {
+    public GatherModel map(GatherJsonModel source) {
         if (source == null) {
             return null;
         }
@@ -132,14 +145,15 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public List<ResourceModel> mapResources(List<Integer> source, LocalizationKeyModel localization) {
+    public List<ResourceModel> mapResources(List<Integer> source) {
         List<ResourceModel> resources = new ArrayList<>();
         if (source != null && !source.isEmpty()) {
-            for (int i = 0; i < RESOURCES_COUNT; ++i) {
+            for (int i = 0; i < Constants.ACTIVE_RESOURCES; ++i) {
                 ResourceModel resource = new ResourceModel();
+                resource.setResourceId(i);
                 resource.setResource(localization.getResourceNames().get(i));
                 resource.setValue(Util.intToDoubleShift(source.get(i)).intValue());
-                resource.setImage(imageService.getImageName("resource", i));
+                resource.setImage(imageService.getImageName(Constants.EntityType.RESOURCE.getName(), i));
                 resources.add(resource);
             }
         }
@@ -148,6 +162,9 @@ public class ModelMappingServiceImpl implements ModelMappingService {
 
     @Override
     public TransportingModel map(TransportingJsonModel transportingSource, TransportJsonModel transportSource) {
+        if (transportingSource == null && transportSource == null) {
+            return null;
+        }
         TransportingModel transportingModel = new TransportingModel();
         if (transportSource != null) {
             transportingModel.setCarrySize(transportSource.getVolume());
@@ -171,58 +188,70 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public LocalizationKeyModel map(SessionInitFileModel sessionInitSource, MainStartupFileModel mainStartupSource) {
-        LocalizationKeyModel localizationModel = new LocalizationKeyModel();
-        localizationModel.setNationNames(convertToNationNames(sessionInitSource.getNationNames()));
-        localizationModel.setResearchNames(convertToLocalizationTags(sessionInitSource.getResearchNames()));
-        localizationModel.setResearchTexts(convertToLocalizationTags(sessionInitSource.getResearchTexts()));
-        localizationModel.setUnitNames(convertToLocalizationTags(sessionInitSource.getUnitNames()));
-        localizationModel.setUnitTexts(convertToLocalizationTags(sessionInitSource.getUnitTexts()));
-        localizationModel.setUnitTagNames(convertToLocalizationTags(mainStartupSource.getUnitTagNames()));
-        localizationModel.setUnitSearchTagNames(convertToLocalizationTags(mainStartupSource.getUnitSearchTagNames()));
-        localizationModel.setEnvNames(convertToLocalizationTagMap(sessionInitSource.getEnvNames()));
-        localizationModel.setEnvTagNames(convertToLocalizationTags(mainStartupSource.getEnvTagNames()));
-        localizationModel.setEnvSearchTagNames(convertToLocalizationTags(mainStartupSource.getEnvSearchTagNames()));
-        localizationModel.setAgeNames(convertToLocalizationTags(sessionInitSource.getAgeNames()));
-        localizationModel.setResourceNames(convertToLocalizationTags(mainStartupSource.getResourceNames()));
-        return localizationModel;
-    }
-
-    @Override
     public AbilityModel map(int abilityIndex,
                             AbilityJsonModel abilitySource,
                             WorkJsonModel workSource,
                             List<CreateEnvJsonModel> createEnvSource,
-                            AbilityOnActionJsonModel onActionSource,
-                            Map<Integer, EnvJsonModel> envSource,
-                            LocalizationKeyModel localization) {
+                            AbilityOnActionJsonModel onActionSource) {
         if (abilitySource == null) {
             return null;
         }
         AbilityModel abilityModel = new AbilityModel();
         AbilityType abilityType = getAbilityType(abilitySource);
         AbilityDataJsonModel abilityData = abilitySource.getData();
-        WorkReserveJsonModel workReserve = workSource != null ? workSource.getReserve() : null;
-        Integer entityId = getAbilityEntityId(abilityData);
-        abilityModel.setEntityId(entityId);
-        abilityModel.setAbilityType(abilityType.getName());
+        AbilityEntityInfoWrapper entityInfo = getAbilityEntityType(abilityData);
+        Integer entityId = entityInfo.getEntityId();
         if (entityId != null) {
-            abilityModel.setEntityName(getAbilityEntityName(abilityType, entityId, createEnvSource, envSource, localization));
+            abilityModel.setEntityInfo(map(entityInfo, abilityType, createEnvSource));
             abilityModel.setCount(getEnvCount(abilityData, abilityType, entityId, createEnvSource));
         }
-        abilityModel.setCost(getWorkCost(workSource, localization));
+        abilityModel.setAbilityType(abilityType.getType());
+        abilityModel.setAbilityName(abilityType.getName());
+        abilityModel.setAbilityId(abilityIndex);
+        abilityModel.setCost(getWorkCost(workSource));
         abilityModel.setLifeTime(Util.intToDoubleShift(abilityData.getLifeTime()));
-        abilityModel.setMakeTime(workReserve != null ? Util.intToDoubleShift(workSource.getMaketime()) : null);
+        abilityModel.setMakeTime(workSource != null ? Util.intToDoubleShift(workSource.getMaketime()) : null);
+        abilityModel.setReserve(workSource != null ? map(workSource.getReserve()) : null);
         abilityModel.setDuration(Util.intToDoubleShift(abilityData.getDuration()));
-        abilityModel.setRequirements(map(abilitySource.getRequirements(), localization));
-        abilityModel.setReserveLimit(workReserve != null ? workReserve.getLimit() : null);
-        abilityModel.setReserveTime(workReserve != null ? Util.intToDoubleShift(workReserve.getTime()) : null);
-        abilityModel.setOnAction(onActionSource == null || abilityIndex != onActionSource.getAbility() ? null : map(onActionSource));
+        abilityModel.setRequirements(map(abilitySource.getRequirements()));
+        Boolean enabled = workSource == null ? null : workSource.getEnabled();
+        if (onActionSource != null && abilityIndex == onActionSource.getAbility()) {
+            abilityModel.setOnAction(map(onActionSource));
+            if (enabled == null) {
+                enabled = onActionSource.getEnabled();
+            }
+        }
+        abilityModel.setEnabled(enabled != null ? enabled : true);
         return abilityModel;
     }
 
     @Override
-    public RequirementsModel map(RequirementsJsonModel requirementsSource, LocalizationKeyModel localization) {
+    public EntityInfoModel map(AbilityEntityInfoWrapper entityInfo, AbilityType abilityType, List<CreateEnvJsonModel> createEnvSource) {
+        EntityInfoModel entityInfoModel = new EntityInfoModel();
+        String entityType = entityInfo.getEntityType();
+        int entityId = entityInfo.getEntityId();
+        entityInfoModel.setEntityImage(imageService.getImageName(entityType, entityId));
+        entityInfoModel.setEntityName(getAbilityEntityName(abilityType, entityId, createEnvSource));
+        if (Constants.EntityType.UNIT.getName().equals(entityType)) {
+            entityInfoModel.setEntityNation(Util.getUnitNation(unitNations, localization.getNationNames(), entityId));
+        }
+        entityInfoModel.setEntityId(entityId);
+        return entityInfoModel;
+    }
+
+    @Override
+    public ReserveModel map(WorkReserveJsonModel reserveSource) {
+        if (reserveSource == null) {
+            return null;
+        }
+        ReserveModel reserveModel = new ReserveModel();
+        reserveModel.setReserveLimit(reserveSource.getLimit());
+        reserveModel.setReserveTime(Util.intToDoubleShift(reserveSource.getTime()));
+        return reserveModel;
+    }
+
+    @Override
+    public RequirementsModel map(RequirementsJsonModel requirementsSource) {
         if (requirementsSource == null) {
             return null;
         }
@@ -233,6 +262,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
                 .map(researchId -> {
                     ResearchRequirementModel result = new ResearchRequirementModel();
                     result.setResearchId(researchId);
+                    result.setResearchImage(imageService.getImageName(Constants.EntityType.UPGRADE.getName(), researchId));
                     result.setResearchName(localization.getResearchNames().get(researchId));
                     return result;
                 })
@@ -242,18 +272,19 @@ public class ModelMappingServiceImpl implements ModelMappingService {
                 .stream()
                 .map(unitJson -> {
                     UnitRequirementModel result = new UnitRequirementModel();
-                    int id = unitJson.getType();
-                    result.setMax(unitJson.getMax());
-                    result.setMin(unitJson.getMin());
-                    result.setUnitId(id);
-                    result.setUnitName(localization.getUnitNames().get(id));
+                    int unitId = unitJson.getType();
+                    result.setQuantity(Util.getQuantityString(unitJson.getMin(), unitJson.getMax()));
+                    result.setUnitImage(imageService.getImageName(Constants.EntityType.UNIT.getName(), unitId));
+                    result.setUnitId(unitId);
+                    result.setUnitName(localization.getUnitNames().get(unitId));
+                    result.setUnitNation(Util.getUnitNation(unitNations, localization.getNationNames(), unitId));
                     return result;
                 })
                 .toList();
         requirementsModel.setResearches(researchRequirementModels);
         requirementsModel.setUnits(unitRequirementModels);
-        requirementsModel.setResearchesAll(requirementsSource.getResearchesAll());
-        requirementsModel.setUnitsAll(requirementsSource.getUnitsAll());
+        requirementsModel.setResearchesAll(Util.getDirectBoolean(requirementsSource.getResearchesAll()));
+        requirementsModel.setUnitsAll(Util.getInvertedBoolean(requirementsSource.getUnitsAll()));
         return requirementsModel;
     }
 
@@ -261,7 +292,6 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     public OnActionModel map(AbilityOnActionJsonModel onActionSource) {
         OnActionModel onActionModel = new OnActionModel();
         onActionModel.setDistance(map(onActionSource.getDistance()));
-        onActionModel.setEnabled(onActionSource.getEnabled());
         onActionModel.setOnAgro(onActionSource.getOnAgro());
         onActionModel.setRechargeTime(Util.intToDoubleShift(onActionSource.getRestore()));
         return onActionModel;
@@ -271,8 +301,6 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     public WeaponModel map(int weaponId,
                            WeaponJsonModel weaponSource,
                            Boolean attackGround,
-                           Map<Integer, ProjectileJsonModel> projectileSource,
-                           LocalizationKeyModel localization,
                            boolean isTurret) {
         if (weaponSource == null) {
             return null;
@@ -284,7 +312,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         weaponModel.setDistance(map(weaponSource.getDistance()));
         weaponModel.setEnabled(weaponSource.getEnabled());
         Integer projectileId = weaponSource.getProjectile();
-        weaponModel.setProjectile(projectileId == null ? null : map(projectileId, projectileSource.get(projectileId)));
+        weaponModel.setProjectile(projectileId == null ? null : map(projectileId, projectileMap.get(projectileId)));
         weaponModel.setRechargePeriod(Util.intToDoubleShift(weaponSource.getRechargePeriod()));
         weaponModel.setSpread(Util.intToPercent(weaponSource.getSpread()));
         List<DirectionAttacksPointJsonModel> points = weaponSource.getDirectionAttacks().getDefaultValue().getPoints();
@@ -301,21 +329,21 @@ public class ModelMappingServiceImpl implements ModelMappingService {
 
         DamageJsonModel damageSource = weaponSource.getDamage();
         weaponModel.setAreaType(Constants.DamageAreaType.get(damageSource.getArea()).getName());
-        weaponModel.setBuff(map(damageSource.getBuff(), localization));
+        weaponModel.setAngle(Util.intToDoubleShift(damageSource.getAngle()));
+        weaponModel.setBuff(map(damageSource.getBuff()));
         weaponModel.setDamageFriendly(damageSource.getDamageFriendly());
-        weaponModel.setDamages(mapDamages(damageSource.getDamages(), localization));
+        weaponModel.setDamages(mapDamages(damageSource.getDamages()));
         weaponModel.setDamagesCount(getMultipliable(damageSource.getDamagesCount()));
         weaponModel.setEnvDamage(Util.intToDoubleShift(damageSource.getEnvDamage()));
         weaponModel.setEnvsAffected(mapTags(damageSource.getEnvsAffected(), i -> localization.getEnvSearchTagNames().get(i)));
         weaponModel.setRadius(Util.intToDoubleShift(damageSource.getRadius()));
-        weaponModel.setDamagesCount(getMultipliable(damageSource.getDamagesCount()));
 
         weaponModel.setWeaponType(getWeaponType(isTurret, weaponModel));
         return weaponModel;
     }
 
     @Override
-    public List<DamageModel> mapDamages(List<List<Integer>> damagesSource, LocalizationKeyModel localization) {
+    public List<DamageModel> mapDamages(List<List<Integer>> damagesSource) {
         List<DamageModel> damages = new ArrayList<>();
         for (List<Integer> damageList : damagesSource) {
             int unitTag = damageList.get(0);
@@ -354,7 +382,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public BuffModel map(BuffJsonModel buffSource, LocalizationKeyModel localization) {
+    public BuffModel map(BuffJsonModel buffSource) {
         if (buffSource == null) {
             return null;
         }
@@ -362,7 +390,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         buffModel.setBuffId(buffSource.getResearch());
         buffModel.setName(localization.getResearchNames().get(buffSource.getResearch()));
         buffModel.setPeriod(Util.intToDoubleShift(buffSource.getPeriod()));
-        buffModel.setAffectedUnits(mapUnitTags(buffSource.getTargetsTags(), localization));
+        buffModel.setAffectedUnits(mapUnitTags(buffSource.getTargetsTags()));
         return buffModel;
     }
 
@@ -400,37 +428,37 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public BuildingModel map(UnitJsonModel unitSource, BuildJsonModel buildSource, LocalizationKeyModel localization) {
+    public BuildingModel map(UnitJsonModel unitSource, BuildJsonModel buildSource) {
         if (buildSource == null) {
             return null;
         }
         BuildingModel buildingModel = new BuildingModel();
-        buildingModel.setIncome(map(unitSource.getIncome(), localization));
+        buildingModel.setIncome(map(unitSource.getIncome()));
         DeathabilityJsonModel deathability = unitSource.getDeathability();
         if (deathability != null) {
-            buildingModel.setHealCost(mapResources(deathability.getHealMeCost(), localization));
+            buildingModel.setHealCost(mapResources(deathability.getHealMeCost()));
             buildingModel.setInitHealth(getInitHealth(deathability.getHealth(), buildSource.getHealth()));
         }
-        buildingModel.setRequirements(map(buildSource.getRequirements(), localization));
-        buildingModel.setInitCost(mapResources(buildSource.getCostInit(), localization));
+        buildingModel.setRequirements(map(buildSource.getRequirements()));
+        buildingModel.setInitCost(mapResources(buildSource.getCostInit()));
         List<Integer> fullCost = Util.add(buildSource.getCostInit(), buildSource.getCostBuilding());
-        buildingModel.setFullCost(mapResources(fullCost, localization));
+        buildingModel.setFullCost(mapResources(fullCost));
         return buildingModel;
     }
 
     @Override
-    public IncomeModel map(IncomeJsonModel incomeSource, LocalizationKeyModel localization) {
+    public IncomeModel map(IncomeJsonModel incomeSource) {
         if (incomeSource == null) {
             return null;
         }
         IncomeModel incomeModel = new IncomeModel();
-        incomeModel.setValue(mapResources(incomeSource.getValue(), localization));
+        incomeModel.setValue(mapResources(incomeSource.getValue()));
         incomeModel.setPeriod(Util.intToDoubleShift(incomeSource.getPeriod()));
         return incomeModel;
     }
 
     @Override
-    public AirplaneModel mapAirplane(AirplaneJsonModel airplaneSource, LocalizationKeyModel localization) {
+    public AirplaneModel mapAirplane(AirplaneJsonModel airplaneSource) {
         // check if airplane model does not belong to submarine
         if (airplaneSource == null || airplaneSource.getHeightAboveSurface() <= 1) {
             return null;
@@ -483,18 +511,18 @@ public class ModelMappingServiceImpl implements ModelMappingService {
      * all units contain tag with value 0
      */
     @Override
-    public List<String> mapUnitTags(Long tags, LocalizationKeyModel localization) {
-        return mapTags(tags, i -> i == 0 ? GENERIC_UNIT_TAG : localization.getUnitTagNames().get(i - 1));
+    public List<String> mapUnitTags(Long tags) {
+        return mapTags(tags, i -> i == 0 ? Constants.GENERIC_UNIT_TAG : localization.getUnitTagNames().get(i - 1));
     }
 
     @Override
-    public HealModel map(HealJsonModel healSource, LocalizationKeyModel localization) {
+    public HealModel map(HealJsonModel healSource) {
         if (healSource == null) {
             return null;
         }
         HealModel healModel = new HealModel();
         healModel.setDistance(Util.intToDoubleShift(healSource.getDistance()));
-        healModel.setTargetTags(mapUnitTags(healSource.getTargetTags(), localization));
+        healModel.setTargetTags(mapUnitTags(healSource.getTargetTags()));
         healModel.setPerSecond(Util.intToDoubleTick(healSource.getPerTick()));
         healModel.setSearchNextDistance(Util.intToDoubleShift(healSource.getSearchNextDistance()));
         healModel.setAutoSearchTargetDistance(Util.intToDoubleShift(healSource.getAutoSearchTargetDistance()));
@@ -529,77 +557,29 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         return result;
     }
 
-    /**
-     * Converts list of next format: {[0]=localize("<*sample_tag/0>"), ...} to map where key - env id, value - localization key
-     */
-    private Map<Integer, String> convertToLocalizationTagMap(List<String> list) {
-        Map<Integer, String> result = new HashMap<>();
-        list.forEach(item -> {
-            Matcher matcher = MAP_ENTRY_PATTERN.matcher(item);
-            if (matcher.find()) {
-                result.put(Integer.parseInt(matcher.group(1)), matcher.group(2));
-            }
-        });
-        return result;
-    }
-
-    /**
-     * Converts localize("<*sample_tag/10>") to <*sample_tag/10>
-     */
-    private List<String> convertToLocalizationTags(List<String> values) {
-        List<String> result = new ArrayList<>();
-        values.forEach(value -> result.add(convertToLocalizationTag(value)));
-        return result;
-    }
-
-    /**
-     * Converts localize("<*sample_tag/10>") to <*sample_tag/10>
-     */
-    private String convertToLocalizationTag(String value) {
-        Matcher matcher = LOCALIZATION_PATTERN.matcher(value);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        LOG.error("Value {} does not match pattern {}", value, LOCALIZATION_PATTERN);
-        throw new IllegalStateException("Localization Tag expected");
-    }
-
-    private List<String> convertToNationNames(List<String> rawNationNames) {
-        List<String> result = new ArrayList<>();
-        for (int i = 0; i < rawNationNames.size(); ++i) {
-            String ir1 = rawNationNames.get(i);
-            if (ir1.contains("{")) {
-                ++i; // skip ir2 value
-                ir1 = ir1.replace("{", StringUtils.EMPTY);
-            }
-            String nationName;
-            nationName = convertToLocalizationTag(ir1);
-            result.add(nationName);
-        }
-        return result;
-    }
-
-    private Integer getAbilityEntityId(AbilityDataJsonModel abilityData) {
+    private AbilityEntityInfoWrapper getAbilityEntityType(AbilityDataJsonModel abilityData) {
         Integer id = abilityData.getId();
         Integer research = abilityData.getResearch();
         Integer unit = abilityData.getUnit();
+        AbilityEntityInfoWrapper result = new AbilityEntityInfoWrapper();
         if (id != null && research == null && unit == null) {
-            return id;
+            result.setEntityType(Constants.EntityType.ENV.getName());
+            result.setEntityId(id);
         }
         if (id == null && research != null && unit == null) {
-            return research;
+            result.setEntityType(Constants.EntityType.UPGRADE.getName());
+            result.setEntityId(research);
         }
         if (id == null && research == null && unit != null) {
-            return unit;
+            result.setEntityType(Constants.EntityType.UNIT.getName());
+            result.setEntityId(unit);
         }
-        return null;
+        return result;
     }
 
     private String getAbilityEntityName(AbilityType abilityType,
                                         int entityId,
-                                        List<CreateEnvJsonModel> createEnvSource,
-                                        Map<Integer, EnvJsonModel> envSource,
-                                        LocalizationKeyModel localization) {
+                                        List<CreateEnvJsonModel> createEnvSource) {
         switch (abilityType) {
             case CREATE_UNIT, TRANSFORM -> {
                 return localization.getUnitNames().get(entityId);
@@ -609,7 +589,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
             }
             case CREATE_ENV -> {
                 String tag = createEnvSource.get(entityId).getTag();
-                Map.Entry<Integer, EnvJsonModel> envEntry = envSource.entrySet().stream()
+                Map.Entry<Integer, EnvJsonModel> envEntry = envMap.entrySet().stream()
                         .filter(env -> tag.equals(env.getValue().getCreateTag()))
                         .findAny()
                         .orElseThrow();
@@ -635,22 +615,22 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         return AbilityType.get(typeId != null ? typeId : 0);
     }
 
-    private List<ResourceModel> getWorkCost(WorkJsonModel workSource, LocalizationKeyModel localization) {
+    private List<ResourceModel> getWorkCost(WorkJsonModel workSource) {
         if (workSource == null) {
-            return new ArrayList<>();
+            return mapResources(Arrays.asList(0, 0, 0));
         }
         List<Integer> costOrder = workSource.getCostOrder();
         List<Integer> costProcess = workSource.getCostProcess();
         List<Integer> costStart = workSource.getCostStart();
 
         if (costOrder != null && costProcess == null && costStart == null) {
-            return mapResources(costOrder, localization);
+            return mapResources(costOrder);
         } else if (costOrder == null && costProcess != null && costStart == null) {
-            return mapResources(costProcess, localization);
+            return mapResources(costProcess);
         } else if (costOrder == null && costProcess == null && costStart != null) {
-            return mapResources(costStart, localization);
+            return mapResources(costStart);
         } else {
-            return new ArrayList<>();
+            return mapResources(Arrays.asList(0, 0, 0));
         }
     }
 
@@ -684,7 +664,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
             return null;
         }
         double healthPerPercent = Util.intToDoubleShift(fullHealth) / 100d;
-        return healthPerPercent * Util.intToDoubleShift(healthParam) * INIT_HEALTH_MODIFIER;
+        return healthPerPercent * Util.intToDoubleShift(healthParam) * Constants.INIT_HEALTH_MODIFIER;
     }
 
     /**

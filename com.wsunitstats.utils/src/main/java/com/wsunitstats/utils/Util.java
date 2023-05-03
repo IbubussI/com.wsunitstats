@@ -1,14 +1,24 @@
 package com.wsunitstats.utils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 
+import static com.wsunitstats.utils.Constants.LOCALIZATION_MAP_ENTRY_PATTERN;
+import static com.wsunitstats.utils.Constants.LOCALIZATION_PATTERN;
+import static com.wsunitstats.utils.Constants.NIL;
+
 public class Util {
+    private static final Logger LOG = LoggerFactory.getLogger(Util.class);
+
     private Util() {
         //Utility class
     }
@@ -110,6 +120,101 @@ public class Util {
             }
         }
         return indices;
+    }
+
+    /**
+     * Returns unit nation name
+     *
+     * @param nations list of unit nation indexes
+     * @param nationNames list of nation names
+     * @param unitId ID of unit
+     */
+    public static String getUnitNation(List<String> nations, List<String> nationNames, int unitId) {
+        String unitNation = nations.get(unitId);
+        Integer nationId = NIL.equals(unitNation) ? null : Integer.parseInt(unitNation);
+        return nationId == null ? null : nationNames.get(nationId);
+    }
+
+    /**
+     * Converts list of next format: {[0]=localize("<*sample_tag/0>"), ...} to map where key - env id, value - localization key
+     */
+    public static Map<Integer, String> convertToLocalizationTagMap(List<String> list) {
+        Map<Integer, String> result = new HashMap<>();
+        list.forEach(item -> {
+            Matcher matcher = LOCALIZATION_MAP_ENTRY_PATTERN.matcher(item);
+            if (matcher.find()) {
+                result.put(Integer.parseInt(matcher.group(1)), matcher.group(2));
+            }
+        });
+        return result;
+    }
+
+    /**
+     * Converts localize("<*sample_tag/10>") to <*sample_tag/10>
+     */
+    public static List<String> convertToLocalizationTags(List<String> values) {
+        List<String> result = new ArrayList<>();
+        values.forEach(value -> result.add(convertToLocalizationTag(value)));
+        return result;
+    }
+
+    /**
+     * Converts localize("<*sample_tag/10>") to <*sample_tag/10>
+     */
+    public static String convertToLocalizationTag(String value) {
+        Matcher matcher = LOCALIZATION_PATTERN.matcher(value);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        LOG.error("Value {} does not match pattern {}", value, LOCALIZATION_PATTERN);
+        throw new IllegalStateException("Localization Tag expected");
+    }
+
+    public static List<String> convertToNationNames(List<String> rawNationNames) {
+        List<String> result = new ArrayList<>();
+        for (int i = 0; i < rawNationNames.size(); ++i) {
+            String ir1 = rawNationNames.get(i);
+            if (ir1.contains("{")) {
+                ++i; // skip ir2 value
+                ir1 = ir1.replace("{", StringUtils.EMPTY);
+            }
+            String nationName;
+            nationName = convertToLocalizationTag(ir1);
+            result.add(nationName);
+        }
+        return result;
+    }
+
+    /**
+     * Returns string representation of min...max values, depending on the given input
+     */
+    public static String getQuantityString(Integer min, Integer max) {
+        if (min == null && max == null) {
+            return String.format(Constants.QuantityType.NOT_LESS_THAN.getName(), 1);
+        }
+        if (min != null && max == null) {
+            return String.format(Constants.QuantityType.NOT_LESS_THAN.getName(), min);
+        }
+        // min == null && max != null
+        if (min == null) {
+            return String.format(Constants.QuantityType.NOT_MORE_THAN.getName(), max);
+        }
+        // min != null && max != null
+        return String.format(Constants.QuantityType.FROM_TO.getName(), min, max);
+    }
+
+    /**
+     * Returns given boolean or false if it is not present
+     */
+    public static boolean getDirectBoolean(Boolean bool) {
+        return Boolean.TRUE.equals(bool);
+    }
+
+    /**
+     * Returns given boolean or true if it is not present
+     */
+    public static boolean getInvertedBoolean(Boolean bool) {
+        return bool == null || Boolean.TRUE.equals(bool);
     }
 
     private static Double divide(Integer value, double divider) {

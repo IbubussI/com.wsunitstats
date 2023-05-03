@@ -13,4 +13,5 @@ import lombok.ToString;
 public class MovementModel extends PersistentObject {
     private Integer speed;
     private Double rotationSpeed;
+    private Integer weight;
 }

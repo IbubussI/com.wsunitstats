@@ -13,10 +13,8 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildingJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.CreateEnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.DeathabilityJsonModel;
-import com.wsunitstats.exporter.model.json.gameplay.submodel.EnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.MovementJsonModel;
-import com.wsunitstats.exporter.model.json.gameplay.submodel.ProjectileJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ScenesJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TurretJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.UnitJsonModel;
@@ -27,18 +25,17 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonMo
 import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
 import com.wsunitstats.exporter.model.json.visual.VisualFileJsonModel;
 import com.wsunitstats.exporter.model.json.visual.submodel.UnitTypeJsonModel;
-import com.wsunitstats.exporter.model.lua.MainStartupFileModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
+import com.wsunitstats.exporter.service.FileContentService;
 import com.wsunitstats.exporter.service.ImageService;
 import com.wsunitstats.exporter.service.ModelMappingService;
-import com.wsunitstats.exporter.service.UnitModelResolverService;
+import com.wsunitstats.exporter.service.UnitModelResolver;
 import com.wsunitstats.utils.Constants;
 import com.wsunitstats.utils.Util;
 import com.wsunitstats.exporter.model.LocalizationKeyModel;
 import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.domain.submodel.ArmorModel;
 import com.wsunitstats.domain.submodel.GatherModel;
-import com.wsunitstats.exporter.model.SourceModelWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,28 +47,24 @@ import java.util.stream.IntStream;
 import static com.wsunitstats.utils.Constants.LIVESTOCK_LIMIT;
 
 @Service
-public class UnitModelResolverServiceImpl implements UnitModelResolverService {
-    private static final String NIL = "nil";
-
+public class UnitModelResolverImpl implements UnitModelResolver {
     @Autowired
     private ModelMappingService mappingService;
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private FileContentService fileContentService;
 
     @Override
-    public List<UnitModel> resolveFromJsonModel(SourceModelWrapper rootContainer) {
-        GameplayFileJsonModel gameplayModel = rootContainer.getGameplayFileModel();
-        VisualFileJsonModel visualModel = rootContainer.getVisualFileModel();
-        MainStartupFileModel startupModel = rootContainer.getMainStartupFileModel();
-        SessionInitFileModel sessionInitModel = rootContainer.getSessionInitFileModel();
-
-        LocalizationKeyModel localizationModel = mappingService.map(sessionInitModel, startupModel);
+    public List<UnitModel> resolve() {
+        GameplayFileJsonModel gameplayModel = fileContentService.getGameplayFileModel();
+        VisualFileJsonModel visualModel = fileContentService.getVisualFileModel();
+        SessionInitFileModel sessionInitModel = fileContentService.getSessionInitFileModel();
+        LocalizationKeyModel localizationKeyModel = fileContentService.getLocalizationKeyModel();
 
         ScenesJsonModel scenes = gameplayModel.getScenes();
         Map<Integer, UnitJsonModel> unitMap = scenes.getUnits();
         Map<Integer, UnitTypeJsonModel> unitTypeMap = visualModel.getUnitTypes();
-        Map<Integer, EnvJsonModel> envMap = scenes.getEnvs();
-        Map<Integer, ProjectileJsonModel> projectileMap = scenes.getProjectiles();
 
         List<UnitModel> result = new ArrayList<>();
         for (Map.Entry<Integer, UnitJsonModel> entry : unitMap.entrySet()) {
@@ -81,28 +74,25 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
 
             // Generic traits
             unit.setGameId(id);
-            unit.setName(localizationModel.getUnitNames().get(id));
-            unit.setImage(imageService.getImageName("unit", id));
-            unit.setNation(getUnitNation(sessionInitModel, localizationModel, id));
+            unit.setName(localizationKeyModel.getUnitNames().get(id));
+            unit.setImage(imageService.getImageName(Constants.EntityType.UNIT.getName(), id));
+            unit.setNation(Util.getUnitNation(sessionInitModel.getUnitNations(), localizationKeyModel.getNationNames(), id));
 
             // Build traits
-            unit.setBuild(mappingService.map(unitJsonModel, findUnitBuildObject(gameplayModel, id), localizationModel));
+            unit.setBuild(mappingService.map(unitJsonModel, findUnitBuildObject(gameplayModel, id)));
 
             // Unit traits
             unit.setViewRange(Util.intToDoubleShift(unitJsonModel.getViewRange()));
-            unit.setTags(mappingService.mapUnitTags(unitJsonModel.getTags(), localizationModel));
-            unit.setSearchTags(mappingService.mapTags(unitJsonModel.getSearchTags(), i -> localizationModel.getUnitSearchTagNames().get(i)));
+            unit.setTags(mappingService.mapUnitTags(unitJsonModel.getTags()));
+            unit.setSearchTags(mappingService.mapTags(unitJsonModel.getSearchTags(), i -> localizationKeyModel.getUnitSearchTagNames().get(i)));
             unit.setControllable(unitJsonModel.getControllable());
             unit.setParentMustIdle(unitJsonModel.getParentMustIdle());
-            unit.setHeal(mappingService.map(unitJsonModel.getHeal(), localizationModel));
+            unit.setHeal(mappingService.map(unitJsonModel.getHeal()));
             unit.setSize(Util.intToDoubleShift(unitJsonModel.getSize()));
 
             AbilityWrapperJsonModel ability = unitJsonModel.getAbility();
             if (ability != null) {
-                unit.setAbilities(getAbilitiesList(ability,
-                        unitJsonModel.getCreateEnvs(),
-                        envMap,
-                        localizationModel));
+                unit.setAbilities(getAbilitiesList(ability, unitJsonModel.getCreateEnvs()));
             }
 
             DeathabilityJsonModel deathability = unitJsonModel.getDeathability();
@@ -118,8 +108,8 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             AttackJsonModel attack = unitJsonModel.getAttack();
             String externalData = unitTypeMap.get(id).getExternalData();
             if (attack != null) {
-                unit.setWeapons(getWeaponsList(attack.getWeapons(), externalData, projectileMap, localizationModel, false));
-                unit.setTurrets(getTurretList(attack.getTurrets(), externalData, projectileMap, localizationModel));
+                unit.setWeapons(getWeaponsList(attack.getWeapons(), externalData, false));
+                unit.setTurrets(getTurretList(attack.getTurrets(), externalData));
                 unit.setSupply(mappingService.map(unitJsonModel.getSupply()));
                 unit.setWeaponOnDeath(attack.getWeaponUseOnDeath());
             }
@@ -127,10 +117,10 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
             MovementJsonModel movement = unitJsonModel.getMovement();
             if (movement != null) {
                 AirplaneJsonModel airplaneAndSubmarineModel = movement.getAirplane();
-                unit.setAirplane(mappingService.mapAirplane(airplaneAndSubmarineModel, localizationModel));
+                unit.setAirplane(mappingService.mapAirplane(airplaneAndSubmarineModel));
                 unit.setSubmarine(mappingService.mapSubmarine(airplaneAndSubmarineModel));
                 unit.setTransporting(mappingService.map(movement.getTransporting(), unitJsonModel.getTransport()));
-                unit.setGather(getGatherList(movement.getGather(), localizationModel));
+                unit.setGather(getGatherList(movement.getGather()));
                 unit.setConstruction(getConstructionList(movement.getBuilding()));
                 unit.setMovement(mappingService.map(movement));
             } else {
@@ -152,10 +142,10 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
                 .orElse(null);
     }
 
-    private List<GatherModel> getGatherList(List<GatherJsonModel> gatherList, LocalizationKeyModel localizationModel) {
+    private List<GatherModel> getGatherList(List<GatherJsonModel> gatherList) {
         return gatherList == null ? new ArrayList<>() :
                 gatherList.stream()
-                        .map(gatherJsonModel -> mappingService.map(gatherJsonModel, localizationModel))
+                        .map(gatherJsonModel -> mappingService.map(gatherJsonModel))
                         .toList();
     }
 
@@ -168,16 +158,8 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
                 .toList();
     }
 
-    private String getUnitNation(SessionInitFileModel sessionInitModel, LocalizationKeyModel localizationModel, int unitId) {
-        String unitNation = sessionInitModel.getUnitNations().get(unitId);
-        Integer nationId = NIL.equals(unitNation) ? null : Integer.parseInt(unitNation);
-        return nationId == null ? null : localizationModel.getNationNames().get(nationId);
-    }
-
     private List<AbilityModel> getAbilitiesList(AbilityWrapperJsonModel ability,
-                                                List<CreateEnvJsonModel> createEnvs,
-                                                Map<Integer, EnvJsonModel> envs,
-                                                LocalizationKeyModel localizationModel) {
+                                                List<CreateEnvJsonModel> createEnvs) {
         List<AbilityJsonModel> abilitiesList = ability.getAbilities();
         List<WorkJsonModel> workList = ability.getWork();
         AbilityOnActionJsonModel onAction = ability.getAbilityOnAction();
@@ -185,41 +167,37 @@ public class UnitModelResolverServiceImpl implements UnitModelResolverService {
                 IntStream.range(0, abilitiesList.size())
                         .mapToObj(i -> {
                             if (workList == null) {
-                                return mappingService.map(i, abilitiesList.get(i), null, createEnvs, onAction, envs, localizationModel);
+                                return mappingService.map(i, abilitiesList.get(i), null, createEnvs, onAction);
                             }
                             WorkJsonModel workModel = workList.stream()
                                     .filter(work -> i == work.getAbility())
                                     .findFirst()
                                     .orElse(null);
-                            return mappingService.map(i, abilitiesList.get(i), workModel, createEnvs, onAction, envs, localizationModel);
+                            return mappingService.map(i, abilitiesList.get(i), workModel, createEnvs, onAction);
                         })
                         .toList();
     }
 
     private List<WeaponModel> getWeaponsList(List<WeaponJsonModel> weaponList,
                                              String attackGroundString,
-                                             Map<Integer, ProjectileJsonModel> projectiles,
-                                             LocalizationKeyModel localizationModel,
                                              boolean isTurret) {
         List<WeaponModel> result = new ArrayList<>();
         if (weaponList != null) {
             GroundAttackDataWrapper attackGroundData = mappingService.map(attackGroundString);
             result = IntStream.range(0, weaponList.size())
-                    .mapToObj(index -> mappingService.map(index, weaponList.get(index), getAttackGround(attackGroundData, isTurret, index), projectiles, localizationModel, isTurret))
+                    .mapToObj(index -> mappingService.map(index, weaponList.get(index), getAttackGround(attackGroundData, isTurret, index), isTurret))
                     .toList();
         }
         return result;
     }
 
     private List<TurretModel> getTurretList(List<TurretJsonModel> turretList,
-                                            String attackGroundString,
-                                            Map<Integer, ProjectileJsonModel> projectiles,
-                                            LocalizationKeyModel localizationModel) {
+                                            String attackGroundString) {
         return turretList == null ? new ArrayList<>() :
                 IntStream.range(0, turretList.size())
                 .mapToObj(index -> {
                     TurretJsonModel turret = turretList.get(index);
-                    return mappingService.map(index, turret, getWeaponsList(turret.getWeapons(), attackGroundString, projectiles, localizationModel, true));
+                    return mappingService.map(index, turret, getWeaponsList(turret.getWeapons(), attackGroundString, true));
                 })
                 .toList();
     }

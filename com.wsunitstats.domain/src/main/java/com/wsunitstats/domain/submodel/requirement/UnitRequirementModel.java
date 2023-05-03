@@ -11,8 +11,8 @@ import lombok.ToString;
 @ToString
 public class UnitRequirementModel {
     private int unitId;
-    // TODO: remove (redundant for database pov - duplicates existing name)
     private String unitName;
-    private Integer min;
-    private Integer max;
+    private String unitNation;
+    private String unitImage;
+    private String quantity;
 }

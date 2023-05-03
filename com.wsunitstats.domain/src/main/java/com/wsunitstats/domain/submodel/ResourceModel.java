@@ -11,6 +11,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ResourceModel {
+    private int resourceId;
     private String resource;
     @Column(name="value_")
     private int value;

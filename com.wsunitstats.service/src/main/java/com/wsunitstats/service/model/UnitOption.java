@@ -5,6 +5,7 @@ package com.wsunitstats.service.model;
  */
 public interface UnitOption {
     String getName();
+    Integer getGameId();
     Integer getId();
     String getNation();
 }
