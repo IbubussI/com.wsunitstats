@@ -10,8 +10,8 @@ export const UnitPage = () => {
   const [option, setOption] = React.useState(null);
   const [unit, setUnit] = React.useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
-  const unitId = searchParams.get('unitId');
-  const locale = searchParams.get('locale');
+  const gameId = searchParams.get(Constants.PARAM_GAME_ID);
+  const locale = searchParams.get(Constants.PARAM_LOCALE);
 
   React.useEffect(() => {
     let active = true;
@@ -22,20 +22,20 @@ export const UnitPage = () => {
         setUnit(receivedUnit);
         setOption({
           name: receivedUnit.name,
-          id: receivedUnit.id,
+          [Constants.PARAM_GAME_ID]: receivedUnit.gameId,
           nation: receivedUnit.nation
         });
       } else {
-        searchParams.delete('unitId');
+        searchParams.delete(Constants.PARAM_GAME_ID);
         setSearchParams(searchParams);
       }
     }
 
     if (active) {
-      if (unitId) {
+      if (gameId) {
         fetch(Constants.HOST + Constants.UNIT_DATA_API + '?' + new URLSearchParams({
-          id: unitId,
-          locale: locale
+          [Constants.PARAM_GAME_ID]: gameId,
+          [Constants.PARAM_LOCALE]: locale
         }))
           .then((response) => response.json())
           .then(handleUnitResult)
@@ -48,23 +48,23 @@ export const UnitPage = () => {
     return () => {
       active = false;
     };
-  }, [unitId, locale, setSearchParams, searchParams]);
+  }, [gameId, locale, setSearchParams, searchParams]);
 
   return (
     <>
       <UnitForm
-        onUnitIdChange={(unitId) => {
+        onUnitIdChange={(gameId) => {
           // update unitId
-          if (unitId === null) {
-            searchParams.delete('unitId');
+          if (gameId === null) {
+            searchParams.delete(Constants.PARAM_GAME_ID);
           } else {
-            searchParams.set('unitId', unitId);
+            searchParams.set(Constants.PARAM_GAME_ID, gameId);
           }
           setSearchParams(searchParams);
         }}
         onLocaleChange={(locale) => {
           // update selected locale to url
-          searchParams.set('locale', locale);
+          searchParams.set(Constants.PARAM_LOCALE, locale);
           setSearchParams(searchParams, { replace: true });
         }}
         locale={locale}
@@ -76,7 +76,7 @@ export const UnitPage = () => {
   );
 }
 
-export const UnitForm = ({onUnitIdChange, onLocaleChange, locale, option, setOption}) => {
+export const UnitForm = ({ onUnitIdChange, onLocaleChange, locale, option, setOption }) => {
   return (
     <Stack
       sx={{
@@ -85,7 +85,7 @@ export const UnitForm = ({onUnitIdChange, onLocaleChange, locale, option, setOpt
         justifyContent: 'center',
         fontSize: 'calc(10px + 2vmin)',
         padding: '15px',
-        width: '100%',
+        width: '90%',
         maxWidth: '400px'
       }}>
       <LocalePicker

@@ -18,8 +18,8 @@ export const UnitPicker = ({ locale, onSelect, value, setValue }) => {
       newValue = null;
     }
     setValue(newValue);
-    if (newValue && newValue.id) {
-      onSelect(newValue.id);
+    if (newValue && newValue.gameId) {
+      onSelect(newValue.gameId);
     } else {
       onSelect(null);
     }
@@ -70,7 +70,7 @@ export const UnitPicker = ({ locale, onSelect, value, setValue }) => {
         typeof option === 'string' ? option : option.name
       }
       isOptionEqualToValue={(option, value) =>
-        typeof option === 'string' ? option === value : option.id === value.id
+        typeof option === 'string' ? option === value : option.gameId === value.gameId
       }
       filterOptions={(x) => x}
       options={options}
@@ -105,7 +105,7 @@ export const UnitPicker = ({ locale, onSelect, value, setValue }) => {
         const matches = match(option.name, inputValue, { insideWords: true });
         const parts = parse(option.name, matches);
         return (
-          <Box component='li' {...props} key={option.id}>
+          <Box component='li' {...props} key={option.gameId}>
             <Grid container alignItems="center">
               <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
                 {parts.map((part, index) => (

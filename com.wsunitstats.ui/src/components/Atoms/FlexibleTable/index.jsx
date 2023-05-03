@@ -1,8 +1,11 @@
-import { Box, Button, Chip, Stack, Avatar, Tooltip } from "@mui/material";
-import { ButtonTextRenderer, SubValueRenderer, TextRenderer } from "./renderers";
-import { ButtonPopper } from "../ButtonPopper";
+import { Box, Button, Stack } from "@mui/material";
+import { ButtonText, Text } from "components/Atoms/Renderer";
+import { ButtonPopper } from "components/Atoms/ButtonPopper";
 
 export const FlexibleTable = ({ columns, rows, data, minWidth }) => {
+  if (data.length < rows*columns) {
+    fillEmptyRows(data, columns, rows);
+  }
   return (
     <Box sx={{
       minWidth: minWidth,
@@ -27,11 +30,9 @@ export const FlexibleTable = ({ columns, rows, data, minWidth }) => {
             gridColumn={column}
             gridRow={`${row} / ${rowSpan}`}
             minHeight={'45px'}
-            backgroundColor={backgroundColor}>
-            <Renderer
-              key={index}
-              data={entry.childData}
-              options={entry.options} />
+            backgroundColor={backgroundColor}
+            overflow='hidden'>
+            <Renderer data={entry.childData} />
           </Box>
         );
       })}
@@ -39,11 +40,9 @@ export const FlexibleTable = ({ columns, rows, data, minWidth }) => {
   );
 }
 
-export const FlexibleTableDoubleCellRow = ({
-  labelRenderer: LabelRenderer,
-  valueRenderer: ValueRenderer,
-  data
-}) => {
+export const FlexibleTableDoubleCellRow = ({ data }) => {
+  let LabelRenderer = data.labelRenderer ? data.labelRenderer : Text;
+  let ValueRenderer = data.valueRenderer ? data.valueRenderer : Text;
   return (
     <Stack
       direction="row"
@@ -51,14 +50,14 @@ export const FlexibleTableDoubleCellRow = ({
       height='100%'>
       <Stack
         justifyContent='center'
-        width='50%'
+        width={data.widthLeft ? data.widthLeft : '50%'}
         height='100%'
         sx={{ paddingLeft: '7px' }}>
         <LabelRenderer data={data.label} />
       </Stack>
       <Stack
         justifyContent='center'
-        width='50%'
+        width={data.widthRight ? data.widthRight : '50%'}
         height='100%'
         sx={{ paddingLeft: '7px' }}>
         <ValueRenderer data={data.value} />
@@ -67,53 +66,25 @@ export const FlexibleTableDoubleCellRow = ({
   );
 }
 
-export const FlexibleTableHeaderRow = ({ data }) => {
-  let label = data.disabled ? `${data.type} (${data.disabled})` : data.type;
-
+export const FlexibleTableSingleCellRow = ({ data }) => {
+  let ValueRenderer = data.valueRenderer ? data.valueRenderer : Text;
+  let alignItems = data.alignItems ? data.alignItems : '';
+  let width = data.width ? data.width : '100%';
   return (
     <Stack
-      alignItems='center'
+      direction="row"
       justifyContent='center'
-      flexDirection='row'
-      flexWrap='wrap'
-      gap='5px'
+      width={width}
+      alignItems={alignItems}
       height='100%'>
-      <Chip
-        label={label}
-        variant='outlined'
-        avatar={
-          <Tooltip title={data.avatarTooltip}>
-            <Avatar sx={{ border: '1px solid' }}>
-              {data.id}
-            </Avatar>
-          </Tooltip>
-        }
-        color={data.disabled ? 'error' : 'default'}
-        sx={{
-          fontWeight: 'bold',
-          fontSize: 17,
-          height: '36px',
-          borderRadius: '18px'
-        }} />
+      <Stack
+        justifyContent='center'
+        width='100%'
+        height='100%'
+        sx={{ paddingLeft: '7px' }}>
+        <ValueRenderer data={data.value} />
+      </Stack>
     </Stack>
-  );
-}
-
-export const FlexibleTableRow = ({ data }) => {
-  return (
-    <FlexibleTableDoubleCellRow
-      labelRenderer={TextRenderer}
-      valueRenderer={TextRenderer}
-      data={data} />
-  );
-}
-
-export const FlexibleTableSubValuedRow = ({ data }) => {
-  return (
-    <FlexibleTableDoubleCellRow
-      labelRenderer={TextRenderer}
-      valueRenderer={SubValueRenderer}
-      data={data} />
   );
 }
 
@@ -132,8 +103,8 @@ export const FlexibleTableButtonRow = ({ data }) => {
           padding: 0,
         }}>
         <FlexibleTableDoubleCellRow
-          labelRenderer={TextRenderer}
-          valueRenderer={ButtonTextRenderer}
+          labelRenderer={Text}
+          valueRenderer={ButtonText}
           data={{ label: data.label, value: 'click to open' }} />
       </Button>
     );
@@ -157,4 +128,34 @@ function isFillBackground(index, rows, column) {
 
 function isEven(n) {
   return n % 2 === 0;
+}
+
+function fillEmptyRows(data, columns, rows) {
+  const appendDummyRows = (column, index, number) => {
+    let dummyRow = {
+      column: column,
+      renderer: FlexibleTableDoubleCellRow,
+      childData: { label: '', value: '' }
+    }
+    data.splice(index, 0, ...Array(number).fill(dummyRow));
+  }
+
+  const getSpannedNumber = (data) => {
+    let spans = 0;
+    for (let i = 0; i < data.length; ++i) {
+      if (typeof data[i].rowSpan === 'number') {
+        spans += data[i].rowSpan - 1;
+      }
+    }
+    return spans;
+  }
+
+  for (let i = 1; i <= columns; ++i) {
+    let columnData = data.filter(row => row.column === i);
+    let spans = getSpannedNumber(columnData);
+    let diff = rows - columnData.length - spans;
+    if (diff > 0) {
+      appendDummyRows(i, rows * (i - 1) + columnData.length, diff);
+    }
+  }
 }

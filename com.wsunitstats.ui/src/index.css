@@ -31,10 +31,16 @@ body {
   flex: 1;
 }
 
-@media only screen and (max-width: 400px) {
+@media only screen and (max-width: 360px) {
   #root {
     align-items: normal;
     width: fit-content;
-    max-width: 400px;
+    max-width: 360px;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .page-root {
+    padding: 10px;
   }
 }
