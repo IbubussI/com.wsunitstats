@@ -1,5 +1,5 @@
 import * as Utils from 'utils/utils';
-import * as Constants from "utils/Constants";
+import * as Constants from "utils/constants";
 import { Avatar, Box, Chip, Link, Stack, Tooltip, Typography } from "@mui/material";
 import React from 'react';
 
@@ -74,14 +74,20 @@ export const Resource = ({ data }) => {
   return (
     <Stack direction='row' spacing={2}>
       {data.map((resource, index) =>
-        <Stack key={index} direction='row' alignItems='center'>
-          <Box sx={{ marginRight: 0.4 }}>
-            <Image data={data.image} />
-          </Box>
-          <Typography variant='body2' color='text.primary'>
-            {resource.value}
-          </Typography>
-        </Stack>
+        <Tooltip key={index} title={resource.resource}>
+          <Stack direction='row' alignItems='center' sx={{ minWidth: '40px'}}>
+            <Box sx={{ marginRight: 0.4 }}>
+              <Image data={{
+                path: resource.image,
+                width: 25,
+                height: 25,
+              }} />
+            </Box>
+            <Typography variant='body2' color='text.primary'>
+              {resource.value}
+            </Typography>
+          </Stack>
+        </Tooltip>
       )}
     </Stack>
   );

@@ -122,12 +122,16 @@ function isFillBackground(index, rows, column) {
   if (isEven(rows)) {
     return isEven(index);
   } else {
-    return isEven(column) ? isEven(index) : !isEven(index);
+    return isEven(column) ? isOdd(index) : !isOdd(index);
   }
 }
 
 function isEven(n) {
   return n % 2 === 0;
+}
+
+function isOdd(n) {
+  return n % 2 !== 0;
 }
 
 function fillEmptyRows(data, columns, rows) {

@@ -16,7 +16,6 @@ export const ClassicTable = ({ data }) => {
         padding: '7px',
         paddingBottom: '0',
         fontSize: 19,
-        color: '#186374',
         fontWeight: 'bold'
       }}>
         {data.label}
@@ -24,7 +23,7 @@ export const ClassicTable = ({ data }) => {
       <Typography variant='body2' sx={{marginTop: '-4px'}}>
         {data.subLabel}
       </Typography>
-      <TableContainer sx={{ width: 'fit-content' }}>
+      <TableContainer>
         <Table>
           <TableHead sx={{
             '& tr th': {
@@ -32,13 +31,16 @@ export const ClassicTable = ({ data }) => {
             }
           }}>
             <TableRow>
-              {data.head.map((headCell, index) =>
-                <TableCell key={index} align='center'>
-                  <Typography variant='body2' color='text.primary' sx={{ fontWeight: 'bold' }}>
-                    {headCell}
-                  </Typography>
-                </TableCell>
-              )}
+              {data.head.map((headCell, index) => {
+                let isIdCell = index === 0 ? true : false;
+                return (
+                  <TableCell key={index} sx={{ width: isIdCell ? '60px' : '' }}>
+                    <Typography variant='body2' color='text.primary' sx={{ fontWeight: 'bold' }}>
+                      {headCell}
+                    </Typography>
+                  </TableCell>
+                );
+              })}
             </TableRow>
           </TableHead>
           <TableBody sx={{

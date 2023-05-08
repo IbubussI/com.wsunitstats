@@ -1,19 +1,23 @@
-import { Box, Stack } from "@mui/material";
+import * as Constants from "utils/constants";
+import * as Utils from "utils/utils";
+import * as Data from "data";
+import { Stack } from "@mui/material";
 import { BasicPaper } from "components/Atoms/BasicPaper";
 import { FlexibleTable, FlexibleTableDoubleCellRow, FlexibleTableSingleCellRow } from "components/Atoms/FlexibleTable";
 import { EntityInfo, HeaderChip, SubValue, Text } from 'components/Atoms/Renderer';
 import { DoubleColumnTable } from "components/Atoms/DoubleColumnTable";
 import { InfoButtonPopper } from "components/Atoms/ButtonPopper";
-import * as Constants from "utils/Constants";
 import { useSearchParams } from "react-router-dom";
 import { ClassicTable } from "components/Atoms/ClassicTable";
-import * as Utils from "utils/utils";
+import { DoubleColumnFrame } from "components/Atoms/DoubleColumnFrame";
 
 const ABILITY_COLUMNS = 1;
+const FLEX_TABLE_RIGHT_WIDTH = '73%';
+const FLEX_TABLE_LEFT_WIDTH = '27%';
 
 export const AbilityTable = ({ abilities }) => {
   return (
-    <Stack component={BasicPaper} spacing={0.5} sx={{ padding: 1 }}>
+    <Stack component={BasicPaper} spacing={0.5} sx={{ padding: 1, width: '100%', maxWidth: '500px' }}>
       {abilities.map((ability, index) =>
         <AbilityTableEntry
           key={index}
@@ -37,7 +41,7 @@ const AbilityTableEntry = ({ ability }) => {
           disabled: ability.enabled === false && 'disabled'
         },
         valueRenderer: HeaderChip,
-        width: '50%'
+        width: '59%'
       },
     },
     {
@@ -61,8 +65,8 @@ const AbilityTableEntry = ({ ability }) => {
           overflow: true
         },
         valueRenderer: EntityInfo,
-        widthRight: '70%',
-        widthLeft: '30%'
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -71,8 +75,8 @@ const AbilityTableEntry = ({ ability }) => {
       childData: {
         label: 'Make time',
         value: ability.makeTime && ability.makeTime + Constants.SECONDS_END_MARKER,
-        widthRight: '70%',
-        widthLeft: '30%'
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -81,8 +85,8 @@ const AbilityTableEntry = ({ ability }) => {
       childData: {
         label: 'Reserve limit',
         value: ability.reserve?.reserveLimit,
-        widthRight: '70%',
-        widthLeft: '30%'
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -91,8 +95,8 @@ const AbilityTableEntry = ({ ability }) => {
       childData: {
         label: 'Reserve time',
         value: ability.reserve && ability.reserve.reserveTime + Constants.SECONDS_END_MARKER,
-        widthRight: '70%',
-        widthLeft: '30%'
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -101,8 +105,8 @@ const AbilityTableEntry = ({ ability }) => {
       childData: {
         label: 'Count',
         value: ability.count,
-        widthRight: '70%',
-        widthLeft: '30%'
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -111,8 +115,8 @@ const AbilityTableEntry = ({ ability }) => {
       childData: {
         label: 'Duration',
         value: ability.duration && ability.duration + Constants.SECONDS_END_MARKER,
-        widthRight: '70%',
-        widthLeft: '30%'
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -121,8 +125,8 @@ const AbilityTableEntry = ({ ability }) => {
       childData: {
         label: 'Life time',
         value: ability.lifeTime && ability.lifeTime + Constants.SECONDS_END_MARKER,
-        widthRight: '70%',
-        widthLeft: '30%'
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     }
   ].filter(x => x.childData.value || x.childData.renderer);
@@ -165,97 +169,7 @@ const AbilityTableEntry = ({ ability }) => {
     ].filter(element => element.value !== undefined)
   }
 
-  let requirementsData;
-  let requirements = ability.requirements;
-  if (requirements) {
-    const unitsAll = requirements.unitsAll ? '(All of below)' : '(One of below)';
-    const requirementsAll = requirements.requirementsAll ? '(All of below)' : '(One of below)';
-    const unitRequirements = requirements.units?.map((unit) => {
-      return [
-        {
-          renderer: Text,
-          align: 'center',
-          data: unit.unitId
-        },
-        {
-          renderer: EntityInfo,
-          data: {
-            primary: unit.unitName,
-            secondary: unit.unitNation,
-            image: {
-              path: unit.unitImage,
-              width: 35,
-              height: 35,
-            },
-            link: {
-              id: unit.unitId,
-              locale: searchParams.get(Constants.PARAM_LOCALE),
-              path: Utils.getEntityRoute('unit')
-            },
-            overflow: true
-          }
-        },
-        {
-          renderer: Text,
-          data: unit.quantity
-        },
-      ]
-    });
-
-    const researchRequirements = requirements.researches?.map((research) => {
-      return [
-        {
-          renderer: Text,
-          align: 'center',
-          data: research.researchId
-        },
-        {
-          renderer: EntityInfo,
-          data: {
-            primary: research.researchName,
-            image: {
-              path: research.researchImage,
-              width: 35,
-              height: 35,
-            },
-            link: {
-              id: research.researchId,
-              locale: searchParams.get(Constants.PARAM_LOCALE),
-              path: Utils.getEntityRoute('research')
-            },
-            overflow: true
-          }
-        },
-      ]
-    });
-
-    requirementsData = {
-      label: 'Requirements',
-      unitData: {
-        label: 'Units',
-        subLabel: unitsAll,
-        head: [
-          'Game ID',
-          'Unit',
-          'Quantity'
-        ],
-        body: unitRequirements
-      },
-      researchData: {
-        label: 'Researches',
-        subLabel: requirementsAll,
-        head: [
-          'Game ID',
-          'Research'
-        ],
-        body: researchRequirements
-      }
-    }
-  }
-
-  const costData = ability.cost?.map((resource) => {
-    return resource
-  });
+  const requirementsData = ability.requirements && Data.getRequirementsData(ability.requirements, searchParams.get(Constants.PARAM_LOCALE));
 
   const costTableData = {
     label: 'Cost',
@@ -268,21 +182,12 @@ const AbilityTableEntry = ({ ability }) => {
       paddingTop: '0px',
       paddingBottom: '0px'
     },
-    content: costData,
+    content: ability.cost,
   }
 
   return (
-    <Stack
-      direction="row"
-      justifyContent='center'
-      sx={{
-        border: '3px solid rgb(85, 120, 218)',
-        borderRadius: 2,
-      }}>
-      <Stack
-        flex='1 1 20%'
-        alignItems='center'
-        borderRight='3px solid rgb(85, 120, 218)'>
+    <DoubleColumnFrame rightWidth='100%'>
+      <>
         <DoubleColumnTable data={costTableData} />
         <Stack sx={{
           width: '100%',
@@ -300,23 +205,14 @@ const AbilityTableEntry = ({ ability }) => {
               <DoubleColumnTable data={buffData} />
             </InfoButtonPopper>}
         </Stack>
-      </Stack>
-      <Box sx={{
-        width: '100%',
-        height: 'max-content',
-        display: 'flex',
-        flexDirection: 'row',
-        padding: '3px',
-        overflow: 'auto',
-      }}>
-        <FlexibleTable
-          columns={ABILITY_COLUMNS}
-          rows={abilityData.length}
-          data={abilityData}
-          rowHeight='max-content'
-          minWidth='390px' />
-      </Box>
-    </Stack>
+      </>
+      <FlexibleTable
+        columns={ABILITY_COLUMNS}
+        rows={abilityData.length}
+        data={abilityData}
+        rowHeight='max-content'
+        minWidth='280px' />
+    </DoubleColumnFrame>
   );
 }
 

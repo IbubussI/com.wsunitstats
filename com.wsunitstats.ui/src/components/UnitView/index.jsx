@@ -1,95 +1,124 @@
 import * as React from 'react';
+import * as Constants from "utils/constants";
 import './index.css';
-import { StatsTable } from 'components/StatsTable';
-import { ArmorChart } from 'components/ArmorChart';
-import { WeaponTable } from 'components/WeaponTable';
-import { AbilityTable } from 'components/AbilityTable';
+import { useSearchParams } from 'react-router-dom';
+import { Tab, Tabs } from '@mui/material';
+import { CommonTab } from 'components/Tabs/Common';
+import { WeaponTab } from 'components/Tabs/Weapons';
+import { AbilitiesTab } from 'components/Tabs/Abilities';
+import { BuildingTab } from 'components/Tabs/Building';
 
 export const UnitView = ({ unit }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentTab = searchParams.get('tab');
 
-  const getCommonProps = (unit) => [
-    createRowData('Game ID', unit.gameId),
-    createRowData('Nation', unit.nation),
-    createRowData('View Range', unit.viewRange),
-    createRowData('Size', unit.size),
-    createRowData('Health', unit.health),
-    createRowData('Regeneration Speed', unit.regenerationSpeed, 'hp/sec'),
+  const tabsData = [
+    {
+      id: Constants.UNIT_COMMON_TAB,
+      label: 'Common',
+      component: CommonTab,
+      isShow: !!unit
+    },
+    {
+      id: Constants.UNIT_WEAPONS_TAB,
+      label: 'Weapons',
+      component: WeaponTab,
+      isShow: unit?.weapons?.length || unit?.turrets?.length
+    },
+    {
+      id: Constants.UNIT_ABILITIES_TAB,
+      label: 'Abilities',
+      component: AbilitiesTab,
+      isShow: unit?.abilities?.length
+    },
+    {
+      id: Constants.UNIT_BUILD_TAB,
+      label: 'Building',
+      component: BuildingTab,
+      isShow: unit?.build
+    },
+  ].filter(element => element.isShow);
 
-    createRowData('Movement Speed', unit.movement?.speed),
-    createRowData('Rotation Speed', unit.movement?.rotationSpeed),
+  const setTab = React.useCallback(tab => {
+    searchParams.set('tab', tab);
+    setSearchParams(searchParams);
+  }, [searchParams, setSearchParams]);
 
-    createRowData('Transporting size', unit.transporting?.ownSize),
-    createRowData('Transporting capacity',  unit.transporting?.carrySize),
-    createRowData('Can transport', unit.transporting?.carrySize ? (unit.transporting.onlyInfantry ? 'Only infantry' : 'Any land unit') : null),
+  const removeTab = React.useCallback(() => {
+    searchParams.delete('tab');
+    setSearchParams(searchParams);
+  }, [searchParams, setSearchParams]);
 
-    createRowData('Takes population', unit.supply?.consume),
-    createRowData('Gives population', unit.supply?.produce),
-    createRowData('Limit', unit.limit),
+  const isTabValid = React.useCallback((tab, tabsData) => {
+    if (!tab) {
+      return false;
+    }
+    for(const tabData of tabsData) {
+      if (tabData.id === tab) {
+        return true;
+      }
+    }
+    return false;
+  }, []);
 
-    createRowData('Receives friendly damage', unit.receiveFriendlyDamage === false ? 'False' : 'True'),
-    createRowData('Parent must not move', unit.parentMustIdle ? 'True' : null),
-    createRowData('Controllable', unit.controllable === undefined || unit.controllable ? 'True' : 'False'),
-
-    createRowData('Threat', unit.threat),
-  ];
-
-  if (unit) {
-    return (
-      <div className="unit-view-container">
-        <h2>{unit.name}</h2>
-        <img className="image" src={`/files/images/${unit.image}`} alt="" />
-        <h3>Common properties</h3>
-        <div className="common-table">
-          <StatsTable
-            content={getCommonProps(unit)}
-          />
-        </div>
-        {unit.armor?.length &&
-          <div className="armor-container">
-            <h3>Armor</h3>
-            <div className="armor-chart">
-              <ArmorChart
-                content={unit.armor}
-                valuePrefix={'Thickness: '}
-              />
-            </div>
-          </div>}
-        {(unit.weapons?.length || unit.turrets?.length) &&
-          <>
-            <h3>Weapons</h3>
-            <div className="flex-table">
-              <WeaponTable
-                weapons={unit.weapons}
-                turrets={unit.turrets}
-              />
-            </div>
-          </>}
-        {unit.abilities?.length &&
-          <>
-            <h3>Abilities</h3>
-            <div className="flex-table">
-              <AbilityTable
-                abilities={unit.abilities}
-              />
-            </div>
-          </>}
-      </div>
-    );
-  } else {
-    return (null);
-  }
+  React.useEffect(() => {
+    if (unit && !isTabValid(currentTab, tabsData)) {
+      setTab(tabsData[0].id);
+    }
+    if (currentTab && !unit && !searchParams.get(Constants.PARAM_GAME_ID)) {
+      removeTab();
+    }
+    //adding tabsData to dependencies leads to re-render loop
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setTab, removeTab, isTabValid, currentTab, unit, searchParams]);
+  
+  let isRenderContent = currentTab && tabsData.length > 0;
+  applyBodyStyle(isRenderContent);
+  return (
+    <>
+      {isRenderContent
+        ? <TabsUnitView tabsData={tabsData} currentTab={currentTab} unit={unit} setTab={setTab} />
+        : <DefaultUnitView />}
+    </>
+  );
 }
 
-function createRowData(name, valueObject, units) {
-  if (valueObject != null) {
-    let value = "";
-    if (units) {
-      value = `${valueObject} ${units}`;
+const TabsUnitView = ({ tabsData, currentTab, unit, setTab }) => {
+  return (
+    <>
+      <Tabs value={currentTab} onChange={(_, newValue) => setTab(newValue)}> 
+        {tabsData.map((tab) => <Tab key={tab.id} label={tab.label} value={tab.id} />)}
+      </Tabs>
+      {tabsData.map((tab) => {
+        let TabComponent = tab.component;
+        return (
+          <TabView key={tab.id} value={currentTab} selfValue={tab.id}>
+            <TabComponent unit={unit} />
+          </TabView>
+        );
+      })}
+    </>
+  );
+}
+
+const TabView = ({ selfValue, value, children }) => {
+  return (
+    <div className="unit-view-container" hidden={value !== selfValue}>
+      {value === selfValue && children}
+    </div>
+  );
+}
+
+const DefaultUnitView = () => <div>Waiting for your input...</div>
+
+const applyBodyStyle = (isContent) => {
+  let bodyRoot = document.querySelector(".body-root");
+  if (bodyRoot) {
+    let bodyClassList = bodyRoot.classList;
+    if (isContent) {
+      bodyClassList.add('content-body-root');
     } else {
-      value = valueObject.toString();
+      bodyClassList.remove('content-body-root');
     }
-    return { name, value };
-  } else {
-    return null;
   }
 }

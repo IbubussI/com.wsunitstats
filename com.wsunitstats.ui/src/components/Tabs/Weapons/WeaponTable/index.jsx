@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 import { BasicPaper } from 'components/Atoms/BasicPaper';
 import {
   FlexibleTable,
@@ -9,15 +9,18 @@ import {
 import { HeaderChip, SubValue, TagList, Text } from 'components/Atoms/Renderer';
 import { DoubleColumnTable } from 'components/Atoms/DoubleColumnTable';
 import { InfoButtonPopper } from "components/Atoms/ButtonPopper";
-import * as Constants from "utils/Constants";
+import * as Constants from "utils/constants";
+import { DoubleColumnFrame } from 'components/Atoms/DoubleColumnFrame';
 
 const STATS_COLUMNS = 2;
 const STATS_ROWS = 5;
+const FLEX_TABLE_RIGHT_WIDTH = '58%';
+const FLEX_TABLE_LEFT_WIDTH = '42%';
 
 export const WeaponTable = ({ turrets, weapons }) => {
   if (turrets || weapons) {
     return (
-      <Stack component={BasicPaper} spacing={0.5} sx={{ padding: 1 }}>
+      <Stack component={BasicPaper} spacing={0.5} sx={{ padding: 1, width: '100%', maxWidth: '700px' }}>
         {weapons && weapons.map((weapon, index) => {
           return (
             <WeaponTableEntry
@@ -177,7 +180,7 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
     ].filter(element => element.value !== undefined)
   }
 
-  const statsData = [
+  const weaponData = [
     {
       column: 1,
       renderer: FlexibleTableSingleCellRow,
@@ -196,7 +199,9 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Reload',
-        value: weapon.rechargePeriod + Constants.SECONDS_END_MARKER
+        value: weapon.rechargePeriod + Constants.SECONDS_END_MARKER,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -204,7 +209,9 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Spread',
-        value: weapon.spread && weapon.spread + ' %'
+        value: weapon.spread && weapon.spread + '\u00A0%',
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -225,7 +232,9 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
             }
           ]
         },
-        valueRenderer: SubValue
+        valueRenderer: SubValue,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -242,7 +251,9 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
             }
           ]
         },
-        valueRenderer: SubValue
+        valueRenderer: SubValue,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -250,7 +261,9 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Rotation speed',
-        value: turretRotationSpeed
+        value: turretRotationSpeed,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -258,15 +271,19 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Friendly damage',
-        value: '' + !!weapon.damageFriendly
+        value: '' + !!weapon.damageFriendly,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
       column: 2,
       renderer: FlexibleTableDoubleCellRow,
       childData: {
-        label: 'Ground attack (X)',
-        value: '' + !!weapon.attackGround
+        label: 'Ground attack\u00A0(X)',
+        value: '' + !!weapon.attackGround,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -274,7 +291,9 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Projectile speed',
-        value: weapon.projectile?.speed
+        value: weapon.projectile?.speed,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -282,23 +301,16 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Projectile inactive',
-        value: weapon.projectile?.timeToStartCollision && weapon.projectile?.timeToStartCollision + Constants.SECONDS_END_MARKER
+        value: weapon.projectile?.timeToStartCollision && weapon.projectile?.timeToStartCollision + Constants.SECONDS_END_MARKER,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
   ].filter(element => element.childData.type !== undefined || (element.childData.value !== undefined && (!Array.isArray(element.childData.value) || element.childData.value.length > 0)));
 
   return (
-    <Stack
-      direction="row"
-      justifyContent='center'
-      sx={{
-        border: '3px solid rgb(85, 120, 218)',
-        borderRadius: 2,
-      }}>
-      <Stack
-        flex='1 1 20%'
-        alignItems='center'
-        borderRight='3px solid rgb(85, 120, 218)'>
+    <DoubleColumnFrame rightWidth='100%'>
+      <>
         <DoubleColumnTable data={damageTableData} />
         <Stack sx={{
           width: '100%',
@@ -307,32 +319,24 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
           boxSizing: 'border-box'
         }}>
           {attackData.content.length > 0 && <InfoButtonPopper label={attackData.label}>
-            <DoubleColumnTable data={attackData}/>
+            <DoubleColumnTable data={attackData} />
           </InfoButtonPopper>}
           {buffData.content.length > 0 && <InfoButtonPopper label={buffData.label}>
-            <DoubleColumnTable data={buffData}/>
+            <DoubleColumnTable data={buffData} />
           </InfoButtonPopper>}
           {envData.content.length > 0 && <InfoButtonPopper label={envData.label}>
-            <DoubleColumnTable data={envData}/>
+            <DoubleColumnTable data={envData} />
           </InfoButtonPopper>}
         </Stack>
-      </Stack>
-      <Box sx={{
-        width: '100%',
-        height: 'max-content',
-        display: 'flex',
-        flexDirection: 'row',
-        padding: '3px',
-        overflow: 'auto',
-      }}>
-        <FlexibleTable
-          columns={STATS_COLUMNS}
-          rows={STATS_ROWS}
-          data={statsData}
-          rowHeight='max-content'
-          minWidth='390px' />
-      </Box>
-    </Stack>
+      </>
+
+      <FlexibleTable
+        columns={STATS_COLUMNS}
+        rows={STATS_ROWS}
+        data={weaponData}
+        rowHeight='max-content'
+        minWidth='340px' />
+    </DoubleColumnFrame>
   );
 }
 

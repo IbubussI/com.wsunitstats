@@ -69,7 +69,7 @@ const ResourceRow = ({ data }) => {
         </Typography>
       </TableCell>
       <TableCell sx={{ width: data.rowStyle.rightRowWidth }}>
-      <Stack direction='row' alignItems='center'>
+        <Stack direction='row' alignItems='center'>
           <Box
             component="img"
             sx={{
@@ -135,7 +135,7 @@ export const DoubleColumnTable = ({ data }) => {
   let tableLayout = data.tableLayout ? data.tableLayout : 'auto';
   return (
     <TableContainer>
-      <Table style={{ tableLayout: tableLayout, width: width, minWidth: minWidth }}>
+      <Table sx={{ tableLayout: tableLayout, width: width, minWidth: minWidth }}>
         <TableHead sx={{
           '& tr th': {
             paddingTop: '7px',
