@@ -38,7 +38,7 @@ export const SubValue = ({ data }) => {
   data.subValues.forEach((entry, index) => {
     let delimiter = data.subValues[index + 1] && typeof data.subValues[index + 1].value === 'number' ? ', ' : '';
     if (entry.value) {
-      subString = subString.concat(`${entry.label}: ${entry.value}${delimiter}`);
+      subString = subString.concat(`${entry.label}:\u00A0${entry.value}${delimiter}`);
     }
   });
   return (
@@ -72,11 +72,21 @@ export const TagList = ({ data }) => {
 
 export const Resource = ({ data }) => {
   return (
-    <Stack direction='row' spacing={2}>
+    <Stack
+      direction='row'
+      spacing={0.7}
+      sx={{
+        width: 'fit-content',
+        border: '1px solid rgb(182, 182, 182)',
+        padding: '5px',
+        paddingBottom: '3px',
+        margin: '5px',
+        marginLeft: '0'
+      }}>
       {data.map((resource, index) =>
         <Tooltip key={index} title={resource.resource}>
-          <Stack direction='row' alignItems='center' sx={{ minWidth: '40px'}}>
-            <Box sx={{ marginRight: 0.4 }}>
+          <Stack direction='column' alignItems='center' sx={{ minWidth: '50px' }}>
+            <Box>
               <Image data={{
                 path: resource.image,
                 width: 25,
@@ -106,7 +116,7 @@ export const EntityInfo = ({ data }) => {
   const LinkContent = () => {
     return (
       <Stack direction='row' alignItems='center' id="2123">
-        <Stack sx={{ marginRight: 0.4, height: 'fit-content'}}>
+        <Stack sx={{ marginRight: 0.4, height: 'fit-content' }}>
           <Image data={data.image} />
         </Stack>
         <Stack minWidth={minWidth}>

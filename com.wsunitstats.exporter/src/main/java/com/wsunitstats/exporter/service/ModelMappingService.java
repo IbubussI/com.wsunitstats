@@ -115,7 +115,7 @@ public interface ModelMappingService {
 
     HealModel map(HealJsonModel healSource);
 
-    ConstructionModel map(BuildingJsonModel buildingSource);
+    ConstructionModel map(int index, BuildingJsonModel buildingSource);
 
     GroundAttackDataWrapper map(String attackGroundString);
 }

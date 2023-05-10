@@ -14,41 +14,14 @@ import { DoubleColumnFrame } from 'components/Atoms/DoubleColumnFrame';
 
 const STATS_COLUMNS = 2;
 const STATS_ROWS = 5;
-const FLEX_TABLE_RIGHT_WIDTH = '58%';
-const FLEX_TABLE_LEFT_WIDTH = '42%';
-
-export const WeaponTable = ({ turrets, weapons }) => {
-  if (turrets || weapons) {
-    return (
-      <Stack component={BasicPaper} spacing={0.5} sx={{ padding: 1, width: '100%', maxWidth: '700px' }}>
-        {weapons && weapons.map((weapon, index) => {
-          return (
-            <WeaponTableEntry
-              key={index}
-              weapon={weapon} />
-          );
-        })}
-        {turrets && turrets.map((turret, index) => {
-          return (
-            <React.Fragment key={index}>
-              {turret.weapons.map((weapon, index) => {
-                return (
-                  <WeaponTableEntry
-                    key={index}
-                    weapon={weapon}
-                    turretRotationSpeed={turret.rotationSpeed}
-                    turretId={turret.turretId} />
-                );
-              })}
-            </React.Fragment>
-          );
-        })}
-      </Stack>
-    );
-  }
-}
-
-const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
+const FLEX_TABLE_RIGHT_WIDTH = '52%';
+const FLEX_TABLE_LEFT_WIDTH = '48%';
+ 
+export const WeaponTable = ({ item, isTurret }) => {
+  const weapon = isTurret ? item.weapon : item;
+  const turretRotationSpeed = item.turretRotationSpeed;
+  const turretId = item.turretId;
+  
   const attacksNumber = weapon.damagesCount * weapon.attacksPerAttack * weapon.attacksPerAction;
 
   const damageData = weapon.damages.map((damage) => {
@@ -186,8 +159,8 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
       renderer: FlexibleTableSingleCellRow,
       childData: {
         value: {
-          tooltip: typeof turretId === "number" ? "Turret ID #" + turretId : "Weapon ID #" + weapon.weaponId,
-          id: typeof turretId === "number" ? "T" + turretId : "W" + weapon.weaponId,
+          tooltip: isTurret ? "Turret ID #" + turretId : "Weapon ID #" + weapon.weaponId,
+          id: isTurret ? "T" + turretId : "W" + weapon.weaponId,
           label: weapon.weaponType,
           disabled: weapon.enabled === false && 'disabled'
         },
@@ -309,7 +282,7 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
   ].filter(element => element.childData.type !== undefined || (element.childData.value !== undefined && (!Array.isArray(element.childData.value) || element.childData.value.length > 0)));
 
   return (
-    <DoubleColumnFrame rightWidth='100%'>
+    <DoubleColumnFrame childrenProps={[ null, { overflow: 'auto', width: '100%' }]}>
       <>
         <DoubleColumnTable data={damageTableData} />
         <Stack sx={{

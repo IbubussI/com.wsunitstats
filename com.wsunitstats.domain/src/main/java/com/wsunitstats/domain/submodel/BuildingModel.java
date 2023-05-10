@@ -3,10 +3,12 @@ package com.wsunitstats.domain.submodel;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.wsunitstats.domain.PersistentObject;
 import com.wsunitstats.domain.submodel.requirement.RequirementsModel;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -27,8 +29,7 @@ public class BuildingModel extends PersistentObject {
     private RequirementsModel requirements;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<ResourceModel> healCost;
-    @Embedded
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = IncomeModel.class)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private IncomeModel income;
     private Double initHealth;
 }

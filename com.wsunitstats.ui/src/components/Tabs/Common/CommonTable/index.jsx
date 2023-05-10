@@ -1,5 +1,8 @@
 import * as React from 'react';
 import { FlexibleTable, FlexibleTableDoubleCellRow } from 'components/Atoms/FlexibleTable';
+import { Stack } from '@mui/material';
+import { DoubleColumnFrame } from 'components/Atoms/DoubleColumnFrame';
+import { ArmorChart } from '../ArmorChart';
 
 const COMMON_COLUMN = 1;
 const FLEX_TABLE_RIGHT_WIDTH = '50%';
@@ -33,12 +36,39 @@ export const CommonTable = ({ unit }) => {
   ].filter(element => element);
 
   return (
-    <FlexibleTable
-      columns={COMMON_COLUMN}
-      rows={commonData.length}
-      data={commonData}
-      rowHeight='max-content'
-      minWidth='200px' />
+    <DoubleColumnFrame childrenProps={[null, { overflow: 'auto', width: '100%' }]}>
+      <Stack alignItems='center'>
+        <h3 style={{ marginBlockStart: '0.65em', marginBlockEnd: '0.65em', maxWidth: '150px', textAlign: 'center' }}>{unit.name}</h3>
+        <Stack sx={{
+          width: '150px',
+          height: '150px',
+          justifyContent: 'center',
+          alignItems: 'center',
+          border: '1px solid',
+        }}>
+          <img style={{ border: '5px solid #555', boxSizing: 'border-box' }} src={`/files/images/${unit.image}`} alt="" />
+        </Stack>
+        {unit.armor?.length > 0 &&
+          <>
+            <h3>Armor</h3>
+            <ArmorChart
+              content={unit.armor}
+              valuePrefix={'Thickness: '}
+              colors={[
+                'rgba(122, 16, 16, 1)',
+                'rgba(168, 87, 15, 1)',
+                'rgba(168, 116, 15, 1)',
+                'rgba(15, 132, 21, 1)',
+              ]} />
+          </>}
+      </Stack>
+      <FlexibleTable
+        columns={COMMON_COLUMN}
+        rows={commonData.length}
+        data={commonData}
+        rowHeight='max-content'
+        minWidth='200px' />
+    </DoubleColumnFrame>
   );
 }
 

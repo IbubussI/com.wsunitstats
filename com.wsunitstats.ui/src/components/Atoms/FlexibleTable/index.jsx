@@ -41,8 +41,8 @@ export const FlexibleTable = ({ columns, rows, data, minWidth }) => {
 }
 
 export const FlexibleTableDoubleCellRow = ({ data }) => {
-  let LabelRenderer = data.labelRenderer ? data.labelRenderer : Text;
-  let ValueRenderer = data.valueRenderer ? data.valueRenderer : Text;
+  const LabelRenderer = data.labelRenderer ? data.labelRenderer : Text;
+  const ValueRenderer = data.valueRenderer ? data.valueRenderer : Text;
   return (
     <Stack
       direction="row"

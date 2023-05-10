@@ -97,10 +97,10 @@
 
     create table building (
        id bigint not null auto_increment,
-        period float(53),
         initHealth float(53),
         researchesAll bit,
         unitsAll bit,
+        income_id bigint,
         primary key (id)
     ) engine=InnoDB;
 
@@ -144,19 +144,15 @@
         unitNation varchar(255)
     ) engine=InnoDB;
 
-    create table building_value (
-       building_id bigint not null,
-        image varchar(255),
-        resource varchar(255),
-        resourceId integer not null,
-        value_ integer
-    ) engine=InnoDB;
-
     create table construction (
        id bigint not null auto_increment,
-        buildId integer,
+        constructionId integer not null,
         constructionSpeed float(53),
         distance float(53),
+        entityId integer,
+        entityImage varchar(255),
+        entityName varchar(255),
+        entityNation varchar(255),
         primary key (id)
     ) engine=InnoDB;
 
@@ -189,6 +185,20 @@
     create table heal_targetTags (
        heal_id bigint not null,
         targetTags varchar(255)
+    ) engine=InnoDB;
+
+    create table income (
+       id bigint not null auto_increment,
+        period float(53),
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table income_value (
+       income_id bigint not null,
+        image varchar(255),
+        resource varchar(255),
+        resourceId integer not null,
+        value_ integer
     ) engine=InnoDB;
 
     create table localization (
@@ -435,6 +445,11 @@
        foreign key (buff_id) 
        references buff (id);
 
+    alter table building 
+       add constraint FKr4ud3a4dpn9e78iulww8bfkkd 
+       foreign key (income_id) 
+       references income (id);
+
     alter table building_fullCost 
        add constraint FK530g1mcloh1hsow7pqxotr3be 
        foreign key (building_id) 
@@ -460,11 +475,6 @@
        foreign key (building_id) 
        references building (id);
 
-    alter table building_value 
-       add constraint FK1o2wsit1wkwmdexrqy3ywy50o 
-       foreign key (building_id) 
-       references building (id);
-
     alter table gather_envTags 
        add constraint FK22xc4voqbyj0h9qaih8vvcin3 
        foreign key (gather_id) 
@@ -474,6 +484,11 @@
        add constraint FKo3bdaxloq89mnf94d5l628un0 
        foreign key (heal_id) 
        references heal (id);
+
+    alter table income_value 
+       add constraint FKgc5pv8v3pru6g1kajo0pis6la 
+       foreign key (income_id) 
+       references income (id);
 
     alter table localization_entries 
        add constraint FKr54j8wvwxlrjqi4dqbej7no3g 

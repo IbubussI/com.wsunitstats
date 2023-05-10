@@ -204,8 +204,8 @@ public class UnitModelResolverImpl implements UnitModelResolver {
 
     private List<ConstructionModel> getConstructionList(List<BuildingJsonModel> buildingList) {
         return buildingList == null ? new ArrayList<>() :
-                buildingList.stream()
-                        .map(mappingService::map)
+                IntStream.range(0, buildingList.size())
+                        .mapToObj(index -> mappingService.map(index, buildingList.get(index)))
                         .toList();
     }
 

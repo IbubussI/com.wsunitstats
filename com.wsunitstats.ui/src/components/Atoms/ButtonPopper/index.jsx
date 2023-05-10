@@ -67,6 +67,7 @@ export const InfoButtonPopper = ({ children, label }) => {
         sx={{
           width: '100%',
           textTransform: 'none',
+          padding: '5px 24px',
           '&:hover': { backgroundColor: 'rgb(195, 225, 255)' },
         }}>
         {label}

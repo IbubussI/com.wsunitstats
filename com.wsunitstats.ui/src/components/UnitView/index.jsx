@@ -2,11 +2,12 @@ import * as React from 'react';
 import * as Constants from "utils/constants";
 import './index.css';
 import { useSearchParams } from 'react-router-dom';
-import { Tab, Tabs } from '@mui/material';
+import { Box, Tab, Tabs } from '@mui/material';
 import { CommonTab } from 'components/Tabs/Common';
 import { WeaponTab } from 'components/Tabs/Weapons';
 import { AbilitiesTab } from 'components/Tabs/Abilities';
 import { BuildingTab } from 'components/Tabs/Building';
+import { ConstructionsTab } from 'components/Tabs/Constructions';
 
 export const UnitView = ({ unit }) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -37,16 +38,22 @@ export const UnitView = ({ unit }) => {
       component: BuildingTab,
       isShow: unit?.build
     },
+    {
+      id: Constants.UNIT_CONSTRUCTION_TAB,
+      label: 'Construction',
+      component: ConstructionsTab,
+      isShow: unit?.construction
+    },
   ].filter(element => element.isShow);
 
-  const setTab = React.useCallback(tab => {
+  const setTab = React.useCallback((tab, replace = false) => {
     searchParams.set('tab', tab);
-    setSearchParams(searchParams);
+    setSearchParams(searchParams, { replace: replace });
   }, [searchParams, setSearchParams]);
 
   const removeTab = React.useCallback(() => {
     searchParams.delete('tab');
-    setSearchParams(searchParams);
+    setSearchParams(searchParams, { replace: true });
   }, [searchParams, setSearchParams]);
 
   const isTabValid = React.useCallback((tab, tabsData) => {
@@ -63,7 +70,7 @@ export const UnitView = ({ unit }) => {
 
   React.useEffect(() => {
     if (unit && !isTabValid(currentTab, tabsData)) {
-      setTab(tabsData[0].id);
+      setTab(tabsData[0].id, true);
     }
     if (currentTab && !unit && !searchParams.get(Constants.PARAM_GAME_ID)) {
       removeTab();
@@ -86,9 +93,11 @@ export const UnitView = ({ unit }) => {
 const TabsUnitView = ({ tabsData, currentTab, unit, setTab }) => {
   return (
     <>
-      <Tabs value={currentTab} onChange={(_, newValue) => setTab(newValue)}> 
-        {tabsData.map((tab) => <Tab key={tab.id} label={tab.label} value={tab.id} />)}
-      </Tabs>
+      <Box display="flex" justifyContent="center" width="100%">
+        <Tabs value={currentTab} onChange={(_, newValue) => setTab(newValue)} allowScrollButtonsMobile variant="scrollable">
+          {tabsData.map((tab) => <Tab key={tab.id} label={tab.label} value={tab.id} />)}
+        </Tabs>
+      </Box>
       {tabsData.map((tab) => {
         let TabComponent = tab.component;
         return (

@@ -89,7 +89,6 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     private static final Pattern ATTACK_GROUND_PATTERN = Pattern.compile("\\{\"groundAttack\":\\[([0-9]+),([0-9]+)]}");
     private static final int PROBABILITY_MAX = 100;
 
-
     @Autowired
     private ImageService imageService;
     @Autowired
@@ -429,20 +428,27 @@ public class ModelMappingServiceImpl implements ModelMappingService {
 
     @Override
     public BuildingModel map(UnitJsonModel unitSource, BuildJsonModel buildSource) {
-        if (buildSource == null) {
+        DeathabilityJsonModel deathability = unitSource.getDeathability();
+        IncomeJsonModel income = unitSource.getIncome();
+        if (buildSource == null && (deathability == null || deathability.getHealMeCost() == null) && income == null) {
             return null;
         }
         BuildingModel buildingModel = new BuildingModel();
-        buildingModel.setIncome(map(unitSource.getIncome()));
-        DeathabilityJsonModel deathability = unitSource.getDeathability();
         if (deathability != null) {
             buildingModel.setHealCost(mapResources(deathability.getHealMeCost()));
-            buildingModel.setInitHealth(getInitHealth(deathability.getHealth(), buildSource.getHealth()));
+            if (buildSource != null) {
+                buildingModel.setInitHealth(getInitHealth(deathability.getHealth(), buildSource.getHealth()));
+            }
         }
-        buildingModel.setRequirements(map(buildSource.getRequirements()));
-        buildingModel.setInitCost(mapResources(buildSource.getCostInit()));
-        List<Integer> fullCost = Util.add(buildSource.getCostInit(), buildSource.getCostBuilding());
-        buildingModel.setFullCost(mapResources(fullCost));
+        if (buildSource != null) {
+            buildingModel.setRequirements(map(buildSource.getRequirements()));
+            buildingModel.setInitCost(mapResources(buildSource.getCostInit()));
+            List<Integer> fullCost = Util.add(buildSource.getCostInit(), buildSource.getCostBuilding());
+            buildingModel.setFullCost(mapResources(fullCost));
+        }
+        if (income != null) {
+            buildingModel.setIncome(map(income));
+        }
         return buildingModel;
     }
 
@@ -531,12 +537,19 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public ConstructionModel map(BuildingJsonModel buildingSource) {
+    public ConstructionModel map(int index, BuildingJsonModel buildingSource) {
         if (buildingSource == null) {
             return null;
         }
         ConstructionModel constructionModel = new ConstructionModel();
-        constructionModel.setBuildId(buildingSource.getId());
+        EntityInfoModel entityInfoModel = new EntityInfoModel();
+        Integer entityId = buildingSource.getId();
+        entityInfoModel.setEntityId(entityId);
+        entityInfoModel.setEntityNation(Util.getUnitNation(unitNations, localization.getNationNames(), entityId));
+        entityInfoModel.setEntityName(localization.getUnitNames().get(entityId));
+        entityInfoModel.setEntityImage(imageService.getImageName(Constants.EntityType.UNIT.getName(), entityId));
+        constructionModel.setEntityInfo(entityInfoModel);
+        constructionModel.setConstructionId(index);
         constructionModel.setDistance(Util.intToDoubleShift(buildingSource.getDistance()));
         constructionModel.setConstructionSpeed(getConstructionSpeed(buildingSource.getProgress()));
         return constructionModel;

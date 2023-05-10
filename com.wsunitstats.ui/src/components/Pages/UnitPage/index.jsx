@@ -16,10 +16,10 @@ export const UnitPage = () => {
   const prevGameId = React.useRef(null);
   const prevLocale = React.useRef(null);
 
-  const clearUnit = React.useCallback(() => {
+  const clearUnit = React.useCallback((replace = true) => {
     searchParams.delete(Constants.PARAM_GAME_ID);
     searchParams.delete(Constants.PARAM_TAB);
-    setSearchParams(searchParams);
+    setSearchParams(searchParams, { replace: replace });
     setUnit(null);
     setOption(null);
   }, [searchParams, setSearchParams]);
@@ -67,7 +67,7 @@ export const UnitPage = () => {
         onUnitIdChange={(gameId) => {
           // update unitId
           if (gameId === null) {
-            clearUnit();
+            clearUnit(false);
           } else {
             searchParams.set(Constants.PARAM_GAME_ID, gameId);
             setSearchParams(searchParams);

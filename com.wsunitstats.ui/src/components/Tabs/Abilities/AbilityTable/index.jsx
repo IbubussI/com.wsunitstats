@@ -2,7 +2,6 @@ import * as Constants from "utils/constants";
 import * as Utils from "utils/utils";
 import * as Data from "data";
 import { Stack } from "@mui/material";
-import { BasicPaper } from "components/Atoms/BasicPaper";
 import { FlexibleTable, FlexibleTableDoubleCellRow, FlexibleTableSingleCellRow } from "components/Atoms/FlexibleTable";
 import { EntityInfo, HeaderChip, SubValue, Text } from 'components/Atoms/Renderer';
 import { DoubleColumnTable } from "components/Atoms/DoubleColumnTable";
@@ -15,19 +14,7 @@ const ABILITY_COLUMNS = 1;
 const FLEX_TABLE_RIGHT_WIDTH = '73%';
 const FLEX_TABLE_LEFT_WIDTH = '27%';
 
-export const AbilityTable = ({ abilities }) => {
-  return (
-    <Stack component={BasicPaper} spacing={0.5} sx={{ padding: 1, width: '100%', maxWidth: '500px' }}>
-      {abilities.map((ability, index) =>
-        <AbilityTableEntry
-          key={index}
-          ability={ability}
-        />)}
-    </Stack>
-  );
-}
-
-const AbilityTableEntry = ({ ability }) => {
+export const AbilityTable = ({ ability }) => {
   const [searchParams] = useSearchParams();
   const abilityData = [
     {
@@ -186,7 +173,7 @@ const AbilityTableEntry = ({ ability }) => {
   }
 
   return (
-    <DoubleColumnFrame rightWidth='100%'>
+    <DoubleColumnFrame childrenProps={[null, { overflow: 'auto', width: '100%' }]}>
       <>
         <DoubleColumnTable data={costTableData} />
         <Stack sx={{
