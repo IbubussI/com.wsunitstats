@@ -2,7 +2,7 @@ import * as Constants from "utils/constants";
 import * as Utils from "utils/utils";
 import * as Data from "data";
 import { Stack } from "@mui/material";
-import { FlexibleTable, FlexibleTableDoubleCellRow, FlexibleTableSingleCellRow } from "components/Atoms/FlexibleTable";
+import { FlexibleTable, FlexibleTableDoubleCellRow } from "components/Atoms/FlexibleTable";
 import { EntityInfo, HeaderChip, SubValue, Text } from 'components/Atoms/Renderer';
 import { DoubleColumnTable } from "components/Atoms/DoubleColumnTable";
 import { InfoButtonPopper } from "components/Atoms/ButtonPopper";
@@ -17,20 +17,6 @@ const FLEX_TABLE_LEFT_WIDTH = '27%';
 export const AbilityTable = ({ ability }) => {
   const [searchParams] = useSearchParams();
   const abilityData = [
-    {
-      column: 1,
-      renderer: FlexibleTableSingleCellRow,
-      childData: {
-        value: {
-          tooltip: "Ability ID #" + ability.abilityId,
-          id: "A" + ability.abilityId,
-          label: ability.abilityName,
-          disabled: ability.enabled === false && 'disabled'
-        },
-        valueRenderer: HeaderChip,
-        width: '59%'
-      },
-    },
     {
       column: 1,
       renderer: FlexibleTableDoubleCellRow,
@@ -172,8 +158,20 @@ export const AbilityTable = ({ ability }) => {
     content: ability.cost,
   }
 
+  const disabled = ability.enabled === false && 'disabled';
+  const labelData = {
+    value: {
+      tooltip: "Ability ID #" + ability.abilityId,
+      id: ability.abilityId,
+      label: ability.abilityName,
+      disabled: disabled
+    },
+    valueRenderer: HeaderChip,
+    shift: '80px'
+  }
+
   return (
-    <DoubleColumnFrame childrenProps={[null, { overflow: 'auto', width: '100%' }]}>
+    <DoubleColumnFrame childrenProps={[{ paddingTop: '14px'}, { overflow: 'auto', width: '100%' }]} borderLabel={labelData} disabled={disabled}>
       <>
         <DoubleColumnTable data={costTableData} />
         <Stack sx={{

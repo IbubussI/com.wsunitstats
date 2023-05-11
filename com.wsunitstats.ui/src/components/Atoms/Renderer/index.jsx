@@ -57,13 +57,29 @@ export const TagList = ({ data }) => {
   return (
     <>
       {data.tags && data.tags.map((tag, index) => (
-        <Box sx={{ paddingBottom: '2px' }}>
+        <Box sx={{ paddingBottom: '1px' }}>
           <Chip
             key={index}
             label={tag}
             onClick={data.onClick}
             size='small'
-            sx={{ border: '1px solid rgb(182, 182, 182)', width: 'max-content' }} />
+            sx={{
+              width: 'max-content',
+              height: '19px',
+              backgroundColor: 'rgb(24, 117, 238)',
+              textTransform: 'uppercase',
+              color: 'white',
+              '& span': {
+                fontWeight: 'bold',
+                fontSize: 11
+              },
+              '&:hover': {
+                backgroundColor: 'rgb(139, 195, 255)'
+              },
+              '&:hover span': {
+                color: 'rgb(1, 113, 212)'
+              },
+            }} />
         </Box>
       ))}
     </>
@@ -145,67 +161,70 @@ export const EntityInfo = ({ data }) => {
 }
 
 export const HeaderChip = ({ data }) => {
-  let color = data.disabled ? 'error.main' : 'text.secondary';
-  let textColor = data.disabled ? 'error.main' : 'text.primary';
-  let borderColor = data.disabled ? 'error.main' : 'rgb(189, 189, 189)';
+  const color = data.disabled ? 'error.main' : 'text.secondary';
+  const textColor = data.disabled ? 'error.main' : 'text.primary';
+  const borderColor = data.disabled ? 'error.main' : 'rgb(85, 120, 218)';
+  const isLabel = data.label;
   return (
-    <Stack alignItems='center'>
-      <Box sx={{
-        border: '1px solid',
-        borderColor: borderColor,
-        color: color,
-        borderRadius: '18px',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontWeight: '700',
-        height: '36px'
-      }}>
-        <Tooltip title={data.tooltip}>
-          <Avatar sx={{
-            fontWeight: 'inherit',
-            border: '1px solid',
-            width: '24px',
-            height: '24px',
-            fontSize: '0.75rem',
-            color: color,
-            marginLeft: '5px',
-            marginRight: '-6px'
-          }}>
-            {data.id}
-          </Avatar>
-        </Tooltip>
-        <Stack alignItems='center' sx={{
-          paddingRight: '12px',
-          paddingLeft: '12px',
+    <Box sx={{
+      border: '3px solid',
+      borderColor: borderColor,
+      color: color,
+      borderRadius: '18px',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontWeight: '700',
+      height: '32px',
+      backgroundColor: 'white',
+
+    }}>
+      <Tooltip title={data.tooltip}>
+        <Avatar sx={{
+          fontWeight: 'inherit',
+          border: '1px solid',
+          width: '24px',
+          height: '24px',
+          fontSize: '0.75rem',
+          color: color,
+          marginLeft: isLabel ? '4px' : '3px',
+          marginRight: isLabel ? '-6px' : '3px'
         }}>
-          <Typography
-            variant='body2'
+          {data.id}
+        </Avatar>
+      </Tooltip>
+      {isLabel && <Stack alignItems='center' sx={{
+        paddingRight: '12px',
+        paddingLeft: '12px',
+      }}>
+        <Typography
+          variant='body2'
+          sx={{
+            fontWeight: 'inherit',
+            fontSize: 14,
+            lineHeight: 'initial',
+            color: textColor,
+            paddingBottom: data.disabled ? '1px' : '',
+            marginTop: data.disabled ? '-3px' : ''
+          }}>
+          {data.label}
+        </Typography>
+        {data.disabled &&
+          <Chip
+            label='disabled'
+            variant='contained'
+            color='error'
             sx={{
-              fontWeight: 'inherit',
-              fontSize: 14,
-              lineHeight: 'initial',
-              color: textColor
-            }}>
-            {data.label}
-          </Typography>
-          {data.disabled &&
-            <Chip
-              label='disabled'
-              variant='contained'
-              color='error'
-              sx={{
-                textTransform: 'uppercase',
-                fontSize: '11px',
-                height: '14px',
-                minwidth: 'fit-content',
-                '& > .MuiChip-label': {
-                  padding: '4px'
-                }
-              }} />}
-        </Stack>
-      </Box>
-    </Stack>
+              textTransform: 'uppercase',
+              fontSize: '11px',
+              height: '14px',
+              minwidth: 'fit-content',
+              '& > .MuiChip-label': {
+                padding: '4px'
+              }
+            }} />}
+      </Stack>}
+    </Box>
   );
 }
 

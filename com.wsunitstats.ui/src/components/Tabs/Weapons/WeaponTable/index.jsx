@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { Stack } from '@mui/material';
-import { BasicPaper } from 'components/Atoms/BasicPaper';
 import {
   FlexibleTable,
   FlexibleTableDoubleCellRow,
-  FlexibleTableSingleCellRow
 } from 'components/Atoms/FlexibleTable';
 import { HeaderChip, SubValue, TagList, Text } from 'components/Atoms/Renderer';
 import { DoubleColumnTable } from 'components/Atoms/DoubleColumnTable';
@@ -13,7 +11,7 @@ import * as Constants from "utils/constants";
 import { DoubleColumnFrame } from 'components/Atoms/DoubleColumnFrame';
 
 const STATS_COLUMNS = 2;
-const STATS_ROWS = 5;
+const STATS_ROWS = 4;
 const FLEX_TABLE_RIGHT_WIDTH = '52%';
 const FLEX_TABLE_LEFT_WIDTH = '48%';
  
@@ -156,19 +154,6 @@ export const WeaponTable = ({ item, isTurret }) => {
   const weaponData = [
     {
       column: 1,
-      renderer: FlexibleTableSingleCellRow,
-      childData: {
-        value: {
-          tooltip: isTurret ? "Turret ID #" + turretId : "Weapon ID #" + weapon.weaponId,
-          id: isTurret ? "T" + turretId : "W" + weapon.weaponId,
-          label: weapon.weaponType,
-          disabled: weapon.enabled === false && 'disabled'
-        },
-        valueRenderer: HeaderChip
-      }
-    },
-    {
-      column: 1,
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Reload',
@@ -281,8 +266,20 @@ export const WeaponTable = ({ item, isTurret }) => {
     },
   ].filter(element => element.childData.type !== undefined || (element.childData.value !== undefined && (!Array.isArray(element.childData.value) || element.childData.value.length > 0)));
 
+  const disabled = weapon.enabled === false && 'disabled';
+  const labelData = {
+    value: {
+      tooltip: isTurret ? "Turret ID #" + turretId : "Weapon ID #" + weapon.weaponId,
+      id: isTurret ? "T" + turretId : "W" + weapon.weaponId,
+      label: weapon.weaponType,
+      disabled: disabled
+    },
+    valueRenderer: HeaderChip,
+    shift: '80px'
+  }
+
   return (
-    <DoubleColumnFrame childrenProps={[ null, { overflow: 'auto', width: '100%' }]}>
+    <DoubleColumnFrame childrenProps={[{ paddingTop: '14px'}, { overflow: 'auto', width: '100%' }]} borderLabel={labelData} disabled={disabled}>
       <>
         <DoubleColumnTable data={damageTableData} />
         <Stack sx={{

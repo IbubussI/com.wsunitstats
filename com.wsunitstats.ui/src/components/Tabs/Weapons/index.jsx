@@ -7,7 +7,7 @@ export const WeaponTab = ({ unit }) => {
   return (
     <>
       <h3>Weapons</h3>
-      <Stack component={BasicPaper} spacing={0.5} sx={{ padding: 1, width: '100%', maxWidth: '700px' }}>
+      <Stack component={BasicPaper} spacing={3.5} sx={{ padding: 1, paddingTop: 3, width: '100%', maxWidth: '700px' }}>
         {unit.weapons && unit.weapons.map((weapon, index) => {
           return (
             <WeaponTable key={index} item={weapon} />
@@ -22,7 +22,7 @@ export const WeaponTab = ({ unit }) => {
                     item={{
                       weapon: weapon,
                       turretId: turret.turretId,
-                      turretRotationSpeed: turret.turretRotationSpeed
+                      turretRotationSpeed: turret.rotationSpeed
                     }}
                     isTurret={true} />
                 );

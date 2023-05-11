@@ -144,7 +144,7 @@ export const DoubleColumnTable = ({ data }) => {
         }}>
           <TableRow>
             <TableCell align="center" colSpan={2}>
-              <Typography variant='body2' color='text.primary' sx={{ fontWeight: 'bold' }}>
+              <Typography variant='body2' color='text.primary'>
                 {data.label}
               </Typography>
             </TableCell>
