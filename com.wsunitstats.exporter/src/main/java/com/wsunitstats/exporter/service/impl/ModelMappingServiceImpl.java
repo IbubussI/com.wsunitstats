@@ -4,6 +4,7 @@ import com.wsunitstats.domain.EntityInfoModel;
 import com.wsunitstats.domain.submodel.AirplaneModel;
 import com.wsunitstats.domain.submodel.BuildingModel;
 import com.wsunitstats.domain.submodel.ConstructionModel;
+import com.wsunitstats.domain.submodel.EnvTag;
 import com.wsunitstats.domain.submodel.HealModel;
 import com.wsunitstats.domain.submodel.IncomeModel;
 import com.wsunitstats.domain.submodel.ReserveModel;
@@ -128,18 +129,22 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public GatherModel map(GatherJsonModel source) {
+    public GatherModel map(int index, GatherJsonModel source) {
         if (source == null) {
             return null;
         }
         GatherModel gatherModel = new GatherModel();
+        gatherModel.setGatherId(index);
+        gatherModel.setAngle(Util.intToDoubleShift(source.getAngle()));
         gatherModel.setBagSize(Util.intToDoubleShift(source.getBagsize()));
         gatherModel.setGatherDistance(Util.intToDoubleShift(source.getGatherdistance()));
         gatherModel.setPerSecond(Util.intToDoubleTick(source.getPertick()));
         gatherModel.setFindTargetDistance(Util.intToDoubleShift(source.getFindtargetdistance()));
         gatherModel.setPutDistance(Util.intToDoubleShift(source.getPutdistance()));
-        gatherModel.setEnvTags(mapTags(source.getEnvtags(), i -> localization.getEnvSearchTagNames().get(i)));
-        gatherModel.setResource(localization.getResourceNames().get(source.getResource()));
+        gatherModel.setEnvTags(mapEnvTags(source.getEnvtags()));
+        gatherModel.setStorageTags(mapTags(source.getStoragetags(), i -> localization.getUnitTagNames().get(i)));
+        gatherModel.setUnitTags(mapTags(source.getUnitTags(), i -> localization.getUnitTagNames().get(i)));
+        gatherModel.setResource(mapResource(source.getResource(), null));
         return gatherModel;
     }
 
@@ -148,15 +153,20 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         List<ResourceModel> resources = new ArrayList<>();
         if (source != null && !source.isEmpty()) {
             for (int i = 0; i < Constants.ACTIVE_RESOURCES; ++i) {
-                ResourceModel resource = new ResourceModel();
-                resource.setResourceId(i);
-                resource.setResource(localization.getResourceNames().get(i));
-                resource.setValue(Util.intToDoubleShift(source.get(i)).intValue());
-                resource.setImage(imageService.getImageName(Constants.EntityType.RESOURCE.getName(), i));
-                resources.add(resource);
+                resources.add(mapResource(i, Util.intToDoubleShift(source.get(i)).intValue()));
             }
         }
         return resources;
+    }
+
+    @Override
+    public ResourceModel mapResource(Integer resourceId, Integer resourceValue) {
+        ResourceModel resource = new ResourceModel();
+        resource.setResourceId(resourceId);
+        resource.setResourceName(localization.getResourceNames().get(resourceId));
+        resource.setValue(resourceValue);
+        resource.setImage(imageService.getImageName(Constants.EntityType.RESOURCE.getName(), resourceId));
+        return resource;
     }
 
     @Override
@@ -198,11 +208,11 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         AbilityModel abilityModel = new AbilityModel();
         AbilityType abilityType = getAbilityType(abilitySource);
         AbilityDataJsonModel abilityData = abilitySource.getData();
-        AbilityEntityInfoWrapper entityInfo = getAbilityEntityType(abilityData);
+        AbilityEntityInfoWrapper entityInfo = getAbilityEntityInfo(abilityData, createEnvSource);
         Integer entityId = entityInfo.getEntityId();
         if (entityId != null) {
-            abilityModel.setEntityInfo(map(entityInfo, abilityType, createEnvSource));
-            abilityModel.setCount(getEnvCount(abilityData, abilityType, entityId, createEnvSource));
+            abilityModel.setEntityInfo(map(entityInfo, abilityType));
+            abilityModel.setCount(getEnvCount(abilityData, abilityType, entityInfo.getCreateEnvId(), createEnvSource));
         }
         abilityModel.setAbilityType(abilityType.getType());
         abilityModel.setAbilityName(abilityType.getName());
@@ -225,12 +235,12 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public EntityInfoModel map(AbilityEntityInfoWrapper entityInfo, AbilityType abilityType, List<CreateEnvJsonModel> createEnvSource) {
+    public EntityInfoModel map(AbilityEntityInfoWrapper entityInfo, AbilityType abilityType) {
         EntityInfoModel entityInfoModel = new EntityInfoModel();
         String entityType = entityInfo.getEntityType();
         int entityId = entityInfo.getEntityId();
         entityInfoModel.setEntityImage(imageService.getImageName(entityType, entityId));
-        entityInfoModel.setEntityName(getAbilityEntityName(abilityType, entityId, createEnvSource));
+        entityInfoModel.setEntityName(getAbilityEntityName(abilityType, entityId));
         if (Constants.EntityType.UNIT.getName().equals(entityType)) {
             entityInfoModel.setEntityNation(Util.getUnitNation(unitNations, localization.getNationNames(), entityId));
         }
@@ -522,6 +532,33 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
+    public List<EnvTag> mapEnvTags(Long tags) {
+        List<EnvTag> envTags = new ArrayList<>();
+        if (tags != null) {
+            List<Integer> tagIds = Util.getPositiveBitIndices(tags);
+            for (int tagId : tagIds) {
+                EnvTag envTag = new EnvTag();
+                envTag.setEnvId(tagId);
+                envTag.setEnvName(localization.getEnvSearchTagNames().get(tagId));
+                Map.Entry<Integer, EnvJsonModel> targetEnvEntry = envMap.entrySet().stream()
+                        .filter(envEntry -> envEntry.getValue().getSearchTags() != null)
+                        .filter(envEntry -> {
+                            List<Integer> searchTags = Util.getPositiveBitIndices(envEntry.getValue().getSearchTags());
+                            if (searchTags.size() != 1) {
+                                throw new IllegalStateException("Should be only 1 search tag for single env");
+                            }
+                            return tagId == searchTags.get(0);
+                        })
+                        .findAny()
+                        .orElseThrow();
+                envTag.setEnvImage(imageService.getImageName(Constants.EntityType.ENV.getName(), targetEnvEntry.getKey()));
+                envTags.add(envTag);
+            }
+        }
+        return envTags;
+    }
+
+    @Override
     public HealModel map(HealJsonModel healSource) {
         if (healSource == null) {
             return null;
@@ -570,14 +607,21 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         return result;
     }
 
-    private AbilityEntityInfoWrapper getAbilityEntityType(AbilityDataJsonModel abilityData) {
+    private AbilityEntityInfoWrapper getAbilityEntityInfo(AbilityDataJsonModel abilityData, List<CreateEnvJsonModel> createEnvSource) {
         Integer id = abilityData.getId();
         Integer research = abilityData.getResearch();
         Integer unit = abilityData.getUnit();
         AbilityEntityInfoWrapper result = new AbilityEntityInfoWrapper();
         if (id != null && research == null && unit == null) {
             result.setEntityType(Constants.EntityType.ENV.getName());
-            result.setEntityId(id);
+            result.setCreateEnvId(id);
+            String tag = createEnvSource.get(id).getTag();
+            int entityId = envMap.entrySet().stream()
+                    .filter(env -> tag.equals(env.getValue().getCreateTag()))
+                    .findAny()
+                    .orElseThrow()
+                    .getKey();
+            result.setEntityId(entityId);
         }
         if (id == null && research != null && unit == null) {
             result.setEntityType(Constants.EntityType.UPGRADE.getName());
@@ -590,9 +634,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         return result;
     }
 
-    private String getAbilityEntityName(AbilityType abilityType,
-                                        int entityId,
-                                        List<CreateEnvJsonModel> createEnvSource) {
+    private String getAbilityEntityName(AbilityType abilityType, int entityId) {
         switch (abilityType) {
             case CREATE_UNIT, TRANSFORM -> {
                 return localization.getUnitNames().get(entityId);
@@ -601,12 +643,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
                 return localization.getResearchNames().get(entityId);
             }
             case CREATE_ENV -> {
-                String tag = createEnvSource.get(entityId).getTag();
-                Map.Entry<Integer, EnvJsonModel> envEntry = envMap.entrySet().stream()
-                        .filter(env -> tag.equals(env.getValue().getCreateTag()))
-                        .findAny()
-                        .orElseThrow();
-                return localization.getEnvNames().get(envEntry.getKey());
+                return localization.getEnvNames().get(entityId);
             }
             default -> {
                 return null;
@@ -614,11 +651,11 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         }
     }
 
-    private Integer getEnvCount(AbilityDataJsonModel abilityData, AbilityType abilityType, int entityId, List<CreateEnvJsonModel> createEnvSource) {
+    private Integer getEnvCount(AbilityDataJsonModel abilityData, AbilityType abilityType, Integer createEnvId, List<CreateEnvJsonModel> createEnvSource) {
         Integer count = abilityData.getCount();
         //case for wheat
         if (count == null && abilityType == AbilityType.CREATE_ENV) {
-            count = createEnvSource.get(entityId).getCount();
+            count = createEnvSource.get(createEnvId).getCount();
         }
         return count;
     }

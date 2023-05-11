@@ -24,8 +24,8 @@
     create table ability_cost (
        ability_id bigint not null,
         image varchar(255),
-        resource varchar(255),
         resourceId integer not null,
+        resourceName varchar(255),
         value_ integer
     ) engine=InnoDB;
 
@@ -107,24 +107,24 @@
     create table building_fullCost (
        building_id bigint not null,
         image varchar(255),
-        resource varchar(255),
         resourceId integer not null,
+        resourceName varchar(255),
         value_ integer
     ) engine=InnoDB;
 
     create table building_healCost (
        building_id bigint not null,
         image varchar(255),
-        resource varchar(255),
         resourceId integer not null,
+        resourceName varchar(255),
         value_ integer
     ) engine=InnoDB;
 
     create table building_initCost (
        building_id bigint not null,
         image varchar(255),
-        resource varchar(255),
         resourceId integer not null,
+        resourceName varchar(255),
         value_ integer
     ) engine=InnoDB;
 
@@ -156,20 +156,35 @@
         primary key (id)
     ) engine=InnoDB;
 
+    create table envtag (
+       id bigint not null auto_increment,
+        envId integer not null,
+        envImage varchar(255),
+        envName varchar(255),
+        primary key (id)
+    ) engine=InnoDB;
+
     create table gather (
        id bigint not null auto_increment,
+        angle float(53),
         bagSize float(53),
         findTargetDistance float(53),
         gatherDistance float(53),
+        gatherId integer not null,
         perSecond float(53),
         putDistance float(53),
-        resource varchar(255),
+        image varchar(255),
+        resourceId integer not null,
+        resourceName varchar(255),
+        value_ integer,
+        storageTags varbinary(255),
+        unitTags varbinary(255),
         primary key (id)
     ) engine=InnoDB;
 
     create table gather_envTags (
        gather_id bigint not null,
-        envTags varchar(255)
+        envTags_id bigint not null
     ) engine=InnoDB;
 
     create table heal (
@@ -196,8 +211,8 @@
     create table income_value (
        income_id bigint not null,
         image varchar(255),
-        resource varchar(255),
         resourceId integer not null,
+        resourceName varchar(255),
         value_ integer
     ) engine=InnoDB;
 
@@ -378,6 +393,9 @@
     alter table account 
        add constraint UK_gex1lmaqpg0ir5g1f5eftyaa1 unique (username);
 
+    alter table gather_envTags 
+       add constraint UK_qeda4w5by446sv6reckqmwb1v unique (envTags_id);
+
     alter table localization 
        add constraint UK_j6j9h30eydn1rkg0etaayj2is unique (locale);
 
@@ -474,6 +492,11 @@
        add constraint FK6964irkx8f1eb2ht3ktfeg55c 
        foreign key (building_id) 
        references building (id);
+
+    alter table gather_envTags 
+       add constraint FKnfqjrf1r5gim88qhvry55slej 
+       foreign key (envTags_id) 
+       references envtag (id);
 
     alter table gather_envTags 
        add constraint FK22xc4voqbyj0h9qaih8vvcin3 

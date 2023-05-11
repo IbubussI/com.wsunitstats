@@ -1,9 +1,10 @@
 package com.wsunitstats.domain.submodel;
 
 import com.wsunitstats.domain.PersistentObject;
-import jakarta.persistence.ElementCollection;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -15,12 +16,16 @@ import java.util.List;
 @Setter
 @ToString
 public class GatherModel extends PersistentObject {
+    private int gatherId;
+    private Double angle;
     private Double bagSize;
     private Double findTargetDistance;
     private Double gatherDistance;
     private Double putDistance;
     private Double perSecond;
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> envTags;
-    private String resource;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<EnvTag> envTags;
+    private List<String> storageTags;
+    private List<String> unitTags;
+    private ResourceModel resource;
 }

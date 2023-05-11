@@ -144,8 +144,8 @@ public class UnitModelResolverImpl implements UnitModelResolver {
 
     private List<GatherModel> getGatherList(List<GatherJsonModel> gatherList) {
         return gatherList == null ? new ArrayList<>() :
-                gatherList.stream()
-                        .map(gatherJsonModel -> mappingService.map(gatherJsonModel))
+                IntStream.range(0, gatherList.size())
+                        .mapToObj(index -> mappingService.map(index, gatherList.get(index)))
                         .toList();
     }
 

@@ -4,6 +4,7 @@ import com.wsunitstats.domain.EntityInfoModel;
 import com.wsunitstats.domain.submodel.AirplaneModel;
 import com.wsunitstats.domain.submodel.BuildingModel;
 import com.wsunitstats.domain.submodel.ConstructionModel;
+import com.wsunitstats.domain.submodel.EnvTag;
 import com.wsunitstats.domain.submodel.HealModel;
 import com.wsunitstats.domain.submodel.IncomeModel;
 import com.wsunitstats.domain.submodel.ReserveModel;
@@ -56,9 +57,11 @@ import java.util.function.IntFunction;
 public interface ModelMappingService {
     ArmorModel map(ArmorJsonModel.Entry source, int probabilitiesSum);
 
-    GatherModel map(GatherJsonModel source);
+    GatherModel map(int index, GatherJsonModel source);
 
     List<ResourceModel> mapResources(List<Integer> source);
+
+    ResourceModel mapResource(Integer resourceId, Integer resourceValue);
 
     TransportingModel map(TransportingJsonModel transportingSource, TransportJsonModel transportSource);
 
@@ -70,7 +73,7 @@ public interface ModelMappingService {
                      List<CreateEnvJsonModel> createEnvSource,
                      AbilityOnActionJsonModel onActionSource);
 
-    EntityInfoModel map(AbilityEntityInfoWrapper entityInfo, Constants.AbilityType abilityType, List<CreateEnvJsonModel> createEnvSource);
+    EntityInfoModel map(AbilityEntityInfoWrapper entityInfo, Constants.AbilityType abilityType);
 
     ReserveModel map(WorkReserveJsonModel reserveSource);
 
@@ -112,6 +115,8 @@ public interface ModelMappingService {
      * Use this for unit tags
      */
     List<String> mapUnitTags(Long tags);
+
+    List<EnvTag> mapEnvTags(Long tags);
 
     HealModel map(HealJsonModel healSource);
 
