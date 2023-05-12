@@ -45,6 +45,8 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 import static com.wsunitstats.utils.Constants.LIVESTOCK_LIMIT;
+import static com.wsunitstats.utils.Constants.STORAGE_MULTIPLIER_DEFAULT;
+import static com.wsunitstats.utils.Constants.STORAGE_MULTIPLIER_MODIFIER;
 
 @Service
 public class UnitModelResolverImpl implements UnitModelResolver {
@@ -89,6 +91,12 @@ public class UnitModelResolverImpl implements UnitModelResolver {
             unit.setParentMustIdle(unitJsonModel.getParentMustIdle());
             unit.setHeal(mappingService.map(unitJsonModel.getHeal()));
             unit.setSize(Util.intToDoubleShift(unitJsonModel.getSize()));
+            Integer storageMultiplier = unitJsonModel.getStorageMultiplier();
+            if (storageMultiplier == null) {
+                unit.setStorageMultiplier((int) (STORAGE_MULTIPLIER_MODIFIER * STORAGE_MULTIPLIER_DEFAULT));
+            } else if (storageMultiplier != 0) {
+                unit.setStorageMultiplier((int) (STORAGE_MULTIPLIER_MODIFIER * storageMultiplier));
+            }
 
             AbilityWrapperJsonModel ability = unitJsonModel.getAbility();
             if (ability != null) {

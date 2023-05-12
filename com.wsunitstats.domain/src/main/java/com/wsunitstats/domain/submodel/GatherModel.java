@@ -20,6 +20,7 @@ public class GatherModel extends PersistentObject {
     private Double angle;
     private Double bagSize;
     private Double findTargetDistance;
+    private Double findStorageDistance;
     private Double gatherDistance;
     private Double putDistance;
     private Double perSecond;

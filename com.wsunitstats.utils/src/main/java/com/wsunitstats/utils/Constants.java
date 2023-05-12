@@ -22,6 +22,10 @@ public class Constants {
     public static final double INIT_HEALTH_MODIFIER = 1.5; // calculated by experiment
     public static final double BUILD_SPEED_MODIFIER = 0.238095; // calculated by experiment
     public static final int ACTIVE_RESOURCES = 3;
+    public static final double DEFAULT_GATHER_FIND_TARGET_DISTANCE = 100d;
+    public static final double DEFAULT_GATHER_FIND_STORAGE_DISTANCE = 16640d;
+    public static final double STORAGE_MULTIPLIER_MODIFIER = 100d / 65536d;
+    public static final double STORAGE_MULTIPLIER_DEFAULT = 65536d;
 
     private static final String UNDEF = "N/A";
 

@@ -43,6 +43,7 @@ public class UnitModel extends GenericEntityModel {
     private Boolean parentMustIdle;
     private Boolean receiveFriendlyDamage;
     private Integer threat;
+    private Integer storageMultiplier;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<AbilityModel> abilities;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

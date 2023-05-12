@@ -137,13 +137,17 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         gatherModel.setGatherId(index);
         gatherModel.setAngle(Util.intToDoubleShift(source.getAngle()));
         gatherModel.setBagSize(Util.intToDoubleShift(source.getBagsize()));
-        gatherModel.setGatherDistance(Util.intToDoubleShift(source.getGatherdistance()));
+        Double gatherDistance = Util.intToDoubleShift(source.getGatherdistance());
+        gatherModel.setGatherDistance(gatherDistance != null ? gatherDistance : 0);
         gatherModel.setPerSecond(Util.intToDoubleTick(source.getPertick()));
-        gatherModel.setFindTargetDistance(Util.intToDoubleShift(source.getFindtargetdistance()));
+        Integer findTargetDistance = source.getFindtargetdistance();
+        gatherModel.setFindTargetDistance(findTargetDistance != null ? Util.intToDoubleShift(findTargetDistance) : Constants.DEFAULT_GATHER_FIND_TARGET_DISTANCE);
+        // present only in game, probably hardcoded in the engine
+        gatherModel.setFindStorageDistance(Constants.DEFAULT_GATHER_FIND_STORAGE_DISTANCE);
         gatherModel.setPutDistance(Util.intToDoubleShift(source.getPutdistance()));
         gatherModel.setEnvTags(mapEnvTags(source.getEnvtags()));
-        gatherModel.setStorageTags(mapTags(source.getStoragetags(), i -> localization.getUnitTagNames().get(i)));
-        gatherModel.setUnitTags(mapTags(source.getUnitTags(), i -> localization.getUnitTagNames().get(i)));
+        gatherModel.setStorageTags(mapTags(source.getStoragetags(), i -> localization.getUnitSearchTagNames().get(i)));
+        gatherModel.setUnitTags(mapTags(source.getUnitTags(), i -> localization.getUnitSearchTagNames().get(i)));
         gatherModel.setResource(mapResource(source.getResource(), null));
         return gatherModel;
     }
@@ -569,7 +573,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         healModel.setPerSecond(Util.intToDoubleTick(healSource.getPerTick()));
         healModel.setSearchNextDistance(Util.intToDoubleShift(healSource.getSearchNextDistance()));
         healModel.setAutoSearchTargetDistance(Util.intToDoubleShift(healSource.getAutoSearchTargetDistance()));
-        healModel.setAutoSearchTargetPeriod(Util.intToDoubleTick(healSource.getAutoSearchTargetPeriod()));
+        healModel.setAutoSearchTargetPeriod(Util.intToDoubleShift(healSource.getAutoSearchTargetPeriod()));
         return healModel;
     }
 
