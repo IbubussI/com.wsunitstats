@@ -1,14 +1,17 @@
-import { Stack } from "@mui/material";
-import { BasicPaper } from "components/Atoms/BasicPaper";
+import { ResizableGrid } from "components/Layout/ResizableGrid";
 import { CommonTable } from "components/Tabs/Common/CommonTable";
+
+const MIN_WIDTH = 400;
+const OVERFLOW_WIDTH = 200;
+const COLUMN_WIDTH = 500;
 
 export const CommonTab = ({ unit }) => {
   return (
     <>
       <h3>Common properties</h3>
-      <Stack component={BasicPaper} sx={{ padding: 1, width: '100%', maxWidth: '500px' }}>
-        <CommonTable unit={unit} />
-      </Stack>
+      <ResizableGrid minWidth={MIN_WIDTH} columnWidth={COLUMN_WIDTH} paddingTop={1}>
+        <CommonTable unit={unit} overflowMinWidth={OVERFLOW_WIDTH}/>
+      </ResizableGrid>
     </>
   );
 }

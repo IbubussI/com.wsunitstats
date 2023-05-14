@@ -65,7 +65,7 @@ const ResourceRow = ({ data }) => {
     }}>
       <TableCell>
         <Typography variant={textVariant} color={textColor} sx={{ width: data.rowStyle.leftRowWidth }}>
-          {data.row.resource}
+          {data.row.resourceName}
         </Typography>
       </TableCell>
       <TableCell sx={{ width: data.rowStyle.rightRowWidth }}>

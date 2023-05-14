@@ -1,9 +1,9 @@
 import * as Data from "data";
 import * as Constants from "utils/constants";
 import { InfoButtonPopper } from "components/Atoms/ButtonPopper";
-import { ClassicTable } from "components/Atoms/ClassicTable";
-import { DoubleColumnFrame } from "components/Atoms/DoubleColumnFrame";
-import { FlexibleTable, FlexibleTableDoubleCellRow } from "components/Atoms/FlexibleTable";
+import { ClassicTable } from "components/Layout/ClassicTable";
+import { DoubleColumnFrame } from "components/Layout/DoubleColumnFrame";
+import { FlexibleTable, FlexibleTableDoubleCellRow } from "components/Layout/FlexibleTable";
 import { Resource } from "components/Atoms/Renderer";
 import { useSearchParams } from "react-router-dom";
 
@@ -11,7 +11,7 @@ const BUILD_COLUMNS = 1;
 const FLEX_TABLE_RIGHT_WIDTH = '65%';
 const FLEX_TABLE_LEFT_WIDTH = '35%';
 
-export const BuildingTable = ({ build }) => {
+export const BuildingTable = ({ build, overflowMinWidth }) => {
   const [searchParams] = useSearchParams();
 
   const buildData = [
@@ -89,7 +89,7 @@ export const BuildingTable = ({ build }) => {
         columns={BUILD_COLUMNS}
         rows={buildData.length}
         data={buildData}
-        minWidth='200px'
+        minWidth={overflowMinWidth}
       />
       {requirementsData &&
         <InfoButtonPopper label={requirementsData.label}>

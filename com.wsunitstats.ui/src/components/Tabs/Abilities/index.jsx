@@ -1,16 +1,18 @@
-import { Stack } from "@mui/material";
-import { BasicPaper } from "components/Atoms/BasicPaper";
+import { ResizableGrid } from "components/Layout/ResizableGrid";
 import { AbilityTable } from "components/Tabs/Abilities/AbilityTable"
+
+const MIN_WIDTH = 280;
+const COLUMN_WIDTH = 500;
 
 export const AbilitiesTab = ({ unit }) => {
   return (
     <>
       <h3>Abilities</h3>
-      <Stack component={BasicPaper} spacing={3.5} sx={{ padding: 1, paddingTop: 3, width: '100%', maxWidth: '500px' }}>
+      <ResizableGrid minWidth={MIN_WIDTH} columnWidth={COLUMN_WIDTH}>
         {unit.abilities.map((ability, index) =>
-          <AbilityTable key={index} ability={ability} />
+          <AbilityTable key={index} ability={ability} overflowMinWidth={MIN_WIDTH} />
         )}
-      </Stack>
+      </ResizableGrid>
     </>
   );
 }

@@ -2,19 +2,19 @@ import * as Constants from "utils/constants";
 import * as Utils from "utils/utils";
 import * as Data from "data";
 import { Stack } from "@mui/material";
-import { FlexibleTable, FlexibleTableDoubleCellRow } from "components/Atoms/FlexibleTable";
+import { FlexibleTable, FlexibleTableDoubleCellRow } from "components/Layout/FlexibleTable";
 import { EntityInfo, HeaderChip, SubValue, Text } from 'components/Atoms/Renderer';
-import { DoubleColumnTable } from "components/Atoms/DoubleColumnTable";
+import { DoubleColumnTable } from "components/Layout/DoubleColumnTable";
 import { InfoButtonPopper } from "components/Atoms/ButtonPopper";
 import { useSearchParams } from "react-router-dom";
-import { ClassicTable } from "components/Atoms/ClassicTable";
-import { DoubleColumnFrame } from "components/Atoms/DoubleColumnFrame";
+import { ClassicTable } from "components/Layout/ClassicTable";
+import { DoubleColumnFrame } from "components/Layout/DoubleColumnFrame";
 
 const ABILITY_COLUMNS = 1;
-const FLEX_TABLE_RIGHT_WIDTH = '73%';
-const FLEX_TABLE_LEFT_WIDTH = '27%';
+const FLEX_TABLE_RIGHT_WIDTH = '67%';
+const FLEX_TABLE_LEFT_WIDTH = '33%';
 
-export const AbilityTable = ({ ability }) => {
+export const AbilityTable = ({ ability, overflowMinWidth }) => {
   const [searchParams] = useSearchParams();
   const abilityData = [
     {
@@ -22,20 +22,24 @@ export const AbilityTable = ({ ability }) => {
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Target',
-        value: ability.entityInfo && {
-          primary: ability.entityInfo.entityName,
-          secondary: ability.entityInfo.entityNation,
-          image: {
-            path: ability.entityInfo.entityImage,
-            width: 35,
-            height: 35,
-          },
-          link: {
-            id: ability.entityInfo.entityId,
-            locale: searchParams.get(Constants.PARAM_LOCALE),
-            path: getAbilityRoute(ability.abilityType)
-          },
-          overflow: true
+        value: {
+          values: [
+            ability.entityInfo && {
+              primary: ability.entityInfo.entityName,
+              secondary: ability.entityInfo.entityNation,
+              image: {
+                path: ability.entityInfo.entityImage,
+                width: 35,
+                height: 35,
+              },
+              link: {
+                id: ability.entityInfo.entityId,
+                locale: searchParams.get(Constants.PARAM_LOCALE),
+                path: getAbilityRoute(ability.abilityType)
+              },
+              overflow: true
+            },
+          ].filter(element => element),
         },
         valueRenderer: EntityInfo,
         widthRight: FLEX_TABLE_RIGHT_WIDTH,
@@ -102,7 +106,7 @@ export const AbilityTable = ({ ability }) => {
         widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     }
-  ].filter(x => x.childData.value || x.childData.renderer);
+  ].filter(x => x.childData.value && (!x.childData.value.values || x.childData.value.values.length > 0));
 
   const onAction = ability.onAction;
   const buffData = !onAction ? undefined : {
@@ -196,7 +200,7 @@ export const AbilityTable = ({ ability }) => {
         rows={abilityData.length}
         data={abilityData}
         rowHeight='max-content'
-        minWidth='280px' />
+        minWidth={overflowMinWidth} />
     </DoubleColumnFrame>
   );
 }

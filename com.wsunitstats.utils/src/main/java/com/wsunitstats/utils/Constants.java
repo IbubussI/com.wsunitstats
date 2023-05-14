@@ -149,7 +149,8 @@ public class Constants {
         TURRET("Turret"),
         RANGE("Range"),
         MELEE("Melee"),
-        AERIAL_BOMB("Aerial bomb");
+        AERIAL_BOMB("Aerial bomb"),
+        SUICIDE("Suicide");
 
         private final String name;
 

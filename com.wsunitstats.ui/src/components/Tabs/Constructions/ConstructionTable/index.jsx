@@ -1,7 +1,7 @@
 import * as Constants from "utils/constants";
 import * as Utils from "utils/utils";
-import { DoubleColumnFrame } from "components/Atoms/DoubleColumnFrame";
-import { FlexibleTable, FlexibleTableDoubleCellRow } from "components/Atoms/FlexibleTable";
+import { DoubleColumnFrame } from "components/Layout/DoubleColumnFrame";
+import { FlexibleTable, FlexibleTableDoubleCellRow } from "components/Layout/FlexibleTable";
 import { EntityInfo, HeaderChip } from "components/Atoms/Renderer";
 import { useSearchParams } from "react-router-dom";
 
@@ -9,7 +9,7 @@ const BUILD_COLUMNS = 1;
 const FLEX_TABLE_RIGHT_WIDTH = '65%';
 const FLEX_TABLE_LEFT_WIDTH = '35%';
 
-export const ConstructionTable = ({ construction }) => {
+export const ConstructionTable = ({ construction, overflowMinWidth }) => {
   const [searchParams] = useSearchParams();
 
   const constructionData = [
@@ -18,20 +18,24 @@ export const ConstructionTable = ({ construction }) => {
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Target',
-        value: construction.entityInfo && {
-          primary: construction.entityInfo.entityName,
-          secondary: construction.entityInfo.entityNation,
-          image: {
-            path: construction.entityInfo.entityImage,
-            width: 35,
-            height: 35,
-          },
-          link: {
-            id: construction.entityInfo.entityId,
-            locale: searchParams.get(Constants.PARAM_LOCALE),
-            path: Utils.getEntityRoute('unit')
-          },
-          overflow: true
+        value: {
+          values: [
+            construction.entityInfo && {
+              primary: construction.entityInfo.entityName,
+              secondary: construction.entityInfo.entityNation,
+              image: {
+                path: construction.entityInfo.entityImage,
+                width: 35,
+                height: 35,
+              },
+              link: {
+                id: construction.entityInfo.entityId,
+                locale: searchParams.get(Constants.PARAM_LOCALE),
+                path: Utils.getEntityRoute('unit')
+              },
+              overflow: true
+            },
+          ].filter(element => element),
         },
         valueRenderer: EntityInfo,
         widthRight: FLEX_TABLE_RIGHT_WIDTH,
@@ -66,7 +70,7 @@ export const ConstructionTable = ({ construction }) => {
       id: construction.constructionId
     },
     valueRenderer: HeaderChip,
-    shift: 'calc(35% - 20px)'
+    shift: '21%'
   }
 
   return (
@@ -75,7 +79,7 @@ export const ConstructionTable = ({ construction }) => {
         columns={BUILD_COLUMNS}
         rows={constructionData.length}
         data={constructionData}
-        minWidth='200px'
+        minWidth={overflowMinWidth}
       />
     </DoubleColumnFrame>
   );

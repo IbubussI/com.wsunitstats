@@ -14,19 +14,23 @@ export const getRequirementsData = (requirements, locale) => {
       {
         renderer: EntityInfo,
         data: {
-          primary: unit.unitName,
-          secondary: unit.unitNation,
-          image: {
-            path: unit.unitImage,
-            width: 35,
-            height: 35,
-          },
-          link: {
-            id: unit.unitId,
-            locale: locale,
-            path: Utils.getEntityRoute('unit')
-          },
-          overflow: true
+          values: [
+            {
+              primary: unit.unitName,
+              secondary: unit.unitNation,
+              image: {
+                path: unit.unitImage,
+                width: 35,
+                height: 35,
+              },
+              link: {
+                id: unit.unitId,
+                locale: locale,
+                path: Utils.getEntityRoute('unit')
+              },
+              overflow: true
+            }
+          ]
         }
       },
       {
@@ -46,18 +50,22 @@ export const getRequirementsData = (requirements, locale) => {
       {
         renderer: EntityInfo,
         data: {
-          primary: research.researchName,
-          image: {
-            path: research.researchImage,
-            width: 35,
-            height: 35,
-          },
-          link: {
-            id: research.researchId,
-            locale: locale,
-            path: Utils.getEntityRoute('research')
-          },
-          overflow: true
+          values: [
+            {
+              primary: research.researchName,
+              image: {
+                path: research.researchImage,
+                width: 35,
+                height: 35,
+              },
+              link: {
+                id: research.researchId,
+                locale: locale,
+                path: Utils.getEntityRoute('research')
+              },
+              overflow: true
+            }
+          ]
         }
       },
     ]

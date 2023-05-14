@@ -34,6 +34,8 @@ export const getEntityRoute = (entityType) => {
       result = Constants.UNIT_PAGE_PATH;
       break;
     //case 'research': Constants.RESEARCH_PAGE_PATH; break; <-- TODO
+    //case 'env': Constants.ENV_PAGE_PATH; break; <-- TODO
+    //case 'resource': Constants.RESOURCE_PAGE_PATH; break; <-- TODO
     default: result = Constants.NO_LINK_INDICATOR;
   }
   return result;

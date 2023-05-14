@@ -38,7 +38,11 @@ export const SubValue = ({ data }) => {
   data.subValues.forEach((entry, index) => {
     let delimiter = data.subValues[index + 1] && typeof data.subValues[index + 1].value === 'number' ? ', ' : '';
     if (entry.value) {
-      subString = subString.concat(`${entry.label}:\u00A0${entry.value}${delimiter}`);
+      if (entry.label) {
+        subString = subString.concat(`${entry.label}:\u00A0${entry.value}${delimiter}`);
+      } else {
+        subString = subString.concat(`${entry.value}${delimiter}`);
+      }
     }
   });
   return (
@@ -53,36 +57,55 @@ export const SubValue = ({ data }) => {
   );
 }
 
+export const Tag = ({ data }) => {
+  return (
+    <Chip
+      label={data.tag}
+      onClick={data.onClick}
+      size='medium'
+      sx={{
+        borderRadius: '1000px', // to match any height
+        height: 'fit-content',
+        backgroundColor: 'rgb(24, 117, 238)',
+        textTransform: 'uppercase',
+        color: 'white',
+        '& span': {
+          fontWeight: 'bold',
+          fontSize: 11,
+          whiteSpace: 'normal',
+          textAlign: 'center',
+          paddingTop: '4px',
+          paddingBottom: '4px',
+        },
+        '&:hover': {
+          backgroundColor: 'rgb(139, 195, 255)'
+        },
+        '&:hover span': {
+          color: 'rgb(1, 113, 212)'
+        },
+      }} />
+  );
+}
+
 export const TagList = ({ data }) => {
   return (
     <>
       {data.tags && data.tags.map((tag, index) => (
-        <Box sx={{ paddingBottom: '1px' }}>
-          <Chip
-            key={index}
-            label={tag}
-            onClick={data.onClick}
-            size='small'
-            sx={{
-              width: 'max-content',
-              height: '19px',
-              backgroundColor: 'rgb(24, 117, 238)',
-              textTransform: 'uppercase',
-              color: 'white',
-              '& span': {
-                fontWeight: 'bold',
-                fontSize: 11
-              },
-              '&:hover': {
-                backgroundColor: 'rgb(139, 195, 255)'
-              },
-              '&:hover span': {
-                color: 'rgb(1, 113, 212)'
-              },
-            }} />
+        <Box key={index} sx={{ paddingBottom: '2px' }}>
+          <Tag data={{ tag: tag, onClick: () => {}}} />
         </Box>
       ))}
     </>
+  );
+}
+
+export const TagRow = ({ data }) => {
+  return (
+    <Stack direction='row' spacing={0.3}>
+      {data.tags && data.tags.map((tag, index) => (
+        <Tag key={index} data={{ tag: tag, onClick: () => {}}} />
+      ))}
+    </Stack>
   );
 }
 
@@ -100,15 +123,13 @@ export const Resource = ({ data }) => {
         marginLeft: '0'
       }}>
       {data.map((resource, index) =>
-        <Tooltip key={index} title={resource.resource}>
+        <Tooltip key={index} title={resource.resourceName}>
           <Stack direction='column' alignItems='center' sx={{ minWidth: '50px' }}>
-            <Box>
-              <Image data={{
-                path: resource.image,
-                width: 25,
-                height: 25,
-              }} />
-            </Box>
+            <Image data={{
+              path: resource.image,
+              width: 25,
+              height: 25,
+            }} />
             <Typography variant='body2' color='text.primary'>
               {resource.value}
             </Typography>
@@ -120,43 +141,92 @@ export const Resource = ({ data }) => {
 }
 
 export const EntityInfo = ({ data }) => {
-  let minWidth = data.overflow ? '0' : '';
-  let availableLines = data.secondary ? 1 : 2;
-  let overflow = data.overflow ? {
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    display: '-webkit-box',
-    WebkitLineClamp: availableLines,
-    WebkitBoxOrient: 'vertical',
-  } : '';
-  const LinkContent = () => {
+  const Entry = ({ entryData }) => {
+    const minWidth = entryData.overflow ? '0' : '';
+    const availableLines = entryData.secondary ? 1 : 2;
+    const overflow = entryData.overflow ? {
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      display: '-webkit-box',
+      WebkitLineClamp: availableLines,
+      WebkitBoxOrient: 'vertical',
+    } : '';
+
+    const LinkContent = () => {
+      return (
+        <Stack direction='row' alignItems='center'>
+          <Stack sx={{ marginRight: 0.4, height: 'fit-content' }}>
+            <Image data={entryData.image} />
+          </Stack>
+          <Stack minWidth={minWidth}>
+            <Typography variant='body2' lineHeight={1.2} sx={overflow}>
+              {entryData.primary}
+            </Typography>
+            {entryData.secondary && <Typography variant='caption' lineHeight={1.2}>
+              {entryData.secondary}
+            </Typography>}
+          </Stack>
+        </Stack>
+      );
+    }
+
     return (
-      <Stack direction='row' alignItems='center' id="2123">
-        <Stack sx={{ marginRight: 0.4, height: 'fit-content' }}>
-          <Image data={data.image} />
-        </Stack>
-        <Stack minWidth={minWidth}>
-          <Typography variant='body2' lineHeight={1.2} sx={overflow}>
-            {data.primary}
-          </Typography>
-          {data.secondary && <Typography variant='caption' lineHeight={1.2}>
-            {data.secondary}
-          </Typography>}
-        </Stack>
-      </Stack>
+      <>
+        {entryData?.link.path === Constants.NO_LINK_INDICATOR ?
+          <DisabledLink>
+            <LinkContent />
+          </DisabledLink>
+          :
+          <Link href={Utils.makeEntityLink(entryData.link)}>
+            <LinkContent />
+          </Link>}
+      </>
     );
   }
+
+  const direction = data.direction ? data.direction : 'row';
   return (
-    <>
-      {data.link.path === Constants.NO_LINK_INDICATOR ?
-        <DisabledLink>
-          <LinkContent />
-        </DisabledLink>
-        :
-        <Link href={Utils.makeEntityLink(data.link)}>
-          <LinkContent />
-        </Link>}
-    </>
+    <Stack direction={direction} gap={1}>
+      {data.values.map((entry, index) => <Entry key={index} entryData={entry} />)}
+    </Stack>
+  );
+}
+
+export const TransformInfo = ({ data }) => {
+  const From = data.fromRenderer;
+  const To = data.toRenderer;
+  return (
+    <Stack direction='row' sx={{
+      justifyContent: 'center',
+      alignContent: 'center',
+      alignItems: 'center',
+      padding: '10px',
+
+    }}>
+      <Box sx={{ flexGrow: 1, flexBasis: 0 }} >
+        <Box sx={{
+          maxWidth: 'max-content',
+          margin: 'auto'
+        }}>
+          <From data={data.from} />
+        </Box>
+      </Box>
+      <Box sx={{
+        fontSize: '40px',
+        lineHeight: '40px',
+        color: 'rgb(22, 124, 232)'
+      }}>
+        <i className="fa-solid fa-right-long"></i>
+      </Box>
+      <Box sx={{ flexGrow: 1, flexBasis: 0 }} >
+        <Box sx={{
+          maxWidth: 'max-content',
+          margin: 'auto'
+        }}>
+          <To data={data.to} />
+        </Box>
+      </Box>
+    </Stack>
   );
 }
 

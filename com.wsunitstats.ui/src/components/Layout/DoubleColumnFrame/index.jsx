@@ -67,6 +67,8 @@ export const DoubleColumnFrame = ({ children, childrenProps, column, borderLabel
         borderColor: borderColor,
         borderRadius: BORDER_RADIUS,
         position: 'relative',
+        height: '100%',
+        boxSizing: 'border-box'
       }}>
         {isBorderLabel && <BorderLabel data={borderLabel}/>}
         {childrenFiltered.map((child, index) => {

@@ -3,22 +3,20 @@ import { Stack } from '@mui/material';
 import {
   FlexibleTable,
   FlexibleTableDoubleCellRow,
-} from 'components/Atoms/FlexibleTable';
+} from 'components/Layout/FlexibleTable';
 import { HeaderChip, SubValue, TagList, Text } from 'components/Atoms/Renderer';
-import { DoubleColumnTable } from 'components/Atoms/DoubleColumnTable';
+import { DoubleColumnTable } from 'components/Layout/DoubleColumnTable';
 import { InfoButtonPopper } from "components/Atoms/ButtonPopper";
 import * as Constants from "utils/constants";
-import { DoubleColumnFrame } from 'components/Atoms/DoubleColumnFrame';
+import { DoubleColumnFrame } from 'components/Layout/DoubleColumnFrame';
 
 const STATS_COLUMNS = 2;
-const STATS_ROWS = 4;
+const STATS_ROWS = 5;
 const FLEX_TABLE_RIGHT_WIDTH = '52%';
 const FLEX_TABLE_LEFT_WIDTH = '48%';
  
-export const WeaponTable = ({ item, isTurret }) => {
-  const weapon = isTurret ? item.weapon : item;
-  const turretRotationSpeed = item.turretRotationSpeed;
-  const turretId = item.turretId;
+export const WeaponTable = ({ item, overflowMinWidth }) => {
+  const weapon = item.weapon;
   
   const attacksNumber = weapon.damagesCount * weapon.attacksPerAttack * weapon.attacksPerAction;
 
@@ -116,8 +114,7 @@ export const WeaponTable = ({ item, isTurret }) => {
         baseline: true,
         renderer: TagList,
         value: weapon.buff?.affectedUnits && {
-          tags: weapon.buff.affectedUnits,
-          onClick: handleClick,
+          tags: weapon.buff.affectedUnits
         }
       }
     ].filter(element => element.value !== undefined)
@@ -144,8 +141,7 @@ export const WeaponTable = ({ item, isTurret }) => {
         labelBaseline: true,
         renderer: TagList,
         value: weapon.envsAffected && {
-          tags: weapon.envsAffected,
-          onClick: handleClick,
+          tags: weapon.envsAffected
         }
       }
     ].filter(element => element.value !== undefined)
@@ -186,7 +182,7 @@ export const WeaponTable = ({ item, isTurret }) => {
             },
             {
               label: 'angle',
-              value: weapon.angle
+              value: weapon.damageAngle
             }
           ]
         },
@@ -215,11 +211,21 @@ export const WeaponTable = ({ item, isTurret }) => {
       }
     },
     {
+      column: 1,
+      renderer: FlexibleTableDoubleCellRow,
+      childData: {
+        label: 'Angle',
+        value: weapon.angle,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
+      }
+    },
+    {
       column: 2,
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Rotation speed',
-        value: turretRotationSpeed,
+        value: item.turretRotationSpeed,
         widthRight: FLEX_TABLE_RIGHT_WIDTH,
         widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
@@ -240,6 +246,16 @@ export const WeaponTable = ({ item, isTurret }) => {
       childData: {
         label: 'Ground attack\u00A0(X)',
         value: '' + !!weapon.attackGround,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
+      }
+    },
+    {
+      column: 2,
+      renderer: FlexibleTableDoubleCellRow,
+      childData: {
+        label: 'Auto attack',
+        value: '' + !!weapon.autoAttack,
         widthRight: FLEX_TABLE_RIGHT_WIDTH,
         widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
@@ -269,8 +285,8 @@ export const WeaponTable = ({ item, isTurret }) => {
   const disabled = weapon.enabled === false && 'disabled';
   const labelData = {
     value: {
-      tooltip: isTurret ? "Turret ID #" + turretId : "Weapon ID #" + weapon.weaponId,
-      id: isTurret ? "T" + turretId : "W" + weapon.weaponId,
+      tooltip: item.isTurret ? "Turret ID #" + item.turretId : "Weapon ID #" + weapon.weaponId,
+      id: item.isTurret ? "T" + item.turretId : "W" + weapon.weaponId,
       label: weapon.weaponType,
       disabled: disabled
     },
@@ -305,11 +321,7 @@ export const WeaponTable = ({ item, isTurret }) => {
         rows={STATS_ROWS}
         data={weaponData}
         rowHeight='max-content'
-        minWidth='340px' />
+        minWidth={overflowMinWidth} />
     </DoubleColumnFrame>
   );
 }
-
-const handleClick = () => {
-  // tbd
-};

@@ -8,6 +8,10 @@ import { WeaponTab } from 'components/Tabs/Weapons';
 import { AbilitiesTab } from 'components/Tabs/Abilities';
 import { BuildingTab } from 'components/Tabs/Building';
 import { ConstructionsTab } from 'components/Tabs/Constructions';
+import { GatheringTab } from 'components/Tabs/Gathering';
+import { HealTab } from 'components/Tabs/Heal';
+import { AirplaneTab } from 'components/Tabs/Airplane';
+import { SubmarineTab } from 'components/Tabs/Submarine';
 
 export const UnitView = ({ unit }) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -40,9 +44,33 @@ export const UnitView = ({ unit }) => {
     },
     {
       id: Constants.UNIT_CONSTRUCTION_TAB,
-      label: 'Construction',
+      label: 'Construct',
       component: ConstructionsTab,
       isShow: unit?.construction
+    },
+    {
+      id: Constants.UNIT_GATHER_TAB,
+      label: 'Gather',
+      component: GatheringTab,
+      isShow: unit?.gather
+    },
+    {
+      id: Constants.UNIT_HEAL_TAB,
+      label: 'Heal',
+      component: HealTab,
+      isShow: unit?.heal
+    },
+    {
+      id: Constants.UNIT_AIRPLANE_TAB,
+      label: 'Airplane',
+      component: AirplaneTab,
+      isShow: unit?.airplane
+    },
+    {
+      id: Constants.UNIT_SUBMARINE_TAB,
+      label: 'Submarine',
+      component: SubmarineTab,
+      isShow: unit?.submarine
     },
   ].filter(element => element.isShow);
 

@@ -1,16 +1,16 @@
 import { ResizableGrid } from "components/Layout/ResizableGrid";
-import { BuildingTable } from "components/Tabs/Building/BuildingTable";
+import { HealTable } from "components/Tabs/Heal/HealTable";
 
 const MIN_WIDTH = 250;
 const OVERFLOW_WIDTH = 200;
-const COLUMN_WIDTH = 450;
+const COLUMN_WIDTH = 500;
 
-export const BuildingTab = ({ unit }) => {
+export const HealTab = ({ unit }) => {
   return (
     <>
-      <h3>Building</h3>
+      <h3>Heal</h3>
       <ResizableGrid minWidth={MIN_WIDTH} columnWidth={COLUMN_WIDTH} paddingTop={1}>
-        <BuildingTable build={unit.build} overflowMinWidth={OVERFLOW_WIDTH}/>
+        <HealTable heal={unit.heal} overflowMinWidth={OVERFLOW_WIDTH} />
       </ResizableGrid>
     </>
   );

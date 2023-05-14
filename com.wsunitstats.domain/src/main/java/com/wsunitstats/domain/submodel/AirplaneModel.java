@@ -16,12 +16,12 @@ import java.util.List;
 @ToString
 public class AirplaneModel extends PersistentObject {
     private Double healingSpeed;
-    private Double rechargingSpeed;
-    private Double refuelingSpeed;
+    private Double refuelSpeed;
+    private Double rechargePeriod;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> aerodromeTags;
     // In seconds of fly time
-    private Double flyTime;
+    private Double fuel;
     private Double flyHeight;
     private Boolean kamikaze;
     private Integer ascensionSpeed;

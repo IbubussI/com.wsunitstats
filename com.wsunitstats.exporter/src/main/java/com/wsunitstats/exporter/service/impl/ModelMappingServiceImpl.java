@@ -314,7 +314,8 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     public WeaponModel map(int weaponId,
                            WeaponJsonModel weaponSource,
                            Boolean attackGround,
-                           boolean isTurret) {
+                           boolean isTurret,
+                           Integer onDeathId) {
         if (weaponSource == null) {
             return null;
         }
@@ -339,10 +340,11 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         weaponModel.setAttacksPerAction(attacksPerAction);
         weaponModel.setAttacksPerAttack(getMultipliable(weaponSource.getAttackscount()));
         weaponModel.setCharges(weaponSource.getCharges());
+        weaponModel.setAngle(Util.intToDoubleShift(weaponSource.getAngle()));
 
         DamageJsonModel damageSource = weaponSource.getDamage();
         weaponModel.setAreaType(Constants.DamageAreaType.get(damageSource.getArea()).getName());
-        weaponModel.setAngle(Util.intToDoubleShift(damageSource.getAngle()));
+        weaponModel.setDamageAngle(Util.intToDoubleShift(damageSource.getAngle()));
         weaponModel.setBuff(map(damageSource.getBuff()));
         weaponModel.setDamageFriendly(damageSource.getDamageFriendly());
         weaponModel.setDamages(mapDamages(damageSource.getDamages()));
@@ -351,7 +353,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         weaponModel.setEnvsAffected(mapTags(damageSource.getEnvsAffected(), i -> localization.getEnvSearchTagNames().get(i)));
         weaponModel.setRadius(Util.intToDoubleShift(damageSource.getRadius()));
 
-        weaponModel.setWeaponType(getWeaponType(isTurret, weaponModel));
+        weaponModel.setWeaponType(getWeaponType(isTurret, weaponModel, onDeathId));
         return weaponModel;
     }
 
@@ -484,7 +486,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
             return null;
         }
         AirplaneModel airplaneModel = new AirplaneModel();
-        airplaneModel.setFlyTime(Util.intToDoubleShift(airplaneSource.getFuel()));
+        airplaneModel.setFuel(Util.intToDoubleShift(airplaneSource.getFuel()));
         airplaneModel.setKamikaze(airplaneSource.getMoveAsFallDown());
         airplaneModel.setFlyHeight(Util.intToDoubleShift(airplaneSource.getHeightAboveSurface()));
         airplaneModel.setAscensionSpeed(airplaneSource.getAscensionalRate());
@@ -492,9 +494,8 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         if (aerodromeSource != null) {
             airplaneModel.setAerodromeTags(mapTags(aerodromeSource.getTags(), i -> localization.getUnitSearchTagNames().get(i)));
             airplaneModel.setHealingSpeed(Util.intToDoubleTick(aerodromeSource.getHealingSpeed()));
-            Double rechargePeriod = Util.intToDoubleShift(aerodromeSource.getRechargingPeriod());
-            airplaneModel.setRechargingSpeed(rechargePeriod == null ? null : 1d / rechargePeriod);
-            airplaneModel.setRefuelingSpeed(Util.intToDoubleTick(aerodromeSource.getRefuelingSpeed()));
+            airplaneModel.setRechargePeriod(Util.intToDoubleShift(aerodromeSource.getRechargingPeriod()));
+            airplaneModel.setRefuelSpeed(Util.intToDoubleTick(aerodromeSource.getRefuelingSpeed()));
         }
         return airplaneModel;
     }
@@ -732,11 +733,13 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         return Util.intToDoubleShift(progress) * Constants.BUILD_SPEED_MODIFIER;
     }
 
-    private String getWeaponType(boolean isTurret, WeaponModel weaponModel) {
+    private String getWeaponType(boolean isTurret, WeaponModel weaponModel, Integer onDeathId) {
         if (isTurret) {
             return Constants.WeaponType.TURRET.getName();
         } else if (weaponModel.getCharges() != null) {
             return Constants.WeaponType.AERIAL_BOMB.getName();
+        } else if (onDeathId != null && weaponModel.getWeaponId() == onDeathId) {
+            return Constants.WeaponType.SUICIDE.getName();
         } else {
             return weaponModel.getSpread() != null ? Constants.WeaponType.RANGE.getName() : Constants.WeaponType.MELEE.getName();
         }

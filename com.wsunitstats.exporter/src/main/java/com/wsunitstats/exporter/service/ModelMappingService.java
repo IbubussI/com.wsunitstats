@@ -84,7 +84,8 @@ public interface ModelMappingService {
     WeaponModel map(int weaponId,
                     WeaponJsonModel weaponSource,
                     Boolean attackGround,
-                    boolean isTurret);
+                    boolean isTurret,
+                    Integer onDeathId);
 
     List<DamageModel> mapDamages(List<List<Integer>> damagesSource);
 

@@ -1,20 +1,21 @@
 import * as React from 'react';
-import { FlexibleTable, FlexibleTableDoubleCellRow } from 'components/Atoms/FlexibleTable';
+import { FlexibleTable, FlexibleTableDoubleCellRow } from 'components/Layout/FlexibleTable';
 import { Stack } from '@mui/material';
-import { DoubleColumnFrame } from 'components/Atoms/DoubleColumnFrame';
+import { DoubleColumnFrame } from 'components/Layout/DoubleColumnFrame';
 import { ArmorChart } from '../ArmorChart';
+import { TagBox } from 'components/Atoms/TagBox';
 
 const COMMON_COLUMN = 1;
 const FLEX_TABLE_RIGHT_WIDTH = '50%';
 const FLEX_TABLE_LEFT_WIDTH = '50%';
 
-export const CommonTable = ({ unit }) => {
+export const CommonTable = ({ unit, overflowMinWidth }) => {
   const commonData = [
     createRowData('Game ID', unit.gameId),
     createRowData('Nation', unit.nation),
+    createRowData('Health', unit.health),
     createRowData('View Range', unit.viewRange),
     createRowData('Size', unit.size),
-    createRowData('Health', unit.health),
     createRowData('Regeneration Speed', unit.regenerationSpeed, 'hp/sec'),
 
     createRowData('Movement Speed', unit.movement?.speed),
@@ -28,47 +29,69 @@ export const CommonTable = ({ unit }) => {
     createRowData('Gives population', unit.supply?.produce),
     createRowData('Limit', unit.limit),
 
-    createRowData('Receives friendly\u00A0DMG', unit.receiveFriendlyDamage === false ? 'False' : 'True'),
-    createRowData('Parent must not move', unit.parentMustIdle ? 'True' : null),
-    createRowData('Controllable', unit.controllable === undefined || unit.controllable ? 'True' : 'False'),
+    createRowData('Receives friendly\u00A0dmg', '' + !!unit.receiveFriendlyDamage),
+    createRowData('Parent must not move', unit.parentMustIdle ? '' + true : null),
+    createRowData('Controllable', '' + !!unit.controllable),
+
+    createRowData('Storage efficiency', unit.storageMultiplier && unit.storageMultiplier + '%'),
 
     createRowData('Threat', unit.threat),
+    createRowData('Weight', unit.weight),
+    createRowData('Death weapon', typeof unit.weaponOnDeath === 'number' ? ('W' + unit.weaponOnDeath) : null),
   ].filter(element => element);
 
+  const searchTagsData = {
+    label: 'Search tags:',
+    tags: unit.searchTags
+  };
+
+  const tagsData = {
+    label: 'Unit tags:',
+    tags: unit.tags
+  };
+
   return (
-    <DoubleColumnFrame childrenProps={[null, { overflow: 'auto', width: '100%' }]}>
-      <Stack alignItems='center'>
-        <h3 style={{ marginBlockStart: '0.65em', marginBlockEnd: '0.65em', maxWidth: '150px', textAlign: 'center' }}>{unit.name}</h3>
-        <Stack sx={{
-          width: '150px',
-          height: '150px',
-          justifyContent: 'center',
-          alignItems: 'center',
-          border: '1px solid',
-        }}>
-          <img style={{ border: '5px solid #555', boxSizing: 'border-box' }} src={`/files/images/${unit.image}`} alt="" />
+    <Stack spacing={0.5}>
+      <DoubleColumnFrame childrenProps={[null, { overflow: 'auto', width: '100%' }]}>
+        <Stack alignItems='center'>
+          <h3 style={{ marginBlockStart: '0.4em', marginBlockEnd: '0.65em', maxWidth: '150px', textAlign: 'center' }}>{unit.name}</h3>
+          <Stack sx={{
+            width: '150px',
+            height: '150px',
+            justifyContent: 'center',
+            alignItems: 'center',
+            border: '1px solid',
+          }}>
+            <img style={{ border: '5px solid #555', boxSizing: 'border-box' }} src={`/files/images/${unit.image}`} alt="" />
+          </Stack>
+          {unit.armor?.length > 0 &&
+            <>
+              <h3>Armor</h3>
+              <ArmorChart
+                content={unit.armor}
+                valuePrefix={'Thickness: '}
+                colors={[
+                  'rgba(122, 16, 16, 1)',
+                  'rgba(168, 87, 15, 1)',
+                  'rgba(168, 116, 15, 1)',
+                  'rgba(15, 132, 21, 1)',
+                ]} />
+            </>}
         </Stack>
-        {unit.armor?.length > 0 &&
-          <>
-            <h3>Armor</h3>
-            <ArmorChart
-              content={unit.armor}
-              valuePrefix={'Thickness: '}
-              colors={[
-                'rgba(122, 16, 16, 1)',
-                'rgba(168, 87, 15, 1)',
-                'rgba(168, 116, 15, 1)',
-                'rgba(15, 132, 21, 1)',
-              ]} />
-          </>}
-      </Stack>
-      <FlexibleTable
-        columns={COMMON_COLUMN}
-        rows={commonData.length}
-        data={commonData}
-        rowHeight='max-content'
-        minWidth='200px' />
-    </DoubleColumnFrame>
+        <FlexibleTable
+          columns={COMMON_COLUMN}
+          rows={commonData.length}
+          data={commonData}
+          rowHeight='max-content'
+          minWidth={overflowMinWidth} />
+      </DoubleColumnFrame>
+      <DoubleColumnFrame childrenProps={[null, null]} column>
+        <>
+          <TagBox tagsData={searchTagsData} />
+          <TagBox tagsData={tagsData} />
+        </>
+      </DoubleColumnFrame>
+    </Stack>
   );
 }
 

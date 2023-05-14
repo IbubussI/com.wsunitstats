@@ -87,7 +87,7 @@ public class UnitModelResolverImpl implements UnitModelResolver {
             unit.setViewRange(Util.intToDoubleShift(unitJsonModel.getViewRange()));
             unit.setTags(mappingService.mapUnitTags(unitJsonModel.getTags()));
             unit.setSearchTags(mappingService.mapTags(unitJsonModel.getSearchTags(), i -> localizationKeyModel.getUnitSearchTagNames().get(i)));
-            unit.setControllable(unitJsonModel.getControllable());
+            unit.setControllable(Util.getInvertedBoolean(unitJsonModel.getControllable()));
             unit.setParentMustIdle(unitJsonModel.getParentMustIdle());
             unit.setHeal(mappingService.map(unitJsonModel.getHeal()));
             unit.setSize(Util.intToDoubleShift(unitJsonModel.getSize()));
@@ -108,7 +108,7 @@ public class UnitModelResolverImpl implements UnitModelResolver {
                 unit.setArmor(getArmorList(deathability.getArmor()));
                 unit.setRegenerationSpeed(Util.intToDoubleTick(deathability.getRegeneration()));
                 unit.setThreat(deathability.getThreat());
-                unit.setReceiveFriendlyDamage(deathability.getReceiveFriendlyDamage());
+                unit.setReceiveFriendlyDamage(Util.getInvertedBoolean(deathability.getReceiveFriendlyDamage()));
                 unit.setLifetime(Util.intToDoubleShift(deathability.getLifeTime()));
                 unit.setHealth(Util.intToDoubleShift(deathability.getHealth()));
             }
@@ -116,10 +116,11 @@ public class UnitModelResolverImpl implements UnitModelResolver {
             AttackJsonModel attack = unitJsonModel.getAttack();
             String externalData = unitTypeMap.get(id).getExternalData();
             if (attack != null) {
-                unit.setWeapons(getWeaponsList(attack.getWeapons(), externalData, false));
+                Integer onDeathId = attack.getWeaponUseOnDeath();
+                unit.setWeapons(getWeaponsList(attack.getWeapons(), externalData, false, onDeathId));
                 unit.setTurrets(getTurretList(attack.getTurrets(), externalData));
                 unit.setSupply(mappingService.map(unitJsonModel.getSupply()));
-                unit.setWeaponOnDeath(attack.getWeaponUseOnDeath());
+                unit.setWeaponOnDeath(onDeathId);
             }
 
             MovementJsonModel movement = unitJsonModel.getMovement();
@@ -131,6 +132,7 @@ public class UnitModelResolverImpl implements UnitModelResolver {
                 unit.setGather(getGatherList(movement.getGather()));
                 unit.setConstruction(getConstructionList(movement.getBuilding()));
                 unit.setMovement(mappingService.map(movement));
+                unit.setWeight(movement.getWeight());
             } else {
                 unit.setTransporting(mappingService.map(null, unitJsonModel.getTransport()));
             }
@@ -188,12 +190,13 @@ public class UnitModelResolverImpl implements UnitModelResolver {
 
     private List<WeaponModel> getWeaponsList(List<WeaponJsonModel> weaponList,
                                              String attackGroundString,
-                                             boolean isTurret) {
+                                             boolean isTurret,
+                                             Integer onDeathId) {
         List<WeaponModel> result = new ArrayList<>();
         if (weaponList != null) {
             GroundAttackDataWrapper attackGroundData = mappingService.map(attackGroundString);
             result = IntStream.range(0, weaponList.size())
-                    .mapToObj(index -> mappingService.map(index, weaponList.get(index), getAttackGround(attackGroundData, isTurret, index), isTurret))
+                    .mapToObj(index -> mappingService.map(index, weaponList.get(index), getAttackGround(attackGroundData, isTurret, index), isTurret, onDeathId))
                     .toList();
         }
         return result;
@@ -205,7 +208,7 @@ public class UnitModelResolverImpl implements UnitModelResolver {
                 IntStream.range(0, turretList.size())
                 .mapToObj(index -> {
                     TurretJsonModel turret = turretList.get(index);
-                    return mappingService.map(index, turret, getWeaponsList(turret.getWeapons(), attackGroundString, true));
+                    return mappingService.map(index, turret, getWeaponsList(turret.getWeapons(), attackGroundString, true, null));
                 })
                 .toList();
     }

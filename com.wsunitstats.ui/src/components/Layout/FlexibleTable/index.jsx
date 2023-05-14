@@ -29,7 +29,7 @@ export const FlexibleTable = ({ columns, rows, data, minWidth }) => {
             key={index}
             gridColumn={column}
             gridRow={`${row} / ${rowSpan}`}
-            minHeight={'45px'}
+            minHeight='45px'
             backgroundColor={backgroundColor}
             overflow='hidden'>
             <Renderer data={entry.childData} />

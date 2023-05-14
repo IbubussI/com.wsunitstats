@@ -36,13 +36,14 @@ public class UnitModel extends GenericEntityModel {
     private Double health;
     private Double regenerationSpeed;
     private Integer weaponOnDeath;
-    private Boolean controllable;
+    private boolean controllable;
     private List<String> tags;
     private List<String> searchTags;
     private Double lifetime;
     private Boolean parentMustIdle;
     private Boolean receiveFriendlyDamage;
     private Integer threat;
+    private Integer weight;
     private Integer storageMultiplier;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<AbilityModel> abilities;
