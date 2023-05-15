@@ -1,6 +1,8 @@
 package com.wsunitstats.domain.submodel;
 
+import com.wsunitstats.domain.EntityInfoModel;
 import com.wsunitstats.domain.PersistentObject;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +14,9 @@ import lombok.ToString;
 @ToString
 public class ConstructionModel extends PersistentObject {
 	private Double distance;
-    private Integer buildId;
+    private int constructionId;
+    @Embedded
+    private EntityInfoModel entityInfo;
     // %/sec
     private Double constructionSpeed;
 }

@@ -4,6 +4,7 @@ import com.wsunitstats.domain.EntityInfoModel;
 import com.wsunitstats.domain.submodel.AirplaneModel;
 import com.wsunitstats.domain.submodel.BuildingModel;
 import com.wsunitstats.domain.submodel.ConstructionModel;
+import com.wsunitstats.domain.submodel.EnvTag;
 import com.wsunitstats.domain.submodel.HealModel;
 import com.wsunitstats.domain.submodel.IncomeModel;
 import com.wsunitstats.domain.submodel.ReserveModel;
@@ -89,7 +90,6 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     private static final Pattern ATTACK_GROUND_PATTERN = Pattern.compile("\\{\"groundAttack\":\\[([0-9]+),([0-9]+)]}");
     private static final int PROBABILITY_MAX = 100;
 
-
     @Autowired
     private ImageService imageService;
     @Autowired
@@ -129,18 +129,26 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public GatherModel map(GatherJsonModel source) {
+    public GatherModel map(int index, GatherJsonModel source) {
         if (source == null) {
             return null;
         }
         GatherModel gatherModel = new GatherModel();
+        gatherModel.setGatherId(index);
+        gatherModel.setAngle(Util.intToDoubleShift(source.getAngle()));
         gatherModel.setBagSize(Util.intToDoubleShift(source.getBagsize()));
-        gatherModel.setGatherDistance(Util.intToDoubleShift(source.getGatherdistance()));
+        Double gatherDistance = Util.intToDoubleShift(source.getGatherdistance());
+        gatherModel.setGatherDistance(gatherDistance != null ? gatherDistance : 0);
         gatherModel.setPerSecond(Util.intToDoubleTick(source.getPertick()));
-        gatherModel.setFindTargetDistance(Util.intToDoubleShift(source.getFindtargetdistance()));
+        Integer findTargetDistance = source.getFindtargetdistance();
+        gatherModel.setFindTargetDistance(findTargetDistance != null ? Util.intToDoubleShift(findTargetDistance) : Constants.DEFAULT_GATHER_FIND_TARGET_DISTANCE);
+        // present only in game, probably hardcoded in the engine
+        gatherModel.setFindStorageDistance(Constants.DEFAULT_GATHER_FIND_STORAGE_DISTANCE);
         gatherModel.setPutDistance(Util.intToDoubleShift(source.getPutdistance()));
-        gatherModel.setEnvTags(mapTags(source.getEnvtags(), i -> localization.getEnvSearchTagNames().get(i)));
-        gatherModel.setResource(localization.getResourceNames().get(source.getResource()));
+        gatherModel.setEnvTags(mapEnvTags(source.getEnvtags()));
+        gatherModel.setStorageTags(mapTags(source.getStoragetags(), i -> localization.getUnitSearchTagNames().get(i)));
+        gatherModel.setUnitTags(mapTags(source.getUnitTags(), i -> localization.getUnitSearchTagNames().get(i)));
+        gatherModel.setResource(mapResource(source.getResource(), null));
         return gatherModel;
     }
 
@@ -149,15 +157,20 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         List<ResourceModel> resources = new ArrayList<>();
         if (source != null && !source.isEmpty()) {
             for (int i = 0; i < Constants.ACTIVE_RESOURCES; ++i) {
-                ResourceModel resource = new ResourceModel();
-                resource.setResourceId(i);
-                resource.setResource(localization.getResourceNames().get(i));
-                resource.setValue(Util.intToDoubleShift(source.get(i)).intValue());
-                resource.setImage(imageService.getImageName(Constants.EntityType.RESOURCE.getName(), i));
-                resources.add(resource);
+                resources.add(mapResource(i, Util.intToDoubleShift(source.get(i)).intValue()));
             }
         }
         return resources;
+    }
+
+    @Override
+    public ResourceModel mapResource(Integer resourceId, Integer resourceValue) {
+        ResourceModel resource = new ResourceModel();
+        resource.setResourceId(resourceId);
+        resource.setResourceName(localization.getResourceNames().get(resourceId));
+        resource.setValue(resourceValue);
+        resource.setImage(imageService.getImageName(Constants.EntityType.RESOURCE.getName(), resourceId));
+        return resource;
     }
 
     @Override
@@ -199,11 +212,11 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         AbilityModel abilityModel = new AbilityModel();
         AbilityType abilityType = getAbilityType(abilitySource);
         AbilityDataJsonModel abilityData = abilitySource.getData();
-        AbilityEntityInfoWrapper entityInfo = getAbilityEntityType(abilityData);
+        AbilityEntityInfoWrapper entityInfo = getAbilityEntityInfo(abilityData, createEnvSource);
         Integer entityId = entityInfo.getEntityId();
         if (entityId != null) {
-            abilityModel.setEntityInfo(map(entityInfo, abilityType, createEnvSource));
-            abilityModel.setCount(getEnvCount(abilityData, abilityType, entityId, createEnvSource));
+            abilityModel.setEntityInfo(map(entityInfo, abilityType));
+            abilityModel.setCount(getEnvCount(abilityData, abilityType, entityInfo.getCreateEnvId(), createEnvSource));
         }
         abilityModel.setAbilityType(abilityType.getType());
         abilityModel.setAbilityName(abilityType.getName());
@@ -226,12 +239,12 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public EntityInfoModel map(AbilityEntityInfoWrapper entityInfo, AbilityType abilityType, List<CreateEnvJsonModel> createEnvSource) {
+    public EntityInfoModel map(AbilityEntityInfoWrapper entityInfo, AbilityType abilityType) {
         EntityInfoModel entityInfoModel = new EntityInfoModel();
         String entityType = entityInfo.getEntityType();
         int entityId = entityInfo.getEntityId();
         entityInfoModel.setEntityImage(imageService.getImageName(entityType, entityId));
-        entityInfoModel.setEntityName(getAbilityEntityName(abilityType, entityId, createEnvSource));
+        entityInfoModel.setEntityName(getAbilityEntityName(abilityType, entityId));
         if (Constants.EntityType.UNIT.getName().equals(entityType)) {
             entityInfoModel.setEntityNation(Util.getUnitNation(unitNations, localization.getNationNames(), entityId));
         }
@@ -301,7 +314,8 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     public WeaponModel map(int weaponId,
                            WeaponJsonModel weaponSource,
                            Boolean attackGround,
-                           boolean isTurret) {
+                           boolean isTurret,
+                           Integer onDeathId) {
         if (weaponSource == null) {
             return null;
         }
@@ -326,10 +340,11 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         weaponModel.setAttacksPerAction(attacksPerAction);
         weaponModel.setAttacksPerAttack(getMultipliable(weaponSource.getAttackscount()));
         weaponModel.setCharges(weaponSource.getCharges());
+        weaponModel.setAngle(Util.intToDoubleShift(weaponSource.getAngle()));
 
         DamageJsonModel damageSource = weaponSource.getDamage();
         weaponModel.setAreaType(Constants.DamageAreaType.get(damageSource.getArea()).getName());
-        weaponModel.setAngle(Util.intToDoubleShift(damageSource.getAngle()));
+        weaponModel.setDamageAngle(Util.intToDoubleShift(damageSource.getAngle()));
         weaponModel.setBuff(map(damageSource.getBuff()));
         weaponModel.setDamageFriendly(damageSource.getDamageFriendly());
         weaponModel.setDamages(mapDamages(damageSource.getDamages()));
@@ -338,7 +353,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         weaponModel.setEnvsAffected(mapTags(damageSource.getEnvsAffected(), i -> localization.getEnvSearchTagNames().get(i)));
         weaponModel.setRadius(Util.intToDoubleShift(damageSource.getRadius()));
 
-        weaponModel.setWeaponType(getWeaponType(isTurret, weaponModel));
+        weaponModel.setWeaponType(getWeaponType(isTurret, weaponModel, onDeathId));
         return weaponModel;
     }
 
@@ -429,20 +444,27 @@ public class ModelMappingServiceImpl implements ModelMappingService {
 
     @Override
     public BuildingModel map(UnitJsonModel unitSource, BuildJsonModel buildSource) {
-        if (buildSource == null) {
+        DeathabilityJsonModel deathability = unitSource.getDeathability();
+        IncomeJsonModel income = unitSource.getIncome();
+        if (buildSource == null && (deathability == null || deathability.getHealMeCost() == null) && income == null) {
             return null;
         }
         BuildingModel buildingModel = new BuildingModel();
-        buildingModel.setIncome(map(unitSource.getIncome()));
-        DeathabilityJsonModel deathability = unitSource.getDeathability();
         if (deathability != null) {
             buildingModel.setHealCost(mapResources(deathability.getHealMeCost()));
-            buildingModel.setInitHealth(getInitHealth(deathability.getHealth(), buildSource.getHealth()));
+            if (buildSource != null) {
+                buildingModel.setInitHealth(getInitHealth(deathability.getHealth(), buildSource.getHealth()));
+            }
         }
-        buildingModel.setRequirements(map(buildSource.getRequirements()));
-        buildingModel.setInitCost(mapResources(buildSource.getCostInit()));
-        List<Integer> fullCost = Util.add(buildSource.getCostInit(), buildSource.getCostBuilding());
-        buildingModel.setFullCost(mapResources(fullCost));
+        if (buildSource != null) {
+            buildingModel.setRequirements(map(buildSource.getRequirements()));
+            buildingModel.setInitCost(mapResources(buildSource.getCostInit()));
+            List<Integer> fullCost = Util.add(buildSource.getCostInit(), buildSource.getCostBuilding());
+            buildingModel.setFullCost(mapResources(fullCost));
+        }
+        if (income != null) {
+            buildingModel.setIncome(map(income));
+        }
         return buildingModel;
     }
 
@@ -464,7 +486,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
             return null;
         }
         AirplaneModel airplaneModel = new AirplaneModel();
-        airplaneModel.setFlyTime(Util.intToDoubleShift(airplaneSource.getFuel()));
+        airplaneModel.setFuel(Util.intToDoubleShift(airplaneSource.getFuel()));
         airplaneModel.setKamikaze(airplaneSource.getMoveAsFallDown());
         airplaneModel.setFlyHeight(Util.intToDoubleShift(airplaneSource.getHeightAboveSurface()));
         airplaneModel.setAscensionSpeed(airplaneSource.getAscensionalRate());
@@ -472,9 +494,8 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         if (aerodromeSource != null) {
             airplaneModel.setAerodromeTags(mapTags(aerodromeSource.getTags(), i -> localization.getUnitSearchTagNames().get(i)));
             airplaneModel.setHealingSpeed(Util.intToDoubleTick(aerodromeSource.getHealingSpeed()));
-            Double rechargePeriod = Util.intToDoubleShift(aerodromeSource.getRechargingPeriod());
-            airplaneModel.setRechargingSpeed(rechargePeriod == null ? null : 1d / rechargePeriod);
-            airplaneModel.setRefuelingSpeed(Util.intToDoubleTick(aerodromeSource.getRefuelingSpeed()));
+            airplaneModel.setRechargePeriod(Util.intToDoubleShift(aerodromeSource.getRechargingPeriod()));
+            airplaneModel.setRefuelSpeed(Util.intToDoubleTick(aerodromeSource.getRefuelingSpeed()));
         }
         return airplaneModel;
     }
@@ -516,6 +537,33 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
+    public List<EnvTag> mapEnvTags(Long tags) {
+        List<EnvTag> envTags = new ArrayList<>();
+        if (tags != null) {
+            List<Integer> tagIds = Util.getPositiveBitIndices(tags);
+            for (int tagId : tagIds) {
+                EnvTag envTag = new EnvTag();
+                envTag.setEnvId(tagId);
+                envTag.setEnvName(localization.getEnvSearchTagNames().get(tagId));
+                Map.Entry<Integer, EnvJsonModel> targetEnvEntry = envMap.entrySet().stream()
+                        .filter(envEntry -> envEntry.getValue().getSearchTags() != null)
+                        .filter(envEntry -> {
+                            List<Integer> searchTags = Util.getPositiveBitIndices(envEntry.getValue().getSearchTags());
+                            if (searchTags.size() != 1) {
+                                throw new IllegalStateException("Should be only 1 search tag for single env");
+                            }
+                            return tagId == searchTags.get(0);
+                        })
+                        .findAny()
+                        .orElseThrow();
+                envTag.setEnvImage(imageService.getImageName(Constants.EntityType.ENV.getName(), targetEnvEntry.getKey()));
+                envTags.add(envTag);
+            }
+        }
+        return envTags;
+    }
+
+    @Override
     public HealModel map(HealJsonModel healSource) {
         if (healSource == null) {
             return null;
@@ -526,17 +574,24 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         healModel.setPerSecond(Util.intToDoubleTick(healSource.getPerTick()));
         healModel.setSearchNextDistance(Util.intToDoubleShift(healSource.getSearchNextDistance()));
         healModel.setAutoSearchTargetDistance(Util.intToDoubleShift(healSource.getAutoSearchTargetDistance()));
-        healModel.setAutoSearchTargetPeriod(Util.intToDoubleTick(healSource.getAutoSearchTargetPeriod()));
+        healModel.setAutoSearchTargetPeriod(Util.intToDoubleShift(healSource.getAutoSearchTargetPeriod()));
         return healModel;
     }
 
     @Override
-    public ConstructionModel map(BuildingJsonModel buildingSource) {
+    public ConstructionModel map(int index, BuildingJsonModel buildingSource) {
         if (buildingSource == null) {
             return null;
         }
         ConstructionModel constructionModel = new ConstructionModel();
-        constructionModel.setBuildId(buildingSource.getId());
+        EntityInfoModel entityInfoModel = new EntityInfoModel();
+        Integer entityId = buildingSource.getId();
+        entityInfoModel.setEntityId(entityId);
+        entityInfoModel.setEntityNation(Util.getUnitNation(unitNations, localization.getNationNames(), entityId));
+        entityInfoModel.setEntityName(localization.getUnitNames().get(entityId));
+        entityInfoModel.setEntityImage(imageService.getImageName(Constants.EntityType.UNIT.getName(), entityId));
+        constructionModel.setEntityInfo(entityInfoModel);
+        constructionModel.setConstructionId(index);
         constructionModel.setDistance(Util.intToDoubleShift(buildingSource.getDistance()));
         constructionModel.setConstructionSpeed(getConstructionSpeed(buildingSource.getProgress()));
         return constructionModel;
@@ -557,14 +612,21 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         return result;
     }
 
-    private AbilityEntityInfoWrapper getAbilityEntityType(AbilityDataJsonModel abilityData) {
+    private AbilityEntityInfoWrapper getAbilityEntityInfo(AbilityDataJsonModel abilityData, List<CreateEnvJsonModel> createEnvSource) {
         Integer id = abilityData.getId();
         Integer research = abilityData.getResearch();
         Integer unit = abilityData.getUnit();
         AbilityEntityInfoWrapper result = new AbilityEntityInfoWrapper();
         if (id != null && research == null && unit == null) {
             result.setEntityType(Constants.EntityType.ENV.getName());
-            result.setEntityId(id);
+            result.setCreateEnvId(id);
+            String tag = createEnvSource.get(id).getTag();
+            int entityId = envMap.entrySet().stream()
+                    .filter(env -> tag.equals(env.getValue().getCreateTag()))
+                    .findAny()
+                    .orElseThrow()
+                    .getKey();
+            result.setEntityId(entityId);
         }
         if (id == null && research != null && unit == null) {
             result.setEntityType(Constants.EntityType.UPGRADE.getName());
@@ -577,9 +639,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         return result;
     }
 
-    private String getAbilityEntityName(AbilityType abilityType,
-                                        int entityId,
-                                        List<CreateEnvJsonModel> createEnvSource) {
+    private String getAbilityEntityName(AbilityType abilityType, int entityId) {
         switch (abilityType) {
             case CREATE_UNIT, TRANSFORM -> {
                 return localization.getUnitNames().get(entityId);
@@ -588,12 +648,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
                 return localization.getResearchNames().get(entityId);
             }
             case CREATE_ENV -> {
-                String tag = createEnvSource.get(entityId).getTag();
-                Map.Entry<Integer, EnvJsonModel> envEntry = envMap.entrySet().stream()
-                        .filter(env -> tag.equals(env.getValue().getCreateTag()))
-                        .findAny()
-                        .orElseThrow();
-                return localization.getEnvNames().get(envEntry.getKey());
+                return localization.getEnvNames().get(entityId);
             }
             default -> {
                 return null;
@@ -601,11 +656,11 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         }
     }
 
-    private Integer getEnvCount(AbilityDataJsonModel abilityData, AbilityType abilityType, int entityId, List<CreateEnvJsonModel> createEnvSource) {
+    private Integer getEnvCount(AbilityDataJsonModel abilityData, AbilityType abilityType, Integer createEnvId, List<CreateEnvJsonModel> createEnvSource) {
         Integer count = abilityData.getCount();
         //case for wheat
         if (count == null && abilityType == AbilityType.CREATE_ENV) {
-            count = createEnvSource.get(entityId).getCount();
+            count = createEnvSource.get(createEnvId).getCount();
         }
         return count;
     }
@@ -678,11 +733,13 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         return Util.intToDoubleShift(progress) * Constants.BUILD_SPEED_MODIFIER;
     }
 
-    private String getWeaponType(boolean isTurret, WeaponModel weaponModel) {
+    private String getWeaponType(boolean isTurret, WeaponModel weaponModel, Integer onDeathId) {
         if (isTurret) {
             return Constants.WeaponType.TURRET.getName();
         } else if (weaponModel.getCharges() != null) {
             return Constants.WeaponType.AERIAL_BOMB.getName();
+        } else if (onDeathId != null && weaponModel.getWeaponId() == onDeathId) {
+            return Constants.WeaponType.SUICIDE.getName();
         } else {
             return weaponModel.getSpread() != null ? Constants.WeaponType.RANGE.getName() : Constants.WeaponType.MELEE.getName();
         }

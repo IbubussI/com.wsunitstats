@@ -24,8 +24,8 @@
     create table ability_cost (
        ability_id bigint not null,
         image varchar(255),
-        resource varchar(255),
         resourceId integer not null,
+        resourceName varchar(255),
         value_ integer
     ) engine=InnoDB;
 
@@ -62,11 +62,11 @@
        id bigint not null auto_increment,
         ascensionSpeed integer,
         flyHeight float(53),
-        flyTime float(53),
+        fuel float(53),
         healingSpeed float(53),
         kamikaze bit,
-        rechargingSpeed float(53),
-        refuelingSpeed float(53),
+        rechargePeriod float(53),
+        refuelSpeed float(53),
         primary key (id)
     ) engine=InnoDB;
 
@@ -97,34 +97,34 @@
 
     create table building (
        id bigint not null auto_increment,
-        period float(53),
         initHealth float(53),
         researchesAll bit,
         unitsAll bit,
+        income_id bigint,
         primary key (id)
     ) engine=InnoDB;
 
     create table building_fullCost (
        building_id bigint not null,
         image varchar(255),
-        resource varchar(255),
         resourceId integer not null,
+        resourceName varchar(255),
         value_ integer
     ) engine=InnoDB;
 
     create table building_healCost (
        building_id bigint not null,
         image varchar(255),
-        resource varchar(255),
         resourceId integer not null,
+        resourceName varchar(255),
         value_ integer
     ) engine=InnoDB;
 
     create table building_initCost (
        building_id bigint not null,
         image varchar(255),
-        resource varchar(255),
         resourceId integer not null,
+        resourceName varchar(255),
         value_ integer
     ) engine=InnoDB;
 
@@ -144,36 +144,48 @@
         unitNation varchar(255)
     ) engine=InnoDB;
 
-    create table building_value (
-       building_id bigint not null,
-        image varchar(255),
-        resource varchar(255),
-        resourceId integer not null,
-        value_ integer
-    ) engine=InnoDB;
-
     create table construction (
        id bigint not null auto_increment,
-        buildId integer,
+        constructionId integer not null,
         constructionSpeed float(53),
         distance float(53),
+        entityId integer,
+        entityImage varchar(255),
+        entityName varchar(255),
+        entityNation varchar(255),
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table envtag (
+       id bigint not null auto_increment,
+        envId integer not null,
+        envImage varchar(255),
+        envName varchar(255),
         primary key (id)
     ) engine=InnoDB;
 
     create table gather (
        id bigint not null auto_increment,
+        angle float(53),
         bagSize float(53),
+        findStorageDistance float(53),
         findTargetDistance float(53),
         gatherDistance float(53),
+        gatherId integer not null,
         perSecond float(53),
         putDistance float(53),
-        resource varchar(255),
+        image varchar(255),
+        resourceId integer not null,
+        resourceName varchar(255),
+        value_ integer,
+        storageTags varbinary(255),
+        unitTags varbinary(255),
         primary key (id)
     ) engine=InnoDB;
 
     create table gather_envTags (
        gather_id bigint not null,
-        envTags varchar(255)
+        envTags_id bigint not null
     ) engine=InnoDB;
 
     create table heal (
@@ -189,6 +201,20 @@
     create table heal_targetTags (
        heal_id bigint not null,
         targetTags varchar(255)
+    ) engine=InnoDB;
+
+    create table income (
+       id bigint not null auto_increment,
+        period float(53),
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table income_value (
+       income_id bigint not null,
+        image varchar(255),
+        resourceId integer not null,
+        resourceName varchar(255),
+        value_ integer
     ) engine=InnoDB;
 
     create table localization (
@@ -270,7 +296,7 @@
         image varchar(255),
         name varchar(255),
         nation varchar(255),
-        controllable bit,
+        controllable bit not null,
         health float(53),
         lifetime float(53),
         limit_ integer,
@@ -279,10 +305,12 @@
         regenerationSpeed float(53),
         searchTags varbinary(255),
         size float(53),
+        storageMultiplier integer,
         tags varbinary(255),
         threat integer,
         viewRange float(53),
         weaponOnDeath integer,
+        weight integer,
         airplane_id bigint,
         build_id bigint,
         heal_id bigint,
@@ -335,6 +363,7 @@
         autoAttack bit,
         avgShotTime float(53),
         charges integer,
+        damageAngle float(53),
         damageFriendly bit,
         damagesCount integer not null,
         max float(53),
@@ -367,6 +396,9 @@
 
     alter table account 
        add constraint UK_gex1lmaqpg0ir5g1f5eftyaa1 unique (username);
+
+    alter table gather_envTags 
+       add constraint UK_qeda4w5by446sv6reckqmwb1v unique (envTags_id);
 
     alter table localization 
        add constraint UK_j6j9h30eydn1rkg0etaayj2is unique (locale);
@@ -435,6 +467,11 @@
        foreign key (buff_id) 
        references buff (id);
 
+    alter table building 
+       add constraint FKr4ud3a4dpn9e78iulww8bfkkd 
+       foreign key (income_id) 
+       references income (id);
+
     alter table building_fullCost 
        add constraint FK530g1mcloh1hsow7pqxotr3be 
        foreign key (building_id) 
@@ -460,10 +497,10 @@
        foreign key (building_id) 
        references building (id);
 
-    alter table building_value 
-       add constraint FK1o2wsit1wkwmdexrqy3ywy50o 
-       foreign key (building_id) 
-       references building (id);
+    alter table gather_envTags 
+       add constraint FKnfqjrf1r5gim88qhvry55slej 
+       foreign key (envTags_id) 
+       references envtag (id);
 
     alter table gather_envTags 
        add constraint FK22xc4voqbyj0h9qaih8vvcin3 
@@ -474,6 +511,11 @@
        add constraint FKo3bdaxloq89mnf94d5l628un0 
        foreign key (heal_id) 
        references heal (id);
+
+    alter table income_value 
+       add constraint FKgc5pv8v3pru6g1kajo0pis6la 
+       foreign key (income_id) 
+       references income (id);
 
     alter table localization_entries 
        add constraint FKr54j8wvwxlrjqi4dqbej7no3g 

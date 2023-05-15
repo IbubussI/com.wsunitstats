@@ -1,24 +1,31 @@
 import * as React from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
+import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export const ArmorChart = ({content, valuePrefix}) => {
-  const [labels, probabilities, values, avg] = React.useMemo(() => {
+export const ArmorChart = ({content, valuePrefix, colors}) => {
+  const [labels, probabilities, values, avg, legendEntries] = React.useMemo(() => {
     let labels_ = Array(content.length);
     let probabilities_ = Array(content.length);
     let values_ = Array(content.length);
+    let legendEntries_ = Array(content.length);
     for (let i = 0; i < content.length; ++i) {
       let probability = content[i].probability;
       let value = content[i].value;
       labels_[i] = `${probability}% : ${value}`;
       probabilities_[i] = probability;
       values_[i] = value;
+      legendEntries_[i] = {
+        color: colors[i],
+        probability: probability,
+        value: value
+      }
     }
     let avg_ = findAverage(values_, probabilities_).toFixed(1);
-    return [labels_, probabilities_, values_, avg_];
-  }, [content]);
+    return [labels_, probabilities_, values_, avg_, legendEntries_];
+  }, [content, colors]);
 
   const data = {
     labels: labels,
@@ -27,12 +34,7 @@ export const ArmorChart = ({content, valuePrefix}) => {
         data: probabilities,
         dataValues: values,
         borderWidth: 1,
-        backgroundColor: [
-          'rgba(122, 16, 16, 1)',
-          'rgba(168, 87, 15, 1)',
-          'rgba(168, 116, 15, 1)',
-          'rgba(15, 132, 21, 1)',
-        ],
+        backgroundColor: colors,
         tooltip: {
           titlePrefix: valuePrefix,
           labelSuffix: '%',
@@ -77,9 +79,11 @@ export const ArmorChart = ({content, valuePrefix}) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    devicePixelRatio: 1.5,
     plugins: {
       legend: {
-        position: 'right',
+        display: false,
+        position: 'bottom',
         onClick: (e) => e.stopPropagation()
       },
       tooltip: {
@@ -92,11 +96,18 @@ export const ArmorChart = ({content, valuePrefix}) => {
   }
 
   return (
-    <Doughnut
-      data={data}
-      options={options}
-      plugins={[avgText]}
-    />
+    <>
+      <Box sx={{ width: '150px', height: '150px' }}>
+        <Doughnut
+          data={data}
+          options={options}
+          plugins={[avgText]}
+        />
+      </Box>
+      <Box sx={{ paddingTop: '10px' }}>
+        <LegendTable data={legendEntries} />
+      </Box>
+    </>
   );
 }
 
@@ -106,4 +117,46 @@ function findAverage(values, probabilities) {
     result = result + values[i] * probabilities[i] / 100;
   }
   return result;
+}
+
+const LegendTable = ({ data }) => {
+  return (
+    <TableContainer sx={{ width: 'fit-content' }}>
+      <Table>
+        <TableBody>
+          {data.map((entry, index) => {
+            return (
+              <TableRow key={index} sx={{
+                '& td': {
+                  paddingTop: '3px',
+                  paddingBottom: '3px',
+                  paddingRight: '3px',
+                  paddingLeft: '3px',
+                  verticalAlign: 'middle',
+                  width: 'fit-content',
+                  border: 0
+                }
+              }}>
+                <TableCell>
+                  <svg width="50" height="20" display='block'>
+                    <rect width="50" height="20" style={{ fill: entry.color }} />
+                  </svg>
+                </TableCell>
+                <TableCell align='right'>
+                  <Typography variant='body2'>
+                    {entry.probability}%
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant='body2'>
+                    : {entry.value}
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
 }

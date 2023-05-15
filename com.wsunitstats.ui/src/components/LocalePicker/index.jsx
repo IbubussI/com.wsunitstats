@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Constants from 'utils/Constants';
+import * as Constants from 'utils/constants';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';

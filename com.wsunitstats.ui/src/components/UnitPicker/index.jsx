@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Constants from 'utils/Constants';
+import * as Constants from 'utils/constants';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -18,7 +18,7 @@ export const UnitPicker = ({ locale, onSelect, value, setValue }) => {
       newValue = null;
     }
     setValue(newValue);
-    if (newValue && newValue.gameId) {
+    if (newValue && typeof newValue.gameId === 'number') {
       onSelect(newValue.gameId);
     } else {
       onSelect(null);

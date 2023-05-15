@@ -1,51 +1,23 @@
 import * as React from 'react';
-import { Box, Stack } from '@mui/material';
-import { BasicPaper } from 'components/Atoms/BasicPaper';
+import { Stack } from '@mui/material';
 import {
   FlexibleTable,
   FlexibleTableDoubleCellRow,
-  FlexibleTableSingleCellRow
-} from 'components/Atoms/FlexibleTable';
+} from 'components/Layout/FlexibleTable';
 import { HeaderChip, SubValue, TagList, Text } from 'components/Atoms/Renderer';
-import { DoubleColumnTable } from 'components/Atoms/DoubleColumnTable';
+import { DoubleColumnTable } from 'components/Layout/DoubleColumnTable';
 import { InfoButtonPopper } from "components/Atoms/ButtonPopper";
-import * as Constants from "utils/Constants";
+import * as Constants from "utils/constants";
+import { DoubleColumnFrame } from 'components/Layout/DoubleColumnFrame';
 
 const STATS_COLUMNS = 2;
 const STATS_ROWS = 5;
-
-export const WeaponTable = ({ turrets, weapons }) => {
-  if (turrets || weapons) {
-    return (
-      <Stack component={BasicPaper} spacing={0.5} sx={{ padding: 1 }}>
-        {weapons && weapons.map((weapon, index) => {
-          return (
-            <WeaponTableEntry
-              key={index}
-              weapon={weapon} />
-          );
-        })}
-        {turrets && turrets.map((turret, index) => {
-          return (
-            <React.Fragment key={index}>
-              {turret.weapons.map((weapon, index) => {
-                return (
-                  <WeaponTableEntry
-                    key={index}
-                    weapon={weapon}
-                    turretRotationSpeed={turret.rotationSpeed}
-                    turretId={turret.turretId} />
-                );
-              })}
-            </React.Fragment>
-          );
-        })}
-      </Stack>
-    );
-  }
-}
-
-const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
+const FLEX_TABLE_RIGHT_WIDTH = '52%';
+const FLEX_TABLE_LEFT_WIDTH = '48%';
+ 
+export const WeaponTable = ({ item, overflowMinWidth }) => {
+  const weapon = item.weapon;
+  
   const attacksNumber = weapon.damagesCount * weapon.attacksPerAttack * weapon.attacksPerAction;
 
   const damageData = weapon.damages.map((damage) => {
@@ -142,8 +114,7 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
         baseline: true,
         renderer: TagList,
         value: weapon.buff?.affectedUnits && {
-          tags: weapon.buff.affectedUnits,
-          onClick: handleClick,
+          tags: weapon.buff.affectedUnits
         }
       }
     ].filter(element => element.value !== undefined)
@@ -170,33 +141,21 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
         labelBaseline: true,
         renderer: TagList,
         value: weapon.envsAffected && {
-          tags: weapon.envsAffected,
-          onClick: handleClick,
+          tags: weapon.envsAffected
         }
       }
     ].filter(element => element.value !== undefined)
   }
 
-  const statsData = [
-    {
-      column: 1,
-      renderer: FlexibleTableSingleCellRow,
-      childData: {
-        value: {
-          tooltip: typeof turretId === "number" ? "Turret ID #" + turretId : "Weapon ID #" + weapon.weaponId,
-          id: typeof turretId === "number" ? "T" + turretId : "W" + weapon.weaponId,
-          label: weapon.weaponType,
-          disabled: weapon.enabled === false && 'disabled'
-        },
-        valueRenderer: HeaderChip
-      }
-    },
+  const weaponData = [
     {
       column: 1,
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Reload',
-        value: weapon.rechargePeriod + Constants.SECONDS_END_MARKER
+        value: weapon.rechargePeriod + Constants.SECONDS_END_MARKER,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -204,7 +163,9 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Spread',
-        value: weapon.spread && weapon.spread + ' %'
+        value: weapon.spread && weapon.spread + '\u00A0%',
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -221,11 +182,13 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
             },
             {
               label: 'angle',
-              value: weapon.angle
+              value: weapon.damageAngle
             }
           ]
         },
-        valueRenderer: SubValue
+        valueRenderer: SubValue,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -242,7 +205,19 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
             }
           ]
         },
-        valueRenderer: SubValue
+        valueRenderer: SubValue,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
+      }
+    },
+    {
+      column: 1,
+      renderer: FlexibleTableDoubleCellRow,
+      childData: {
+        label: 'Angle',
+        value: weapon.angle,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -250,7 +225,9 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Rotation speed',
-        value: turretRotationSpeed
+        value: item.turretRotationSpeed,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -258,15 +235,29 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Friendly damage',
-        value: '' + !!weapon.damageFriendly
+        value: '' + !!weapon.damageFriendly,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
       column: 2,
       renderer: FlexibleTableDoubleCellRow,
       childData: {
-        label: 'Ground attack (X)',
-        value: '' + !!weapon.attackGround
+        label: 'Ground attack\u00A0(X)',
+        value: '' + !!weapon.attackGround,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
+      }
+    },
+    {
+      column: 2,
+      renderer: FlexibleTableDoubleCellRow,
+      childData: {
+        label: 'Auto attack',
+        value: '' + !!weapon.autoAttack,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -274,7 +265,9 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Projectile speed',
-        value: weapon.projectile?.speed
+        value: weapon.projectile?.speed,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
     {
@@ -282,23 +275,28 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Projectile inactive',
-        value: weapon.projectile?.timeToStartCollision && weapon.projectile?.timeToStartCollision + Constants.SECONDS_END_MARKER
+        value: weapon.projectile?.timeToStartCollision && weapon.projectile?.timeToStartCollision + Constants.SECONDS_END_MARKER,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
     },
   ].filter(element => element.childData.type !== undefined || (element.childData.value !== undefined && (!Array.isArray(element.childData.value) || element.childData.value.length > 0)));
 
+  const disabled = weapon.enabled === false && 'disabled';
+  const labelData = {
+    value: {
+      tooltip: item.isTurret ? "Turret ID #" + item.turretId : "Weapon ID #" + weapon.weaponId,
+      id: item.isTurret ? "T" + item.turretId : "W" + weapon.weaponId,
+      label: weapon.weaponType,
+      disabled: disabled
+    },
+    valueRenderer: HeaderChip,
+    shift: '80px'
+  }
+
   return (
-    <Stack
-      direction="row"
-      justifyContent='center'
-      sx={{
-        border: '3px solid rgb(85, 120, 218)',
-        borderRadius: 2,
-      }}>
-      <Stack
-        flex='1 1 20%'
-        alignItems='center'
-        borderRight='3px solid rgb(85, 120, 218)'>
+    <DoubleColumnFrame childrenProps={[{ paddingTop: '14px'}, { overflow: 'auto', width: '100%' }]} borderLabel={labelData} disabled={disabled}>
+      <>
         <DoubleColumnTable data={damageTableData} />
         <Stack sx={{
           width: '100%',
@@ -307,35 +305,23 @@ const WeaponTableEntry = ({ weapon, turretRotationSpeed, turretId }) => {
           boxSizing: 'border-box'
         }}>
           {attackData.content.length > 0 && <InfoButtonPopper label={attackData.label}>
-            <DoubleColumnTable data={attackData}/>
+            <DoubleColumnTable data={attackData} />
           </InfoButtonPopper>}
           {buffData.content.length > 0 && <InfoButtonPopper label={buffData.label}>
-            <DoubleColumnTable data={buffData}/>
+            <DoubleColumnTable data={buffData} />
           </InfoButtonPopper>}
           {envData.content.length > 0 && <InfoButtonPopper label={envData.label}>
-            <DoubleColumnTable data={envData}/>
+            <DoubleColumnTable data={envData} />
           </InfoButtonPopper>}
         </Stack>
-      </Stack>
-      <Box sx={{
-        width: '100%',
-        height: 'max-content',
-        display: 'flex',
-        flexDirection: 'row',
-        padding: '3px',
-        overflow: 'auto',
-      }}>
-        <FlexibleTable
-          columns={STATS_COLUMNS}
-          rows={STATS_ROWS}
-          data={statsData}
-          rowHeight='max-content'
-          minWidth='390px' />
-      </Box>
-    </Stack>
+      </>
+
+      <FlexibleTable
+        columns={STATS_COLUMNS}
+        rows={STATS_ROWS}
+        data={weaponData}
+        rowHeight='max-content'
+        minWidth={overflowMinWidth} />
+    </DoubleColumnFrame>
   );
 }
-
-const handleClick = () => {
-  // tbd
-};

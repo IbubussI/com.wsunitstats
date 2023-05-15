@@ -29,7 +29,7 @@ export const FlexibleTable = ({ columns, rows, data, minWidth }) => {
             key={index}
             gridColumn={column}
             gridRow={`${row} / ${rowSpan}`}
-            minHeight={'45px'}
+            minHeight='45px'
             backgroundColor={backgroundColor}
             overflow='hidden'>
             <Renderer data={entry.childData} />
@@ -41,8 +41,8 @@ export const FlexibleTable = ({ columns, rows, data, minWidth }) => {
 }
 
 export const FlexibleTableDoubleCellRow = ({ data }) => {
-  let LabelRenderer = data.labelRenderer ? data.labelRenderer : Text;
-  let ValueRenderer = data.valueRenderer ? data.valueRenderer : Text;
+  const LabelRenderer = data.labelRenderer ? data.labelRenderer : Text;
+  const ValueRenderer = data.valueRenderer ? data.valueRenderer : Text;
   return (
     <Stack
       direction="row"
@@ -122,12 +122,16 @@ function isFillBackground(index, rows, column) {
   if (isEven(rows)) {
     return isEven(index);
   } else {
-    return isEven(column) ? isEven(index) : !isEven(index);
+    return isEven(column) ? isOdd(index) : !isOdd(index);
   }
 }
 
 function isEven(n) {
   return n % 2 === 0;
+}
+
+function isOdd(n) {
+  return n % 2 !== 0;
 }
 
 function fillEmptyRows(data, columns, rows) {

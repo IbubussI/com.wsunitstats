@@ -1,4 +1,4 @@
-import * as Constants from "utils/Constants";
+import * as Constants from "utils/constants";
 
 export const resolveImage = (name) => {
   return `/files/images/${name}`;
@@ -7,6 +7,9 @@ export const resolveImage = (name) => {
 export const makeEntityLink = (link) => {
   if (link.path === Constants.NO_LINK_INDICATOR) {
     return Constants.NO_LINK_INDICATOR;
+  }
+  if (link.id === undefined) {
+    return `${link.path}?locale=${link.locale}`;
   }
   return `${link.path}?locale=${link.locale}&gameId=${link.id}`;
 }
@@ -31,6 +34,8 @@ export const getEntityRoute = (entityType) => {
       result = Constants.UNIT_PAGE_PATH;
       break;
     //case 'research': Constants.RESEARCH_PAGE_PATH; break; <-- TODO
+    //case 'env': Constants.ENV_PAGE_PATH; break; <-- TODO
+    //case 'resource': Constants.RESOURCE_PAGE_PATH; break; <-- TODO
     default: result = Constants.NO_LINK_INDICATOR;
   }
   return result;

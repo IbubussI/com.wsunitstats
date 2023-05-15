@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { UnitView } from 'components/UnitView';
 import { useSearchParams } from 'react-router-dom';
-import * as Constants from 'utils/Constants';
+import * as Constants from 'utils/constants';
 import { Stack } from '@mui/material';
 import { LocalePicker } from 'components/LocalePicker';
 import { UnitPicker } from 'components/UnitPicker';
@@ -12,6 +12,17 @@ export const UnitPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const gameId = searchParams.get(Constants.PARAM_GAME_ID);
   const locale = searchParams.get(Constants.PARAM_LOCALE);
+  
+  const prevGameId = React.useRef(null);
+  const prevLocale = React.useRef(null);
+
+  const clearUnit = React.useCallback((replace = true) => {
+    searchParams.delete(Constants.PARAM_GAME_ID);
+    searchParams.delete(Constants.PARAM_TAB);
+    setSearchParams(searchParams, { replace: replace });
+    setUnit(null);
+    setOption(null);
+  }, [searchParams, setSearchParams]);
 
   React.useEffect(() => {
     let active = true;
@@ -26,12 +37,11 @@ export const UnitPage = () => {
           nation: receivedUnit.nation
         });
       } else {
-        searchParams.delete(Constants.PARAM_GAME_ID);
-        setSearchParams(searchParams);
+        clearUnit();
       }
     }
 
-    if (active) {
+    if (active && (prevGameId.current !== gameId || prevLocale.current !== locale)) {
       if (gameId) {
         fetch(Constants.HOST + Constants.UNIT_DATA_API + '?' + new URLSearchParams({
           [Constants.PARAM_GAME_ID]: gameId,
@@ -41,14 +51,15 @@ export const UnitPage = () => {
           .then(handleUnitResult)
           .catch(console.log);
       } else {
-        setUnit(null);
-        setOption(null);
+        clearUnit();
       }
+      prevGameId.current = gameId;
+      prevLocale.current = locale;
     }
     return () => {
       active = false;
     };
-  }, [gameId, locale, setSearchParams, searchParams]);
+  }, [gameId, locale, clearUnit]);
 
   return (
     <>
@@ -56,11 +67,11 @@ export const UnitPage = () => {
         onUnitIdChange={(gameId) => {
           // update unitId
           if (gameId === null) {
-            searchParams.delete(Constants.PARAM_GAME_ID);
+            clearUnit(false);
           } else {
             searchParams.set(Constants.PARAM_GAME_ID, gameId);
+            setSearchParams(searchParams);
           }
-          setSearchParams(searchParams);
         }}
         onLocaleChange={(locale) => {
           // update selected locale to url
@@ -71,7 +82,7 @@ export const UnitPage = () => {
         option={option}
         setOption={setOption}
       />
-      {unit ? <UnitView unit={unit} /> : <div>Waiting for your input...</div>}
+      <UnitView unit={unit} />
     </>
   );
 }

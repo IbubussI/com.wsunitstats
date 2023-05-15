@@ -6,18 +6,6 @@
   width: 100%;
 }
 
-.unit-view-container .image {
-  border: 5px solid #555;
-  margin: 17px;
-  margin-top: 0;
-}
-
-.armor-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.flex-table {
-  width: 100%;
+.content-body-root {
+  justify-content: normal;
 }

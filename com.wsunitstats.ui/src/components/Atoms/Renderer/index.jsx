@@ -1,5 +1,5 @@
 import * as Utils from 'utils/utils';
-import * as Constants from "utils/Constants";
+import * as Constants from "utils/constants";
 import { Avatar, Box, Chip, Link, Stack, Tooltip, Typography } from "@mui/material";
 import React from 'react';
 
@@ -38,7 +38,11 @@ export const SubValue = ({ data }) => {
   data.subValues.forEach((entry, index) => {
     let delimiter = data.subValues[index + 1] && typeof data.subValues[index + 1].value === 'number' ? ', ' : '';
     if (entry.value) {
-      subString = subString.concat(`${entry.label}: ${entry.value}${delimiter}`);
+      if (entry.label) {
+        subString = subString.concat(`${entry.label}:\u00A0${entry.value}${delimiter}`);
+      } else {
+        subString = subString.concat(`${entry.value}${delimiter}`);
+      }
     }
   });
   return (
@@ -53,143 +57,244 @@ export const SubValue = ({ data }) => {
   );
 }
 
+export const Tag = ({ data }) => {
+  return (
+    <Chip
+      label={data.tag}
+      onClick={data.onClick}
+      size='medium'
+      sx={{
+        borderRadius: '1000px', // to match any height
+        height: 'fit-content',
+        backgroundColor: 'rgb(24, 117, 238)',
+        textTransform: 'uppercase',
+        color: 'white',
+        '& span': {
+          fontWeight: 'bold',
+          fontSize: 11,
+          whiteSpace: 'normal',
+          textAlign: 'center',
+          paddingTop: '4px',
+          paddingBottom: '4px',
+        },
+        '&:hover': {
+          backgroundColor: 'rgb(139, 195, 255)'
+        },
+        '&:hover span': {
+          color: 'rgb(1, 113, 212)'
+        },
+      }} />
+  );
+}
+
 export const TagList = ({ data }) => {
   return (
     <>
       {data.tags && data.tags.map((tag, index) => (
-        <Box sx={{ paddingBottom: '2px' }}>
-          <Chip
-            key={index}
-            label={tag}
-            onClick={data.onClick}
-            size='small'
-            sx={{ border: '1px solid rgb(182, 182, 182)', width: 'max-content' }} />
+        <Box key={index} sx={{ paddingBottom: '2px' }}>
+          <Tag data={{ tag: tag, onClick: () => {}}} />
         </Box>
       ))}
     </>
   );
 }
 
+export const TagRow = ({ data }) => {
+  return (
+    <Stack direction='row' spacing={0.3}>
+      {data.tags && data.tags.map((tag, index) => (
+        <Tag key={index} data={{ tag: tag, onClick: () => {}}} />
+      ))}
+    </Stack>
+  );
+}
+
 export const Resource = ({ data }) => {
   return (
-    <Stack direction='row' spacing={2}>
+    <Stack
+      direction='row'
+      spacing={0.7}
+      sx={{
+        width: 'fit-content',
+        border: '1px solid rgb(182, 182, 182)',
+        padding: '5px',
+        paddingBottom: '3px',
+        margin: '5px',
+        marginLeft: '0'
+      }}>
       {data.map((resource, index) =>
-        <Stack key={index} direction='row' alignItems='center'>
-          <Box sx={{ marginRight: 0.4 }}>
-            <Image data={data.image} />
-          </Box>
-          <Typography variant='body2' color='text.primary'>
-            {resource.value}
-          </Typography>
-        </Stack>
+        <Tooltip key={index} title={resource.resourceName}>
+          <Stack direction='column' alignItems='center' sx={{ minWidth: '50px' }}>
+            <Image data={{
+              path: resource.image,
+              width: 25,
+              height: 25,
+            }} />
+            <Typography variant='body2' color='text.primary'>
+              {resource.value}
+            </Typography>
+          </Stack>
+        </Tooltip>
       )}
     </Stack>
   );
 }
 
 export const EntityInfo = ({ data }) => {
-  let minWidth = data.overflow ? '0' : '';
-  let availableLines = data.secondary ? 1 : 2;
-  let overflow = data.overflow ? {
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    display: '-webkit-box',
-    WebkitLineClamp: availableLines,
-    WebkitBoxOrient: 'vertical',
-  } : '';
-  const LinkContent = () => {
+  const Entry = ({ entryData }) => {
+    const minWidth = entryData.overflow ? '0' : '';
+    const availableLines = entryData.secondary ? 1 : 2;
+    const overflow = entryData.overflow ? {
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      display: '-webkit-box',
+      WebkitLineClamp: availableLines,
+      WebkitBoxOrient: 'vertical',
+    } : '';
+
+    const LinkContent = () => {
+      return (
+        <Stack direction='row' alignItems='center'>
+          <Stack sx={{ marginRight: 0.4, height: 'fit-content' }}>
+            <Image data={entryData.image} />
+          </Stack>
+          <Stack minWidth={minWidth}>
+            <Typography variant='body2' lineHeight={1.2} sx={overflow}>
+              {entryData.primary}
+            </Typography>
+            {entryData.secondary && <Typography variant='caption' lineHeight={1.2}>
+              {entryData.secondary}
+            </Typography>}
+          </Stack>
+        </Stack>
+      );
+    }
+
     return (
-      <Stack direction='row' alignItems='center' id="2123">
-        <Stack sx={{ marginRight: 0.4, height: 'fit-content'}}>
-          <Image data={data.image} />
-        </Stack>
-        <Stack minWidth={minWidth}>
-          <Typography variant='body2' lineHeight={1.2} sx={overflow}>
-            {data.primary}
-          </Typography>
-          {data.secondary && <Typography variant='caption' lineHeight={1.2}>
-            {data.secondary}
-          </Typography>}
-        </Stack>
-      </Stack>
+      <>
+        {entryData?.link.path === Constants.NO_LINK_INDICATOR ?
+          <DisabledLink>
+            <LinkContent />
+          </DisabledLink>
+          :
+          <Link href={Utils.makeEntityLink(entryData.link)}>
+            <LinkContent />
+          </Link>}
+      </>
     );
   }
+
+  const direction = data.direction ? data.direction : 'row';
   return (
-    <>
-      {data.link.path === Constants.NO_LINK_INDICATOR ?
-        <DisabledLink>
-          <LinkContent />
-        </DisabledLink>
-        :
-        <Link href={Utils.makeEntityLink(data.link)}>
-          <LinkContent />
-        </Link>}
-    </>
+    <Stack direction={direction} gap={1}>
+      {data.values.map((entry, index) => <Entry key={index} entryData={entry} />)}
+    </Stack>
+  );
+}
+
+export const TransformInfo = ({ data }) => {
+  const From = data.fromRenderer;
+  const To = data.toRenderer;
+  return (
+    <Stack direction='row' sx={{
+      justifyContent: 'center',
+      alignContent: 'center',
+      alignItems: 'center',
+      padding: '10px',
+
+    }}>
+      <Box sx={{ flexGrow: 1, flexBasis: 0 }} >
+        <Box sx={{
+          maxWidth: 'max-content',
+          margin: 'auto'
+        }}>
+          <From data={data.from} />
+        </Box>
+      </Box>
+      <Box sx={{
+        fontSize: '40px',
+        lineHeight: '40px',
+        color: 'rgb(22, 124, 232)'
+      }}>
+        <i className="fa-solid fa-right-long"></i>
+      </Box>
+      <Box sx={{ flexGrow: 1, flexBasis: 0 }} >
+        <Box sx={{
+          maxWidth: 'max-content',
+          margin: 'auto'
+        }}>
+          <To data={data.to} />
+        </Box>
+      </Box>
+    </Stack>
   );
 }
 
 export const HeaderChip = ({ data }) => {
-  let color = data.disabled ? 'error.main' : 'text.secondary';
-  let textColor = data.disabled ? 'error.main' : 'text.primary';
-  let borderColor = data.disabled ? 'error.main' : 'rgb(189, 189, 189)';
+  const color = data.disabled ? 'error.main' : 'text.secondary';
+  const textColor = data.disabled ? 'error.main' : 'text.primary';
+  const borderColor = data.disabled ? 'error.main' : 'rgb(85, 120, 218)';
+  const isLabel = data.label;
   return (
-    <Stack alignItems='center'>
-      <Box sx={{
-        border: '1px solid',
-        borderColor: borderColor,
-        color: color,
-        borderRadius: '18px',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontWeight: '700',
-        height: '36px'
-      }}>
-        <Tooltip title={data.tooltip}>
-          <Avatar sx={{
-            fontWeight: 'inherit',
-            border: '1px solid',
-            width: '24px',
-            height: '24px',
-            fontSize: '0.75rem',
-            color: color,
-            marginLeft: '5px',
-            marginRight: '-6px'
-          }}>
-            {data.id}
-          </Avatar>
-        </Tooltip>
-        <Stack alignItems='center' sx={{
-          paddingRight: '12px',
-          paddingLeft: '12px',
+    <Box sx={{
+      border: '3px solid',
+      borderColor: borderColor,
+      color: color,
+      borderRadius: '18px',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontWeight: '700',
+      height: '32px',
+      backgroundColor: 'white',
+
+    }}>
+      <Tooltip title={data.tooltip}>
+        <Avatar sx={{
+          fontWeight: 'inherit',
+          border: '1px solid',
+          width: '24px',
+          height: '24px',
+          fontSize: '0.75rem',
+          color: color,
+          marginLeft: isLabel ? '4px' : '3px',
+          marginRight: isLabel ? '-6px' : '3px'
         }}>
-          <Typography
-            variant='body2'
+          {data.id}
+        </Avatar>
+      </Tooltip>
+      {isLabel && <Stack alignItems='center' sx={{
+        paddingRight: '12px',
+        paddingLeft: '12px',
+      }}>
+        <Typography
+          variant='body2'
+          sx={{
+            fontWeight: 'inherit',
+            fontSize: 14,
+            lineHeight: 'initial',
+            color: textColor,
+            paddingBottom: data.disabled ? '1px' : '',
+            marginTop: data.disabled ? '-3px' : ''
+          }}>
+          {data.label}
+        </Typography>
+        {data.disabled &&
+          <Chip
+            label='disabled'
+            variant='contained'
+            color='error'
             sx={{
-              fontWeight: 'inherit',
-              fontSize: 14,
-              lineHeight: 'initial',
-              color: textColor
-            }}>
-            {data.label}
-          </Typography>
-          {data.disabled &&
-            <Chip
-              label='disabled'
-              variant='contained'
-              color='error'
-              sx={{
-                textTransform: 'uppercase',
-                fontSize: '11px',
-                height: '14px',
-                minwidth: 'fit-content',
-                '& > .MuiChip-label': {
-                  padding: '4px'
-                }
-              }} />}
-        </Stack>
-      </Box>
-    </Stack>
+              textTransform: 'uppercase',
+              fontSize: '11px',
+              height: '14px',
+              minwidth: 'fit-content',
+              '& > .MuiChip-label': {
+                padding: '4px'
+              }
+            }} />}
+      </Stack>}
+    </Box>
   );
 }
 
