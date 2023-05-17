@@ -7,10 +7,12 @@ import com.wsunitstats.domain.submodel.ConstructionModel;
 import com.wsunitstats.domain.submodel.EnvTag;
 import com.wsunitstats.domain.submodel.HealModel;
 import com.wsunitstats.domain.submodel.IncomeModel;
+import com.wsunitstats.domain.submodel.ParameterModel;
 import com.wsunitstats.domain.submodel.ReserveModel;
 import com.wsunitstats.domain.submodel.SubmarineDepthModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
 import com.wsunitstats.domain.submodel.TurretModel;
+import com.wsunitstats.domain.submodel.UpgradeModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.ability.OnActionModel;
 import com.wsunitstats.domain.submodel.requirement.RequirementsModel;
@@ -38,6 +40,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJson
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityOnActionJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.air.AirplaneJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.requirement.RequirementsJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.researches.UpgradeJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.BuffJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.DistanceJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
@@ -121,7 +124,11 @@ public interface ModelMappingService {
 
     HealModel map(HealJsonModel healSource);
 
-    ConstructionModel map(int index, BuildingJsonModel buildingSource);
+    ConstructionModel map(int id, BuildingJsonModel buildingSource);
 
     GroundAttackDataWrapper map(String attackGroundString);
+
+    UpgradeModel map(int id, UpgradeJsonModel upgradeSource);
+
+    List<ParameterModel> mapParameters(String parametersSource);
 }

@@ -31,6 +31,7 @@ import java.util.List;
 @ToString
 public class UnitModel extends GenericEntityModel {
     // Unit traits
+    private String nation;
     private Double size;
     private Double viewRange;
     private Double health;

@@ -248,6 +248,19 @@
         primary key (id)
     ) engine=InnoDB;
 
+    create table research (
+       id bigint not null auto_increment,
+        gameId integer not null,
+        image varchar(255),
+        name varchar(255),
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table research_upgrades (
+       research_id bigint not null,
+        upgrades_id bigint not null
+    ) engine=InnoDB;
+
     create table role (
        id bigint not null auto_increment,
         role varchar(30) not null,
@@ -295,11 +308,11 @@
         gameId integer not null,
         image varchar(255),
         name varchar(255),
-        nation varchar(255),
         controllable bit not null,
         health float(53),
         lifetime float(53),
         limit_ integer,
+        nation varchar(255),
         parentMustIdle bit,
         receiveFriendlyDamage bit,
         regenerationSpeed float(53),
@@ -349,6 +362,24 @@
     create table unit_weapons (
        unit_id bigint not null,
         weapons_id bigint not null
+    ) engine=InnoDB;
+
+    create table upgrade (
+       id bigint not null auto_increment,
+        programFile varchar(255),
+        programId integer not null,
+        entityId integer,
+        entityImage varchar(255),
+        entityName varchar(255),
+        entityNation varchar(255),
+        upgradeId integer not null,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table upgrade_parameters (
+       upgrade_id bigint not null,
+        name varchar(255),
+        value_ varchar(255)
     ) engine=InnoDB;
 
     create table weapon (
@@ -402,6 +433,9 @@
 
     alter table localization 
        add constraint UK_j6j9h30eydn1rkg0etaayj2is unique (locale);
+
+    alter table research_upgrades 
+       add constraint UK_7gdiey3v5lj970tgswajvs1y7 unique (upgrades_id);
 
     alter table role 
        add constraint UK_bjxn5ii7v7ygwx39et0wawu0q unique (role);
@@ -522,6 +556,16 @@
        foreign key (localization_id) 
        references localization (id);
 
+    alter table research_upgrades 
+       add constraint FK576x5xifajchphoeybkjvho4u 
+       foreign key (upgrades_id) 
+       references upgrade (id);
+
+    alter table research_upgrades 
+       add constraint FKsued1ejla95myd0aq6rjcsxn2 
+       foreign key (research_id) 
+       references research (id);
+
     alter table turret_weapons 
        add constraint FKbype15yhrf2iaqggdpdyqe8ma 
        foreign key (weapons_id) 
@@ -626,6 +670,11 @@
        add constraint FKi5u8i79qq0pc2tbd8f41fl9or 
        foreign key (unit_id) 
        references unit (id);
+
+    alter table upgrade_parameters 
+       add constraint FKm3ghnsp5bkg2w59s86a1usirk 
+       foreign key (upgrade_id) 
+       references upgrade (id);
 
     alter table weapon 
        add constraint FK6yy30tce8ofl4tynr0sb2t5es 

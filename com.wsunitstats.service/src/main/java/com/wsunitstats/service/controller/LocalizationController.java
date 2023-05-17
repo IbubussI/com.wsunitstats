@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wsunitstats.domain.LocalizationModel;
 import com.wsunitstats.service.exception.RestException;
 import com.wsunitstats.service.service.LocalizationService;
-import com.wsunitstats.utils.service.ModelExporterService;
+import com.wsunitstats.service.service.UtilsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,15 +22,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/locales")
-public class LocalizationController extends JsonControllerSupport {
+public class LocalizationController {
     private static final String OK = "ok";
     private static final String ALREADY_EXISTS = "Given item already exists";
     private static final String INVALID_JSON = "Given json doesn't match expected data model";
 
     @Autowired
-    private LocalizationService localizationService;
+    private UtilsService utilsService;
     @Autowired
-    private ModelExporterService exporterService;
+    private LocalizationService localizationService;
 
     @PostMapping(path = "/upload/bulk", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateLocalizationBulk(@RequestBody String data) {
@@ -63,8 +63,7 @@ public class LocalizationController extends JsonControllerSupport {
     public ResponseEntity<String> fetchLocaleOptions() {
         try {
             List<String> locales = localizationService.getLocaleNames();
-            String json = exporterService.exportToJson(locales);
-            return getStringJsonResponseEntity(json, HttpStatus.OK);
+            return utilsService.getJson(locales, false, null);
         } catch (JsonProcessingException ex) {
             throw new RestException("Json export error", ex, HttpStatus.INTERNAL_SERVER_ERROR);
         }

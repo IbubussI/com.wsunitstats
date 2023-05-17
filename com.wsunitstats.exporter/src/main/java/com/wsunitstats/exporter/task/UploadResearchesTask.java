@@ -13,16 +13,16 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 
 @Component
-public class UploadUnitsTask extends RestUploadTask implements ExecutionTask {
-    private static final Logger LOG = LogManager.getLogger(UploadUnitsTask.class);
-    private static final String TASK_NAME = "uploadUnits";
+public class UploadResearchesTask extends RestUploadTask implements ExecutionTask {
+    private static final Logger LOG = LogManager.getLogger(UploadResearchesTask.class);
+    private static final String TASK_NAME = "uploadResearches";
 
     @Autowired
     private ModelExporterService exporterService;
     @Autowired
     private RestService restService;
 
-    @Value("${com.wsunitstats.exporter.upload.units}")
+    @Value("${com.wsunitstats.exporter.upload.researches}")
     private String uploadUriPath;
 
     @Override
@@ -34,11 +34,11 @@ public class UploadUnitsTask extends RestUploadTask implements ExecutionTask {
     public void execute(ExecutionPayload payload) throws TaskExecutionException {
         try {
             String authToken = getAuthToken(restService, payload);
-            String json = exporterService.exportToJson(payload.getUnits());
+            String json = exporterService.exportToJson(payload.getResearches());
             String endpoint = payload.getHostname() + uploadUriPath;
-            LOG.info("Sending units data to {}", endpoint);
+            LOG.info("Sending researches data to {}", endpoint);
             ResponseEntity<String> response = restService.postJson(endpoint, new HashMap<>(), json, authToken);
-            LOG.info("Units data submitted: HTTP {} : {}", response.getStatusCode().value(), response.getBody());
+            LOG.info("Researches data submitted: HTTP {} : {}", response.getStatusCode().value(), response.getBody());
         } catch (Exception ex) {
             throw new TaskExecutionException(ex);
         }

@@ -7,10 +7,12 @@ import com.wsunitstats.domain.submodel.ConstructionModel;
 import com.wsunitstats.domain.submodel.EnvTag;
 import com.wsunitstats.domain.submodel.HealModel;
 import com.wsunitstats.domain.submodel.IncomeModel;
+import com.wsunitstats.domain.submodel.ParameterModel;
 import com.wsunitstats.domain.submodel.ReserveModel;
 import com.wsunitstats.domain.submodel.SubmarineDepthModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
 import com.wsunitstats.domain.submodel.TurretModel;
+import com.wsunitstats.domain.submodel.UpgradeModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.ability.OnActionModel;
 import com.wsunitstats.domain.submodel.requirement.RequirementsModel;
@@ -38,6 +40,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.SupplyJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportingJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TurretJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.UnitJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.UpgradesScriptsJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityDataJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityOnActionJsonModel;
@@ -45,6 +48,7 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.air.AerodromeJsonMo
 import com.wsunitstats.exporter.model.json.gameplay.submodel.air.AirplaneJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.requirement.RequirementsJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.requirement.UnitRequirementJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.researches.UpgradeJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.BuffJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.DamageJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.DirectionAttacksPointJsonModel;
@@ -66,6 +70,7 @@ import com.wsunitstats.domain.submodel.ResourceModel;
 import com.wsunitstats.domain.submodel.TransportingModel;
 import com.wsunitstats.utils.Constants.AbilityType;
 import jakarta.annotation.PostConstruct;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +104,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     private Map<Integer, EnvJsonModel> envMap;
     private Map<Integer, ProjectileJsonModel> projectileMap;
     private List<String> unitNations;
+    private UpgradesScriptsJsonModel upgradesScripts;
 
     @PostConstruct
     protected void postConstruct() {
@@ -106,6 +112,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         envMap = fileContentService.getGameplayFileModel().getScenes().getEnvs();
         projectileMap = fileContentService.getGameplayFileModel().getScenes().getProjectiles();
         unitNations = fileContentService.getSessionInitFileModel().getUnitNations();
+        upgradesScripts = fileContentService.getGameplayFileModel().getUpgradesScripts();
     }
 
     @Override
@@ -579,7 +586,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public ConstructionModel map(int index, BuildingJsonModel buildingSource) {
+    public ConstructionModel map(int id, BuildingJsonModel buildingSource) {
         if (buildingSource == null) {
             return null;
         }
@@ -591,7 +598,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         entityInfoModel.setEntityName(localization.getUnitNames().get(entityId));
         entityInfoModel.setEntityImage(imageService.getImageName(Constants.EntityType.UNIT.getName(), entityId));
         constructionModel.setEntityInfo(entityInfoModel);
-        constructionModel.setConstructionId(index);
+        constructionModel.setConstructionId(id);
         constructionModel.setDistance(Util.intToDoubleShift(buildingSource.getDistance()));
         constructionModel.setConstructionSpeed(getConstructionSpeed(buildingSource.getProgress()));
         return constructionModel;
@@ -610,6 +617,46 @@ public class ModelMappingServiceImpl implements ModelMappingService {
             }
         }
         return result;
+    }
+
+    @Override
+    public UpgradeModel map(int id, UpgradeJsonModel upgradeSource) {
+        if (upgradeSource == null) {
+            return null;
+        }
+        UpgradeModel upgradeModel = new UpgradeModel();
+        upgradeModel.setUpgradeId(id);
+        upgradeModel.setParameters(mapParameters(upgradeSource.getParameters()));
+        int programId = upgradeSource.getProgram();
+        upgradeModel.setProgramId(programId);
+        upgradeModel.setProgramFile(upgradesScripts.getPath() + "/" + upgradesScripts.getList().get(programId).getFile());
+
+        EntityInfoModel unitInfo = new EntityInfoModel();
+        Integer unitId = upgradeSource.getUnit();
+        if (unitId != null) {
+            unitInfo.setEntityId(unitId);
+            unitInfo.setEntityName(localization.getUnitNames().get(unitId));
+            unitInfo.setEntityImage(imageService.getImageName(Constants.EntityType.UNIT.getName(), unitId));
+            upgradeModel.setUnit(unitInfo);
+        }
+
+        return upgradeModel;
+    }
+
+    @Override
+    public List<ParameterModel> mapParameters(String parametersSource) {
+        List<ParameterModel> parameters = new ArrayList<>();
+        if (StringUtils.isNotBlank(parametersSource)) {
+            String[] stringParameters = parametersSource.split(",");
+            for (String stringParameter : stringParameters) {
+                String[] keyValue = stringParameter.split("=");
+                ParameterModel parameter = new ParameterModel();
+                parameter.setName(keyValue[0]);
+                parameter.setValue(keyValue[1]);
+                parameters.add(parameter);
+            }
+        }
+        return parameters;
     }
 
     private AbilityEntityInfoWrapper getAbilityEntityInfo(AbilityDataJsonModel abilityData, List<CreateEnvJsonModel> createEnvSource) {
