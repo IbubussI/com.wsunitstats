@@ -16,7 +16,7 @@ export const ResizableGrid = ({ children, minWidth, columnWidth, paddingTop, sta
 
     const resizeObserver = new ResizeObserver(() => {
       let divider = Math.floor(contentRef.current.clientWidth / columnWidth);
-      if (12 % divider === 0 && children.length > 1) {
+      if (12 % divider === 0 && children.length >= divider) {
         setGridCols(12 / divider);
       }
     });
