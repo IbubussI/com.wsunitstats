@@ -44,6 +44,7 @@ public class ResearchModelResolverImpl implements ResearchModelResolver {
             researchModel.setGameId(id);
             researchModel.setImage(imageService.getImageName(Constants.EntityType.UPGRADE.getName(), id));
             researchModel.setName(localizationKeyModel.getResearchNames().get(id));
+            researchModel.setDescription(localizationKeyModel.getResearchTexts().get(id));
             researchModel.setUpgrades(getUpgrades(researchJsonModel, upgrades));
             result.add(researchModel);
         }

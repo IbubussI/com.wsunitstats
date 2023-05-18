@@ -4,6 +4,7 @@ import { Stack } from '@mui/material';
 import { DoubleColumnFrame } from 'components/Layout/DoubleColumnFrame';
 import { ArmorChart } from '../ArmorChart';
 import { TagBox } from 'components/Atoms/TagBox';
+import { EntityImage } from 'components/Atoms/EntityImage';
 
 const COMMON_COLUMN = 1;
 const FLEX_TABLE_RIGHT_WIDTH = '50%';
@@ -55,15 +56,7 @@ export const CommonTable = ({ unit, overflowMinWidth }) => {
       <DoubleColumnFrame childrenProps={[null, { overflow: 'auto', width: '100%' }]}>
         <Stack alignItems='center'>
           <h3 style={{ marginBlockStart: '0.4em', marginBlockEnd: '0.65em', maxWidth: '150px', textAlign: 'center' }}>{unit.name}</h3>
-          <Stack sx={{
-            width: '150px',
-            height: '150px',
-            justifyContent: 'center',
-            alignItems: 'center',
-            border: '1px solid',
-          }}>
-            <img style={{ border: '5px solid #555', boxSizing: 'border-box' }} src={`/files/images/${unit.image}`} alt="" />
-          </Stack>
+          <EntityImage image={unit.image} width='150px' height='150px'/>
           {unit.armor?.length > 0 &&
             <>
               <h3>Armor</h3>
@@ -85,7 +78,7 @@ export const CommonTable = ({ unit, overflowMinWidth }) => {
           rowHeight='max-content'
           minWidth={overflowMinWidth} />
       </DoubleColumnFrame>
-      <DoubleColumnFrame childrenProps={[null, null]} column>
+      <DoubleColumnFrame childrenProps={[]} column>
         <>
           <TagBox tagsData={searchTagsData} />
           <TagBox tagsData={tagsData} />

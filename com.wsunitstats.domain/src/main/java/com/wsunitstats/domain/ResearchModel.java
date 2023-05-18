@@ -16,6 +16,7 @@ import java.util.List;
 @Setter
 @ToString
 public class ResearchModel extends GenericEntityModel {
+    private String description;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<UpgradeModel> upgrades;
 }

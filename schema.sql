@@ -253,6 +253,7 @@
         gameId integer not null,
         image varchar(255),
         name varchar(255),
+        description varchar(255),
         primary key (id)
     ) engine=InnoDB;
 

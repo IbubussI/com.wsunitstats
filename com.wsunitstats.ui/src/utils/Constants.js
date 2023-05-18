@@ -23,6 +23,9 @@ export const UNIT_CONSTRUCTION_TAB = 'construction';
 export const UNIT_AIRPLANE_TAB = 'airplane';
 export const UNIT_SUBMARINE_TAB = 'submarine';
 
+export const RESEARCH_MAIN_TAB = 'research';
+export const RESEARCH_UPGRADES_TAB = 'upgrades';
+
 export const PARAM_LOCALE = 'locale';
 export const PARAM_GAME_ID = 'gameId';
 export const PARAM_TAB = 'tab';
