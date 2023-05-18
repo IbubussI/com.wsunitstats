@@ -1,4 +1,4 @@
-import { ConstructionTable } from "components/Tabs/Constructions/ConstructionTable";
+import { ConstructionTable } from "components/Pages/UnitPage/Tabs/Constructions/ConstructionTable";
 import { ResizableGrid } from "components/Layout/ResizableGrid";
 import { Typography } from "@mui/material";
 

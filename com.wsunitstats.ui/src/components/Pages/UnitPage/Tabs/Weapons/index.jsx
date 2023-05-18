@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { WeaponTable } from "components/Tabs/Weapons/WeaponTable";
+import { WeaponTable } from "components/Pages/UnitPage/Tabs/Weapons/WeaponTable";
 import { ResizableGrid } from 'components/Layout/ResizableGrid';
 
 const MIN_WIDTH = 340;

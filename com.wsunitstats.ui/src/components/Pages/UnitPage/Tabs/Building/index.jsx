@@ -1,5 +1,5 @@
 import { ResizableGrid } from "components/Layout/ResizableGrid";
-import { BuildingTable } from "components/Tabs/Building/BuildingTable";
+import { BuildingTable } from "components/Pages/UnitPage/Tabs/Building/BuildingTable";
 
 const MIN_WIDTH = 250;
 const OVERFLOW_WIDTH = 200;

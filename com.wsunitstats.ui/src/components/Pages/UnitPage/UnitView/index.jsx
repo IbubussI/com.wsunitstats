@@ -3,17 +3,17 @@ import * as Constants from "utils/constants";
 import './index.css';
 import { useSearchParams } from 'react-router-dom';
 import { Box, Tab, Tabs } from '@mui/material';
-import { CommonTab } from 'components/Tabs/Common';
-import { WeaponTab } from 'components/Tabs/Weapons';
-import { AbilitiesTab } from 'components/Tabs/Abilities';
-import { BuildingTab } from 'components/Tabs/Building';
-import { ConstructionsTab } from 'components/Tabs/Constructions';
-import { GatheringTab } from 'components/Tabs/Gathering';
-import { HealTab } from 'components/Tabs/Heal';
-import { AirplaneTab } from 'components/Tabs/Airplane';
-import { SubmarineTab } from 'components/Tabs/Submarine';
+import { CommonTab } from 'components/Pages/UnitPage/Tabs/Common';
+import { WeaponTab } from 'components/Pages/UnitPage/Tabs/Weapons';
+import { AbilitiesTab } from 'components/Pages/UnitPage/Tabs/Abilities';
+import { BuildingTab } from 'components/Pages/UnitPage/Tabs/Building';
+import { ConstructionsTab } from 'components/Pages/UnitPage/Tabs/Constructions';
+import { GatheringTab } from 'components/Pages/UnitPage/Tabs/Gathering';
+import { HealTab } from 'components/Pages/UnitPage/Tabs/Heal';
+import { AirplaneTab } from 'components/Pages/UnitPage/Tabs/Airplane';
+import { SubmarineTab } from 'components/Pages/UnitPage/Tabs/Submarine';
 
-export const UnitView = ({ unit }) => {
+export const UnitView = ({ entity: unit }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentTab = searchParams.get('tab');
 

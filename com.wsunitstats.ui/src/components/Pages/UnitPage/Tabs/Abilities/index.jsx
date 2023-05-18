@@ -1,5 +1,5 @@
 import { ResizableGrid } from "components/Layout/ResizableGrid";
-import { AbilityTable } from "components/Tabs/Abilities/AbilityTable"
+import { AbilityTable } from "components/Pages/UnitPage/Tabs/Abilities/AbilityTable"
 
 const MIN_WIDTH = 280;
 const COLUMN_WIDTH = 500;

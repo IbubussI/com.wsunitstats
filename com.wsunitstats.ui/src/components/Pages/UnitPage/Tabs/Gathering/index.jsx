@@ -1,5 +1,5 @@
 import { ResizableGrid } from "components/Layout/ResizableGrid";
-import { GatheringTable } from "components/Tabs/Gathering/GatheringTable";
+import { GatheringTable } from "components/Pages/UnitPage/Tabs/Gathering/GatheringTable";
 
 const MIN_WIDTH = 250;
 const OVERFLOW_WIDTH = 200;

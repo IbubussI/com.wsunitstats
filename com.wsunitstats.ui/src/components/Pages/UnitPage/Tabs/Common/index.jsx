@@ -1,16 +1,16 @@
 import { ResizableGrid } from "components/Layout/ResizableGrid";
-import { HealTable } from "components/Tabs/Heal/HealTable";
+import { CommonTable } from "components/Pages/UnitPage/Tabs/Common/CommonTable";
 
-const MIN_WIDTH = 250;
+const MIN_WIDTH = 400;
 const OVERFLOW_WIDTH = 200;
 const COLUMN_WIDTH = 500;
 
-export const HealTab = ({ unit }) => {
+export const CommonTab = ({ unit }) => {
   return (
     <>
-      <h3>Heal</h3>
+      <h3>Common properties</h3>
       <ResizableGrid minWidth={MIN_WIDTH} columnWidth={COLUMN_WIDTH} paddingTop={1}>
-        <HealTable heal={unit.heal} overflowMinWidth={OVERFLOW_WIDTH} />
+        <CommonTable unit={unit} overflowMinWidth={OVERFLOW_WIDTH}/>
       </ResizableGrid>
     </>
   );

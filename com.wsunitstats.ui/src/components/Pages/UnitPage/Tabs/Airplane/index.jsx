@@ -1,16 +1,16 @@
 import { ResizableGrid } from "components/Layout/ResizableGrid";
-import { SubmarineTable } from "components/Tabs/Submarine/SubmarineTable";
+import { AirplaneTable } from "components/Pages/UnitPage/Tabs/Airplane/AirplaneTable";
 
 const MIN_WIDTH = 250;
 const OVERFLOW_WIDTH = 200;
 const COLUMN_WIDTH = 450;
 
-export const SubmarineTab = ({ unit }) => {
+export const AirplaneTab = ({ unit }) => {
   return (
     <>
-      <h3>Submarine</h3>
+      <h3>Airplane</h3>
       <ResizableGrid minWidth={MIN_WIDTH} columnWidth={COLUMN_WIDTH} paddingTop={1}>
-        <SubmarineTable submarine={unit.submarine} overflowMinWidth={OVERFLOW_WIDTH}/>
+        <AirplaneTable airplane={unit.airplane} overflowMinWidth={OVERFLOW_WIDTH}/>
       </ResizableGrid>
     </>
   );

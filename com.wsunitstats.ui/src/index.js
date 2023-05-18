@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import { HomePage } from './components/Pages/HomePage/index';
 import { UnitPage } from './components/Pages/UnitPage/index';
 import * as Constants from './utils/constants';
+import { ResearchPage } from 'components/Pages/ResearchPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -19,6 +20,9 @@ root.render(
           <Route
             path={Constants.UNIT_PAGE_PATH}
             element={<UnitPage />} />
+          <Route
+            path={Constants.RESEARCH_PAGE_PATH}
+            element={<ResearchPage />} />
           <Route
             path="*"
             element={<Navigate to={Constants.UNIT_PAGE_PATH} replace />} />

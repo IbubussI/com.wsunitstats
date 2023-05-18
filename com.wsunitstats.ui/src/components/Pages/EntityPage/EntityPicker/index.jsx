@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as Constants from 'utils/constants';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -9,7 +8,7 @@ import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 import { debounce } from '@mui/material/utils';
 
-export const UnitPicker = ({ locale, onSelect, value, setValue }) => {
+export const EntityPicker = ({ locale, onSelect, value, setValue, fetchURI, placeholder }) => {
   const [inputValue, setInputValue] = React.useState('');
   const [options, setOptions] = React.useState([]);
 
@@ -26,13 +25,13 @@ export const UnitPicker = ({ locale, onSelect, value, setValue }) => {
   }, [onSelect, setValue]);
 
   const fetchHandler = React.useCallback(
-    (path, params, callback) => {
-      fetch(Constants.HOST + path + '?' + params)
+    (params, callback) => {
+      fetch(fetchURI + '?' + params)
         .then((response) => response.ok ? response.json() : [])
         .then(callback)
         .catch(console.log);
     },
-    [],
+    [fetchURI],
   );
 
   const debouncedFetchHandler = React.useMemo(
@@ -48,7 +47,7 @@ export const UnitPicker = ({ locale, onSelect, value, setValue }) => {
         // don't fetch for empty input
         setOptions([]);
       } else {
-        debouncedFetchHandler(Constants.UNIT_OPTIONS_API,
+        debouncedFetchHandler(
           new URLSearchParams({
             nameFilter: inputValue,
             locale: locale
@@ -64,7 +63,6 @@ export const UnitPicker = ({ locale, onSelect, value, setValue }) => {
 
   return (
     <Autocomplete
-      id="unit-select"
       sx={{ width: '100%', margin: '2px' }}
       getOptionLabel={(option) =>
         typeof option === 'string' ? option : option.name
@@ -95,7 +93,7 @@ export const UnitPicker = ({ locale, onSelect, value, setValue }) => {
         return (
           <TextField
             {...params}
-            label="Type the Unit name"
+            label={placeholder}
             inputProps={{ ...inputProps, readOnly: readOnly }}
             fullWidth
           />
@@ -118,9 +116,9 @@ export const UnitPicker = ({ locale, onSelect, value, setValue }) => {
                   </Box>
                 ))}
 
-                <Typography variant="body2" color="text.secondary">
+                {option.nation && <Typography variant="body2" color="text.secondary">
                   {option.nation}
-                </Typography>
+                </Typography>}
               </Grid>
             </Grid>
           </Box>
