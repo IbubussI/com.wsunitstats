@@ -5,7 +5,7 @@ import { Stack } from '@mui/material';
 import { LocalePicker } from 'components/Pages/EntityPage/LocalePicker';
 import { EntityPicker } from 'components/Pages/EntityPage/EntityPicker';
 
-export const EntityPage = ({ view: View, fetchEntityURI, fetchOptionsURI, autocompletePlaceholder }) => {
+export const EntityPage = ({ view: View, fetchEntityURI, pickerOptions }) => {
   const [option, setOption] = React.useState(null);
   const [entity, setEntity] = React.useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -94,8 +94,7 @@ export const EntityPage = ({ view: View, fetchEntityURI, fetchOptionsURI, autoco
           value={option}
           setValue={setOption}
           onSelect={onIdChange}
-          fetchURI={fetchOptionsURI}
-          placeholder={autocompletePlaceholder} />
+          options={pickerOptions} />
       </Stack>
       <View entity={entity} />
     </>

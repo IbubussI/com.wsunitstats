@@ -1,14 +1,15 @@
 import * as React from 'react';
+import * as Constants from 'utils/constants';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 import { debounce } from '@mui/material/utils';
+import { EntityInfo } from 'components/Atoms/Renderer';
 
-export const EntityPicker = ({ locale, onSelect, value, setValue, fetchURI, placeholder }) => {
+export const EntityPicker = ({ locale, onSelect, value, setValue, options: componentOptions }) => {
   const [inputValue, setInputValue] = React.useState('');
   const [options, setOptions] = React.useState([]);
 
@@ -26,12 +27,12 @@ export const EntityPicker = ({ locale, onSelect, value, setValue, fetchURI, plac
 
   const fetchHandler = React.useCallback(
     (params, callback) => {
-      fetch(fetchURI + '?' + params)
+      fetch(componentOptions.fetchURI + '?' + params)
         .then((response) => response.ok ? response.json() : [])
         .then(callback)
         .catch(console.log);
     },
-    [fetchURI],
+    [componentOptions.fetchURI],
   );
 
   const debouncedFetchHandler = React.useMemo(
@@ -64,12 +65,8 @@ export const EntityPicker = ({ locale, onSelect, value, setValue, fetchURI, plac
   return (
     <Autocomplete
       sx={{ width: '100%', margin: '2px' }}
-      getOptionLabel={(option) =>
-        typeof option === 'string' ? option : option.name
-      }
-      isOptionEqualToValue={(option, value) =>
-        typeof option === 'string' ? option === value : option.gameId === value.gameId
-      }
+      getOptionLabel={(option) => option.name}
+      isOptionEqualToValue={(option, value) => option.gameId === value.gameId}
       filterOptions={(x) => x}
       options={options}
       autoComplete
@@ -93,7 +90,7 @@ export const EntityPicker = ({ locale, onSelect, value, setValue, fetchURI, plac
         return (
           <TextField
             {...params}
-            label={placeholder}
+            label={componentOptions.placeholder}
             inputProps={{ ...inputProps, readOnly: readOnly }}
             fullWidth
           />
@@ -102,23 +99,34 @@ export const EntityPicker = ({ locale, onSelect, value, setValue, fetchURI, plac
       renderOption={(props, option) => {
         const matches = match(option.name, inputValue, { insideWords: true });
         const parts = parse(option.name, matches);
+        const secondary = componentOptions.optionSecondaryCallback(option);
         return (
           <Box component='li' {...props} key={option.gameId}>
             <Grid container alignItems="center">
-              <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                {parts.map((part, index) => (
-                  <Box
-                    key={index}
-                    component="span"
-                    sx={{ fontWeight: part.highlight ? 'bold' : 'regular' }}
-                  >
-                    {part.text}
-                  </Box>
-                ))}
-
-                {option.nation && <Typography variant="body2" color="text.secondary">
-                  {option.nation}
-                </Typography>}
+              <Grid item sx={{ width: 'calc(100% - 44px)' }}>
+                <EntityInfo data={{
+                  primaryVariant: 'body1',
+                  primaryColor: 'text.primary',
+                  primaryLineHeight: 'inherit',
+                  secondaryVariant: 'body2',
+                  secondaryColor: 'text.secondary',
+                  secondaryLineHeight: 'inherit',
+                  imageSpacing: 0.6,
+                  values: [
+                    {
+                      primary: option.name,
+                      secondary: secondary,
+                      image: {
+                        path: option.image,
+                        width: 42,
+                        height: 42,
+                      },
+                      link: {
+                        path: Constants.NO_LINK_INDICATOR
+                      },
+                    },
+                  ]
+                }} />
               </Grid>
             </Grid>
           </Box>

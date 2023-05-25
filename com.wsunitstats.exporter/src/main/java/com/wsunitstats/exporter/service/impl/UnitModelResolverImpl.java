@@ -79,6 +79,7 @@ public class UnitModelResolverImpl implements UnitModelResolver {
             unit.setName(localizationKeyModel.getUnitNames().get(id));
             unit.setImage(imageService.getImageName(Constants.EntityType.UNIT.getName(), id));
             unit.setNation(Util.getUnitNation(sessionInitModel.getUnitNations(), localizationKeyModel.getNationNames(), id));
+            unit.setDescription(localizationKeyModel.getUnitTexts().get(id));
 
             // Build traits
             unit.setBuild(mappingService.map(unitJsonModel, findUnitBuildObject(gameplayModel, id)));

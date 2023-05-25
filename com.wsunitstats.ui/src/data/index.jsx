@@ -3,7 +3,7 @@ import { EntityInfo, Text } from 'components/Atoms/Renderer';
 
 export const getRequirementsData = (requirements, locale) => {
   const unitsAll = requirements.unitsAll ? '(All of below)' : '(One of below)';
-  const requirementsAll = requirements.requirementsAll ? '(All of below)' : '(One of below)';
+  const researchesAll = requirements.researchesAll ? '(All of below)' : '(One of below)';
   const unitRequirements = requirements.units?.map((unit) => {
     return [
       {
@@ -85,7 +85,7 @@ export const getRequirementsData = (requirements, locale) => {
     },
     researchData: {
       label: 'Researches',
-      subLabel: requirementsAll,
+      subLabel: researchesAll,
       head: [
         'Game\u00A0ID',
         'Research'

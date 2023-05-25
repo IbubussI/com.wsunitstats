@@ -221,7 +221,7 @@ function getAbilityRoute(abilityType) {
   let result;
   switch (abilityType) {
     case 0: case 2: result = Utils.getEntityRoute('unit'); break;
-    case 1: result = Utils.getEntityRoute('research'); break;
+    case 1: case 4: result = Utils.getEntityRoute('research'); break;
     default: result = Utils.getEntityRoute('');
   }
   return result;

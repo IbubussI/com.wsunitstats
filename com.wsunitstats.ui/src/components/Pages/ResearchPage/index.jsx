@@ -8,7 +8,11 @@ export const ResearchPage = () => {
     <EntityPage
       view={ResearchView}
       fetchEntityURI={Constants.HOST + Constants.RESEARCH_DATA_API}
-      fetchOptionsURI={Constants.HOST + Constants.RESEARCH_OPTIONS_API}
-      autocompletePlaceholder='Type the Research name'/>
+      pickerOptions={{
+        fetchURI: Constants.HOST + Constants.RESEARCH_OPTIONS_API,
+        placeholder: 'Type the Research name',
+        optionSecondaryCallback: (option) => "ID: " + option.gameId
+      }}
+    />
   );
 }

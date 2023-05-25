@@ -8,7 +8,11 @@ export const UnitPage = () => {
     <EntityPage
       view={UnitView}
       fetchEntityURI={Constants.HOST + Constants.UNIT_DATA_API}
-      fetchOptionsURI={Constants.HOST + Constants.UNIT_OPTIONS_API}
-      autocompletePlaceholder='Type the Unit name' />
+      pickerOptions={{
+        fetchURI: Constants.HOST + Constants.UNIT_OPTIONS_API,
+        placeholder: 'Type the Unit name',
+        optionSecondaryCallback: (option) => option.nation
+      }}
+    />
   );
 }

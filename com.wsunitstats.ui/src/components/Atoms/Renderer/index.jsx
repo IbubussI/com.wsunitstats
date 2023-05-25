@@ -141,6 +141,13 @@ export const Resource = ({ data }) => {
 }
 
 export const EntityInfo = ({ data }) => {
+  const primaryVariant = data.primaryVariant ? data.primaryVariant : 'body2';
+  const primaryColor = data.primaryColor ? data.primaryColor : 'inherit';
+  const primaryLineHeight = data.primaryLineHeight ? data.primaryLineHeight : 1.2;
+  const secondaryVariant = data.secondaryVariant ? data.secondaryVariant : 'caption';
+  const secondaryColor = data.secondaryColor ? data.secondaryColor : 'inherit';
+  const secondaryLineHeight = data.secondaryLineHeight ? data.secondaryLineHeight : 1.2;
+  const imageSpacing = data.imageSpacing ? data.imageSpacing : 0.4;
   const Entry = ({ entryData }) => {
     const minWidth = entryData.overflow ? '0' : '';
     const availableLines = entryData.secondary ? 1 : 2;
@@ -155,14 +162,14 @@ export const EntityInfo = ({ data }) => {
     const LinkContent = () => {
       return (
         <Stack direction='row' alignItems='center'>
-          <Stack sx={{ marginRight: 0.4, height: 'fit-content' }}>
+          <Stack sx={{ marginRight: imageSpacing, height: 'fit-content' }}>
             <Image data={entryData.image} />
           </Stack>
           <Stack minWidth={minWidth}>
-            <Typography variant='body2' lineHeight={1.2} sx={overflow}>
+            <Typography variant={primaryVariant} color={primaryColor} lineHeight={primaryLineHeight} sx={overflow}>
               {entryData.primary}
             </Typography>
-            {entryData.secondary && <Typography variant='caption' lineHeight={1.2}>
+            {entryData.secondary && <Typography variant={secondaryVariant} color={secondaryColor} lineHeight={secondaryLineHeight}>
               {entryData.secondary}
             </Typography>}
           </Stack>

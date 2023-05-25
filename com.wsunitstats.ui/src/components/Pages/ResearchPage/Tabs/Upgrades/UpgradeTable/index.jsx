@@ -64,18 +64,22 @@ export const UpgradeTable = ({ upgrade, overflowMinWidth }) => {
     }
   ].filter(x => x.childData.value && (!x.childData.value.values || x.childData.value.values.length > 0));
 
-  const upgradeParametersData = upgrade?.parameters?.map((param) => {
-    return {
-      column: 1,
-      renderer: FlexibleTableDoubleCellRow,
-      childData: {
-        label: param.name,
-        value: param.value,
-        widthRight: FLEX_TABLE_RIGHT_WIDTH,
-        widthLeft: FLEX_TABLE_LEFT_WIDTH
-      }
-    };
-  })
+  let upgradeParametersData = [];
+  if (upgrade?.parameters) {
+    for (const key of Object.keys(upgrade.parameters)) {
+      upgradeParametersData.push({
+        column: 1,
+        renderer: FlexibleTableDoubleCellRow,
+        childData: {
+          label: key,
+          value: upgrade.parameters[key],
+          widthRight: FLEX_TABLE_RIGHT_WIDTH,
+          widthLeft: FLEX_TABLE_LEFT_WIDTH
+        }
+      });
+    }
+  }
+
 
   const labelData = {
     value: {
@@ -95,7 +99,7 @@ export const UpgradeTable = ({ upgrade, overflowMinWidth }) => {
         data={upgradeData}
         rowHeight='max-content'
         minWidth={overflowMinWidth} />
-      <Stack spacing={1}>
+      {upgradeParametersData.length && <Stack spacing={1}>
         <Typography variant='body2'>
           Program parameters:
         </Typography>
@@ -105,7 +109,7 @@ export const UpgradeTable = ({ upgrade, overflowMinWidth }) => {
           data={upgradeParametersData}
           rowHeight='max-content'
           minWidth={overflowMinWidth} />
-      </Stack>
+      </Stack>}
     </DoubleColumnFrame>
   );
 }

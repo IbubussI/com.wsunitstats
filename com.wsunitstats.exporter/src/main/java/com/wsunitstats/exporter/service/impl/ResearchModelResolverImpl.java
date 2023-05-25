@@ -1,7 +1,7 @@
 package com.wsunitstats.exporter.service.impl;
 
 import com.wsunitstats.domain.ResearchModel;
-import com.wsunitstats.domain.submodel.UpgradeModel;
+import com.wsunitstats.domain.submodel.research.UpgradeModel;
 import com.wsunitstats.exporter.model.LocalizationKeyModel;
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.researches.ResearchJsonModel;

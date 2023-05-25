@@ -2,9 +2,11 @@ package com.wsunitstats.service.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wsunitstats.domain.ResearchModel;
 import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.service.exception.RestException;
-import com.wsunitstats.service.model.UnitOption;
+import com.wsunitstats.service.model.EntityOption;
+import com.wsunitstats.service.service.ResearchService;
 import com.wsunitstats.service.service.UtilsService;
 import com.wsunitstats.service.exception.InvalidParameterException;
 import com.wsunitstats.service.service.LocalizationService;
@@ -23,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/api/units")
@@ -39,8 +40,10 @@ public class UnitController {
     private LocalizationService localizationService;
     @Autowired
     private ParameterValidatorService parameterValidatorService;
+    @Autowired
+    private ResearchService researchService;
 
-    @GetMapping(params = "names")
+    @GetMapping(path = "/names", params = "names")
     public ResponseEntity<String> getUnitsByNames(@RequestParam List<String> names,
                                                   @RequestParam(defaultValue = "en") String locale,
                                                   @RequestParam(defaultValue = "id") String sort,
@@ -59,7 +62,7 @@ public class UnitController {
         }
     }
 
-    @GetMapping(params = "nations")
+    @GetMapping(path = "/nations", params = "nations")
     public ResponseEntity<String> getUnitsByNations(@RequestParam List<String> nations,
                                                     @RequestParam(defaultValue = "en") String locale,
                                                     @RequestParam(defaultValue = "id") String sort,
@@ -78,42 +81,26 @@ public class UnitController {
         }
     }
 
-    @GetMapping(params = "id")
-    public ResponseEntity<String> getUnitsByIds(@RequestParam(name = "id") List<String> idList,
-                                                @RequestParam(defaultValue = "en") String locale,
-                                                @RequestParam(defaultValue = "id") String sort,
-                                                @RequestParam(defaultValue = "asc") String sortDir,
-                                                @RequestParam(defaultValue = "0") Integer page,
-                                                @RequestParam(defaultValue = "50") Integer size) {
-        try {
-            parameterValidatorService.validateLocale(locale);
-            List<Long> parsedIdList = utilsService.parseIds(idList);
-            if (parsedIdList.size() == 0) {
-                throw new InvalidParameterException("Provided ID(s) not valid");
-            }
-            List<UnitModel> units = unitService.getUnitsByIds(parsedIdList, sort, sortDir, page, size);
-            return utilsService.getJson(units, true, locale);
-        } catch (JsonProcessingException ex) {
-            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (InvalidParameterException ex) {
-            throw new RestException(ex, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping(params = "gameId")
-    public ResponseEntity<String> getUnitsByGameIds(@RequestParam(name = "gameId") List<String> idList,
+    @GetMapping(path = "/game-id", params = "gameId")
+    public ResponseEntity<String> getUnitsByGameIds(@RequestParam(name = "gameId") List<String> gameIdList,
+                                                    @RequestParam(name = "researchId", required = false) List<String> researchIdList,
                                                     @RequestParam(defaultValue = "en") String locale,
                                                     @RequestParam(defaultValue = "gameId") String sort,
                                                     @RequestParam(defaultValue = "asc") String sortDir,
                                                     @RequestParam(defaultValue = "0") Integer page,
                                                     @RequestParam(defaultValue = "50") Integer size) {
         try {
-            parameterValidatorService.validateLocale(locale);
-            List<Integer> parsedGameIdList = utilsService.parseGameIds(idList);
+            List<Integer> parsedGameIdList = utilsService.parseGameIds(gameIdList);
             if (parsedGameIdList.size() == 0) {
                 throw new InvalidParameterException("Provided Game ID(s) not valid");
             }
+            parameterValidatorService.validateLocale(locale);
             List<UnitModel> units = unitService.getUnitsByGameIds(parsedGameIdList, sort, sortDir, page, size);
+            if (researchIdList != null) {
+                List<Integer> parsedResearchIdList = utilsService.parseGameIds(researchIdList);
+                List<ResearchModel> researches = researchService.getResearchesByGameIds(parsedResearchIdList);
+                unitService.applyResearches(units, researches);
+            }
             return utilsService.getJson(units, true, locale);
         } catch (JsonProcessingException ex) {
             throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -146,25 +133,8 @@ public class UnitController {
         try {
             parameterValidatorService.validateLocale(locale);
             parameterValidatorService.validateSize(size);
-            List<UnitOption> unitOptions = unitService.getUnitOptionsByName(locale, nameFilter, size);
+            List<EntityOption> unitOptions = unitService.getUnitOptionsByName(locale, nameFilter, size);
             return utilsService.getJson(unitOptions, true, locale);
-        } catch (JsonProcessingException ex) {
-            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (InvalidParameterException ex) {
-            throw new RestException(ex, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping(path = "/option", params = "unitId")
-    public ResponseEntity<String> fetchUnitOptions(@RequestParam Long unitId,
-                                                   @RequestParam(defaultValue = "en") String locale) {
-        try {
-            parameterValidatorService.validateLocale(locale);
-            Optional<UnitOption> unitOption = unitService.getUnitOption(unitId);
-            if (unitOption.isPresent()) {
-                return utilsService.getJson(unitOption, true, locale);
-            }
-            throw new RestException("Unit with ID [" + unitId + "] not found", HttpStatus.BAD_REQUEST);
         } catch (JsonProcessingException ex) {
             throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {

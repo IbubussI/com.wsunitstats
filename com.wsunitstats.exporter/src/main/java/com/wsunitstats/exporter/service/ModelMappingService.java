@@ -7,12 +7,11 @@ import com.wsunitstats.domain.submodel.ConstructionModel;
 import com.wsunitstats.domain.submodel.EnvTag;
 import com.wsunitstats.domain.submodel.HealModel;
 import com.wsunitstats.domain.submodel.IncomeModel;
-import com.wsunitstats.domain.submodel.ParameterModel;
 import com.wsunitstats.domain.submodel.ReserveModel;
 import com.wsunitstats.domain.submodel.SubmarineDepthModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
 import com.wsunitstats.domain.submodel.TurretModel;
-import com.wsunitstats.domain.submodel.UpgradeModel;
+import com.wsunitstats.domain.submodel.research.UpgradeModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.ability.OnActionModel;
 import com.wsunitstats.domain.submodel.requirement.RequirementsModel;
@@ -55,6 +54,7 @@ import com.wsunitstats.domain.submodel.TransportingModel;
 import com.wsunitstats.utils.Constants;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.IntFunction;
 
 public interface ModelMappingService {
@@ -130,5 +130,5 @@ public interface ModelMappingService {
 
     UpgradeModel map(int id, UpgradeJsonModel upgradeSource);
 
-    List<ParameterModel> mapParameters(String parametersSource);
+    Map<String, String> mapParameters(String parametersSource);
 }

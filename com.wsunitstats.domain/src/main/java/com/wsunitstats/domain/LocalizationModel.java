@@ -7,6 +7,7 @@ import jakarta.persistence.FetchType;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
@@ -22,13 +23,13 @@ public class LocalizationModel extends PersistentObject {
     private Map<String, String> entries;
 
     /**
-     * Tries to find localized value. Returns given key if value not found
+     * Tries to find localized value
      *
      * @param key   key to find value for
-     * @return localized value or given key if there are no values for such a key
+     * @return localized value or empty string if there are no values for such a key
      */
     public String getValue(String key) {
         String entry = entries.get(key);
-        return entry != null ? entry : key;
+        return entry != null ? entry : StringUtils.EMPTY;
     }
 }

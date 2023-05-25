@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FlexibleTable, FlexibleTableDoubleCellRow } from 'components/Layout/FlexibleTable';
-import { Stack } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { DoubleColumnFrame } from 'components/Layout/DoubleColumnFrame';
 import { ArmorChart } from '../ArmorChart';
 import { TagBox } from 'components/Atoms/TagBox';
@@ -57,6 +57,9 @@ export const CommonTable = ({ unit, overflowMinWidth }) => {
         <Stack alignItems='center'>
           <h3 style={{ marginBlockStart: '0.4em', marginBlockEnd: '0.65em', maxWidth: '150px', textAlign: 'center' }}>{unit.name}</h3>
           <EntityImage image={unit.image} width='150px' height='150px'/>
+          <Typography variant='body2' align='center' sx={{maxWidth: '150px'}}>
+            {unit.description}
+          </Typography>
           {unit.armor?.length > 0 &&
             <>
               <h3>Armor</h3>

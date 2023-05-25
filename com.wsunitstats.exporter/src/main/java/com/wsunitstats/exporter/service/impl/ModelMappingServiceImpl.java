@@ -7,12 +7,11 @@ import com.wsunitstats.domain.submodel.ConstructionModel;
 import com.wsunitstats.domain.submodel.EnvTag;
 import com.wsunitstats.domain.submodel.HealModel;
 import com.wsunitstats.domain.submodel.IncomeModel;
-import com.wsunitstats.domain.submodel.ParameterModel;
 import com.wsunitstats.domain.submodel.ReserveModel;
 import com.wsunitstats.domain.submodel.SubmarineDepthModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
 import com.wsunitstats.domain.submodel.TurretModel;
-import com.wsunitstats.domain.submodel.UpgradeModel;
+import com.wsunitstats.domain.submodel.research.UpgradeModel;
 import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.ability.OnActionModel;
 import com.wsunitstats.domain.submodel.requirement.RequirementsModel;
@@ -78,6 +77,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -410,9 +410,14 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         }
         BuffModel buffModel = new BuffModel();
         buffModel.setBuffId(buffSource.getResearch());
-        buffModel.setName(localization.getResearchNames().get(buffSource.getResearch()));
         buffModel.setPeriod(Util.intToDoubleShift(buffSource.getPeriod()));
         buffModel.setAffectedUnits(mapUnitTags(buffSource.getTargetsTags()));
+        EntityInfoModel entityInfo = new EntityInfoModel();
+        int entityId = buffSource.getResearch();
+        entityInfo.setEntityName(localization.getResearchNames().get(entityId));
+        entityInfo.setEntityImage(imageService.getImageName(Constants.EntityType.UPGRADE.getName(), entityId));
+        entityInfo.setEntityId(entityId);
+        buffModel.setEntityInfo(entityInfo);
         return buffModel;
     }
 
@@ -644,16 +649,13 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public List<ParameterModel> mapParameters(String parametersSource) {
-        List<ParameterModel> parameters = new ArrayList<>();
+    public Map<String, String> mapParameters(String parametersSource) {
+        Map<String, String> parameters = new HashMap<>();
         if (StringUtils.isNotBlank(parametersSource)) {
             String[] stringParameters = parametersSource.split(",");
             for (String stringParameter : stringParameters) {
                 String[] keyValue = stringParameter.split("=");
-                ParameterModel parameter = new ParameterModel();
-                parameter.setName(keyValue[0]);
-                parameter.setValue(keyValue[1]);
-                parameters.add(parameter);
+                parameters.put(keyValue[0], keyValue[1]);
             }
         }
         return parameters;

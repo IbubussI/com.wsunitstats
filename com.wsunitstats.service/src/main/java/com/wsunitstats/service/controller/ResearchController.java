@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wsunitstats.domain.ResearchModel;
 import com.wsunitstats.service.exception.InvalidParameterException;
 import com.wsunitstats.service.exception.RestException;
-import com.wsunitstats.service.model.ResearchOption;
+import com.wsunitstats.service.model.EntityOption;
 import com.wsunitstats.service.service.LocalizationService;
 import com.wsunitstats.service.service.ParameterValidatorService;
 import com.wsunitstats.service.service.ResearchService;
@@ -39,7 +39,7 @@ public class ResearchController {
     @Autowired
     private ParameterValidatorService parameterValidatorService;
 
-    @GetMapping(params = "names")
+    @GetMapping(path = "/names", params = "names")
     public ResponseEntity<String> getResearchesByNames(@RequestParam List<String> names,
                                                        @RequestParam(defaultValue = "en") String locale,
                                                        @RequestParam(defaultValue = "id") String sort,
@@ -58,7 +58,7 @@ public class ResearchController {
         }
     }
 
-    @GetMapping(params = "gameId")
+    @GetMapping(path = "/game-id", params = "gameId")
     public ResponseEntity<String> getResearchesByGameIds(@RequestParam(name = "gameId") List<String> idList,
                                                          @RequestParam(defaultValue = "en") String locale,
                                                          @RequestParam(defaultValue = "gameId") String sort,
@@ -97,15 +97,33 @@ public class ResearchController {
         }
     }
 
-    @GetMapping(path = "/options", params = "nameFilter")
+    @GetMapping(path = "/options")
     public ResponseEntity<String> fetchResearchOptions(@RequestParam String nameFilter,
                                                        @RequestParam(defaultValue = "en") String locale,
                                                        @RequestParam(defaultValue = "30") Integer size) {
         try {
             parameterValidatorService.validateLocale(locale);
             parameterValidatorService.validateSize(size);
-            List<ResearchOption> unitOptions = researchService.getResearchOptionsByName(locale, nameFilter, size);
-            return utilsService.getJson(unitOptions, true, locale);
+            List<EntityOption> researchOptions = researchService.getResearchOptionsByName(locale, nameFilter, size);
+            return utilsService.getJson(researchOptions, true, locale);
+        } catch (JsonProcessingException ex) {
+            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (InvalidParameterException ex) {
+            throw new RestException(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "/unit-options")
+    public ResponseEntity<String> fetchUnitResearchOptions(@RequestParam(name = "gameId") List<String> idList,
+                                                           @RequestParam(defaultValue = "en") String locale) {
+        try {
+            parameterValidatorService.validateLocale(locale);
+            List<Integer> parsedGameIdList = utilsService.parseGameIds(idList);
+            if (parsedGameIdList.size() == 0) {
+                throw new InvalidParameterException("Provided Game ID(s) not valid");
+            }
+            List<EntityOption> unitResearchesOptions = researchService.getResearchOptionsByUnitIds(parsedGameIdList);
+            return utilsService.getJson(unitResearchesOptions, true, locale);
         } catch (JsonProcessingException ex) {
             throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {

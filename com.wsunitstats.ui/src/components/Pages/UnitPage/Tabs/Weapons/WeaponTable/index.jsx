@@ -1,14 +1,16 @@
 import * as React from 'react';
+import * as Utils from "utils/utils";
+import * as Constants from "utils/constants";
 import { Stack } from '@mui/material';
 import {
   FlexibleTable,
   FlexibleTableDoubleCellRow,
 } from 'components/Layout/FlexibleTable';
-import { HeaderChip, SubValue, TagList, Text } from 'components/Atoms/Renderer';
+import { EntityInfo, HeaderChip, SubValue, TagList, Text } from 'components/Atoms/Renderer';
 import { DoubleColumnTable } from 'components/Layout/DoubleColumnTable';
 import { InfoButtonPopper } from "components/Atoms/ButtonPopper";
-import * as Constants from "utils/constants";
 import { DoubleColumnFrame } from 'components/Layout/DoubleColumnFrame';
+import { useSearchParams } from 'react-router-dom';
 
 const STATS_COLUMNS = 2;
 const STATS_ROWS = 5;
@@ -16,6 +18,7 @@ const FLEX_TABLE_RIGHT_WIDTH = '52%';
 const FLEX_TABLE_LEFT_WIDTH = '48%';
  
 export const WeaponTable = ({ item, overflowMinWidth }) => {
+  const [searchParams] = useSearchParams();
   const weapon = item.weapon;
   
   const attacksNumber = weapon.damagesCount * weapon.attacksPerAttack * weapon.attacksPerAction;
@@ -98,22 +101,39 @@ export const WeaponTable = ({ item, overflowMinWidth }) => {
       paddingTop: '4px',
       paddingBottom: '4px'
     },
-    content: [
+    content: weapon.buff && [
       {
-        label: 'Name',
-        renderer: Text,
-        value: weapon.buff?.name,
+        label: 'Buff',
+        renderer: EntityInfo,
+        value: weapon.buff.entityInfo && {
+          values: [
+            {
+              primary: weapon.buff.entityInfo.entityName,
+              image: {
+                path: weapon.buff.entityInfo.entityImage,
+                width: 35,
+                height: 35,
+              },
+              link: {
+                id: weapon.buff.entityInfo.entityId,
+                locale: searchParams.get(Constants.PARAM_LOCALE),
+                path: Utils.getEntityRoute("research")
+              },
+              overflow: true
+            },
+          ].filter(element => element),
+        },  
       },
       {
         label: 'Duration',
         renderer: Text,
-        value: weapon.buff?.period && weapon.buff?.period + " sec",
+        value: weapon.buff.period && weapon.buff.period + " sec",
       },
       {
         label: 'Affected units',
         baseline: true,
         renderer: TagList,
-        value: weapon.buff?.affectedUnits && {
+        value: weapon.buff.affectedUnits && {
           tags: weapon.buff.affectedUnits
         }
       }
@@ -307,7 +327,7 @@ export const WeaponTable = ({ item, overflowMinWidth }) => {
           {attackData.content.length > 0 && <InfoButtonPopper label={attackData.label}>
             <DoubleColumnTable data={attackData} />
           </InfoButtonPopper>}
-          {buffData.content.length > 0 && <InfoButtonPopper label={buffData.label}>
+          {buffData.content?.length > 0 && <InfoButtonPopper label={buffData.label}>
             <DoubleColumnTable data={buffData} />
           </InfoButtonPopper>}
           {envData.content.length > 0 && <InfoButtonPopper label={envData.label}>

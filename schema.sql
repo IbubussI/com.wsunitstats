@@ -85,7 +85,10 @@
     create table buff (
        id bigint not null auto_increment,
         buffId integer not null,
-        name varchar(255),
+        entityId integer,
+        entityImage varchar(255),
+        entityName varchar(255),
+        entityNation varchar(255),
         period float(53),
         primary key (id)
     ) engine=InnoDB;
@@ -310,6 +313,7 @@
         image varchar(255),
         name varchar(255),
         controllable bit not null,
+        description varchar(1023),
         health float(53),
         lifetime float(53),
         limit_ integer,
@@ -379,8 +383,9 @@
 
     create table upgrade_parameters (
        upgrade_id bigint not null,
-        name varchar(255),
-        value_ varchar(255)
+        parameters varchar(255),
+        parameters_KEY varchar(255) not null,
+        primary key (upgrade_id, parameters_KEY)
     ) engine=InnoDB;
 
     create table weapon (

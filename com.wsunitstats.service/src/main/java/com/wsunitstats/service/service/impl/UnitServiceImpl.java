@@ -1,15 +1,16 @@
 package com.wsunitstats.service.service.impl;
 
+import com.wsunitstats.domain.ResearchModel;
 import com.wsunitstats.domain.UnitModel;
-import com.wsunitstats.service.model.UnitOption;
+import com.wsunitstats.service.model.EntityOption;
 import com.wsunitstats.service.repository.UnitRepository;
+import com.wsunitstats.service.service.UnitMutatorService;
 import com.wsunitstats.service.service.UnitService;
 import com.wsunitstats.service.service.UtilsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UnitServiceImpl implements UnitService {
@@ -17,6 +18,8 @@ public class UnitServiceImpl implements UnitService {
     private UnitRepository unitRepository;
     @Autowired
     private UtilsService utilsService;
+    @Autowired
+    private UnitMutatorService unitMutatorService;
 
     @Override
     public List<UnitModel> getUnitsAll(String sort, String sortDir, int page, int size) {
@@ -44,13 +47,13 @@ public class UnitServiceImpl implements UnitService {
     }
 
     @Override
-    public List<UnitOption> getUnitOptionsByName(String locale, String namePattern, int size) {
-        return unitRepository.findByPatternContaining(locale, "<*unitName%", String.format("%%%s%%", namePattern), size);
+    public void applyResearches(List<UnitModel> units, List<ResearchModel> researches) {
+         units.forEach(unit -> researches.forEach(research -> unitMutatorService.applyResearchMutations(unit, research)));
     }
 
     @Override
-    public Optional<UnitOption> getUnitOption(Long id) {
-        return unitRepository.findOptionById(id);
+    public List<EntityOption> getUnitOptionsByName(String locale, String namePattern, int size) {
+        return unitRepository.findByPatternContaining(locale, "<*unitName%", String.format("%%%s%%", namePattern), size);
     }
 
     @Override

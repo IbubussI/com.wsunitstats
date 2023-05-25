@@ -1,4 +1,4 @@
-package com.wsunitstats.domain.submodel;
+package com.wsunitstats.domain.submodel.research;
 
 import com.wsunitstats.domain.EntityInfoModel;
 import com.wsunitstats.domain.PersistentObject;
@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.List;
+import java.util.Map;
 
 @Entity(name = "upgrade")
 @Getter
@@ -18,7 +18,7 @@ import java.util.List;
 public class UpgradeModel extends PersistentObject {
     private int upgradeId;
     @ElementCollection(fetch = FetchType.EAGER)
-    private List<ParameterModel> parameters;
+    private Map<String, String> parameters;
     private int programId;
     private String programFile;
     private EntityInfoModel unit;

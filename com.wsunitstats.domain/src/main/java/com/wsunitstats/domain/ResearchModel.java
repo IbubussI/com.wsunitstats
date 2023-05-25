@@ -1,6 +1,6 @@
 package com.wsunitstats.domain;
 
-import com.wsunitstats.domain.submodel.UpgradeModel;
+import com.wsunitstats.domain.submodel.research.UpgradeModel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

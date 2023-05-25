@@ -41,7 +41,7 @@ export const DoubleColumnFrame = ({ children, childrenProps, column, borderLabel
     const childProps = {
       padding: '4px',
       boxSizing: 'border-box',
-      ...childrenProps
+      ...childrenProps[0]
     }
     return (
       <Stack sx={{
