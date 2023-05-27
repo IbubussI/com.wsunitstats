@@ -5,7 +5,7 @@ import { Stack } from '@mui/material';
 import { LocalePicker } from 'components/Pages/EntityPage/LocalePicker';
 import { EntityPicker } from 'components/Pages/EntityPage/EntityPicker';
 
-export const EntityPage = ({ view: View, fetchEntityURI, pickerOptions }) => {
+export const EntityPage = ({ view: View, navItems, navWidth, fetchEntityURI, pickerOptions }) => {
   const [option, setOption] = React.useState(null);
   const [entity, setEntity] = React.useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -79,12 +79,11 @@ export const EntityPage = ({ view: View, fetchEntityURI, pickerOptions }) => {
       <Stack
         sx={{
           flexDirection: 'row',
-          alignItems: 'center',
+          alignItems: 'stretch',
           justifyContent: 'center',
           fontSize: 'calc(10px + 2vmin)',
           padding: '15px',
-          width: '90%',
-          maxWidth: '400px'
+          width: '90%'
         }}>
         <LocalePicker
           onSelect={onLocaleChange}
@@ -95,6 +94,7 @@ export const EntityPage = ({ view: View, fetchEntityURI, pickerOptions }) => {
           setValue={setOption}
           onSelect={onIdChange}
           options={pickerOptions} />
+        {navItems}
       </Stack>
       <View entity={entity} />
     </>

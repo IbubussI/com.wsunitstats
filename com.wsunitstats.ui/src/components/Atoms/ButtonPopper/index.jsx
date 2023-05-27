@@ -81,3 +81,31 @@ export const InfoButtonPopper = ({ children, label }) => {
       buttonRenderer={ButtonContentRenderer} />
   );
 }
+
+export const MenuListButtonPopper = ({ children, label }) => {
+  const ButtonContentRenderer = ({ onClick, icon: Icon }) => {
+    return (
+      <Button
+        variant='outlined'
+        onClick={onClick}
+        sx={{
+          width: '100%',
+          height: '100%',
+          textTransform: 'none',
+          padding: '5px 24px',
+          borderColor: 'rgb(203, 203, 203)',
+          color: 'rgba(0, 0, 0, 0.87)',
+          '&:hover': { borderColor: 'rgba(0, 0, 0, 0.87)', backgroundColor: 'initial' },
+        }}>
+        {label}
+        <Icon sx={{ color: 'rgb(117, 117, 117)', position: "absolute", right: '9px', top: 'calc(50% - 12px)' }} />
+      </Button>
+    );
+  }
+  return (
+    <ButtonPopper
+      children={children}
+      buttonRenderer={ButtonContentRenderer} />
+  );
+}
+

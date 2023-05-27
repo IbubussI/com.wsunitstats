@@ -28,6 +28,7 @@ export const RESEARCH_UPGRADES_TAB = 'upgrades';
 
 export const PARAM_LOCALE = 'locale';
 export const PARAM_GAME_ID = 'gameId';
+export const PARAM_RESEARCH_ID = 'researchId';
 export const PARAM_TAB = 'tab';
 export const NO_LINK_INDICATOR = 'no-link';
 

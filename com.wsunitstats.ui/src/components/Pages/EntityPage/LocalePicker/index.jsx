@@ -37,7 +37,7 @@ export const LocalePicker = ({onSelect, currentLocale}) => {
   }, [locales, currentLocale, onSelect]);
 
   return (
-    <Box sx={{ width: 90, margin: '2px' }}>
+    <Box sx={{ width: 80, margin: '2px' }}>
       <FormControl fullWidth>
         <InputLabel id="locale-select-label">Locale</InputLabel>
         <Select

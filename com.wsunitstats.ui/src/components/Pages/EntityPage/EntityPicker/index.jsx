@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as Constants from 'utils/constants';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -7,7 +6,8 @@ import Grid from '@mui/material/Grid';
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 import { debounce } from '@mui/material/utils';
-import { EntityInfo } from 'components/Atoms/Renderer';
+import { Image } from 'components/Atoms/Renderer';
+import { Stack, Typography } from '@mui/material';
 
 export const EntityPicker = ({ locale, onSelect, value, setValue, options: componentOptions }) => {
   const [inputValue, setInputValue] = React.useState('');
@@ -64,7 +64,7 @@ export const EntityPicker = ({ locale, onSelect, value, setValue, options: compo
 
   return (
     <Autocomplete
-      sx={{ width: '100%', margin: '2px' }}
+      sx={{ width: '100%', margin: '2px', maxWidth: '350px' }}
       getOptionLabel={(option) => option.name}
       isOptionEqualToValue={(option, value) => option.gameId === value.gameId}
       filterOptions={(x) => x}
@@ -85,13 +85,11 @@ export const EntityPicker = ({ locale, onSelect, value, setValue, options: compo
       onInputChange={(_, newInputValue) => {
         setInputValue(newInputValue);
       }}
-      renderInput={({ inputProps, ...params }) => {
-        const readOnly = value ? true : false;
+      renderInput={({ ...params }) => {
         return (
           <TextField
             {...params}
             label={componentOptions.placeholder}
-            inputProps={{ ...inputProps, readOnly: readOnly }}
             fullWidth
           />
         );
@@ -104,29 +102,32 @@ export const EntityPicker = ({ locale, onSelect, value, setValue, options: compo
           <Box component='li' {...props} key={option.gameId}>
             <Grid container alignItems="center">
               <Grid item sx={{ width: 'calc(100% - 44px)' }}>
-                <EntityInfo data={{
-                  primaryVariant: 'body1',
-                  primaryColor: 'text.primary',
-                  primaryLineHeight: 'inherit',
-                  secondaryVariant: 'body2',
-                  secondaryColor: 'text.secondary',
-                  secondaryLineHeight: 'inherit',
-                  imageSpacing: 0.6,
-                  values: [
-                    {
-                      primary: option.name,
-                      secondary: secondary,
-                      image: {
-                        path: option.image,
-                        width: 42,
-                        height: 42,
-                      },
-                      link: {
-                        path: Constants.NO_LINK_INDICATOR
-                      },
-                    },
-                  ]
-                }} />
+                <Stack direction='row' alignItems='center'>
+                  <Stack sx={{ marginRight: 0.6, height: 'fit-content' }}>
+                    <Image data={{
+                      path: option.image,
+                      width: 42,
+                      height: 42,
+                    }} />
+                  </Stack>
+                  <Stack>
+                    <Box>
+                      {parts.map((part, index) => (
+                        <Typography key={index}
+                          component='span'
+                          variant='body1'
+                          color='text.primary'
+                          sx={{ fontWeight: part.highlight ? 'bold' : 'regular' }}
+                        >
+                          {part.text}
+                        </Typography>
+                      ))}
+                    </Box>
+                    {secondary && <Typography variant='body2' color='text.secondary'>
+                      {secondary}
+                    </Typography>}
+                  </Stack>
+                </Stack>
               </Grid>
             </Grid>
           </Box>
