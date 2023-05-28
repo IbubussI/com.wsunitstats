@@ -43,7 +43,7 @@ public interface ResearchRepository extends CrudRepository<ResearchModel, Long>,
                                                @Param("size") int size);
 
     @Query(nativeQuery = true, value = """
-            SELECT DISTINCT research.name, research.gameId, research.id FROM wsunitstats.research
+            SELECT DISTINCT research.name, research.gameId, research.id, research.image FROM wsunitstats.research
             INNER JOIN research_upgrades ON research.id = research_upgrades.research_id
             INNER JOIN upgrade ON upgrade.id = research_upgrades.upgrades_id
             WHERE upgrade.entityId IN :unitId
