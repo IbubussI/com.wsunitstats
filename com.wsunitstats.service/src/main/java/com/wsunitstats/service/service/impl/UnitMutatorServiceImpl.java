@@ -24,9 +24,11 @@ public class UnitMutatorServiceImpl implements UnitMutatorService {
     @Override
     public void applyResearchMutations(UnitModel target, ResearchModel research) {
         for (UpgradeModel upgrade : research.getUpgrades()) {
-            int mutatorId = upgrade.getProgramId();
-            Map<String, String> params = upgrade.getParameters();
-            applyMutation(target, mutatorId, params);
+            if (upgrade.getUnit() != null && upgrade.getUnit().getEntityId() == target.getGameId()) {
+                int mutatorId = upgrade.getProgramId();
+                Map<String, String> params = upgrade.getParameters();
+                applyMutation(target, mutatorId, params);
+            }
         }
     }
 
