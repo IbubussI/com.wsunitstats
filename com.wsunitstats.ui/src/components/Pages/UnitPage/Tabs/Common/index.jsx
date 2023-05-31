@@ -5,7 +5,7 @@ const MIN_WIDTH = 400;
 const OVERFLOW_WIDTH = 200;
 const COLUMN_WIDTH = 500;
 
-export const CommonTab = ({ unit }) => {
+export const CommonTab = ({ entity: unit }) => {
   return (
     <>
       <h3>Common properties</h3>

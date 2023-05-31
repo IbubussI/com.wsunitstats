@@ -2,9 +2,15 @@ import * as React from 'react';
 import * as Constants from "utils/constants";
 import './index.css';
 import { useSearchParams } from 'react-router-dom';
-import { Box, Tab, Tabs } from '@mui/material';
+import { Box, CircularProgress, Tab, Tabs } from '@mui/material';
 
-export const EntityTabsView = ({ entity, tabsData }) => {
+export const EntityTabsView = ({
+  entity,
+  tabsData,
+  loading,
+  tabsView: TabsViewComponent = TabsView,
+  defaultview: DefaultViewComponent = DefaultView
+}) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentTab = searchParams.get('tab');
 
@@ -40,20 +46,17 @@ export const EntityTabsView = ({ entity, tabsData }) => {
     //adding tabsData to dependencies leads to re-render loop
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setTab, removeTab, isTabValid, currentTab, entity, searchParams]);
-  
-  const isRenderContent = currentTab && tabsData.length > 0;
+
+  const isRenderContent = (currentTab && tabsData.length > 0) || loading;
+
   applyBodyStyle(isRenderContent);
-  return (
-    <>
-      {isRenderContent
-        ? <TabsView tabsData={tabsData} currentTab={currentTab} entity={entity} setTab={setTab} />
-        : <DefaultView />}
-    </>
-  );
+  return isRenderContent
+    ? (<TabsViewComponent tabsData={tabsData} currentTab={currentTab} entity={entity} setTab={setTab} loading={loading}/>)
+    : (<DefaultViewComponent loading={loading} />);
 }
 
-const TabsView = ({ tabsData, currentTab, entity, setTab }) => {
-  return (
+export const TabsView = ({ tabsData, currentTab, entity, setTab, loading }) => {
+  return tabsData.length === 0 && loading ? <CircularProgress/> : (
     <>
       <Box display="flex" justifyContent="center" width="100%">
         <Tabs value={currentTab} onChange={(_, newValue) => setTab(newValue)} allowScrollButtonsMobile variant="scrollable">
@@ -64,7 +67,7 @@ const TabsView = ({ tabsData, currentTab, entity, setTab }) => {
         const TabComponent = tab.component;
         return (
           <TabView key={tab.id} value={currentTab} selfValue={tab.id}>
-            <TabComponent entity={entity} />
+            {loading ? <CircularProgress/> : <TabComponent entity={entity} />}
           </TabView>
         );
       })}
@@ -80,7 +83,7 @@ const TabView = ({ selfValue, value, children }) => {
   );
 }
 
-const DefaultView = () => <div>Waiting for your input...</div>
+const DefaultView = ({ loading }) => loading ? <CircularProgress/> : <div>Waiting for your input...</div>
 
 const applyBodyStyle = (isContent) => {
   let bodyRoot = document.querySelector(".body-root");

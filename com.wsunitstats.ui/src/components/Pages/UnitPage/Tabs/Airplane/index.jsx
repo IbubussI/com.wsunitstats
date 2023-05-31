@@ -5,7 +5,7 @@ const MIN_WIDTH = 250;
 const OVERFLOW_WIDTH = 200;
 const COLUMN_WIDTH = 450;
 
-export const AirplaneTab = ({ unit }) => {
+export const AirplaneTab = ({ entity: unit }) => {
   return (
     <>
       <h3>Airplane</h3>

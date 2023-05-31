@@ -5,7 +5,7 @@ const MIN_WIDTH = 250;
 const OVERFLOW_WIDTH = 200;
 const COLUMN_WIDTH = 500;
 
-export const GatheringTab = ({ unit }) => {
+export const GatheringTab = ({ entity: unit }) => {
   return (
     <>
       <h3>Gathering</h3>

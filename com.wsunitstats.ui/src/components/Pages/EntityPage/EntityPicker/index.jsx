@@ -65,18 +65,18 @@ export const EntityPicker = ({ locale, onSelect, value, setValue, options: compo
   return (
     <Autocomplete
       sx={{ width: '100%', margin: '2px', maxWidth: '350px' }}
+      autoComplete
+      autoHighlight
+      includeInputInList
+      filterSelectedOptions
       getOptionLabel={(option) => option.name}
       isOptionEqualToValue={(option, value) => option.gameId === value.gameId}
       filterOptions={(x) => x}
       options={options}
-      autoComplete
-      includeInputInList
-      filterSelectedOptions
       value={value}
-      noOptionsText="No options"
       componentsProps={{
         paper: {
-          elevation: 4
+          elevation: 3
         }
       }}
       onChange={(_, newValue) => {

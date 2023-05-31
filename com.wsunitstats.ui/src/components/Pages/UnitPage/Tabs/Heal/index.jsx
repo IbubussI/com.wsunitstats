@@ -5,7 +5,7 @@ const MIN_WIDTH = 250;
 const OVERFLOW_WIDTH = 200;
 const COLUMN_WIDTH = 500;
 
-export const HealTab = ({ unit }) => {
+export const HealTab = ({ entity: unit }) => {
   return (
     <>
       <h3>Heal</h3>

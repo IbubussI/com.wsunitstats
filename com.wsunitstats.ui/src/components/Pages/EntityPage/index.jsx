@@ -4,16 +4,19 @@ import { useSearchParams } from 'react-router-dom';
 import { Stack } from '@mui/material';
 import { LocalePicker } from 'components/Pages/EntityPage/LocalePicker';
 import { EntityPicker } from 'components/Pages/EntityPage/EntityPicker';
+import isEqual from 'lodash/isEqual';
 
-export const EntityPage = ({ view: View, navItems, navWidth, fetchEntityURI, pickerOptions }) => {
+export const EntityPage = ({ view: View, navItems, fetchEntityURI, fetchEntityParams, pickerOptions }) => {
   const [option, setOption] = React.useState(null);
   const [entity, setEntity] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const gameId = searchParams.get(Constants.PARAM_GAME_ID);
   const locale = searchParams.get(Constants.PARAM_LOCALE);
   
   const prevGameId = React.useRef(null);
   const prevLocale = React.useRef(null);
+  const prevParams = React.useRef(null);
 
   const clear = React.useCallback((replace = true) => {
     setSearchParams(new URLSearchParams({
@@ -27,7 +30,8 @@ export const EntityPage = ({ view: View, navItems, navWidth, fetchEntityURI, pic
     let active = true;
 
     const handleResult = (result) => {
-      let received = result[0];
+      const received = result[0];
+      setLoading(false);
       if (received) {
         setEntity(received);
         setOption({
@@ -40,11 +44,13 @@ export const EntityPage = ({ view: View, navItems, navWidth, fetchEntityURI, pic
       }
     }
 
-    if (active && (prevGameId.current !== gameId || prevLocale.current !== locale)) {
+    if (active && (prevGameId.current !== gameId || prevLocale.current !== locale || !isEqual(prevParams.current, fetchEntityParams))) {
       if (gameId) {
+        setLoading(true);
         fetch(fetchEntityURI + '?' + new URLSearchParams({
           [Constants.PARAM_GAME_ID]: gameId,
-          [Constants.PARAM_LOCALE]: locale
+          [Constants.PARAM_LOCALE]: locale,
+          ...fetchEntityParams
         }))
           .then((response) => response.json())
           .then(handleResult)
@@ -54,11 +60,12 @@ export const EntityPage = ({ view: View, navItems, navWidth, fetchEntityURI, pic
       }
       prevGameId.current = gameId;
       prevLocale.current = locale;
+      prevParams.current = fetchEntityParams;
     }
     return () => {
       active = false;
     };
-  }, [gameId, locale, clear, fetchEntityURI]);
+  }, [gameId, locale, clear, fetchEntityURI, fetchEntityParams]);
 
   const onIdChange = (gameId) => {
     if (gameId === null) {
@@ -96,7 +103,7 @@ export const EntityPage = ({ view: View, navItems, navWidth, fetchEntityURI, pic
           options={pickerOptions} />
         {navItems}
       </Stack>
-      <View entity={entity} />
+      <View entity={entity} loading={loading} />
     </>
   );
 }

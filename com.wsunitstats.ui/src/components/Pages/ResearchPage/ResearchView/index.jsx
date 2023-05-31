@@ -5,7 +5,7 @@ import { EntityTabsView } from 'components/Pages/EntityPage/EntityTabsView';
 import { ResearchTab } from '../Tabs/Research';
 import { UpgradesTab } from '../Tabs/Upgrades';
 
-export const ResearchView = ({ entity: research }) => {
+export const ResearchView = ({ entity: research, loading }) => {
   const tabsData = [
     {
       id: Constants.RESEARCH_MAIN_TAB,
@@ -22,6 +22,6 @@ export const ResearchView = ({ entity: research }) => {
   ].filter(element => element.isShow);
 
   return (
-    <EntityTabsView entity={research} tabsData={tabsData}/>
+    <EntityTabsView entity={research} tabsData={tabsData} loading={loading} />
   );
 }

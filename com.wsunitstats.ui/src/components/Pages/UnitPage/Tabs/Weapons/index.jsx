@@ -5,7 +5,7 @@ import { ResizableGrid } from 'components/Layout/ResizableGrid';
 const MIN_WIDTH = 340;
 const COLUMN_WIDTH = 570;
 
-export const WeaponTab = ({ unit }) => {
+export const WeaponTab = ({ entity: unit }) => {
   const getWeaponArray = (unit) => {
     const weapons = [];
     if (unit.weapons) {

@@ -6,7 +6,7 @@ const MIN_WIDTH = 250;
 const OVERFLOW_WIDTH = 200;
 const COLUMN_WIDTH = 500;
 
-export const ConstructionsTab = ({ unit }) => {
+export const ConstructionsTab = ({ entity: unit }) => {
   const Note = () => {
     return (
       <Typography variant="caption" color="text.secondary">

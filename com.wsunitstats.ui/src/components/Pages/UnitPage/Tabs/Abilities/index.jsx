@@ -4,7 +4,7 @@ import { AbilityTable } from "components/Pages/UnitPage/Tabs/Abilities/AbilityTa
 const MIN_WIDTH = 280;
 const COLUMN_WIDTH = 500;
 
-export const AbilitiesTab = ({ unit }) => {
+export const AbilitiesTab = ({ entity: unit }) => {
   return (
     <>
       <h3>Abilities</h3>

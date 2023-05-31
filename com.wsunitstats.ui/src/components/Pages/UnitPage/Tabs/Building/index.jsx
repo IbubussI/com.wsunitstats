@@ -5,7 +5,7 @@ const MIN_WIDTH = 250;
 const OVERFLOW_WIDTH = 200;
 const COLUMN_WIDTH = 450;
 
-export const BuildingTab = ({ unit }) => {
+export const BuildingTab = ({ entity: unit }) => {
   return (
     <>
       <h3>Building</h3>
