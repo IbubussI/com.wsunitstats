@@ -32,4 +32,7 @@ export const PARAM_RESEARCH_ID = 'researchId';
 export const PARAM_TAB = 'tab';
 export const NO_LINK_INDICATOR = 'no-link';
 
+export const LOCAL_RESIZABLE_WIDTH = 'resizable-width';
+
 export const SECONDS_END_MARKER = '\u00A0sec';
+export const DEFAULT_COLUMN_WIDTH = 600;

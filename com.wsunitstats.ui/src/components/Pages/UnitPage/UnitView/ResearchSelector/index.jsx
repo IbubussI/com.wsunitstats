@@ -11,9 +11,13 @@ export const ResearchSelector = () => {
   const [selected, setSelected] = React.useState([]);
   const gameId = searchParams.get(Constants.PARAM_GAME_ID);
 
-  React.useEffect(() => {
+  const getQueryResearchIds = React.useCallback(() => {
     const currentResearchesQueryParams = searchParams.get(Constants.PARAM_RESEARCH_ID)?.split(',');
-    const currentResearches = currentResearchesQueryParams ? [...currentResearchesQueryParams] : [];
+    return currentResearchesQueryParams ? [...currentResearchesQueryParams] : [];
+  }, [searchParams]);
+
+  React.useEffect(() => {
+    const currentResearches = getQueryResearchIds();
     setSelected(currentResearches
       .filter((value, index, array) => array.indexOf(value) === index)
       .filter((value) => {
@@ -24,7 +28,7 @@ export const ResearchSelector = () => {
       }
       return false;
     }));
-  }, [options, searchParams])
+  }, [options, getQueryResearchIds])
 
   const fetchOptions = React.useCallback(() => {
     fetch(Constants.HOST + Constants.RESEARCH_UNIT_OPTIONS_API + '?' + new URLSearchParams({
@@ -69,16 +73,19 @@ export const ResearchSelector = () => {
     optionIds.push(option.gameId.toString());
   });
 
+  const isButtonDisabled = isEqual(getQueryResearchIds(), selected);
+
   return options.length ? (
     <Stack direction='row' sx={{ gap: 0.5 }}>
       <CheckmarksSelect label='Apply researches' onChange={handleChange} options={optionIds} optionsMetadata={optionsMetadata} value={selected} />
       <Button
         variant='outlined'
         sx={{
-          backgroundColor: "rgba(44, 138, 232, 0.1)",
+          backgroundColor: isButtonDisabled ? "rgba(121, 131, 141, 0.1)" : "rgba(44, 138, 232, 0.1)",
           "&:hover": { backgroundColor: "rgba(12, 127, 241, 0.26)" }
         }}
-        onClick={applySelected}>
+        onClick={applySelected}
+        disabled={isButtonDisabled}>
         APPLY
       </Button>
     </Stack>

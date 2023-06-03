@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as Constants from 'utils/constants'
 import { Box, Grid, debounce } from "@mui/material";
 import { BasicPaper } from "components/Atoms/BasicPaper";
 import { ResizableBox } from 'react-resizable';
@@ -6,13 +7,21 @@ import { ResizableBox } from 'react-resizable';
 export const ResizableGrid = ({ children, minWidth, columnWidth, paddingTop, staticBottom: StaticBottomComponent }) => {
   const [maxWidth, setMaxWidth] = React.useState(0);
   const [width, setWidth] = React.useState(0);
+  const [gridCols, setGridCols] = React.useState(12);
   const containerRef = React.useRef(null);
   const contentRef = React.useRef(null);
-  const [gridCols, setGridCols] = React.useState(12);
 
-  React.useLayoutEffect(() => {
-    setMaxWidth(containerRef.current.clientWidth);
-    setWidth(columnWidth);
+  React.useEffect(() => {
+    const initMaxWidth = containerRef.current.clientWidth;
+    setMaxWidth(initMaxWidth);
+    const localWidth = localStorage.getItem(Constants.LOCAL_RESIZABLE_WIDTH);
+    const localWidthN = Number(localWidth);
+    if (localWidth && localWidthN >= minWidth && localWidthN <= initMaxWidth) {
+      console.log('set width to: ' + localWidthN)
+      setWidth(localWidthN);
+    } else {
+      setWidth(columnWidth);
+    }
 
     const resizeObserver = new ResizeObserver(() => {
       let divider = Math.floor(contentRef.current.clientWidth / columnWidth);
@@ -25,28 +34,35 @@ export const ResizableGrid = ({ children, minWidth, columnWidth, paddingTop, sta
     return () => {
       resizeObserver.disconnect();
     };
-  }, [gridCols, columnWidth, children.length]);
+  }, [columnWidth, children.length, minWidth]);
 
-  const resizeHandler = React.useCallback(
+  const windowResizeHandler = React.useCallback(
     () => {
       setMaxWidth(containerRef.current.clientWidth);
     },
     [],
   );
 
-  const debouncedResizeHandler = React.useMemo(
-    () => debounce(resizeHandler, 300),
-    [resizeHandler],
+  const debouncedWindowResizeHandler = React.useMemo(
+    () => debounce(windowResizeHandler, 300),
+    [windowResizeHandler],
   );
 
   React.useEffect(() => {
-    window.addEventListener("resize", debouncedResizeHandler);
+    window.addEventListener("resize", debouncedWindowResizeHandler);
     // Initial update
-    resizeHandler();
+    windowResizeHandler();
     return () => {
-      window.removeEventListener("resize", debouncedResizeHandler);
+      window.removeEventListener("resize", debouncedWindowResizeHandler);
     }
-  }, [debouncedResizeHandler, resizeHandler]);
+  }, [debouncedWindowResizeHandler, windowResizeHandler]);
+
+  const onResizeStop = (_, data) => {
+    const stopWidth = data.size.width;
+    if (typeof stopWidth === 'number' && stopWidth >= minWidth && stopWidth <= maxWidth) {
+      localStorage.setItem(Constants.LOCAL_RESIZABLE_WIDTH, stopWidth);
+    }
+  }
 
   return (
     <Box ref={containerRef} sx={{
@@ -60,6 +76,7 @@ export const ResizableGrid = ({ children, minWidth, columnWidth, paddingTop, sta
         minConstraints={[minWidth]}
         maxConstraints={[maxWidth]}
         draggableOpts={{ grid: [4, 4] }}
+        onResizeStop={onResizeStop}
         handle={<ResizeHandle />}
         axis='x'>
         <BasicPaper innerref={contentRef} sx={{ padding: 1, paddingTop: paddingTop ? paddingTop : 3, width: '100%', boxSizing: 'border-box' }}>
