@@ -11,13 +11,12 @@ export const ResizableGrid = ({ children, minWidth, columnWidth, paddingTop, sta
   const containerRef = React.useRef(null);
   const contentRef = React.useRef(null);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     const initMaxWidth = containerRef.current.clientWidth;
     setMaxWidth(initMaxWidth);
     const localWidth = localStorage.getItem(Constants.LOCAL_RESIZABLE_WIDTH);
     const localWidthN = Number(localWidth);
     if (localWidth && localWidthN >= minWidth && localWidthN <= initMaxWidth) {
-      console.log('set width to: ' + localWidthN)
       setWidth(localWidthN);
     } else {
       setWidth(columnWidth);

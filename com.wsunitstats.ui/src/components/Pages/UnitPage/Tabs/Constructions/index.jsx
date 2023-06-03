@@ -17,7 +17,7 @@ export const ConstructionsTab = ({ entity: unit }) => {
 
   return (
     <>
-      <h3>Common properties</h3>
+      <h3>Construction</h3>
       <ResizableGrid minWidth={MIN_WIDTH} columnWidth={COLUMN_WIDTH} staticBottom={Note}>
         {unit.construction.map((construction, index) => <ConstructionTable key={index} construction={construction} overflowMinWidth={OVERFLOW_WIDTH}/>)}
       </ResizableGrid>
