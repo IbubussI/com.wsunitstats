@@ -19,9 +19,11 @@ export const EntityPage = ({ view: View, navItems, fetchEntityURI, fetchEntityPa
   const prevParams = React.useRef(null);
 
   const clear = React.useCallback((replace = true) => {
-    setSearchParams(new URLSearchParams({
-      [Constants.PARAM_LOCALE]: locale
-    }), { replace: replace });
+    let params = {};
+    if (locale) {
+      params = {[Constants.PARAM_LOCALE]: locale};
+    }
+    setSearchParams(new URLSearchParams(params), { replace: replace });
     setEntity(null);
     setOption(null);
   }, [setSearchParams, locale]);
