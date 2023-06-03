@@ -54,7 +54,6 @@ import com.wsunitstats.domain.submodel.TransportingModel;
 import com.wsunitstats.utils.Constants;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.IntFunction;
 
 public interface ModelMappingService {
@@ -130,5 +129,5 @@ public interface ModelMappingService {
 
     UpgradeModel map(int id, UpgradeJsonModel upgradeSource);
 
-    Map<String, String> mapParameters(String parametersSource);
+    List<String> mapParameters(String parametersSource);
 }

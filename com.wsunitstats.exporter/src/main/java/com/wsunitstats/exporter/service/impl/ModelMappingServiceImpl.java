@@ -77,7 +77,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -649,16 +648,8 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public Map<String, String> mapParameters(String parametersSource) {
-        Map<String, String> parameters = new HashMap<>();
-        if (StringUtils.isNotBlank(parametersSource)) {
-            String[] stringParameters = parametersSource.split(",");
-            for (String stringParameter : stringParameters) {
-                String[] keyValue = stringParameter.split("=");
-                parameters.put(keyValue[0], keyValue[1]);
-            }
-        }
-        return parameters;
+    public List<String> mapParameters(String parametersSource) {
+        return StringUtils.isNotBlank(parametersSource) ? Arrays.asList(parametersSource.split(",")) : new ArrayList<>();
     }
 
     private AbilityEntityInfoWrapper getAbilityEntityInfo(AbilityDataJsonModel abilityData, List<CreateEnvJsonModel> createEnvSource) {

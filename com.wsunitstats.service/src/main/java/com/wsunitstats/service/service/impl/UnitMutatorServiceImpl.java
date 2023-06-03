@@ -4,12 +4,14 @@ import com.wsunitstats.domain.ResearchModel;
 import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.domain.submodel.research.UpgradeModel;
 import com.wsunitstats.service.service.UnitMutatorService;
-import com.wsunitstats.service.service.impl.mutator.MoveSpeedMutator;
+import com.wsunitstats.service.service.impl.mutator.GatherSpeedAdd;
+import com.wsunitstats.service.service.impl.mutator.MoveSpeed;
 import com.wsunitstats.service.service.impl.mutator.Mutator;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -18,7 +20,8 @@ public class UnitMutatorServiceImpl implements UnitMutatorService {
 
     @PostConstruct
     protected void postConstruct() {
-        mutators.put(0, new MoveSpeedMutator());
+        mutators.put(0, new MoveSpeed());
+        mutators.put(2, new GatherSpeedAdd());
     }
 
     @Override
@@ -26,7 +29,7 @@ public class UnitMutatorServiceImpl implements UnitMutatorService {
         for (UpgradeModel upgrade : research.getUpgrades()) {
             if (upgrade.getUnit() != null && upgrade.getUnit().getEntityId() == target.getGameId()) {
                 int mutatorId = upgrade.getProgramId();
-                Map<String, String> params = upgrade.getParameters();
+                Map<String, String> params = getParametersMap(upgrade.getParameters());
                 applyMutation(target, mutatorId, params);
             }
         }
@@ -37,5 +40,14 @@ public class UnitMutatorServiceImpl implements UnitMutatorService {
         if (mutator != null) {
             mutator.mutate(target, params);
         }
+    }
+
+    public Map<String, String> getParametersMap(List<String> parameters) {
+        Map<String, String> result = new HashMap<>();
+        parameters.forEach(param -> {
+            String[] split = param.split("=");
+            result.put(split[0], split[1]);
+        });
+        return result;
     }
 }

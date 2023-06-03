@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Map;
+import java.util.List;
 
 @Entity(name = "upgrade")
 @Getter
@@ -18,7 +18,7 @@ import java.util.Map;
 public class UpgradeModel extends PersistentObject {
     private int upgradeId;
     @ElementCollection(fetch = FetchType.EAGER)
-    private Map<String, String> parameters;
+    private List<String> parameters;
     private int programId;
     private String programFile;
     private EntityInfoModel unit;

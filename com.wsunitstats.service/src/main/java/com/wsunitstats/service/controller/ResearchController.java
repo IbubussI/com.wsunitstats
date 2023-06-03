@@ -49,8 +49,8 @@ public class ResearchController {
         try {
             parameterValidatorService.validateStandard(locale, sort, researchService.getColumnNames(), sortDir, page, size);
             List<String> nameKeys = localizationService.getKeysForValues(names, locale);
-            List<ResearchModel> units = researchService.getResearchesByNames(nameKeys, sort, sortDir, page, size);
-            return utilsService.getJson(units, true, locale);
+            List<ResearchModel> researches = researchService.getResearchesByNames(nameKeys, sort, sortDir, page, size);
+            return utilsService.getJson(researches, true, locale);
         } catch (JsonProcessingException ex) {
             throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
@@ -71,8 +71,8 @@ public class ResearchController {
             if (parsedGameIdList.size() == 0) {
                 throw new InvalidParameterException("Provided Game ID(s) not valid");
             }
-            List<ResearchModel> units = researchService.getResearchesByGameIds(parsedGameIdList, sort, sortDir, page, size);
-            return utilsService.getJson(units, true, locale);
+            List<ResearchModel> researches = researchService.getResearchesByGameIds(parsedGameIdList, sort, sortDir, page, size);
+            return utilsService.getJson(researches, true, locale);
         } catch (JsonProcessingException ex) {
             throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
@@ -88,8 +88,8 @@ public class ResearchController {
                                                 @RequestParam(defaultValue = "1000") Integer size) {
         try {
             parameterValidatorService.validateStandard(locale, sort, researchService.getColumnNames(), sortDir, page, size);
-            List<ResearchModel> units = researchService.getResearchesAll(sort, sortDir, page, size);
-            return utilsService.getJson(units, true, locale);
+            List<ResearchModel> researches = researchService.getResearchesAll(sort, sortDir, page, size);
+            return utilsService.getJson(researches, true, locale);
         } catch (JsonProcessingException ex) {
             throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {

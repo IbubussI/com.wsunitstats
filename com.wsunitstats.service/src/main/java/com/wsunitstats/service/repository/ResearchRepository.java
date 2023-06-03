@@ -2,7 +2,6 @@ package com.wsunitstats.service.repository;
 
 import com.wsunitstats.domain.ResearchModel;
 import com.wsunitstats.service.model.EntityOption;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -18,8 +17,6 @@ public interface ResearchRepository extends CrudRepository<ResearchModel, Long>,
     List<ResearchModel> findByGameIdIn(Collection<Integer> ids, Pageable pageable);
 
     List<ResearchModel> findByGameIdIn(Collection<Integer> ids);
-
-    Page<ResearchModel> findAll(Pageable pageable);
 
     @Query(nativeQuery = true, value = """
             SELECT COLUMN_NAME

@@ -383,9 +383,7 @@
 
     create table upgrade_parameters (
        upgrade_id bigint not null,
-        parameters varchar(255),
-        parameters_KEY varchar(255) not null,
-        primary key (upgrade_id, parameters_KEY)
+        parameters varchar(255)
     ) engine=InnoDB;
 
     create table weapon (
