@@ -57,7 +57,7 @@ export const ConstructionTable = ({ construction, overflowMinWidth }) => {
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Construction speed*',
-        value: construction.constructionSpeed.toFixed(1) + '% / sec (for 1 worker)',
+        value: construction.constructionSpeed + '% / sec (for 1 worker)',
         widthRight: FLEX_TABLE_RIGHT_WIDTH,
         widthLeft: FLEX_TABLE_LEFT_WIDTH
       }

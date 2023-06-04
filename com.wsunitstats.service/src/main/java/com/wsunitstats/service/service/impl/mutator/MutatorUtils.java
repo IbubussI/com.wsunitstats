@@ -7,7 +7,7 @@ public class MutatorUtils {
         // utility class
     }
 
-    public static Double toNumber(String input, Double defaultValue) {
+    public static double toNumber(String input, Double defaultValue) {
         if (StringUtils.isBlank(input)) {
             return defaultValue;
         }
@@ -18,7 +18,7 @@ public class MutatorUtils {
         }
     }
 
-    public static Integer toNumber(String input, Integer defaultValue) {
+    public static int toNumber(String input, Integer defaultValue) {
         if (StringUtils.isBlank(input)) {
             return defaultValue;
         }

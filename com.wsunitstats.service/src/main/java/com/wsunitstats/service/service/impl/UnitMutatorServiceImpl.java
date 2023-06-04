@@ -7,6 +7,8 @@ import com.wsunitstats.service.service.UnitMutatorService;
 import com.wsunitstats.service.service.impl.mutator.GatherSpeedAdd;
 import com.wsunitstats.service.service.impl.mutator.MoveSpeed;
 import com.wsunitstats.service.service.impl.mutator.Mutator;
+import com.wsunitstats.service.service.impl.mutator.WeaponSetDamageArea;
+import com.wsunitstats.service.service.impl.mutator.WeaponSpreadMult;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,26 @@ public class UnitMutatorServiceImpl implements UnitMutatorService {
     protected void postConstruct() {
         mutators.put(0, new MoveSpeed());
         mutators.put(2, new GatherSpeedAdd());
+        mutators.put(3, new WeaponSetDamageArea());
+        mutators.put(4, new WeaponSpreadMult());
+//        mutators.put(5, new ArmorAddSize());
+//        mutators.put(13, new ArmorAddThickness());
+//        mutators.put(14, new WeaponRechargePeriodDec());
+//        mutators.put(15, new WeaponMaxDistanceAdd());
+//        mutators.put(17, new WorkEnable());
+//        mutators.put(19, new Regeneration());
+//        mutators.put(20, new BuildingSpeedMult());
+//        mutators.put(21, new BatherBagSizeAdd());
+//        mutators.put(22, new WorkReserveTimeMult());
+//        mutators.put(23, new WorkReserveLimitAdd());
+//        mutators.put(27, new StorageMultiplierAdd());
+//        mutators.put(28, new TurretRechargePeriodDec());
+//        mutators.put(29, new TurretSpreadMult());
+//        mutators.put(31, new WorkPriceChange());
+//        mutators.put(32, new WeaponEnable());
+//        mutators.put(33, new AbilityOnActionEnable());
+//        mutators.put(34, new WeaponDamageAdd());
+//        mutators.put(35, new TurretDamageAdd());
     }
 
     @Override

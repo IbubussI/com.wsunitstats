@@ -76,17 +76,17 @@ export const WeaponTable = ({ item, overflowMinWidth }) => {
       {
         label: 'Attack delay',
         renderer: Text,
-        value: weapon.attackDelay && weapon.attackDelay.toFixed(3) + Constants.SECONDS_END_MARKER,
+        value: weapon.attackDelay && weapon.attackDelay + Constants.SECONDS_END_MARKER,
       },
       {
         label: 'Attack time',
         renderer: Text,
-        value: weapon.attackTime && weapon.attackTime.toFixed(3) + Constants.SECONDS_END_MARKER,
+        value: weapon.attackTime && weapon.attackTime + Constants.SECONDS_END_MARKER,
       },
       {
         label: 'Average shot time',
         renderer: Text,
-        value: weapon.avgShotTime && weapon.avgShotTime.toFixed(3) + Constants.SECONDS_END_MARKER,
+        value: weapon.avgShotTime && weapon.avgShotTime + Constants.SECONDS_END_MARKER,
       }
     ].filter(element => element.value !== undefined)
   }

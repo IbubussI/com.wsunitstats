@@ -1,30 +1,56 @@
 package com.wsunitstats.utils.service.impl;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.module.SimpleSerializers;
 import com.wsunitstats.utils.service.ModelExporterService;
+import com.wsunitstats.utils.service.impl.serializer.number.DoubleSerializer;
 import org.springframework.stereotype.Service;
+
+import java.io.Serial;
 
 @Service
 public class ModelExporterServiceImpl implements ModelExporterService {
     @Override
     public <T> String exportToJson(T model) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-        return mapper.writeValueAsString(model);
+        return getExportMapper().writeValueAsString(model);
     }
 
     @Override
     public <T> String exportToPrettyJson(T model) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         DefaultPrettyPrinter prettyWriter = new DefaultPrettyPrinter();
         DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("\t", DefaultIndenter.SYS_LF);
         prettyWriter.indentObjectsWith(indenter);
         prettyWriter.indentArraysWith(indenter);
-        return mapper.writer(prettyWriter).writeValueAsString(model);
+        return getExportMapper().writer(prettyWriter).writeValueAsString(model);
+    }
+
+    @Override
+    public ObjectMapper getExportMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new ExporterModule());
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        return mapper;
+    }
+
+    public static class ExporterModule extends SimpleModule {
+        @Serial
+        private static final long serialVersionUID = -9105685985325373621L;
+
+        public ExporterModule() {
+            super("StandardExporterModule");
+        }
+
+        @Override
+        public void setupModule(SetupContext context) {
+            SimpleSerializers serializers = new SimpleSerializers();
+            serializers.addSerializer(Double.class, new DoubleSerializer());
+            context.addSerializers(serializers);
+        }
     }
 }
