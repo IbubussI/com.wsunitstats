@@ -9,33 +9,31 @@ export const EntityTabsView = ({
   tabsView: TabsViewComponent = TabsView,
   defaultview: DefaultViewComponent = DefaultView
 }) => {
-  const [currentTab, setCurrentTab] = React.useState('');
-
-  const setTab = React.useCallback((tab) => {
-
-  }, []);
+  const [currentTab, setCurrentTab] = React.useState(undefined);
 
   React.useEffect(() => {
     const hash = window.location.hash;
     setCurrentTab(hash ? hash.slice(1) : tabsData[0]?.id);
-    if (!hash && currentTab) {
-      window.location.hash = `#${currentTab}`;
+    if (!hash && currentTab && tabsData.length) {
+      const url = new URL(window.location.href);
+      url.hash = `#${currentTab}`;
+      window.history.replaceState({}, '', url.toString());
     }
-  }, [setTab, currentTab, tabsData]);
+  }, [currentTab, tabsData]);
 
   const isRenderContent = (currentTab && tabsData.length > 0) || loading;
 
   applyBodyStyle(isRenderContent);
   return isRenderContent
-    ? (<TabsViewComponent tabsData={tabsData} currentTab={currentTab} entity={entity} setTab={setTab} loading={loading}/>)
+    ? (<TabsViewComponent tabsData={tabsData} currentTab={currentTab} entity={entity} loading={loading}/>)
     : (<DefaultViewComponent loading={loading} />);
 }
 
-export const TabsView = ({ tabsData, currentTab, entity, setTab, loading }) => {
+export const TabsView = ({ tabsData, currentTab, entity, loading }) => {
   return tabsData.length === 0 && loading ? <CircularProgress/> : (
     <>
       <Box display="flex" justifyContent="center" width="100%">
-        <Tabs value={currentTab} onChange={(_, newValue) => setTab(newValue)} allowScrollButtonsMobile variant="scrollable">
+        <Tabs value={currentTab} allowScrollButtonsMobile variant="scrollable">
           {tabsData.map((tab) => <Tab key={tab.id} label={tab.label} value={tab.id} href={`#${tab.id}`}/>)}
         </Tabs>
       </Box>

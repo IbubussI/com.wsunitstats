@@ -6,9 +6,10 @@ import { LocalePicker } from 'components/Pages/EntityPage/LocalePicker';
 import { EntityPicker } from 'components/Pages/EntityPage/EntityPicker';
 import isEqual from 'lodash/isEqual';
 
-export const EntityPage = ({ view: View, navItems, fetchEntityURI, fetchEntityParams, pickerOptions }) => {
-  const [option, setOption] = React.useState(null);
-  const [entity, setEntity] = React.useState(null);
+export const EntityPage = (props) => {
+  const { view: View, navItems, fetchEntityURI, fetchEntityParams, pickerOptions } = props;
+  let [option, setOption] = React.useState(null);
+  let [entity, setEntity] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const gameId = searchParams.get(Constants.PARAM_GAME_ID);
@@ -17,6 +18,12 @@ export const EntityPage = ({ view: View, navItems, fetchEntityURI, fetchEntityPa
   const prevGameId = React.useRef(null);
   const prevLocale = React.useRef(null);
   const prevParams = React.useRef(null);
+
+  // for immediate sync in case of browser navigation
+  if (!gameId) {
+      entity = null;
+      option = null;
+  }
 
   const clear = React.useCallback((replace = true) => {
     let params = {};
@@ -29,6 +36,7 @@ export const EntityPage = ({ view: View, navItems, fetchEntityURI, fetchEntityPa
   }, [setSearchParams, locale]);
 
   React.useEffect(() => {
+    console.log("use effect")
     let active = true;
 
     const handleResult = (result) => {
