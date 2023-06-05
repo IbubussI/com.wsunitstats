@@ -9,7 +9,6 @@ export const GatheringTab = ({ entity: unit }) => {
   return (
     <>
       <h3>Gathering</h3>
-
       <ResizableGrid minWidth={MIN_WIDTH} columnWidth={COLUMN_WIDTH}>
         {unit.gather.map((gatherEntry, index) => <GatheringTable key={index} gather={gatherEntry} overflowMinWidth={OVERFLOW_WIDTH}/>)}
       </ResizableGrid>

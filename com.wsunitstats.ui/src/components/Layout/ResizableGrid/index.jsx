@@ -12,22 +12,25 @@ export const ResizableGrid = ({ children, minWidth, columnWidth, paddingTop, sta
   const contentRef = React.useRef(null);
 
   React.useLayoutEffect(() => {
-    const initMaxWidth = containerRef.current.clientWidth;
-    setMaxWidth(initMaxWidth);
-    const localWidth = localStorage.getItem(Constants.LOCAL_RESIZABLE_WIDTH);
-    const localWidthN = Number(localWidth);
-    if (localWidth && localWidthN >= minWidth && localWidthN <= initMaxWidth) {
-      setWidth(localWidthN);
-    } else {
-      setWidth(columnWidth);
-    }
-
-    const resizeObserver = new ResizeObserver(() => {
-      let divider = Math.floor(contentRef.current.clientWidth / columnWidth);
+    const resizeHandler = (newWidth) => {
+      const divider = Math.floor(newWidth / columnWidth);
       if (12 % divider === 0 && children.length > 1) {
         setGridCols(12 / divider);
       }
-    });
+    }
+
+    const initMaxWidth = containerRef.current.clientWidth;
+    setMaxWidth(initMaxWidth);
+    const localWidth = localStorage.getItem(Constants.LOCAL_RESIZABLE_WIDTH);
+    let localWidthN = Number(localWidth);
+    if (!localWidth || localWidthN < minWidth || localWidthN > initMaxWidth) {
+      localWidthN = columnWidth;
+    }
+    setWidth(localWidthN);
+
+    resizeHandler(localWidthN);
+
+    const resizeObserver = new ResizeObserver(() => resizeHandler(contentRef.current.clientWidth));
     resizeObserver.observe(contentRef.current);
 
     return () => {

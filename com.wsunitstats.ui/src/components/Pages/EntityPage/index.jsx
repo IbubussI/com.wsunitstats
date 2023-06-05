@@ -36,7 +36,6 @@ export const EntityPage = (props) => {
   }, [setSearchParams, locale]);
 
   React.useEffect(() => {
-    console.log("use effect")
     let active = true;
 
     const handleResult = (result) => {
