@@ -33,6 +33,7 @@ public class AbilityModel extends PersistentObject {
     private Double lifeTime;
     private boolean enabled;
     private Double makeTime;
+    private Integer workId;
 
     @Embedded
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = RequirementsModel.class)

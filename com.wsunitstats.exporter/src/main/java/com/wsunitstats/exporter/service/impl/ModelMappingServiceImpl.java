@@ -210,6 +210,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     public AbilityModel map(int abilityIndex,
                             AbilityJsonModel abilitySource,
                             WorkJsonModel workSource,
+                            Integer workId,
                             List<CreateEnvJsonModel> createEnvSource,
                             AbilityOnActionJsonModel onActionSource) {
         if (abilitySource == null) {
@@ -241,6 +242,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
             }
         }
         abilityModel.setEnabled(enabled != null ? enabled : true);
+        abilityModel.setWorkId(workId);
         return abilityModel;
     }
 
@@ -328,7 +330,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         WeaponModel weaponModel = new WeaponModel();
         weaponModel.setWeaponId(weaponId);
         weaponModel.setAttackGround(attackGround);
-        weaponModel.setAutoAttack(weaponSource.getAutoAttack());
+        weaponModel.setAutoAttack(Util.getInvertedBoolean(weaponSource.getAutoAttack()));
         weaponModel.setDistance(map(weaponSource.getDistance()));
         weaponModel.setEnabled(weaponSource.getEnabled());
         Integer projectileId = weaponSource.getProjectile();
@@ -352,7 +354,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         weaponModel.setAreaType(Constants.DamageAreaType.get(damageSource.getArea()).getName());
         weaponModel.setDamageAngle(Util.intToDoubleShift(damageSource.getAngle()));
         weaponModel.setBuff(map(damageSource.getBuff()));
-        weaponModel.setDamageFriendly(damageSource.getDamageFriendly());
+        weaponModel.setDamageFriendly(Util.getDirectBoolean(damageSource.getDamageFriendly()));
         weaponModel.setDamages(mapDamages(damageSource.getDamages()));
         weaponModel.setDamagesCount(getMultipliable(damageSource.getDamagesCount()));
         weaponModel.setEnvDamage(Util.intToDoubleShift(damageSource.getEnvDamage()));

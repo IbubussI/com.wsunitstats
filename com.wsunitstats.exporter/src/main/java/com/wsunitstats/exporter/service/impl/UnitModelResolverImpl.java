@@ -177,14 +177,18 @@ public class UnitModelResolverImpl implements UnitModelResolver {
         return abilitiesList == null ? new ArrayList<>() :
                 IntStream.range(0, abilitiesList.size())
                         .mapToObj(i -> {
-                            if (workList == null) {
-                                return mappingService.map(i, abilitiesList.get(i), null, createEnvs, onAction);
+                            Integer workId = null;
+                            WorkJsonModel workModel = null;
+                            if (workList != null) {
+                                for (int j = 0; j < workList.size(); j++) {
+                                    WorkJsonModel current = workList.get(j);
+                                    if (i == current.getAbility()) {
+                                        workId = j;
+                                        workModel = current;
+                                    }
+                                }
                             }
-                            WorkJsonModel workModel = workList.stream()
-                                    .filter(work -> i == work.getAbility())
-                                    .findFirst()
-                                    .orElse(null);
-                            return mappingService.map(i, abilitiesList.get(i), workModel, createEnvs, onAction);
+                            return mappingService.map(i, abilitiesList.get(i), workModel, workId, createEnvs, onAction);
                         })
                         .toList();
     }
@@ -207,11 +211,11 @@ public class UnitModelResolverImpl implements UnitModelResolver {
                                             String attackGroundString) {
         return turretList == null ? new ArrayList<>() :
                 IntStream.range(0, turretList.size())
-                .mapToObj(index -> {
-                    TurretJsonModel turret = turretList.get(index);
-                    return mappingService.map(index, turret, getWeaponsList(turret.getWeapons(), attackGroundString, true, null));
-                })
-                .toList();
+                        .mapToObj(index -> {
+                            TurretJsonModel turret = turretList.get(index);
+                            return mappingService.map(index, turret, getWeaponsList(turret.getWeapons(), attackGroundString, true, null));
+                        })
+                        .toList();
     }
 
     private List<ConstructionModel> getConstructionList(List<BuildingJsonModel> buildingList) {

@@ -17,6 +17,7 @@
         unitsAll bit,
         reserveLimit integer,
         reserveTime float(53),
+        workId integer,
         onAction_id bigint,
         primary key (id)
     ) engine=InnoDB;

@@ -72,6 +72,7 @@ public interface ModelMappingService {
     AbilityModel map(int abilityIndex,
                      AbilityJsonModel abilitySource,
                      WorkJsonModel workSource,
+                     Integer workId,
                      List<CreateEnvJsonModel> createEnvSource,
                      AbilityOnActionJsonModel onActionSource);
 
