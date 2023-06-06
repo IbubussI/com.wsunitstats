@@ -48,7 +48,9 @@ export const DoubleColumnFrame = ({ children, childrenProps, column, borderLabel
         border: BORDER,
         borderColor: borderColor,
         borderRadius: BORDER_RADIUS,
-        position: 'relative'
+        position: 'relative',
+        height: '100%',
+        boxSizing: 'border-box'
       }}>
         {isBorderLabel && <BorderLabel data={borderLabel}/>}
         <Box sx={childProps}>

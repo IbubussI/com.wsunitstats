@@ -13,8 +13,10 @@ export const CheckmarksSelect = ({ label, onChange, options, optionsMetadata, va
         width: 350,
         '& .MuiAutocomplete-inputRoot .MuiAutocomplete-input': {
           minWidth: 0,
-          cursor: 'pointer'
-        },
+          cursor: 'pointer',
+          paddingRight: 0,
+          paddingLeft: 0
+        }
       }}
       multiple
       disableCloseOnSelect

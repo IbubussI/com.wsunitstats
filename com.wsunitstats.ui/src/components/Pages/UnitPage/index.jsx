@@ -16,7 +16,7 @@ export const UnitPage = () => {
       pickerOptions={{
         fetchURI: Constants.HOST + Constants.UNIT_OPTIONS_API,
         placeholder: 'Type the Unit name',
-        optionSecondaryCallback: (option) => option.nation
+        optionSecondaryCallback: (option) => `${option.nation}, ID: ${option.gameId}`
       }}
     />
   );
