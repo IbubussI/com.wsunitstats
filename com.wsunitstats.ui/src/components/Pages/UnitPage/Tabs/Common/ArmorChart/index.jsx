@@ -7,20 +7,22 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 export const ArmorChart = ({content, valuePrefix, colors}) => {
   const [labels, probabilities, values, avg, legendEntries] = React.useMemo(() => {
-    let labels_ = Array(content.length);
-    let probabilities_ = Array(content.length);
-    let values_ = Array(content.length);
-    let legendEntries_ = Array(content.length);
+    let labels_ = [];
+    let probabilities_ = [];
+    let values_ = [];
+    let legendEntries_ = [];
     for (let i = 0; i < content.length; ++i) {
       let probability = content[i].probability;
-      let value = content[i].value;
-      labels_[i] = `${probability}% : ${value}`;
-      probabilities_[i] = probability;
-      values_[i] = value;
-      legendEntries_[i] = {
-        color: colors[i],
-        probability: probability,
-        value: value
+      if (probability > 0) {
+        let value = content[i].value;
+        labels_.push(`${probability}% : ${value}`);
+        probabilities_.push(probability);
+        values_.push(value);
+        legendEntries_.push({
+          color: colors[i],
+          probability: probability,
+          value: value
+        });
       }
     }
     let avg_ = findAverage(values_, probabilities_).toFixed(1);
