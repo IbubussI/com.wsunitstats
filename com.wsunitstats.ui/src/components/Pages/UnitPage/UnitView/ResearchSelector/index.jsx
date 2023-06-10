@@ -60,7 +60,7 @@ export const ResearchSelector = () => {
       } else {
         searchParams.delete(Constants.PARAM_RESEARCH_ID);
       }
-      setSearchParams(searchParams);
+      setSearchParams(searchParams, { replace: true });
     }
   }
 

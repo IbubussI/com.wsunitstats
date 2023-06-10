@@ -77,9 +77,7 @@ export const EntityPage = (props) => {
   }, [gameId, locale, clear, fetchEntityURI, fetchEntityParams]);
 
   const onIdChange = (gameId) => {
-    if (gameId === null) {
-      clear(false);
-    } else {
+    if (gameId !== null) {
       searchParams.set(Constants.PARAM_GAME_ID, gameId);
       setSearchParams(searchParams);
     }
