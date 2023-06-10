@@ -606,7 +606,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         constructionModel.setEntityInfo(entityInfoModel);
         constructionModel.setConstructionId(id);
         constructionModel.setDistance(Util.intToDoubleShift(buildingSource.getDistance()));
-        constructionModel.setConstructionSpeed(getConstructionSpeed(buildingSource.getProgress()));
+        constructionModel.setConstructionSpeed(Util.intToConstructionSpeed(buildingSource.getProgress()));
         return constructionModel;
     }
 
@@ -762,17 +762,6 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         }
         double healthPerPercent = Util.intToDoubleShift(fullHealth) / 100d;
         return healthPerPercent * Util.intToDoubleShift(healthParam) * Constants.INIT_HEALTH_MODIFIER;
-    }
-
-    /**
-     * time = (hp-initial_hp)*progress/tickRate, s (not used here, JFI)
-     * speed = 1/progress*tickRate, %/sec
-     */
-    private Double getConstructionSpeed(Integer progress) {
-        if (progress == null) {
-            return null;
-        }
-        return Util.intToDoubleShift(progress) * Constants.BUILD_SPEED_MODIFIER;
     }
 
     private String getWeaponType(boolean isTurret, WeaponModel weaponModel, Integer onDeathId) {

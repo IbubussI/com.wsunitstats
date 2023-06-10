@@ -56,6 +56,17 @@ public class Util {
                 .sum();
     }
 
+    public static Double intToConstructionSpeed(Integer progress) {
+        /*
+         * time = (hp-initial_hp)*progress/tickRate, s (not used here, JFI)
+         * speed = 1/progress*tickRate, %/sec
+         */
+        if (progress == null) {
+            return null;
+        }
+        return Util.intToDoubleShift(progress) * Constants.BUILD_SPEED_MODIFIER;
+    }
+
     public static List<Integer> add(List<Integer> intList1, List<Integer> intList2) {
         if (intList1.size() != intList2.size()) {
             throw new IllegalArgumentException("Given lists should be the same size");
