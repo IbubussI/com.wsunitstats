@@ -10,7 +10,7 @@ import { EntityInfo, HeaderChip, SubValue, TagList, Text } from 'components/Atom
 import { DoubleColumnTable } from 'components/Layout/DoubleColumnTable';
 import { InfoButtonPopper } from "components/Atoms/ButtonPopper";
 import { DoubleColumnFrame } from 'components/Layout/DoubleColumnFrame';
-import { useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const STATS_COLUMNS = 2;
 const STATS_ROWS = 5;
@@ -18,7 +18,7 @@ const FLEX_TABLE_RIGHT_WIDTH = '52%';
 const FLEX_TABLE_LEFT_WIDTH = '48%';
  
 export const WeaponTable = ({ item, overflowMinWidth }) => {
-  const [searchParams] = useSearchParams();
+  const { locale } = useParams();
   const weapon = item.weapon;
   
   const attacksNumber = weapon.damagesCount * weapon.attacksPerAttack * weapon.attacksPerAction;
@@ -116,7 +116,7 @@ export const WeaponTable = ({ item, overflowMinWidth }) => {
               },
               link: {
                 id: weapon.buff.entityInfo.entityId,
-                locale: searchParams.get(Constants.PARAM_LOCALE),
+                locale: locale,
                 path: Utils.getEntityRoute("research")
               },
               overflow: true

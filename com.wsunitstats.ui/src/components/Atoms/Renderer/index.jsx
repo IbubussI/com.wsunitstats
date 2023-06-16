@@ -2,6 +2,7 @@ import * as Utils from 'utils/utils';
 import * as Constants from "utils/constants";
 import { Avatar, Box, Chip, Link, Stack, Tooltip, Typography } from "@mui/material";
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
 export const Image = ({ data }) => {
   return (
@@ -177,7 +178,7 @@ export const EntityInfo = ({ data }) => {
             <LinkContent />
           </DisabledLink>
           :
-          <Link href={Utils.makeEntityLink(entryData.link)}>
+          <Link to={Utils.makeEntityLink(entryData.link)} component={RouterLink}>
             <LinkContent />
           </Link>}
       </>

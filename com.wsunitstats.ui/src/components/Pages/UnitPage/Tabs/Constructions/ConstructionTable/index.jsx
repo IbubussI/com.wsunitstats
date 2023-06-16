@@ -1,16 +1,15 @@
-import * as Constants from "utils/constants";
 import * as Utils from "utils/utils";
 import { DoubleColumnFrame } from "components/Layout/DoubleColumnFrame";
 import { FlexibleTable, FlexibleTableDoubleCellRow } from "components/Layout/FlexibleTable";
 import { EntityInfo, HeaderChip } from "components/Atoms/Renderer";
-import { useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const BUILD_COLUMNS = 1;
 const FLEX_TABLE_RIGHT_WIDTH = '65%';
 const FLEX_TABLE_LEFT_WIDTH = '35%';
 
 export const ConstructionTable = ({ construction, overflowMinWidth }) => {
-  const [searchParams] = useSearchParams();
+  const { locale } = useParams();
 
   const constructionData = [
     {
@@ -30,7 +29,7 @@ export const ConstructionTable = ({ construction, overflowMinWidth }) => {
               },
               link: {
                 id: construction.entityInfo.entityId,
-                locale: searchParams.get(Constants.PARAM_LOCALE),
+                locale: locale,
                 path: Utils.getEntityRoute('unit')
               },
               overflow: true

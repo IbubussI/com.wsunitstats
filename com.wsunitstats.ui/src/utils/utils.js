@@ -9,9 +9,9 @@ export const makeEntityLink = (link) => {
     return Constants.NO_LINK_INDICATOR;
   }
   if (link.id === undefined) {
-    return `${link.path}?locale=${link.locale}`;
+    return `/${link.locale}/${link.path}`;
   }
-  return `${link.path}?locale=${link.locale}&gameId=${link.id}`;
+  return `/${link.locale}/${link.path}?gameId=${link.id}`;
 }
 
 /**
@@ -41,4 +41,12 @@ export const getEntityRoute = (entityType) => {
     default: result = Constants.NO_LINK_INDICATOR;
   }
   return result;
+}
+
+export const setPathParameter = (param, position) => {
+  const url = new URL(window.location.href);
+  const pathname = url.pathname.split('/');
+  pathname[position] = param;
+  url.pathname = pathname.join('/');
+  return url.toString().substring(window.location.origin.length);
 }

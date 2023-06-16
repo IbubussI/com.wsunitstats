@@ -1,23 +1,17 @@
 import * as React from 'react';
 import * as Constants from 'utils/constants';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { Stack } from '@mui/material';
-import { LocalePicker } from 'components/Pages/EntityPage/LocalePicker';
 import { EntityPicker } from 'components/Pages/EntityPage/EntityPicker';
 import isEqual from 'lodash/isEqual';
 
-export const EntityPage = (props) => {
-  const { view: View, navItems, fetchEntityURI, fetchEntityParams, pickerOptions } = props;
+export const EntityPage = ({ view: View, navItems, fetchEntityURI, fetchEntityParams, pickerOptions }) => {
   let [option, setOption] = React.useState(null);
   let [entity, setEntity] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const gameId = searchParams.get(Constants.PARAM_GAME_ID);
-  const locale = searchParams.get(Constants.PARAM_LOCALE);
-  
-  const prevGameId = React.useRef(null);
-  const prevLocale = React.useRef(null);
-  const prevParams = React.useRef(null);
+  const { locale } = useParams();
 
   // for immediate sync in case of browser navigation
   if (!gameId) {
@@ -26,14 +20,10 @@ export const EntityPage = (props) => {
   }
 
   const clear = React.useCallback((replace = true) => {
-    let params = {};
-    if (locale) {
-      params = {[Constants.PARAM_LOCALE]: locale};
-    }
-    setSearchParams(new URLSearchParams(params), { replace: replace });
+    setSearchParams(new URLSearchParams(), { replace: replace });
     setEntity(null);
     setOption(null);
-  }, [setSearchParams, locale]);
+  }, [setSearchParams]);
 
   React.useEffect(() => {
     let active = true;
@@ -53,23 +43,18 @@ export const EntityPage = (props) => {
       }
     }
 
-    if (active && (prevGameId.current !== gameId || prevLocale.current !== locale || !isEqual(prevParams.current, fetchEntityParams))) {
-      if (gameId) {
-        setLoading(true);
-        fetch(fetchEntityURI + '?' + new URLSearchParams({
-          [Constants.PARAM_GAME_ID]: gameId,
-          [Constants.PARAM_LOCALE]: locale,
-          ...fetchEntityParams
-        }))
-          .then((response) => response.json())
-          .then(handleResult)
-          .catch(console.log);
-      } else {
-        clear();
-      }
-      prevGameId.current = gameId;
-      prevLocale.current = locale;
-      prevParams.current = fetchEntityParams;
+    if (gameId) {
+      setLoading(true);
+      fetch(fetchEntityURI + '?' + new URLSearchParams({
+        [Constants.PARAM_GAME_ID]: gameId,
+        [Constants.PARAM_LOCALE]: locale,
+        ...fetchEntityParams
+      }))
+        .then((response) => response.json())
+        .then(handleResult)
+        .catch(console.log);
+    } else {
+      clear();
     }
     return () => {
       active = false;
@@ -83,11 +68,6 @@ export const EntityPage = (props) => {
     }
   }
 
-  const onLocaleChange = (locale) => {
-    searchParams.set(Constants.PARAM_LOCALE, locale);
-    setSearchParams(searchParams, { replace: true });
-  }
-
   return (
     <>
       <Stack
@@ -99,9 +79,6 @@ export const EntityPage = (props) => {
           padding: '15px',
           width: '90%'
         }}>
-        <LocalePicker
-          onSelect={onLocaleChange}
-          currentLocale={locale} />
         <EntityPicker
           locale={locale}
           value={option}

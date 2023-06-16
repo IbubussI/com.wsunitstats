@@ -6,8 +6,12 @@ import { useSearchParams } from 'react-router-dom';
 
 export const UnitPage = () => {
   const [searchParams] = useSearchParams();
-  const researches = searchParams.get(Constants.PARAM_RESEARCH_ID);
-  const fetchParams = researches ? {[Constants.PARAM_RESEARCH_ID]: researches} : {};
+
+  const fetchParams = React.useMemo(() => {
+    const researches = searchParams.get(Constants.PARAM_RESEARCH_ID);
+    return researches ? {[Constants.PARAM_RESEARCH_ID]: researches} : {}
+  }, [searchParams]);
+
   return (
     <EntityPage
       view={UnitView}

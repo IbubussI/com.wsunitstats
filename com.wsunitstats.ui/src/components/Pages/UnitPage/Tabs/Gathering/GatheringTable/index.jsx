@@ -1,9 +1,8 @@
-import * as Constants from "utils/constants";
 import * as Utils from "utils/utils";
 import { DoubleColumnFrame } from "components/Layout/DoubleColumnFrame";
 import { FlexibleTable, FlexibleTableDoubleCellRow } from "components/Layout/FlexibleTable";
 import { EntityInfo, HeaderChip, TransformInfo } from "components/Atoms/Renderer";
-import { useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { TagBox } from "components/Atoms/TagBox";
 
 const GATHER_COLUMNS = 2;
@@ -12,7 +11,7 @@ const FLEX_TABLE_RIGHT_WIDTH = '45%';
 const FLEX_TABLE_LEFT_WIDTH = '55%';
 
 export const GatheringTable = ({ gather, overflowMinWidth }) => {
-  const [searchParams] = useSearchParams();
+  const { locale } = useParams();
 
   const transformData = {
     from: {
@@ -27,7 +26,7 @@ export const GatheringTable = ({ gather, overflowMinWidth }) => {
           },
           link: {
             id: envTag.envId,
-            locale: searchParams.get(Constants.PARAM_LOCALE),
+            locale: locale,
             path: Utils.getEntityRoute('env')
           },
           overflow: true
@@ -44,7 +43,7 @@ export const GatheringTable = ({ gather, overflowMinWidth }) => {
         },
         link: {
           id: gather.resource.resourceId,
-          locale: searchParams.get(Constants.PARAM_LOCALE),
+          locale: locale,
           path: Utils.getEntityRoute('resource')
         },
         overflow: true

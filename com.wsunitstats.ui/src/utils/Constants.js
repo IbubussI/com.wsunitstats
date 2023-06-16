@@ -7,11 +7,11 @@ export const DEFAULT_LOCALE_OPTION = 'en';
 export const UNIT_DATA_API = '/api/units/game-id';
 export const RESEARCH_DATA_API = '/api/researches/game-id';
 
-export const UNIT_PAGE_PATH = '/unit';
-export const RESEARCH_PAGE_PATH = '/research';
-export const ENV_PAGE_PATH = '/env';
-export const RESOURCE_PAGE_PATH = '/resource';
-export const HOME_PAGE_PATH = '/home';
+export const UNIT_PAGE_PATH = 'unit';
+export const RESEARCH_PAGE_PATH = 'research';
+export const ENV_PAGE_PATH = 'env';
+export const RESOURCE_PAGE_PATH = 'resource';
+export const HOME_PAGE_PATH = 'home';
 
 export const UNIT_ABILITIES_TAB = 'abilities';
 export const UNIT_COMMON_TAB = 'common';

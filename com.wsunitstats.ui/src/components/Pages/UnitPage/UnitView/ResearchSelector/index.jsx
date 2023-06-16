@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as Constants from 'utils/constants';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { Button, Stack } from '@mui/material';
 import { CheckmarksSelect } from 'components/Atoms/CheckmarksSelect';
 import isEqual from 'lodash/isEqual';
@@ -10,7 +10,7 @@ export const ResearchSelector = () => {
   const [options, setOptions] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
   const gameId = searchParams.get(Constants.PARAM_GAME_ID);
-  const locale = searchParams.get(Constants.PARAM_LOCALE);
+  const { locale } = useParams();
 
   const getQueryResearchIds = React.useCallback(() => {
     const currentResearchesQueryParams = searchParams.get(Constants.PARAM_RESEARCH_ID)?.split(',');

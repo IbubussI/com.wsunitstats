@@ -6,7 +6,7 @@ import { FlexibleTable, FlexibleTableDoubleCellRow } from "components/Layout/Fle
 import { EntityInfo, HeaderChip, SubValue, Text } from 'components/Atoms/Renderer';
 import { DoubleColumnTable } from "components/Layout/DoubleColumnTable";
 import { InfoButtonPopper } from "components/Atoms/ButtonPopper";
-import { useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { ClassicTable } from "components/Layout/ClassicTable";
 import { DoubleColumnFrame } from "components/Layout/DoubleColumnFrame";
 
@@ -15,7 +15,7 @@ const FLEX_TABLE_RIGHT_WIDTH = '67%';
 const FLEX_TABLE_LEFT_WIDTH = '33%';
 
 export const AbilityTable = ({ ability, overflowMinWidth }) => {
-  const [searchParams] = useSearchParams();
+  const { locale } = useParams();
   const abilityData = [
     {
       column: 1,
@@ -34,7 +34,7 @@ export const AbilityTable = ({ ability, overflowMinWidth }) => {
               },
               link: {
                 id: ability.entityInfo.entityId,
-                locale: searchParams.get(Constants.PARAM_LOCALE),
+                locale: locale,
                 path: getAbilityRoute(ability.abilityType)
               },
               overflow: true
@@ -146,7 +146,7 @@ export const AbilityTable = ({ ability, overflowMinWidth }) => {
     ].filter(element => element.value !== undefined)
   }
 
-  const requirementsData = ability.requirements && Data.getRequirementsData(ability.requirements, searchParams.get(Constants.PARAM_LOCALE));
+  const requirementsData = ability.requirements && Data.getRequirementsData(ability.requirements, locale);
 
   const costTableData = {
     label: 'Cost',

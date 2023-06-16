@@ -1,8 +1,7 @@
-import * as Constants from "utils/constants";
 import * as Utils from "utils/utils";
 import { FlexibleTable, FlexibleTableDoubleCellRow } from "components/Layout/FlexibleTable";
 import { EntityInfo, HeaderChip } from 'components/Atoms/Renderer';
-import { useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { DoubleColumnFrame } from "components/Layout/DoubleColumnFrame";
 import { Stack, Typography } from "@mui/material";
 
@@ -11,7 +10,7 @@ const FLEX_TABLE_RIGHT_WIDTH = '67%';
 const FLEX_TABLE_LEFT_WIDTH = '33%';
 
 export const UpgradeTable = ({ upgrade, overflowMinWidth }) => {
-  const [searchParams] = useSearchParams();
+  const { locale } = useParams();
   const upgradeData = [
     {
       column: 1,
@@ -30,7 +29,7 @@ export const UpgradeTable = ({ upgrade, overflowMinWidth }) => {
               },
               link: {
                 id: upgrade.unit.entityId,
-                locale: searchParams.get(Constants.PARAM_LOCALE),
+                locale: locale,
                 path: Utils.getEntityRoute("unit")
               },
               overflow: true
