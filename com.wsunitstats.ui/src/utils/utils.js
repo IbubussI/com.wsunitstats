@@ -11,7 +11,7 @@ export const makeEntityLink = (link) => {
   if (link.id === undefined) {
     return `/${link.locale}/${link.path}`;
   }
-  return `/${link.locale}/${link.path}?gameId=${link.id}`;
+  return `/${link.locale}/${link.path}/${link.id}/${Constants.INITIAL_TAB}`;
 }
 
 /**
@@ -43,10 +43,38 @@ export const getEntityRoute = (entityType) => {
   return result;
 }
 
-export const setPathParameter = (param, position) => {
+/**
+ * Sets given path params to current url
+ * 
+ * @param {*} params array of objects { param: ..., pos: ...} where param is new param value to set, pos is index in the url where to set this param
+ * @param {*} removeFrom if specified and positive - this function removes all param from (include) given in removeFrom position up to the end of the url
+ * @returns current url with given path params
+ */
+export const setPathParams = (params, removeFrom = 0) => {
   const url = new URL(window.location.href);
-  const pathname = url.pathname.split('/');
-  pathname[position] = param;
-  url.pathname = pathname.join('/');
+  let pathItems = url.pathname.split('/');
+  for (const paramObj of params) {
+    if (paramObj.param || paramObj.param === 0) {
+      pathItems[paramObj.pos] = paramObj.param;
+    } else if (paramObj.pos < pathItems.length) {
+      pathItems = pathItems.splice(paramObj.pos, 1);
+    }
+  }
+  if (removeFrom > 0) {
+    pathItems.length = removeFrom;
+  }
+  url.pathname = pathItems.join('/');
   return url.toString().substring(window.location.origin.length);
+}
+
+export const navigateToError = (navHook, msg, code) => {
+  const path = window.location.pathname;
+  const pathItems = path.split('/');
+  pathItems.length = 3;
+  pathItems[2] = Constants.ERROR_PAGE_PATH;
+  navHook(pathItems.join('/'), { replace: true, state: { msg: msg, code: code } });
+}
+
+export const navigateTo404 = (navHook) => {
+  navigateToError(navHook, 'Not found', 404);
 }

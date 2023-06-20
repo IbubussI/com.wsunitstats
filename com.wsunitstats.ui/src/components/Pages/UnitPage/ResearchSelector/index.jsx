@@ -9,8 +9,7 @@ export const ResearchSelector = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [options, setOptions] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
-  const gameId = searchParams.get(Constants.PARAM_GAME_ID);
-  const { locale } = useParams();
+  const params = useParams();
 
   const getQueryResearchIds = React.useCallback(() => {
     const currentResearchesQueryParams = searchParams.get(Constants.PARAM_RESEARCH_ID)?.split(',');
@@ -33,13 +32,13 @@ export const ResearchSelector = () => {
 
   const fetchOptions = React.useCallback(() => {
     fetch(Constants.HOST + Constants.RESEARCH_UNIT_OPTIONS_API + '?' + new URLSearchParams({
-      gameId: gameId,
-      locale: locale
+      gameId: params.gameId,
+      locale: params.locale
     }))
       .then((response) => response.ok ? response.json() : [])
       .then((result) => setOptions(result))
       .catch(console.log);
-  }, [gameId, locale]);
+  }, [params.gameId, params.locale]);
 
   React.useEffect(() => fetchOptions(), [fetchOptions]);
 

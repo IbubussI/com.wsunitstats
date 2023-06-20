@@ -13,6 +13,8 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { LocalePicker } from './LocalePicker';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { Stack, Tooltip } from '@mui/material';
 
 const pages = [
   {
@@ -24,11 +26,6 @@ const pages = [
     name: 'Researches'
   }
 ];
-
-const homePage = {
-  path: Constants.UNIT_PAGE_PATH,
-  name: 'WS UNIT STATS'
-};
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -43,17 +40,16 @@ export const Header = () => {
     setAnchorElNav(null);
   };
 
-  const onLocaleChange = React.useCallback((newLocale) => {
-    if (locale !== newLocale) {
-      navigate(Utils.setPathParameter(newLocale, 1));
-    }
-  }, [locale, navigate]);
+  const onLocaleChange = React.useCallback((newLocale, replace) => {
+    navigate(Utils.setPathParams([{ param: newLocale, pos: 1 }]), { replace: replace });
+  }, [navigate]);
 
+  console.log('header');
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Typography
+          {/*<Typography
             variant="h6"
             noWrap
             sx={{
@@ -66,8 +62,8 @@ export const Header = () => {
               textDecoration: 'none',
             }}
           >
-            {homePage.name}
-          </Typography>
+            WS UNIT STATS
+          </Typography>*/}
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
@@ -104,7 +100,7 @@ export const Header = () => {
               ))}
             </Menu>
           </Box>
-          <Typography
+          {/*<Typography
             variant="h5"
             noWrap
             sx={{
@@ -119,7 +115,7 @@ export const Header = () => {
             }}
           >
             WS UNIT STATS
-          </Typography>
+          </Typography>*/}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <NavLink key={page.path} to={page.path} style={{ textDecoration: 'none' }}>
@@ -132,9 +128,14 @@ export const Header = () => {
               </NavLink>
             ))}
           </Box>
-          <LocalePicker
-            onSelect={onLocaleChange}
-            currentLocale={locale} />
+          <Stack sx={{ gap: 1, alignItems: 'center', flexDirection: 'row', paddingTop: 1, paddingBottom: 1 }}>
+            {locale !== Constants.DEFAULT_LOCALE_OPTION && <Tooltip arrow title='Only in-game values are localized using game localization files. Most of the UI is available only in English now'>
+              <WarningAmberIcon sx={{ color: '#fd853c', filter: 'drop-shadow(0px 0px 3px rgb(0 0 0 / 0.8))', fontSize: 25 }}  />
+            </Tooltip>}
+            <LocalePicker
+              onSelect={onLocaleChange}
+              currentLocale={locale} />
+          </Stack>
         </Toolbar>
       </Container>
     </AppBar>

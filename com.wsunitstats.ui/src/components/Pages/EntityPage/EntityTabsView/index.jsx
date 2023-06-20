@@ -1,27 +1,21 @@
 import * as React from 'react';
+import * as Utils from 'utils/utils';
 import './index.css';
-import { Box, CircularProgress, Tab, Tabs } from '@mui/material';
+import { Box, Tab, Tabs } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export const EntityTabsView = ({
   entity,
   tabsData,
-  loading,
-  tabsView: TabsViewComponent = TabsView,
-  defaultView: DefaultViewComponent = DefaultView
+  tabsView: TabsViewComponent = TabsView
 }) => {
-  const [currentTab, setCurrentTab] = React.useState(undefined);
-
-  const setTab = React.useCallback((tab) => {
-    const url = new URL(window.location.href);
-    url.hash = `#${tab}`;
-    window.history.replaceState({}, '', url.toString());
-    setCurrentTab(tab);
-  }, []);
+  const { tab: currentTab } = useParams();
+  const navigate = useNavigate();
 
   const isTabValid = React.useCallback((tab) => {
     if (tab) {
-      for (const tab of tabsData) {
-        if (tab.id === tab) {
+      for (const tab_ of tabsData) {
+        if (tab_.id === tab) {
           return true;
         }
       }
@@ -29,42 +23,39 @@ export const EntityTabsView = ({
     return false;
   }, [tabsData]);
 
+  const setTab = React.useCallback((tab) => {
+    navigate(Utils.setPathParams([{ param: tab, pos: 4 }]), { replace: true });
+  }, [navigate]);
+
   React.useEffect(() => {
-    const hash = window.location.hash;
-    const initialTab = hash?.slice(1);
-    if (!currentTab && tabsData.length) {
-      if (isTabValid(initialTab)) {
-        setTab(initialTab);
+    if (tabsData.length) {
+      if (currentTab) {
+        if (!isTabValid(currentTab)) {
+          Utils.navigateTo404(navigate);
+        }
       } else {
-        setTab(tabsData[0]?.id);
+        setTab(tabsData[0].id);
       }
     }
-    if (currentTab !== initialTab) {
-      setTab(initialTab);
-    }
-  }, [currentTab, tabsData, setTab, isTabValid]);
+  }, [currentTab, tabsData, setTab, isTabValid, navigate]);
 
-  const isRenderContent = tabsData.length > 0 || loading;
-
-  applyBodyStyle(isRenderContent);
-  return isRenderContent
-    ? (<TabsViewComponent tabsData={tabsData} currentTab={currentTab} setTab={setTab} entity={entity} loading={loading}/>)
-    : (<DefaultViewComponent />);
+  console.log('entityView')
+  return <TabsViewComponent tabsData={tabsData} currentTab={currentTab} setTab={setTab} entity={entity} />;
 }
 
-export const TabsView = ({ tabsData, currentTab, setTab, entity, loading }) => {
-  return !entity || !currentTab || tabsData.length === 0 || loading ? <CircularProgress/> : (
+export const TabsView = ({ tabsData, currentTab, setTab, entity }) => {
+  return (
     <>
       <Box display="flex" justifyContent="center" width="100%">
         <Tabs value={currentTab} onChange={(_, newTab) => setTab(newTab)} allowScrollButtonsMobile variant="scrollable">
-          {tabsData.map((tab) => <Tab key={tab.id} label={tab.label} value={tab.id}/>)}
+          {tabsData.map((tab) => <Tab key={tab.id} label={tab.label} value={tab.id} />)}
         </Tabs>
       </Box>
       {tabsData.map((tab) => {
         const TabComponent = tab.component;
         return (
           <TabView key={tab.id} value={currentTab} selfValue={tab.id}>
-            {loading ? <CircularProgress/> : <TabComponent entity={entity} />}
+            <TabComponent entity={entity} />
           </TabView>
         );
       })}
@@ -78,18 +69,4 @@ const TabView = ({ selfValue, value, children }) => {
       {value === selfValue && children}
     </div>
   );
-}
-
-const DefaultView = () => <div>Waiting for your input...</div>
-
-const applyBodyStyle = (isContent) => {
-  let bodyRoot = document.querySelector(".body-root");
-  if (bodyRoot) {
-    let bodyClassList = bodyRoot.classList;
-    if (isContent) {
-      bodyClassList.add('content-body-root');
-    } else {
-      bodyClassList.remove('content-body-root');
-    }
-  }
 }

@@ -1,18 +1,23 @@
 import * as React from 'react';
-import * as Constants from 'utils/constants';
-import { EntityPage } from 'components/Pages/EntityPage';
-import { ResearchView } from 'components/Pages/ResearchPage/ResearchView';
+import './index.css';
+import { useOutletContext } from 'react-router-dom';
+import { ResearchTable } from './ResearchTable';
+import { ResizableGrid } from 'components/Layout/ResizableGrid';
+
+const MIN_WIDTH = 400;
+const OVERFLOW_WIDTH = 200;
+const COLUMN_WIDTH = 500;
 
 export const ResearchPage = () => {
+  const entity = useOutletContext();
+  const research = entity;
+
   return (
-    <EntityPage
-      view={ResearchView}
-      fetchEntityURI={Constants.HOST + Constants.RESEARCH_DATA_API}
-      pickerOptions={{
-        fetchURI: Constants.HOST + Constants.RESEARCH_OPTIONS_API,
-        placeholder: 'Type the Research name',
-        optionSecondaryCallback: (option) => "ID: " + option.gameId
-      }}
-    />
+    <>
+      <h3>Research</h3>
+      <ResizableGrid minWidth={MIN_WIDTH} columnWidth={COLUMN_WIDTH} paddingTop={1}>
+        <ResearchTable research={research} overflowMinWidth={OVERFLOW_WIDTH} />
+      </ResizableGrid>
+    </>
   );
 }

@@ -8,21 +8,19 @@ import match from 'autosuggest-highlight/match';
 import { debounce } from '@mui/material/utils';
 import { Image } from 'components/Atoms/Renderer';
 import { Stack, Typography } from '@mui/material';
+import { useParams } from 'react-router-dom';
 
-export const EntityPicker = ({ locale, onSelect, value, setValue, options: componentOptions }) => {
+export const EntityPicker = ({ initialValue, onSelect, options: componentOptions }) => {
+  const [value, setValue] = React.useState(initialValue);
   const [inputValue, setInputValue] = React.useState('');
   const [options, setOptions] = React.useState([]);
+  const params = useParams();
 
   const selectValue = React.useCallback((newValue) => {
-    if (Array.isArray(newValue)) {
-      newValue = null;
-    }
-    setValue(newValue);
     if (newValue && typeof newValue.gameId === 'number') {
       onSelect(newValue.gameId);
-    } else {
-      onSelect(null);
     }
+    setValue(newValue);
   }, [onSelect, setValue]);
 
   const fetchHandler = React.useCallback(
@@ -43,35 +41,40 @@ export const EntityPicker = ({ locale, onSelect, value, setValue, options: compo
   // update options on input text change
   React.useEffect(() => {
     let active = true;
+
     if (active) {
-      if (inputValue === '') {
-        // don't fetch for empty input
-        setOptions([]);
-      } else {
-        debouncedFetchHandler(
-          new URLSearchParams({
-            nameFilter: inputValue,
-            locale: locale
-          }),
-          (results) => setOptions(results)
-        );
-      }
+      debouncedFetchHandler(
+        new URLSearchParams({
+          nameFilter: inputValue,
+          locale: params.locale
+        }),
+        (results) => setOptions(results)
+      );
     }
+
     return () => {
       active = false;
     };
-  }, [inputValue, debouncedFetchHandler, locale]);
+  }, [inputValue, debouncedFetchHandler, params.locale]);
 
+  // clear on navigation to empty page
+  React.useEffect(() => {
+    if (!params.gameId && params.gameId !== 0) {
+      setValue(null);
+    }
+  }, [params.gameId]);
+
+  console.log('entityPicker')
   return (
     <Autocomplete
       sx={{ width: '100%', margin: '2px', maxWidth: '350px' }}
+      clearOnBlur={false}
       autoComplete
       autoHighlight
       includeInputInList
       filterSelectedOptions
-      getOptionLabel={(option) => option.name}
-      isOptionEqualToValue={(option, value) => option.gameId === value.gameId}
-      filterOptions={(x) => x}
+      getOptionLabel={(option) => option.name ? option.name : ''}
+      isOptionEqualToValue={(option, value) => value && option.gameId === value.gameId}
       options={options}
       value={value}
       componentsProps={{
@@ -80,7 +83,7 @@ export const EntityPicker = ({ locale, onSelect, value, setValue, options: compo
         }
       }}
       onChange={(_, newValue) => {
-        selectValue(newValue)
+        selectValue(newValue);
       }}
       onInputChange={(_, newInputValue) => {
         setInputValue(newInputValue);

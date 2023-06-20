@@ -28,7 +28,7 @@ const StyledAutocomplete = styled(Autocomplete)({
 
 export const LocalePicker = ({ onSelect, currentLocale }) => {
   const [locales, setLocales] = React.useState([]);
-  const [value, setValue] = React.useState('');
+  const [value, setValue] = React.useState(null);
 
   React.useEffect(() => {
     fetch(Constants.HOST + Constants.LOCALE_OPTIONS_API)
@@ -44,7 +44,7 @@ export const LocalePicker = ({ onSelect, currentLocale }) => {
       let actualLocale = currentLocale;
       if (!locales.includes(currentLocale)) {
         actualLocale = Constants.DEFAULT_LOCALE_OPTION;
-        onSelect(actualLocale);
+        onSelect(actualLocale, true);
       }
       setValue(actualLocale);
     }
@@ -59,7 +59,7 @@ export const LocalePicker = ({ onSelect, currentLocale }) => {
       disableClearable
       onChange={(_, newValue) => {
         setValue(newValue);
-        onSelect(newValue);
+        onSelect(newValue, false);
       }}
       componentsProps={{
         paper: {

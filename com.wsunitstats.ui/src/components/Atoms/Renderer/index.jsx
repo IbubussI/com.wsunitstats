@@ -117,7 +117,6 @@ export const Resource = ({ data }) => {
       spacing={0.7}
       sx={{
         width: 'fit-content',
-        border: '1px solid rgb(182, 182, 182)',
         padding: '5px',
         paddingBottom: '3px',
         margin: '5px',
@@ -151,7 +150,7 @@ export const EntityInfo = ({ data }) => {
       display: '-webkit-box',
       WebkitLineClamp: availableLines,
       WebkitBoxOrient: 'vertical',
-    } : '';
+    } : {};
 
     const LinkContent = () => {
       return (
