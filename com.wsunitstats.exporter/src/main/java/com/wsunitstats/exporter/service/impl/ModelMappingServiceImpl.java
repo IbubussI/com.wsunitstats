@@ -91,7 +91,7 @@ import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 public class ModelMappingServiceImpl implements ModelMappingService {
     private static final Logger LOG = LoggerFactory.getLogger(ModelMappingServiceImpl.class);
 
-    private static final Pattern ATTACK_GROUND_PATTERN = Pattern.compile("\\{\"groundAttack\":\\[([0-9]+),([0-9]+)]}");
+    private static final Pattern ATTACK_GROUND_PATTERN = Pattern.compile("\"groundAttack\":\\[([0-9]+),([0-9]+)]");
     private static final int PROBABILITY_MAX = 100;
 
     @Autowired

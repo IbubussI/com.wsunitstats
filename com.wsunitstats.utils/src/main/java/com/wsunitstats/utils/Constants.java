@@ -48,7 +48,10 @@ public class Constants {
         RESEARCH(1, "Research"),
         TRANSFORM(2, "Transform"),
         CREATE_ENV(3, "Create env"),
-        SPEED_BUFF(4, "Buff");
+        ACTION(4, "Action"),
+        //???(5, "???"),
+        DAMAGE(6, "Damage");
+
         private final int type;
         private final String name;
 
@@ -67,6 +70,38 @@ public class Constants {
 
         public static AbilityType get(int type) {
             for (AbilityType abilityType : AbilityType.values()) {
+                if (abilityType.getType() == type) {
+                    return abilityType;
+                }
+            }
+            return UNDEFINED;
+        }
+    }
+
+    public enum AbilityContainerType {
+        UNDEFINED(-1, UNDEF),
+        ON_ACTION(0, "Action ability"),
+        WORK(1, "Work ability"),
+        ZONE_EVENT(2, "Environment zone event");
+
+        private final int type;
+        private final String name;
+
+        AbilityContainerType(int type, String name) {
+            this.type = type;
+            this.name = name;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public static AbilityContainerType get(int type) {
+            for (AbilityContainerType abilityType : AbilityContainerType.values()) {
                 if (abilityType.getType() == type) {
                     return abilityType;
                 }
