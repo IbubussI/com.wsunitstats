@@ -21,9 +21,9 @@ export const WeaponTable = ({ item, overflowMinWidth }) => {
   const { locale } = useParams();
   const weapon = item.weapon;
   
-  const attacksNumber = weapon.damagesCount * weapon.attacksPerAttack * weapon.attacksPerAction;
+  const attacksNumber = weapon.damage.damagesCount * weapon.attacksPerAttack * weapon.attacksPerAction;
 
-  const damageData = weapon.damages.map((damage) => {
+  const damageData = weapon.damage.damages.map((damage) => {
     let damageValue = attacksNumber > 1 && damage.value > 0 ? attacksNumber + 'x' + damage.value : damage.value;
     return { leftCell: damage.type, rightCell: damageValue }
   });
@@ -61,7 +61,7 @@ export const WeaponTable = ({ item, overflowMinWidth }) => {
       {
         label: 'Damages per projectile',
         renderer: Text,
-        value: weapon.damagesCount,
+        value: weapon.damage.damagesCount,
       },
       {
         label: 'Damages per attack',
@@ -101,21 +101,21 @@ export const WeaponTable = ({ item, overflowMinWidth }) => {
       paddingTop: '4px',
       paddingBottom: '4px'
     },
-    content: weapon.buff && [
+    content: weapon.damage.buff && [
       {
         label: 'Buff',
         renderer: EntityInfo,
-        value: weapon.buff.entityInfo && {
+        value: weapon.damage.buff.entityInfo && {
           values: [
             {
-              primary: weapon.buff.entityInfo.entityName,
+              primary: weapon.damage.buff.entityInfo.entityName,
               image: {
-                path: weapon.buff.entityInfo.entityImage,
+                path: weapon.damage.buff.entityInfo.entityImage,
                 width: 35,
                 height: 35,
               },
               link: {
-                id: weapon.buff.entityInfo.entityId,
+                id: weapon.damage.buff.entityInfo.entityId,
                 locale: locale,
                 path: Utils.getEntityRoute("research")
               },
@@ -127,14 +127,14 @@ export const WeaponTable = ({ item, overflowMinWidth }) => {
       {
         label: 'Duration',
         renderer: Text,
-        value: weapon.buff.period && weapon.buff.period + " sec",
+        value: weapon.damage.buff.period && weapon.damage.buff.period + " sec",
       },
       {
         label: 'Affected units',
         baseline: true,
         renderer: TagList,
-        value: weapon.buff.affectedUnits && {
-          tags: weapon.buff.affectedUnits
+        value: weapon.damage.buff.affectedUnits && {
+          tags: weapon.damage.buff.affectedUnits
         }
       }
     ].filter(element => element.value !== undefined)
@@ -154,14 +154,14 @@ export const WeaponTable = ({ item, overflowMinWidth }) => {
       {
         label: 'Damage',
         renderer: Text,
-        value: weapon.envDamage,
+        value: weapon.damage.envDamage,
       },
       {
         label: 'Can damage',
         labelBaseline: true,
         renderer: TagList,
-        value: weapon.envsAffected && {
-          tags: weapon.envsAffected
+        value: weapon.damage.envsAffected && {
+          tags: weapon.damage.envsAffected
         }
       }
     ].filter(element => element.value !== undefined)
@@ -194,15 +194,15 @@ export const WeaponTable = ({ item, overflowMinWidth }) => {
       childData: {
         label: 'Area type',
         value: {
-          primaryValue: weapon.areaType,
+          primaryValue: weapon.damage.areaType,
           subValues: [
             {
               label: 'radius',
-              value: weapon.radius
+              value: weapon.damage.radius
             },
             {
               label: 'angle',
-              value: weapon.damageAngle
+              value: weapon.damage.damageAngle
             }
           ]
         },
@@ -255,7 +255,7 @@ export const WeaponTable = ({ item, overflowMinWidth }) => {
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Friendly damage',
-        value: '' + !!weapon.damageFriendly,
+        value: '' + !!weapon.damage.damageFriendly,
         widthRight: FLEX_TABLE_RIGHT_WIDTH,
         widthLeft: FLEX_TABLE_LEFT_WIDTH
       }

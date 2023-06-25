@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 
 export const ResearchTable = ({ research }) => {
   const { locale } = useParams();
-
+  const upgrades = research.upgrades?.filter(element => element.unit);
   return (
     <DoubleColumnFrame column childrenProps={[null, { overflow: 'auto', width: '100%' }]}>
       <Stack alignItems='center' spacing={0.8}>
@@ -20,7 +20,7 @@ export const ResearchTable = ({ research }) => {
           Game ID: {research.gameId}
         </Typography>
       </Stack>
-      <Stack alignItems='center' spacing={0.8}>
+      {upgrades.length && <Stack alignItems='center' spacing={0.8}>
         <p>Affected units</p>
         <Grid container spacing={1}>
           {research.upgrades.map((upgrade) => {
@@ -50,7 +50,7 @@ export const ResearchTable = ({ research }) => {
             );
           })}
         </Grid>
-      </Stack>
+      </Stack>}
     </DoubleColumnFrame>
   );
 }
