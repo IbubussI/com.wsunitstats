@@ -15,7 +15,7 @@ public class WeaponSetDamageArea implements Mutator {
         int area = toNumber(parameters.get("area"), -1);
         for (WeaponModel weapon : target.getWeapons()) {
             if (weapon.getWeaponId() == weaponId) {
-                weapon.setAreaType(Constants.DamageAreaType.get(area).getName());
+                weapon.getDamage().setAreaType(Constants.DamageAreaType.get(area).getName());
                 return;
             }
         }

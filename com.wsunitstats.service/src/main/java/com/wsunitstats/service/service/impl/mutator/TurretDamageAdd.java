@@ -46,7 +46,7 @@ public class TurretDamageAdd implements Mutator {
     }
 
     private void processWeapon(WeaponModel weapon, int mult, int add) {
-        DamageModel damage = weapon.getDamages().get(0);
+        DamageModel damage = weapon.getDamage().getDamages().get(0);
         Double value = damage.getValue();
         if (mult == -1) {
             value = value + Util.intToDoubleShift(add);

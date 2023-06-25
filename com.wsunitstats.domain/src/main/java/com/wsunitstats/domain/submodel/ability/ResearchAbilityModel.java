@@ -1,20 +1,17 @@
-package com.wsunitstats.domain.submodel.ability.ref;
+package com.wsunitstats.domain.submodel.ability;
 
 import com.wsunitstats.domain.EntityInfoModel;
-import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Entity(name = "ability-create-env")
+@Entity(name = "ability_research")
 @Getter
 @Setter
 @ToString
-public class CreateEnvAbilityModel extends GenericAbility {
-    @Column(name = "count_")
-    private Integer count;
+public class ResearchAbilityModel extends GenericAbility {
     @Embedded
     private EntityInfoModel entityInfo;
 }

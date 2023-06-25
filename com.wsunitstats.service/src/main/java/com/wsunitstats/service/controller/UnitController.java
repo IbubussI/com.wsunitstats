@@ -2,8 +2,11 @@ package com.wsunitstats.service.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.wsunitstats.domain.ResearchModel;
 import com.wsunitstats.domain.UnitModel;
+import com.wsunitstats.domain.submodel.ability.GenericAbility;
+import com.wsunitstats.domain.submodel.ability.container.GenericAbilityContainer;
 import com.wsunitstats.service.exception.RestException;
 import com.wsunitstats.service.model.EntityOption;
 import com.wsunitstats.service.service.ResearchService;
@@ -12,6 +15,8 @@ import com.wsunitstats.service.exception.InvalidParameterException;
 import com.wsunitstats.service.service.LocalizationService;
 import com.wsunitstats.service.service.ParameterValidatorService;
 import com.wsunitstats.service.service.UnitService;
+import com.wsunitstats.service.service.serializer.AbilityContainerDeserializer;
+import com.wsunitstats.service.service.serializer.AbilityDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -146,6 +151,10 @@ public class UnitController {
     public ResponseEntity<String> uploadUnits(@RequestBody String data) {
         try {
             ObjectMapper mapper = new ObjectMapper();
+            SimpleModule module = new SimpleModule();
+            module.addDeserializer(GenericAbility.class, new AbilityDeserializer());
+            module.addDeserializer(GenericAbilityContainer.class, new AbilityContainerDeserializer());
+            mapper.registerModule(module);
             List<UnitModel> units = Arrays.asList(mapper.readValue(data, UnitModel[].class));
             unitService.setUnits(units);
             return new ResponseEntity<>(OK, HttpStatus.OK);

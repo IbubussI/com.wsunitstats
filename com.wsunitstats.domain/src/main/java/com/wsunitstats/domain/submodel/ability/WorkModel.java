@@ -1,4 +1,4 @@
-package com.wsunitstats.domain.submodel.ability.ref;
+package com.wsunitstats.domain.submodel.ability;
 
 import com.wsunitstats.domain.PersistentObject;
 import com.wsunitstats.domain.submodel.ReserveModel;

@@ -1,4 +1,4 @@
-package com.wsunitstats.domain.submodel.ability.ref;
+package com.wsunitstats.domain.submodel.ability;
 
 import com.wsunitstats.domain.EntityInfoModel;
 import jakarta.persistence.Column;
@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Entity(name = "ability-create-unit")
+@Entity(name = "ability_create_unit")
 @Getter
 @Setter
 @ToString

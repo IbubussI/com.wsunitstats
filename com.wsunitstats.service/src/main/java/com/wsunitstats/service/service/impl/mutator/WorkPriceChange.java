@@ -2,7 +2,9 @@ package com.wsunitstats.service.service.impl.mutator;
 
 import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.domain.submodel.ResourceModel;
-import com.wsunitstats.domain.submodel.ability.AbilityModel;
+import com.wsunitstats.domain.submodel.ability.container.GenericAbilityContainer;
+import com.wsunitstats.domain.submodel.ability.container.WorkAbilityContainer;
+import com.wsunitstats.utils.Constants;
 import com.wsunitstats.utils.Util;
 
 import java.util.List;
@@ -17,10 +19,12 @@ public class WorkPriceChange implements Mutator {
         int mult = toNumber(parameters.get("mult"), 100);
         int add = toNumber(parameters.get("add"), 0);
         int resourceId = toNumber(parameters.get("resource"), -1);
-        List<AbilityModel> abilities = target.getAbilities();
-        for (AbilityModel ability : abilities) {
-            if (ability.getWorkId() == workId) {
-                processResources(ability.getCost(), mult, add, resourceId);
+        for (GenericAbilityContainer abilityContainer : target.getAbilities()) {
+            if (abilityContainer.getContainerType() == Constants.AbilityContainerType.WORK.getType()) {
+                WorkAbilityContainer workAbilityContainer = (WorkAbilityContainer) abilityContainer;
+                if (workAbilityContainer.getWork().getWorkId() == workId) {
+                    processResources(workAbilityContainer.getWork().getCost(), mult, add, resourceId);
+                }
             }
         }
     }

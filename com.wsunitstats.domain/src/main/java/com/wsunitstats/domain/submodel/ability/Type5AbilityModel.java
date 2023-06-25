@@ -1,6 +1,5 @@
-package com.wsunitstats.domain.submodel.ability.ref;
+package com.wsunitstats.domain.submodel.ability;
 
-import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -8,7 +7,7 @@ import lombok.ToString;
 /**
  * unused; need to understand what's that about
  */
-@Entity(name = "ability-5")
+//@Entity(name = "ability_5")
 @Getter
 @Setter
 @ToString

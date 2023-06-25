@@ -1,4 +1,4 @@
-package com.wsunitstats.domain.submodel.ability.ref;
+package com.wsunitstats.domain.submodel.ability;
 
 import com.wsunitstats.domain.EntityInfoModel;
 import jakarta.persistence.Embedded;
@@ -7,12 +7,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Entity(name = "ability-action")
+@Entity(name = "ability_transform")
 @Getter
 @Setter
 @ToString
-public class ActionAbilityModel extends GenericAbility {
+public class TransformAbilityModel extends GenericAbility {
     @Embedded
     private EntityInfoModel entityInfo;
-    private Double duration;
 }

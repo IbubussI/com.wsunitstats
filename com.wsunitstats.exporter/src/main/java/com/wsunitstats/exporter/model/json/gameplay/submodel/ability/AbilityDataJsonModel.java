@@ -1,16 +1,15 @@
 package com.wsunitstats.exporter.model.json.gameplay.submodel.ability;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.DamageJsonModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.List;
-
+// extends damage json model because can have all it props for damage ability
 @Getter
 @Setter
 @ToString
-public class AbilityDataJsonModel {
+public class AbilityDataJsonModel extends DamageJsonModel {
     private Integer count;
     private String clearTasks;
 
@@ -18,7 +17,7 @@ public class AbilityDataJsonModel {
     private Integer duration;
 
     //One of next ids is present
-    private Integer id;         //env id (for wheat)
+    private Integer id;         //env id (for e.g. wheat) or damage id - ??? for damage
     private Integer research;   //research id
     private Integer unit;       //unit id
 
@@ -31,12 +30,4 @@ public class AbilityDataJsonModel {
     private Integer lifeTime;
     private Boolean mustBeSent;
     private Boolean sendStrict;
-
-    //Damage (heavy tanks to trees)
-    private Integer area;
-    private List<List<Integer>> damages;
-    private Integer envDamage;
-    private Long envsAffected;
-    @JsonProperty("radius_")
-    private Integer radius;
 }

@@ -12,7 +12,7 @@ import java.util.List;
 public class ZoneEventJsonModel {
     private List<Integer> abilities;
     private Integer envSearchDistance;
-    private Integer envTags;
+    private Long envTags;
     private Integer levels;
     private Integer size;
 }

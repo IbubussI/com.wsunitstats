@@ -31,24 +31,13 @@ public class WeaponModel extends PersistentObject {
     private ProjectileModel projectile;
     private Double rechargePeriod;
     private Double spread;
-    private String areaType;
     private Double angle;
-    private Double damageAngle;
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private BuffModel buff;
-    private Boolean damageFriendly;
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<DamageModel> damages;
-    private Double envDamage;
-    private Double radius;
+    private DamageWrapperModel damage;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> envsAffected;
     // Bombers specific
     private Integer charges;
 
-    // Death Scythe specific
-    private int damagesCount;
     // For melee attacks and shotguns
     private int attacksPerAttack;
     // For machine-guns

@@ -1,4 +1,4 @@
-package com.wsunitstats.domain.submodel.ability.ref;
+package com.wsunitstats.domain.submodel.ability;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.wsunitstats.domain.PersistentObject;
@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Entity(name = "ability-generic-supertype")
+@Entity(name = "ability_generic_supertype")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Setter
 @Getter

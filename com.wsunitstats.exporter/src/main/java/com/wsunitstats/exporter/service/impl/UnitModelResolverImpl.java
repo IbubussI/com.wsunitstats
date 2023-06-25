@@ -2,7 +2,6 @@ package com.wsunitstats.exporter.service.impl;
 
 import com.wsunitstats.domain.submodel.ConstructionModel;
 import com.wsunitstats.domain.submodel.TurretModel;
-import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import com.wsunitstats.exporter.model.GroundAttackDataWrapper;
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileJsonModel;
@@ -11,21 +10,18 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.AttackJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildingJsonModel;
-import com.wsunitstats.exporter.model.json.gameplay.submodel.CreateEnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.DeathabilityJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.MovementJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ScenesJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TurretJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.UnitJsonModel;
-import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
-import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityOnActionJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.air.AirplaneJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
-import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
 import com.wsunitstats.exporter.model.json.visual.VisualFileJsonModel;
 import com.wsunitstats.exporter.model.json.visual.submodel.UnitTypeJsonModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
+import com.wsunitstats.exporter.service.AbilityMappingService;
 import com.wsunitstats.exporter.service.FileContentService;
 import com.wsunitstats.exporter.service.ImageService;
 import com.wsunitstats.exporter.service.ModelMappingService;
@@ -52,6 +48,8 @@ import static com.wsunitstats.utils.Constants.STORAGE_MULTIPLIER_MODIFIER;
 public class UnitModelResolverImpl implements UnitModelResolver {
     @Autowired
     private ModelMappingService mappingService;
+    @Autowired
+    private AbilityMappingService abilityMappingService;
     @Autowired
     private ImageService imageService;
     @Autowired
@@ -101,7 +99,7 @@ public class UnitModelResolverImpl implements UnitModelResolver {
 
             AbilityWrapperJsonModel ability = unitJsonModel.getAbility();
             if (ability != null) {
-                unit.setAbilities(getAbilitiesList(ability, unitJsonModel.getCreateEnvs()));
+                unit.setAbilities(abilityMappingService.mapAbilities(unitJsonModel));
             }
 
             DeathabilityJsonModel deathability = unitJsonModel.getDeathability();
@@ -167,30 +165,6 @@ public class UnitModelResolverImpl implements UnitModelResolver {
         return entries.stream()
                 .map(entry -> mappingService.map(entry, probabilitiesSum))
                 .toList();
-    }
-
-    private List<AbilityModel> getAbilitiesList(AbilityWrapperJsonModel ability,
-                                                List<CreateEnvJsonModel> createEnvs) {
-        List<AbilityJsonModel> abilitiesList = ability.getAbilities();
-        List<WorkJsonModel> workList = ability.getWork();
-        AbilityOnActionJsonModel onAction = ability.getAbilityOnAction();
-        return abilitiesList == null ? new ArrayList<>() :
-                IntStream.range(0, abilitiesList.size())
-                        .mapToObj(i -> {
-                            Integer workId = null;
-                            WorkJsonModel workModel = null;
-                            if (workList != null) {
-                                for (int j = 0; j < workList.size(); j++) {
-                                    WorkJsonModel current = workList.get(j);
-                                    if (i == current.getAbility()) {
-                                        workId = j;
-                                        workModel = current;
-                                    }
-                                }
-                            }
-                            return mappingService.map(i, abilitiesList.get(i), workModel, workId, createEnvs, onAction);
-                        })
-                        .toList();
     }
 
     private List<WeaponModel> getWeaponsList(List<WeaponJsonModel> weaponList,

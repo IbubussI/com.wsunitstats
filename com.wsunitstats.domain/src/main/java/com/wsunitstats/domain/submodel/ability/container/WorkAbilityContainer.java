@@ -1,8 +1,7 @@
-package com.wsunitstats.domain.submodel.ability.ref.container;
+package com.wsunitstats.domain.submodel.ability.container;
 
-import com.wsunitstats.domain.PersistentObject;
-import com.wsunitstats.domain.submodel.ability.ref.GenericAbility;
-import com.wsunitstats.domain.submodel.ability.ref.WorkModel;
+import com.wsunitstats.domain.submodel.ability.GenericAbility;
+import com.wsunitstats.domain.submodel.ability.WorkModel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,11 +10,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Entity(name = "ability-container-work")
+@Entity(name = "ability_container_work")
 @Getter
 @Setter
 @ToString
-public class WorkAbilityContainer extends PersistentObject {
+public class WorkAbilityContainer extends GenericAbilityContainer {
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private WorkModel work;
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

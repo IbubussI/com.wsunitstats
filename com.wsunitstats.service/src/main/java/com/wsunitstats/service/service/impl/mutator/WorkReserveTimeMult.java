@@ -2,7 +2,10 @@ package com.wsunitstats.service.service.impl.mutator;
 
 import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.domain.submodel.ReserveModel;
-import com.wsunitstats.domain.submodel.ability.AbilityModel;
+import com.wsunitstats.domain.submodel.ability.WorkModel;
+import com.wsunitstats.domain.submodel.ability.container.GenericAbilityContainer;
+import com.wsunitstats.domain.submodel.ability.container.WorkAbilityContainer;
+import com.wsunitstats.utils.Constants;
 
 import java.util.List;
 import java.util.Map;
@@ -16,30 +19,41 @@ public class WorkReserveTimeMult implements Mutator {
         int work2 = toNumber(parameters.get("work2"), -1);
         int work3 = toNumber(parameters.get("work3"), -1);
         int mult = toNumber(parameters.get("mult"), 100);
-        List<AbilityModel> abilities = target.getAbilities();
+        List<WorkModel> workModels = getAbilityWorks(target.getAbilities());
         if (work != -1) {
-            mult(getAbilityByWorkId(abilities, work).getReserve(), mult);
+            mult(getWorkByWorkId(workModels, work).getReserve(), mult);
             if (work2 != -1) {
-                mult(getAbilityByWorkId(abilities, work2).getReserve(), mult);
+                mult(getWorkByWorkId(workModels, work2).getReserve(), mult);
                 if (work3 != -1) {
-                    mult(getAbilityByWorkId(abilities, work3).getReserve(), mult);
+                    mult(getWorkByWorkId(workModels, work3).getReserve(), mult);
                 }
             }
         } else {
-            for (AbilityModel ability : abilities) {
-                mult(ability.getReserve(), mult);
+            for (WorkModel workModel : workModels) {
+                mult(workModel.getReserve(), mult);
             }
         }
     }
 
-    private AbilityModel getAbilityByWorkId(List<AbilityModel> abilities, int workId) {
-        AbilityModel result = null;
-        for (AbilityModel ability : abilities) {
-            if (ability.getWorkId() == workId) {
-                result = ability;
+    private WorkModel getWorkByWorkId(List<WorkModel> workModels, int workId) {
+        WorkModel result = null;
+        for (WorkModel workModel : workModels) {
+            if (workModel.getWorkId() == workId) {
+                result = workModel;
+                break;
             }
         }
         return result;
+    }
+
+    private List<WorkModel> getAbilityWorks(List<GenericAbilityContainer> abilityContainers) {
+        return abilityContainers.stream()
+                .filter(abilityContainer -> abilityContainer.getContainerType() == Constants.AbilityContainerType.WORK.getType())
+                .map(abilityContainer -> {
+                    WorkAbilityContainer workAbilityContainer = (WorkAbilityContainer) abilityContainer;
+                    return workAbilityContainer.getWork();
+                })
+                .toList();
     }
 
     private void mult(ReserveModel reserve, int mult) {
