@@ -2,12 +2,14 @@ package com.wsunitstats.service.service;
 
 import com.wsunitstats.service.exception.InvalidParameterException;
 
+import java.util.List;
+
 public interface ParameterValidatorService {
-    void validateStandard(String locale, String sortBy, String sortDir, Integer page, Integer size) throws InvalidParameterException;
+    void validateStandard(String locale, String sortBy, List<String> columnNames, String sortDir, Integer page, Integer size) throws InvalidParameterException;
 
     void validateLocale(String locale) throws InvalidParameterException;
 
-    void validateSortBy(String sortBy) throws InvalidParameterException;
+    void validateSortBy(String sortBy, List<String> columnNames) throws InvalidParameterException;
 
     void validateSortDir(String sortDir) throws InvalidParameterException;
 

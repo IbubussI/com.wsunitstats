@@ -1,27 +1,24 @@
 package com.wsunitstats.service.repository;
 
 import com.wsunitstats.domain.UnitModel;
-import com.wsunitstats.service.model.UnitOption;
-import org.springframework.data.domain.Page;
+import com.wsunitstats.service.model.EntityOption;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 public interface UnitRepository extends CrudRepository<UnitModel, Long>, PagingAndSortingRepository<UnitModel, Long> {
-    List<UnitModel> findByNameIn(List<String> names, Pageable pageable);
+    List<UnitModel> findByNameIn(Collection<String> names, Pageable pageable);
 
-    List<UnitModel> findByNationIn(List<String> nations, Pageable pageable);
+    List<UnitModel> findByNationIn(Collection<String> nations, Pageable pageable);
 
-    List<UnitModel> findByGameIdIn(List<Integer> ids, Pageable pageable);
+    List<UnitModel> findByGameIdIn(Collection<Integer> ids, Pageable pageable);
 
-    List<UnitModel> findByIdIn(List<Long> ids, Pageable pageable);
-
-    Page<UnitModel> findAll(Pageable pageable);
+    List<UnitModel> findByIdIn(Collection<Long> ids, Pageable pageable);
 
     @Query(nativeQuery = true, value = """
             SELECT COLUMN_NAME
@@ -30,8 +27,8 @@ public interface UnitRepository extends CrudRepository<UnitModel, Long>, PagingA
             """)
     List<String> getColumnNames();
 
-    @Query(nativeQuery = true,value = """
-            SELECT unit.name, unit.gameId, unit.id, unit.nation FROM wsunitstats.localization_entries
+    @Query(nativeQuery = true, value = """
+            SELECT unit.name, unit.gameId, unit.id, unit.nation, unit.image FROM wsunitstats.localization_entries
             RIGHT JOIN wsunitstats.unit ON localization_entries.entries_KEY = unit.name
             WHERE localization_id = (SELECT id FROM wsunitstats.localization WHERE locale = :locale)
             AND entries_KEY LIKE :entryPattern
@@ -39,12 +36,8 @@ public interface UnitRepository extends CrudRepository<UnitModel, Long>, PagingA
             ORDER BY entries
             LIMIT :size
             """)
-    List<UnitOption> findByPatternContaining(@Param("locale") String locale,
-                                             @Param("entryPattern") String entryPattern,
-                                             @Param("textPattern") String textPattern,
-                                             @Param("size") int size);
-
-    @Query(nativeQuery = true,
-            value = "SELECT unit.name, unit.gameId, unit.id, unit.nation FROM wsunitstats.unit WHERE id = :id")
-    Optional<UnitOption> findOptionById(@Param("id") Long id);
+    List<EntityOption> findByPatternContaining(@Param("locale") String locale,
+                                               @Param("entryPattern") String entryPattern,
+                                               @Param("textPattern") String textPattern,
+                                               @Param("size") int size);
 }

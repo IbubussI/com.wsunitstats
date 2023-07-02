@@ -1,10 +1,10 @@
 package com.wsunitstats.service.service;
 
+import com.wsunitstats.domain.ResearchModel;
 import com.wsunitstats.domain.UnitModel;
-import com.wsunitstats.service.model.UnitOption;
+import com.wsunitstats.service.model.EntityOption;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UnitService {
     List<UnitModel> getUnitsAll(String sort, String sortDir, int page, int size);
@@ -17,9 +17,12 @@ public interface UnitService {
 
     List<UnitModel> getUnitsByGameIds(List<Integer> ids, String sort, String sortDir, int page, int size);
 
-    List<UnitOption> getUnitOptionsByName(String locale, String namePattern, int size);
+    void applyResearches(List<UnitModel> units, List<ResearchModel> researches);
 
-    Optional<UnitOption> getUnitOption(Long id);
+    /**
+     * Returns localized options
+     */
+    List<EntityOption> getUnitOptionsByName(String locale, String namePattern, int size);
 
     List<String> getColumnNames();
 

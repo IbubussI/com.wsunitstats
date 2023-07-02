@@ -24,8 +24,14 @@ public abstract class IndexedArrayDataModelDeserializer<T> extends JsonDeseriali
             for (JsonNode arrayElement : node) {
                 JsonNode idNode = arrayElement.get(0);
                 JsonNode dataNode = arrayElement.get(1);
+
+                if (dataNode.isNull()) {
+                    dataModelMap.put(idNode.asInt(), null);
+                    continue;
+                }
+
                 if (!idNode.isInt() || !dataNode.isObject()) {
-                    throw new InvalidObjectException("Expected next format [ id, {data} ] where id is INT and data is OBJECT. Null is not allowed");
+                    throw new InvalidObjectException("Expected next format [ id, {data} ] where id is INT and data is OBJECT");
                 }
 
                 T dataModel;

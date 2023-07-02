@@ -2,7 +2,6 @@ package com.wsunitstats.exporter.service.impl;
 
 import com.wsunitstats.domain.submodel.ConstructionModel;
 import com.wsunitstats.domain.submodel.TurretModel;
-import com.wsunitstats.domain.submodel.ability.AbilityModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import com.wsunitstats.exporter.model.GroundAttackDataWrapper;
 import com.wsunitstats.exporter.model.json.gameplay.GameplayFileJsonModel;
@@ -11,21 +10,18 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.ArmorJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.AttackJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildingJsonModel;
-import com.wsunitstats.exporter.model.json.gameplay.submodel.CreateEnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.DeathabilityJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.GatherJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.MovementJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ScenesJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TurretJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.UnitJsonModel;
-import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
-import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityOnActionJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.air.AirplaneJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.weapon.WeaponJsonModel;
-import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkJsonModel;
 import com.wsunitstats.exporter.model.json.visual.VisualFileJsonModel;
 import com.wsunitstats.exporter.model.json.visual.submodel.UnitTypeJsonModel;
 import com.wsunitstats.exporter.model.lua.SessionInitFileModel;
+import com.wsunitstats.exporter.service.AbilityMappingService;
 import com.wsunitstats.exporter.service.FileContentService;
 import com.wsunitstats.exporter.service.ImageService;
 import com.wsunitstats.exporter.service.ModelMappingService;
@@ -53,6 +49,8 @@ public class UnitModelResolverImpl implements UnitModelResolver {
     @Autowired
     private ModelMappingService mappingService;
     @Autowired
+    private AbilityMappingService abilityMappingService;
+    @Autowired
     private ImageService imageService;
     @Autowired
     private FileContentService fileContentService;
@@ -79,6 +77,7 @@ public class UnitModelResolverImpl implements UnitModelResolver {
             unit.setName(localizationKeyModel.getUnitNames().get(id));
             unit.setImage(imageService.getImageName(Constants.EntityType.UNIT.getName(), id));
             unit.setNation(Util.getUnitNation(sessionInitModel.getUnitNations(), localizationKeyModel.getNationNames(), id));
+            unit.setDescription(localizationKeyModel.getUnitTexts().get(id));
 
             // Build traits
             unit.setBuild(mappingService.map(unitJsonModel, findUnitBuildObject(gameplayModel, id)));
@@ -100,7 +99,7 @@ public class UnitModelResolverImpl implements UnitModelResolver {
 
             AbilityWrapperJsonModel ability = unitJsonModel.getAbility();
             if (ability != null) {
-                unit.setAbilities(getAbilitiesList(ability, unitJsonModel.getCreateEnvs()));
+                unit.setAbilities(abilityMappingService.mapAbilities(unitJsonModel));
             }
 
             DeathabilityJsonModel deathability = unitJsonModel.getDeathability();
@@ -168,26 +167,6 @@ public class UnitModelResolverImpl implements UnitModelResolver {
                 .toList();
     }
 
-    private List<AbilityModel> getAbilitiesList(AbilityWrapperJsonModel ability,
-                                                List<CreateEnvJsonModel> createEnvs) {
-        List<AbilityJsonModel> abilitiesList = ability.getAbilities();
-        List<WorkJsonModel> workList = ability.getWork();
-        AbilityOnActionJsonModel onAction = ability.getAbilityOnAction();
-        return abilitiesList == null ? new ArrayList<>() :
-                IntStream.range(0, abilitiesList.size())
-                        .mapToObj(i -> {
-                            if (workList == null) {
-                                return mappingService.map(i, abilitiesList.get(i), null, createEnvs, onAction);
-                            }
-                            WorkJsonModel workModel = workList.stream()
-                                    .filter(work -> i == work.getAbility())
-                                    .findFirst()
-                                    .orElse(null);
-                            return mappingService.map(i, abilitiesList.get(i), workModel, createEnvs, onAction);
-                        })
-                        .toList();
-    }
-
     private List<WeaponModel> getWeaponsList(List<WeaponJsonModel> weaponList,
                                              String attackGroundString,
                                              boolean isTurret,
@@ -206,11 +185,11 @@ public class UnitModelResolverImpl implements UnitModelResolver {
                                             String attackGroundString) {
         return turretList == null ? new ArrayList<>() :
                 IntStream.range(0, turretList.size())
-                .mapToObj(index -> {
-                    TurretJsonModel turret = turretList.get(index);
-                    return mappingService.map(index, turret, getWeaponsList(turret.getWeapons(), attackGroundString, true, null));
-                })
-                .toList();
+                        .mapToObj(index -> {
+                            TurretJsonModel turret = turretList.get(index);
+                            return mappingService.map(index, turret, getWeaponsList(turret.getWeapons(), attackGroundString, true, null));
+                        })
+                        .toList();
     }
 
     private List<ConstructionModel> getConstructionList(List<BuildingJsonModel> buildingList) {

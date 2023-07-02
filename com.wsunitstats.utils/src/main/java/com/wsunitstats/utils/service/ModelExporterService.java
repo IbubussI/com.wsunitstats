@@ -1,6 +1,7 @@
 package com.wsunitstats.utils.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public interface ModelExporterService {
     /**
@@ -18,4 +19,9 @@ public interface ModelExporterService {
      * @return readable json string
      */
     <T> String exportToPrettyJson(T model) throws JsonProcessingException;
+
+    /**
+     * Returns mapper configured for exporting domain models
+     */
+    ObjectMapper getExportMapper();
 }

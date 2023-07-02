@@ -13,5 +13,6 @@ public class EntityInfoModel {
     private String entityName;
     private Integer entityId;
     private String entityImage;
+    // Nation is optional
     private String entityNation;
 }

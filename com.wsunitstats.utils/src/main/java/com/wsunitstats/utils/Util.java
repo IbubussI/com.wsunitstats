@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +54,17 @@ public class Util {
                 .filter(Objects::nonNull)
                 .mapToInt(Integer::intValue)
                 .sum();
+    }
+
+    public static Double intToConstructionSpeed(Integer progress) {
+        /*
+         * time = (hp-initial_hp)*progress/tickRate, s (not used here, JFI)
+         * speed = 1/progress*tickRate, %/sec
+         */
+        if (progress == null) {
+            return null;
+        }
+        return Util.intToDoubleShift(progress) * Constants.BUILD_SPEED_MODIFIER;
     }
 
     public static List<Integer> add(List<Integer> intList1, List<Integer> intList2) {
@@ -215,6 +228,21 @@ public class Util {
      */
     public static boolean getInvertedBoolean(Boolean bool) {
         return bool == null || Boolean.TRUE.equals(bool);
+    }
+
+    /**
+     * Rounds given double value to closest neighbor that have specified number of digits at decimal portion
+     *
+     * @param value to be rounded
+     * @param places numbers behind the dot
+     * @return rounded double
+     */
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
     private static Double divide(Integer value, double divider) {

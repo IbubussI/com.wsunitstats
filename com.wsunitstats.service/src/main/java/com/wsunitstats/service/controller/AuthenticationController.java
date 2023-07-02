@@ -8,6 +8,7 @@ import com.wsunitstats.service.exception.InvalidParameterException;
 import com.wsunitstats.service.exception.RestException;
 import com.wsunitstats.service.service.AuthService;
 import com.wsunitstats.service.service.ParameterValidatorService;
+import com.wsunitstats.service.service.UtilsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class AuthenticationController extends JsonControllerSupport {
+public class AuthenticationController {
+    @Autowired
+    private UtilsService utilsService;
     @Autowired
     private AuthService authService;
     @Autowired
@@ -39,7 +42,7 @@ public class AuthenticationController extends JsonControllerSupport {
                     new UsernamePasswordAuthenticationToken(username, password));
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String authToken = authService.getUserAuthToken(userDetails);
-            return getStringJsonResponseEntity(getResponseJsonPayload(authToken, userDetails), HttpStatus.OK);
+            return utilsService.getStringJsonResponseEntity(getResponseJsonPayload(authToken, userDetails), HttpStatus.OK);
         } catch (JsonProcessingException ex) {
             throw new RestException("Json error", ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
