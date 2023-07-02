@@ -117,8 +117,6 @@ export const Resource = ({ data }) => {
       spacing={0.7}
       sx={{
         width: 'fit-content',
-        padding: '5px',
-        paddingBottom: '3px',
         margin: '5px',
         marginLeft: '0'
       }}>
@@ -140,7 +138,8 @@ export const Resource = ({ data }) => {
   );
 }
 
-export const EntityInfo = ({ data }) => {
+export const EntityInfo = (props) => {
+  const data = props.data;
   const Entry = ({ entryData }) => {
     const minWidth = entryData.overflow ? '0' : '';
     const availableLines = entryData.secondary ? 1 : 2;
@@ -171,7 +170,7 @@ export const EntityInfo = ({ data }) => {
     }
 
     return (
-      <>
+      <Box {...props}>
         {entryData?.link.path === Constants.NO_LINK_INDICATOR ?
           <DisabledLink>
             <LinkContent />
@@ -180,7 +179,7 @@ export const EntityInfo = ({ data }) => {
           <Link to={Utils.makeEntityLink(entryData.link)} component={RouterLink}>
             <LinkContent />
           </Link>}
-      </>
+      </Box>
     );
   }
 
@@ -234,7 +233,7 @@ export const HeaderChip = ({ data }) => {
   const color = data.disabled ? 'error.main' : 'text.secondary';
   const textColor = data.disabled ? 'error.main' : 'text.primary';
   const borderColor = data.disabled ? 'error.main' : 'rgb(85, 120, 218)';
-  const isLabel = data.label;
+  const isLabel = data.label || (data.disabledLabel && data.disabled);
   return (
     <Box sx={{
       border: '3px solid',

@@ -1,63 +1,36 @@
 import * as React from 'react';
 import * as Constants from 'utils/constants'
-import { Box, Grid, debounce } from "@mui/material";
+import { Box, Grid, Stack, debounce } from "@mui/material";
 import { BasicPaper } from "components/Atoms/BasicPaper";
 import { ResizableBox } from 'react-resizable';
 
-export const ResizableGrid = ({ children, minWidth, columnWidth, paddingTop, staticBottom: StaticBottomComponent }) => {
+const MAX_COLUMNS = 12;
+
+export const ResizableGrid = ({ children, minWidth, defaultWidth = Constants.DEFAULT_COLUMN_WIDTH, paddingTop }) => {
   const [maxWidth, setMaxWidth] = React.useState(0);
   const [width, setWidth] = React.useState(0);
-  const [gridCols, setGridCols] = React.useState(12);
   const containerRef = React.useRef(null);
-  const contentRef = React.useRef(null);
+
+  const debouncedWindowResizeHandler = React.useMemo(
+    () => debounce(() => setMaxWidth(containerRef.current.clientWidth), 300),
+    [],
+  );
 
   React.useLayoutEffect(() => {
-    const resizeHandler = (newWidth) => {
-      const divider = Math.floor(newWidth / columnWidth);
-      if (12 % divider === 0 && children.length > 1) {
-        setGridCols(12 / divider);
-      }
-    }
-
     const initMaxWidth = containerRef.current.clientWidth;
     setMaxWidth(initMaxWidth);
     const localWidth = localStorage.getItem(Constants.LOCAL_RESIZABLE_WIDTH);
     let localWidthN = Number(localWidth);
     if (!localWidth || localWidthN < minWidth || localWidthN > initMaxWidth) {
-      localWidthN = columnWidth;
+      localWidthN = defaultWidth;
     }
     setWidth(localWidthN);
 
-    resizeHandler(localWidthN);
-
-    const resizeObserver = new ResizeObserver(() => resizeHandler(contentRef.current.clientWidth));
-    resizeObserver.observe(contentRef.current);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [columnWidth, children.length, minWidth]);
-
-  const windowResizeHandler = React.useCallback(
-    () => {
-      setMaxWidth(containerRef.current.clientWidth);
-    },
-    [],
-  );
-
-  const debouncedWindowResizeHandler = React.useMemo(
-    () => debounce(windowResizeHandler, 300),
-    [windowResizeHandler],
-  );
-
-  React.useEffect(() => {
     window.addEventListener("resize", debouncedWindowResizeHandler);
-    // Initial update
-    windowResizeHandler();
     return () => {
       window.removeEventListener("resize", debouncedWindowResizeHandler);
     }
-  }, [debouncedWindowResizeHandler, windowResizeHandler]);
+  }, [defaultWidth, minWidth, debouncedWindowResizeHandler]);
 
   const onResizeStop = (_, data) => {
     const stopWidth = data.size.width;
@@ -81,13 +54,8 @@ export const ResizableGrid = ({ children, minWidth, columnWidth, paddingTop, sta
         onResizeStop={onResizeStop}
         handle={<ResizeHandle />}
         axis='x'>
-        <BasicPaper innerref={contentRef} sx={{ padding: 1, paddingTop: paddingTop ? paddingTop : 3, width: '100%', boxSizing: 'border-box' }}>
-          <Grid container spacing={3}>
-            {Array.isArray(children) 
-            ? children.map((child, index) => <Grid key={index} item xs={gridCols}>{child}</Grid>)
-            : <Grid item xs={gridCols}>{children}</Grid>}
-          </Grid>
-          {StaticBottomComponent && <StaticBottomComponent />}
+        <BasicPaper sx={{ padding: 1, paddingTop: typeof paddingTop === 'number' ? paddingTop : 3, width: '100%', boxSizing: 'border-box' }}>
+          {children}
         </BasicPaper>
       </ResizableBox>
     </Box>
@@ -139,3 +107,54 @@ const ResizeHandle = React.forwardRef((props, ref) => {
     </Box>
   );
 });
+
+export const GridLayout = ({ children, columnWidth }) => {
+  const contentRef = React.useRef(null);
+  const [gridCols, setGridCols] = React.useState(1);
+
+  React.useLayoutEffect(() => {
+    const resizeHandler = (newWidth) => {
+      const colsNumber = Math.floor(newWidth / columnWidth);
+      if (MAX_COLUMNS % colsNumber === 0) {
+        setGridCols(colsNumber);
+      }
+    }
+
+    resizeHandler(localStorage.getItem(Constants.LOCAL_RESIZABLE_WIDTH));
+
+    const resizeObserver = new ResizeObserver(() => resizeHandler(contentRef.current.clientWidth));
+    resizeObserver.observe(contentRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [columnWidth]);
+
+  const childrenArray = getArray(children).filter(element => element).flat();
+  const columns = Math.min(gridCols, childrenArray.length);
+
+  return (
+    <Grid ref={contentRef} container spacing={3}>
+      {childrenArray.map((child, index) => <Grid key={index} item xs={MAX_COLUMNS / columns}>{child}</Grid>)}
+    </Grid>
+  );
+}
+
+const getArray = (object) => {
+  if (Array.isArray(object)) {
+    return object;
+  } else {
+    return [object];
+  }
+}
+
+export const GridGroup = ({ columnWidth, children, heading }) => {
+  return (
+    <Stack>
+      {heading && <h4 style={{ textAlign: 'center' }}>{heading}</h4>}
+      <GridLayout columnWidth={columnWidth}>
+        {children}
+      </GridLayout>
+    </Stack>
+  );
+}

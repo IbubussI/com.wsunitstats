@@ -1,5 +1,5 @@
 import { ConstructionTable } from "components/Pages/UnitPage/Tabs/Constructions/ConstructionTable";
-import { ResizableGrid } from "components/Layout/ResizableGrid";
+import { GridGroup, ResizableGrid } from "components/Layout/ResizableGrid";
 import { Typography } from "@mui/material";
 
 const MIN_WIDTH = 250;
@@ -18,8 +18,13 @@ export const ConstructionsTab = ({ entity: unit }) => {
   return (
     <>
       <h3>Construction</h3>
-      <ResizableGrid minWidth={MIN_WIDTH} columnWidth={COLUMN_WIDTH} staticBottom={Note}>
-        {unit.construction.map((construction, index) => <ConstructionTable key={index} construction={construction} overflowMinWidth={OVERFLOW_WIDTH}/>)}
+      <ResizableGrid minWidth={MIN_WIDTH}>
+        <GridGroup columnWidth={COLUMN_WIDTH}>
+          {unit.construction.map((construction, index) => <ConstructionTable key={index} construction={construction} overflowMinWidth={OVERFLOW_WIDTH}/>)}
+        </GridGroup>
+        <GridGroup>
+          <Note />
+        </GridGroup>
       </ResizableGrid>
     </>
   );

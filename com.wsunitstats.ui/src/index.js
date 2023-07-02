@@ -8,6 +8,7 @@ import { ErrorPage } from 'components/Pages/ErrorPage';
 import { EntityPage } from 'components/Pages/EntityPage';
 import { UnitPage } from 'components/Pages/UnitPage';
 import { ResearchPage } from 'components/Pages/ResearchPage';
+import { HomePage } from 'components/Pages/HomePage';
 
 const Root = () => {
   return (
@@ -69,10 +70,10 @@ const router = createBrowserRouter([
         path: Constants.ERROR_PAGE_PATH,
         element: <ErrorPage />
       },
-      /*{
+      {
         path: Constants.HOME_PAGE_PATH,
         element: <HomePage />
-      },*/
+      },
       {
         path: Constants.UNIT_PAGE_PATH,
         element: <EntityPage pickerOptions={unitPickerOptions} />
@@ -115,8 +116,6 @@ const router = createBrowserRouter([
   },
 ]);
 
-
-console.log('root')
 root.render(
   <div className='page-root'>
     <RouterProvider  router={router} />

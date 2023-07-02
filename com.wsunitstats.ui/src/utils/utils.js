@@ -51,8 +51,8 @@ export const getEntityRoute = (entityType) => {
  * @returns current url with given path params
  */
 export const setPathParams = (params, removeFrom = 0) => {
-  const url = new URL(window.location.href);
-  let pathItems = url.pathname.split('/');
+  const pathname = window.location.pathname;
+  let pathItems = pathname.split('/');
   for (const paramObj of params) {
     if (paramObj.param || paramObj.param === 0) {
       pathItems[paramObj.pos] = paramObj.param;
@@ -63,8 +63,7 @@ export const setPathParams = (params, removeFrom = 0) => {
   if (removeFrom > 0) {
     pathItems.length = removeFrom;
   }
-  url.pathname = pathItems.join('/');
-  return url.toString().substring(window.location.origin.length);
+  return pathItems.join('/');
 }
 
 export const navigateToError = (navHook, msg, code) => {
@@ -77,4 +76,26 @@ export const navigateToError = (navHook, msg, code) => {
 
 export const navigateTo404 = (navHook) => {
   navigateToError(navHook, 'Not found', 404);
+}
+
+/**
+ * Shorhand for Utils.getEntityRoute()
+ * @param {*} abilityType
+ * 0 => training
+ * 
+ * 1 => research
+ * 
+ * 2 => transformation
+ * 
+ * 3 => create env
+ * @returns redirection target for given ability type
+ */
+export const getAbilityRoute = (abilityType) => {
+  let result;
+  switch (abilityType) {
+    case 0: case 2: result = getEntityRoute('unit'); break;
+    case 1: case 4: result = getEntityRoute('research'); break;
+    default: result = getEntityRoute('');
+  }
+  return result;
 }

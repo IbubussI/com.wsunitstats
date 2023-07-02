@@ -1,4 +1,4 @@
-import { ResizableGrid } from "components/Layout/ResizableGrid";
+import { GridGroup, ResizableGrid } from "components/Layout/ResizableGrid";
 import { GatheringTable } from "components/Pages/UnitPage/Tabs/Gathering/GatheringTable";
 
 const MIN_WIDTH = 250;
@@ -9,8 +9,10 @@ export const GatheringTab = ({ entity: unit }) => {
   return (
     <>
       <h3>Gathering</h3>
-      <ResizableGrid minWidth={MIN_WIDTH} columnWidth={COLUMN_WIDTH}>
-        {unit.gather.map((gatherEntry, index) => <GatheringTable key={index} gather={gatherEntry} overflowMinWidth={OVERFLOW_WIDTH}/>)}
+      <ResizableGrid minWidth={MIN_WIDTH}>
+        <GridGroup columnWidth={COLUMN_WIDTH}>
+          {unit.gather.map((gatherEntry, index) => <GatheringTable key={index} gather={gatherEntry} overflowMinWidth={OVERFLOW_WIDTH}/>)}
+        </GridGroup>
       </ResizableGrid>
     </>
   );

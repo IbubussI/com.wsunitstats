@@ -37,3 +37,5 @@ export const LOCAL_RESIZABLE_WIDTH = 'resizable-width';
 
 export const SECONDS_END_MARKER = '\u00A0sec';
 export const DEFAULT_COLUMN_WIDTH = 600;
+
+export const ABILITY_TYPE_DAMAGE = 6;

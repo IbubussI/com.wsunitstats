@@ -9,16 +9,13 @@ export const EntityHeader = ({ entity, pickerOptions }) => {
   const navigate = useNavigate();
 
   const onIdChange = (newGameId) => {
-    console.log('idChange')
     if (newGameId !== null) {
-      console.log('navigate')
       navigate(Utils.setPathParams([{ param: newGameId, pos: 3 }, { param: Constants.INITIAL_TAB, pos: 4 }]));
     }
   }
 
   const initialValue = entity ? { name: entity.name, gameId: entity.gameId } : null;
 
-  console.log('entityHeader')
   return (
     <Stack
       sx={{

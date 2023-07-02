@@ -44,26 +44,25 @@ export const Header = () => {
     navigate(Utils.setPathParams([{ param: newLocale, pos: 1 }]), { replace: replace });
   }, [navigate]);
 
-  console.log('header');
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/*<Typography
-            variant="h6"
-            noWrap
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.15rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            WS UNIT STATS
-          </Typography>*/}
+          {
+            <Stack sx={{
+              '& *': {
+                display: { xs: 'none', md: 'flex' },
+                color: '#ffda6b',
+              }
+            }}>
+              <Typography fontSize='12px' mr={2}>
+                Last updated: 02.07.2023
+              </Typography>
+              <Typography fontSize='12px' mr={2}>
+                Game version: v137.1741_25545
+              </Typography>
+            </Stack>
+          }
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
@@ -100,22 +99,6 @@ export const Header = () => {
               ))}
             </Menu>
           </Box>
-          {/*<Typography
-            variant="h5"
-            noWrap
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.15rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            WS UNIT STATS
-          </Typography>*/}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <NavLink key={page.path} to={page.path} style={{ textDecoration: 'none' }}>
@@ -130,7 +113,7 @@ export const Header = () => {
           </Box>
           <Stack sx={{ gap: 1, alignItems: 'center', flexDirection: 'row', paddingTop: 1, paddingBottom: 1 }}>
             {locale !== Constants.DEFAULT_LOCALE_OPTION && <Tooltip arrow title='Only in-game values are localized using game localization files. Most of the UI is available only in English now'>
-              <WarningAmberIcon sx={{ color: '#fd853c', filter: 'drop-shadow(0px 0px 3px rgb(0 0 0 / 0.8))', fontSize: 25 }}  />
+              <WarningAmberIcon sx={{ color: '#fd853c', filter: 'drop-shadow(0px 0px 3px rgb(0 0 0 / 0.8))', fontSize: 25 }} />
             </Tooltip>}
             <LocalePicker
               onSelect={onLocaleChange}

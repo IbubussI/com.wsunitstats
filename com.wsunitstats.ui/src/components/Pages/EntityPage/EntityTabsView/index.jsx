@@ -39,7 +39,6 @@ export const EntityTabsView = ({
     }
   }, [currentTab, tabsData, setTab, isTabValid, navigate]);
 
-  console.log('entityView')
   return <TabsViewComponent tabsData={tabsData} currentTab={currentTab} setTab={setTab} entity={entity} />;
 }
 

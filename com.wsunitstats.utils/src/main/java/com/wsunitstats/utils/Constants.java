@@ -80,9 +80,9 @@ public class Constants {
 
     public enum AbilityContainerType {
         UNDEFINED(-1, UNDEF),
-        ON_ACTION(0, "Action ability"),
-        WORK(1, "Work ability"),
-        ZONE_EVENT(2, "Environment zone event");
+        ON_ACTION(0, "Action abilities"),
+        WORK(1, "Work abilities"),
+        ZONE_EVENT(2, "Environment zone events");
 
         private final int type;
         private final String name;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { WeaponTable } from "components/Pages/UnitPage/Tabs/Weapons/WeaponTable";
-import { ResizableGrid } from 'components/Layout/ResizableGrid';
+import { GridGroup, ResizableGrid } from 'components/Layout/ResizableGrid';
 
 const MIN_WIDTH = 340;
 const COLUMN_WIDTH = 570;
@@ -39,8 +39,10 @@ export const WeaponTab = ({ entity: unit }) => {
   return (
     <>
       <h3>Weapons</h3>
-      <ResizableGrid minWidth={MIN_WIDTH} columnWidth={COLUMN_WIDTH}>
-        {getWeaponArray(unit)}
+      <ResizableGrid minWidth={MIN_WIDTH}>
+        <GridGroup columnWidth={COLUMN_WIDTH}>
+          {getWeaponArray(unit)}
+        </GridGroup>
       </ResizableGrid>
     </>
   );

@@ -1,9 +1,12 @@
 import * as Utils from "utils/utils";
-import { Grid, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { EntityImage } from "components/Atoms/EntityImage";
 import { DoubleColumnFrame } from "components/Layout/DoubleColumnFrame";
 import { EntityInfo } from "components/Atoms/Renderer";
 import { useParams } from "react-router-dom";
+
+const GRID_ITEM_WIDTH = 170;
+const GRID_ITEM_GAP = 4;
 
 export const ResearchTable = ({ research }) => {
   const { locale } = useParams();
@@ -20,19 +23,26 @@ export const ResearchTable = ({ research }) => {
           Game ID: {research.gameId}
         </Typography>
       </Stack>
-      {upgrades.length && <Stack alignItems='center' spacing={0.8}>
+      {upgrades?.length && <Stack alignItems='center' spacing={0.8}>
         <p>Affected units</p>
-        <Grid container spacing={1}>
-          {research.upgrades.map((upgrade) => {
+        <Box sx={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(auto-fill, ${GRID_ITEM_WIDTH}px)`,
+          gridColumnGap: '4px',
+          gridRowGap: '4px',
+          width: '100%',
+          maxWidth: `${GRID_ITEM_WIDTH * upgrades.length + GRID_ITEM_GAP * (upgrades.length - 1)}px`
+        }}>
+          {upgrades.map((upgrade, index) => {
             const upgradeData = {
               values: [
-                upgrade.unit && {
+                {
                   primary: upgrade.unit.entityName,
                   secondary: upgrade.unit.entityNation ? upgrade.unit.entityNation + ', ID: ' + upgrade.unit.entityId : 'ID: ' + upgrade.unit.entityId,
                   image: {
                     path: upgrade.unit.entityImage,
-                    width: 35,
-                    height: 35,
+                    width: 50,
+                    height: 50,
                   },
                   link: {
                     id: upgrade.unit.entityId,
@@ -44,12 +54,10 @@ export const ResearchTable = ({ research }) => {
               ].filter(element => element),
             }
             return (
-              <Grid item key={upgrade.id} xs={6} sx={{ alignItems: 'center', display: 'flex' }}>
-                <EntityInfo data={upgradeData} />
-              </Grid>
+              <EntityInfo key={index} data={upgradeData} />
             );
           })}
-        </Grid>
+        </Box>
       </Stack>}
     </DoubleColumnFrame>
   );

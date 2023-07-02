@@ -6,7 +6,6 @@ export const EntityPage = ({ pickerOptions }) => {
   const loaderData = useLoaderData();
   const entity = loaderData ? loaderData[0] : undefined;
   
-  console.log('entityPage')
   return (
     <>
       <EntityHeader

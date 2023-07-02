@@ -34,7 +34,7 @@ export const EntityPicker = ({ initialValue, onSelect, options: componentOptions
   );
 
   const debouncedFetchHandler = React.useMemo(
-    () => debounce(fetchHandler, 300),
+    () => debounce(fetchHandler, 500),
     [fetchHandler],
   );
 
@@ -64,7 +64,6 @@ export const EntityPicker = ({ initialValue, onSelect, options: componentOptions
     }
   }, [params.gameId]);
 
-  console.log('entityPicker')
   return (
     <Autocomplete
       sx={{ width: '100%', margin: '2px', maxWidth: '350px' }}
@@ -85,7 +84,11 @@ export const EntityPicker = ({ initialValue, onSelect, options: componentOptions
       onChange={(_, newValue) => {
         selectValue(newValue);
       }}
-      onInputChange={(_, newInputValue) => {
+      onInputChange={(_, newInputValue, reason) => {
+        // Clear value if user changes input
+        if (value && reason === 'input') {
+          setValue(null);
+        }
         setInputValue(newInputValue);
       }}
       renderInput={({ ...params }) => {

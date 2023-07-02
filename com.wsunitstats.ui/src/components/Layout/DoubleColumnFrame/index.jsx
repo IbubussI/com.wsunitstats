@@ -74,7 +74,7 @@ export const DoubleColumnFrame = ({ children, childrenProps, column, borderLabel
       }}>
         {isBorderLabel && <BorderLabel data={borderLabel}/>}
         {childrenFiltered.map((child, index) => {
-          const isNotLast = index + 1 !== children.length;
+          const isNotLast = index + 1 < childrenFiltered.length;
           const rowBorder = isRow && isNotLast ? BORDER : '';
           const columnBorder = !isRow && isNotLast ? BORDER : '';
   
