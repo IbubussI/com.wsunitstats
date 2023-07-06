@@ -10,7 +10,7 @@ export const CheckmarksSelect = ({ label, onChange, options, optionsMetadata, va
   return (
     <Autocomplete
       sx={{
-        width: 350,
+        width: '100%',
         '& .MuiAutocomplete-inputRoot .MuiAutocomplete-input': {
           minWidth: 0,
           cursor: 'pointer',

@@ -10,7 +10,11 @@ const GRID_ITEM_GAP = 4;
 
 export const ResearchTable = ({ research }) => {
   const { locale } = useParams();
-  const upgrades = research.upgrades?.filter(element => element.unit);
+
+  // get only unique upgrades to form affected unit list
+  const upgrades = research.upgrades?.filter(element => element.unit)
+    .filter((element, index, array) => array.findIndex(element_ => element.unit.entityId === element_.unit.entityId) === index);
+
   return (
     <DoubleColumnFrame column childrenProps={[null, { overflow: 'auto', width: '100%' }]}>
       <Stack alignItems='center' spacing={0.8}>
