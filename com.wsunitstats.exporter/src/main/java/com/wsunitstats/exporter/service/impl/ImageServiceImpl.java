@@ -6,6 +6,7 @@ import com.wsunitstats.exporter.model.json.main.submodel.ImageJsonModel;
 import com.wsunitstats.exporter.model.json.main.submodel.TextureJsonModel;
 import com.wsunitstats.exporter.model.json.main.submodel.VisualSessionContentJsonModel;
 import com.wsunitstats.exporter.service.ImageService;
+import com.wsunitstats.utils.Constants;
 import com.wsunitstats.utils.Constants.ResourceIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +55,7 @@ public class ImageServiceImpl implements ImageService {
         // Resource images
         Map<Integer, String> imageNames = IntStream.range(0, ResourceIcon.values().length).boxed()
                 .collect(Collectors.toMap(imageGameId -> ResourceIcon.getByGameId(imageGameId).getImageId(),
-                        imageGameId -> getImageName("resource", imageGameId)));
+                        imageGameId -> getImageName(Constants.EntityType.RESOURCE.getName(), imageGameId)));
 
         Map<Integer, BufferedImage> textures = readTextures(rootFolderPath, textureJsonModels);
         readImages(result, imageJsonModels, textures, imageNames, true);

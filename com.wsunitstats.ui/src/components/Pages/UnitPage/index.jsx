@@ -1,112 +1,80 @@
 import * as React from 'react';
-import { UnitView } from 'components/UnitView';
-import { useSearchParams } from 'react-router-dom';
-import * as Constants from 'utils/constants';
-import { Stack } from '@mui/material';
-import { LocalePicker } from 'components/LocalePicker';
-import { UnitPicker } from 'components/UnitPicker';
+import * as Constants from "utils/constants";
+import './index.css';
+import { CommonTab } from 'components/Pages/UnitPage/Tabs/Common';
+import { WeaponTab } from 'components/Pages/UnitPage/Tabs/Weapons';
+import { AbilitiesTab } from 'components/Pages/UnitPage/Tabs/Abilities';
+import { BuildingTab } from 'components/Pages/UnitPage/Tabs/Building';
+import { ConstructionsTab } from 'components/Pages/UnitPage/Tabs/Constructions';
+import { GatheringTab } from 'components/Pages/UnitPage/Tabs/Gathering';
+import { HealTab } from 'components/Pages/UnitPage/Tabs/Heal';
+import { AirplaneTab } from 'components/Pages/UnitPage/Tabs/Airplane';
+import { SubmarineTab } from 'components/Pages/UnitPage/Tabs/Submarine';
+import { TabsUnitWrapper } from 'components/Pages/UnitPage/TabsUnitWrapper';
+import { EntityTabsView } from 'components/Pages/EntityPage/EntityTabsView';
+import { useOutletContext } from 'react-router-dom';
 
 export const UnitPage = () => {
-  const [option, setOption] = React.useState(null);
-  const [unit, setUnit] = React.useState(null);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const gameId = searchParams.get(Constants.PARAM_GAME_ID);
-  const locale = searchParams.get(Constants.PARAM_LOCALE);
-  
-  const prevGameId = React.useRef(null);
-  const prevLocale = React.useRef(null);
-
-  const clearUnit = React.useCallback((replace = true) => {
-    searchParams.delete(Constants.PARAM_GAME_ID);
-    searchParams.delete(Constants.PARAM_TAB);
-    setSearchParams(searchParams, { replace: replace });
-    setUnit(null);
-    setOption(null);
-  }, [searchParams, setSearchParams]);
-
-  React.useEffect(() => {
-    let active = true;
-
-    const handleUnitResult = (result) => {
-      let receivedUnit = result[0];
-      if (receivedUnit) {
-        setUnit(receivedUnit);
-        setOption({
-          name: receivedUnit.name,
-          [Constants.PARAM_GAME_ID]: receivedUnit.gameId,
-          nation: receivedUnit.nation
-        });
-      } else {
-        clearUnit();
-      }
-    }
-
-    if (active && (prevGameId.current !== gameId || prevLocale.current !== locale)) {
-      if (gameId) {
-        fetch(Constants.HOST + Constants.UNIT_DATA_API + '?' + new URLSearchParams({
-          [Constants.PARAM_GAME_ID]: gameId,
-          [Constants.PARAM_LOCALE]: locale
-        }))
-          .then((response) => response.json())
-          .then(handleUnitResult)
-          .catch(console.log);
-      } else {
-        clearUnit();
-      }
-      prevGameId.current = gameId;
-      prevLocale.current = locale;
-    }
-    return () => {
-      active = false;
-    };
-  }, [gameId, locale, clearUnit]);
+  const entity = useOutletContext();
+  const unit = entity;
+  const tabsData = [
+    {
+      id: Constants.INITIAL_TAB,
+      label: 'Common',
+      component: CommonTab,
+      isShow: !!unit
+    },
+    {
+      id: Constants.UNIT_WEAPONS_TAB,
+      label: 'Weapons',
+      component: WeaponTab,
+      isShow: unit?.weapons?.length || unit?.turrets?.length
+    },
+    {
+      id: Constants.UNIT_ABILITIES_TAB,
+      label: 'Abilities',
+      component: AbilitiesTab,
+      isShow: unit?.abilities?.length
+    },
+    {
+      id: Constants.UNIT_BUILD_TAB,
+      label: 'Building',
+      component: BuildingTab,
+      isShow: unit?.build
+    },
+    {
+      id: Constants.UNIT_CONSTRUCTION_TAB,
+      label: 'Construct',
+      component: ConstructionsTab,
+      isShow: unit?.construction
+    },
+    {
+      id: Constants.UNIT_GATHER_TAB,
+      label: 'Gather',
+      component: GatheringTab,
+      isShow: unit?.gather
+    },
+    {
+      id: Constants.UNIT_HEAL_TAB,
+      label: 'Heal',
+      component: HealTab,
+      isShow: unit?.heal
+    },
+    {
+      id: Constants.UNIT_AIRPLANE_TAB,
+      label: 'Airplane',
+      component: AirplaneTab,
+      isShow: unit?.airplane
+    },
+    {
+      id: Constants.UNIT_SUBMARINE_TAB,
+      label: 'Submarine',
+      component: SubmarineTab,
+      isShow: unit?.submarine
+    },
+  ].filter(element => element.isShow);
 
   return (
-    <>
-      <UnitForm
-        onUnitIdChange={(gameId) => {
-          // update unitId
-          if (gameId === null) {
-            clearUnit(false);
-          } else {
-            searchParams.set(Constants.PARAM_GAME_ID, gameId);
-            setSearchParams(searchParams);
-          }
-        }}
-        onLocaleChange={(locale) => {
-          // update selected locale to url
-          searchParams.set(Constants.PARAM_LOCALE, locale);
-          setSearchParams(searchParams, { replace: true });
-        }}
-        locale={locale}
-        option={option}
-        setOption={setOption}
-      />
-      <UnitView unit={unit} />
-    </>
-  );
-}
-
-export const UnitForm = ({ onUnitIdChange, onLocaleChange, locale, option, setOption }) => {
-  return (
-    <Stack
-      sx={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: 'calc(10px + 2vmin)',
-        padding: '15px',
-        width: '90%',
-        maxWidth: '400px'
-      }}>
-      <LocalePicker
-        onSelect={onLocaleChange}
-        currentLocale={locale} />
-      <UnitPicker
-        locale={locale}
-        value={option}
-        setValue={setOption}
-        onSelect={onUnitIdChange} />
-    </Stack>
+    <EntityTabsView entity={unit} tabsData={tabsData} tabsView={TabsUnitWrapper} />
   );
 }

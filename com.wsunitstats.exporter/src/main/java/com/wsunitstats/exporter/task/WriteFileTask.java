@@ -1,10 +1,13 @@
 package com.wsunitstats.exporter.task;
 
 import com.wsunitstats.domain.LocalizationModel;
+import com.wsunitstats.domain.ResearchModel;
 import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.exporter.exception.TaskExecutionException;
 import com.wsunitstats.exporter.service.LocalizationService;
 import com.wsunitstats.utils.service.ModelExporterService;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,12 +46,16 @@ public class WriteFileTask implements ExecutionTask {
     public void execute(ExecutionPayload payload) throws TaskExecutionException {
         try {
             List<UnitModel> unitModels = payload.getUnits();
+            List<ResearchModel> researchModels = payload.getResearches();
+            ExportWrapper exportWrapper = new ExportWrapper();
+            exportWrapper.setUnits(unitModels);
+            exportWrapper.setResearches(researchModels);
             List<LocalizationModel> localizationModels = payload.getLocalization();
             try (Writer fileWriter = new FileWriter(fileName, false)) {
                 LOG.info("Converting to json...");
                 String unitsJson = filePretty
-                        ? exporterService.exportToPrettyJson(unitModels)
-                        : exporterService.exportToJson(unitModels);
+                        ? exporterService.exportToPrettyJson(exportWrapper)
+                        : exporterService.exportToJson(exportWrapper);
                 if (fileLocalize) {
                     LOG.info("Localizing...");
                     LOG.info("Locale: {}", fileLocale);
@@ -65,5 +72,12 @@ public class WriteFileTask implements ExecutionTask {
         } catch (Exception ex) {
             throw new TaskExecutionException(ex);
         }
+    }
+
+    @Setter
+    @Getter
+    private static final class ExportWrapper {
+        private List<UnitModel> units;
+        private List<ResearchModel> researches;
     }
 }

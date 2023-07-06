@@ -1,5 +1,6 @@
 package com.wsunitstats.domain.submodel.weapon;
 
+import com.wsunitstats.domain.EntityInfoModel;
 import com.wsunitstats.domain.PersistentObject;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -16,7 +17,7 @@ import java.util.List;
 @ToString
 public class BuffModel extends PersistentObject {
     private int buffId;
-    private String name;
+    private EntityInfoModel entityInfo;
     private Double period;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> affectedUnits;

@@ -41,14 +41,16 @@ export const DoubleColumnFrame = ({ children, childrenProps, column, borderLabel
     const childProps = {
       padding: '4px',
       boxSizing: 'border-box',
-      ...childrenProps
+      ...childrenProps[0]
     }
     return (
       <Stack sx={{
         border: BORDER,
         borderColor: borderColor,
         borderRadius: BORDER_RADIUS,
-        position: 'relative'
+        position: 'relative',
+        height: '100%',
+        boxSizing: 'border-box'
       }}>
         {isBorderLabel && <BorderLabel data={borderLabel}/>}
         <Box sx={childProps}>
@@ -72,7 +74,7 @@ export const DoubleColumnFrame = ({ children, childrenProps, column, borderLabel
       }}>
         {isBorderLabel && <BorderLabel data={borderLabel}/>}
         {childrenFiltered.map((child, index) => {
-          const isNotLast = index + 1 !== children.length;
+          const isNotLast = index + 1 < childrenFiltered.length;
           const rowBorder = isRow && isNotLast ? BORDER : '';
           const columnBorder = !isRow && isNotLast ? BORDER : '';
   

@@ -2,6 +2,7 @@ package com.wsunitstats.domain.submodel.weapon;
 
 import com.wsunitstats.domain.PersistentObject;
 import com.wsunitstats.domain.submodel.DistanceModel;
+import com.wsunitstats.utils.service.impl.serializer.number.FloatPrecision;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
@@ -30,24 +31,13 @@ public class WeaponModel extends PersistentObject {
     private ProjectileModel projectile;
     private Double rechargePeriod;
     private Double spread;
-    private String areaType;
     private Double angle;
-    private Double damageAngle;
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private BuffModel buff;
-    private Boolean damageFriendly;
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<DamageModel> damages;
-    private Double envDamage;
-    private Double radius;
+    private DamageWrapperModel damage;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> envsAffected;
     // Bombers specific
     private Integer charges;
 
-    // Death Scythe specific
-    private int damagesCount;
     // For melee attacks and shotguns
     private int attacksPerAttack;
     // For machine-guns
@@ -61,4 +51,19 @@ public class WeaponModel extends PersistentObject {
     private Double attackTime;
     // Average time for 1 shot for sequential multi-attack units
     private Double avgShotTime;
+
+    @FloatPrecision(3)
+    public Double getAttackDelay() {
+        return attackDelay;
+    }
+
+    @FloatPrecision(3)
+    public Double getAttackTime() {
+        return attackTime;
+    }
+
+    @FloatPrecision(3)
+    public Double getAvgShotTime() {
+        return avgShotTime;
+    }
 }

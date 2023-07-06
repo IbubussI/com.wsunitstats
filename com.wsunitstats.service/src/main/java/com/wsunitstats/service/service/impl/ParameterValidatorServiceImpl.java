@@ -3,7 +3,6 @@ package com.wsunitstats.service.service.impl;
 import com.wsunitstats.service.exception.InvalidParameterException;
 import com.wsunitstats.service.service.LocalizationService;
 import com.wsunitstats.service.service.ParameterValidatorService;
-import com.wsunitstats.service.service.UnitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,13 +23,11 @@ public class ParameterValidatorServiceImpl implements ParameterValidatorService 
 
     @Autowired
     private LocalizationService localizationService;
-    @Autowired
-    private UnitService unitService;
 
     @Override
-    public void validateStandard(String locale, String sortBy, String sortDir, Integer page, Integer size) throws InvalidParameterException {
+    public void validateStandard(String locale, String sortBy, List<String> columnNames, String sortDir, Integer page, Integer size) throws InvalidParameterException {
         validateLocale(locale);
-        validateSortBy(sortBy);
+        validateSortBy(sortBy, columnNames);
         validateSortDir(sortDir);
         validatePage(page);
         validateSize(size);
@@ -45,9 +42,8 @@ public class ParameterValidatorServiceImpl implements ParameterValidatorService 
     }
 
     @Override
-    public void validateSortBy(String sortBy) throws InvalidParameterException {
-        List<String> unitColumns = unitService.getColumnNames();
-        if (sortBy == null || unitColumns.stream().noneMatch(sortBy::equalsIgnoreCase)) {
+    public void validateSortBy(String sortBy, List<String> columnNames) throws InvalidParameterException {
+        if (sortBy == null || columnNames.stream().noneMatch(sortBy::equalsIgnoreCase)) {
             throw new InvalidParameterException("Illegal sortBy parameter: " + sortBy);
         }
     }

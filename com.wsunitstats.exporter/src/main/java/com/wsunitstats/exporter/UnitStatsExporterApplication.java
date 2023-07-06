@@ -1,7 +1,9 @@
 package com.wsunitstats.exporter;
 
+import com.wsunitstats.domain.ResearchModel;
 import com.wsunitstats.exporter.service.FileContentService;
 import com.wsunitstats.exporter.service.LocalizationModelResolver;
+import com.wsunitstats.exporter.service.ResearchModelResolver;
 import com.wsunitstats.exporter.task.ExecutionPayload;
 import com.wsunitstats.exporter.task.TaskExecutionPool;
 import com.wsunitstats.exporter.service.UnitModelResolver;
@@ -33,6 +35,8 @@ public class UnitStatsExporterApplication {
         @Autowired
         private UnitModelResolver unitModelResolver;
         @Autowired
+        private ResearchModelResolver researchModelResolver;
+        @Autowired
         private LocalizationModelResolver localizationModelResolver;
         @Autowired
         private TaskExecutionPool taskExecutionPool;
@@ -59,6 +63,7 @@ public class UnitStatsExporterApplication {
 
             LOG.info("Transforming files to data model...");
             List<UnitModel> unitModels = unitModelResolver.resolve();
+            List<ResearchModel> researchModels = researchModelResolver.resolve();
             List<LocalizationModel> localizationModels = fileContentService.getLocalizationFileModels().stream()
                     .map(locFile -> localizationModelResolver.resolveFromJsonModel(locFile))
                     .toList();
@@ -66,6 +71,7 @@ public class UnitStatsExporterApplication {
             LOG.info("Executing configured tasks...");
             ExecutionPayload payload = new ExecutionPayload();
             payload.setUnits(unitModels);
+            payload.setResearches(researchModels);
             payload.setLocalization(localizationModels);
             payload.setImages(fileContentService.getImages());
             payload.setHostname(uploadHost);

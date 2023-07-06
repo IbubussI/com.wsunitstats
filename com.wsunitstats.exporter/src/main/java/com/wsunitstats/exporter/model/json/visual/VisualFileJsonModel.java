@@ -20,6 +20,7 @@ public class VisualFileJsonModel {
     private Object buildPlans;
     private Object buildRules;
     private Object debug;
+    private Object envSkins;
     private Object envTypes;
     private Object hotKeys;
     private Object mapEditor;

@@ -23,7 +23,7 @@ public class UploadUnitsTask extends RestUploadTask implements ExecutionTask {
     private RestService restService;
 
     @Value("${com.wsunitstats.exporter.upload.units}")
-    private String uploadUnitsUriPath;
+    private String uploadUriPath;
 
     @Override
     public String getName() {
@@ -34,11 +34,11 @@ public class UploadUnitsTask extends RestUploadTask implements ExecutionTask {
     public void execute(ExecutionPayload payload) throws TaskExecutionException {
         try {
             String authToken = getAuthToken(restService, payload);
-            String unitsJson = exporterService.exportToJson(payload.getUnits());
-            String endpoint = payload.getHostname() + uploadUnitsUriPath;
+            String json = exporterService.exportToJson(payload.getUnits());
+            String endpoint = payload.getHostname() + uploadUriPath;
             LOG.info("Sending units data to {}", endpoint);
-            ResponseEntity<String> gameplayResponse = restService.postJson(endpoint, new HashMap<>(), unitsJson, authToken);
-            LOG.info("Units data submitted: HTTP {} : {}", gameplayResponse.getStatusCode().value(), gameplayResponse.getBody());
+            ResponseEntity<String> response = restService.postJson(endpoint, new HashMap<>(), json, authToken);
+            LOG.info("Units data submitted: HTTP {} : {}", response.getStatusCode().value(), response.getBody());
         } catch (Exception ex) {
             throw new TaskExecutionException(ex);
         }

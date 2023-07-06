@@ -1,6 +1,7 @@
 package com.wsunitstats.exporter.task;
 
 import com.wsunitstats.domain.LocalizationModel;
+import com.wsunitstats.domain.ResearchModel;
 import com.wsunitstats.domain.UnitModel;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import java.util.Map;
 @Setter
 public class ExecutionPayload {
     private List<UnitModel> units;
+    private List<ResearchModel> researches;
     private List<LocalizationModel> localization;
     private Map<String, BufferedImage> images;
     private String hostname;

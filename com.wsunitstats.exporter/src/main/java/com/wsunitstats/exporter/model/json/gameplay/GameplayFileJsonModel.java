@@ -2,6 +2,8 @@ package com.wsunitstats.exporter.model.json.gameplay;
 
 import com.wsunitstats.exporter.model.json.gameplay.submodel.BuildJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ScenesJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.UpgradesScriptsJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.researches.ResearchesJsonModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -18,10 +20,10 @@ public class GameplayFileJsonModel {
     private Integer defaultFormationType;
     private Integer fowCellSize;
     private Integer fowsCount;
-    private Map<String, Object> researches;
+    private ResearchesJsonModel researches;
     private ScenesJsonModel scenes;
     private Map<String, Object> scripts;
     private List<Object> springs;
-    private Map<String, Object> upgradesScripts;
+    private UpgradesScriptsJsonModel upgradesScripts;
     private Integer version;
 }

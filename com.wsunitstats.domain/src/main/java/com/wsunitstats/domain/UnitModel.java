@@ -11,7 +11,7 @@ import com.wsunitstats.domain.submodel.SubmarineDepthModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
 import com.wsunitstats.domain.submodel.TransportingModel;
 import com.wsunitstats.domain.submodel.TurretModel;
-import com.wsunitstats.domain.submodel.ability.AbilityModel;
+import com.wsunitstats.domain.submodel.ability.container.GenericAbilityContainer;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -31,6 +31,9 @@ import java.util.List;
 @ToString
 public class UnitModel extends GenericEntityModel {
     // Unit traits
+    private String nation;
+    @Column(length = 1023)
+    private String description;
     private Double size;
     private Double viewRange;
     private Double health;
@@ -46,7 +49,7 @@ public class UnitModel extends GenericEntityModel {
     private Integer weight;
     private Integer storageMultiplier;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<AbilityModel> abilities;
+    private List<GenericAbilityContainer> abilities;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<WeaponModel> weapons;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

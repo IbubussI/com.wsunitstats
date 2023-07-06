@@ -1,48 +1,122 @@
 
-    create table ability (
+    create table ability_action (
+       duration float(53),
+        entityId integer,
+        entityImage varchar(255),
+        entityName varchar(255),
+        entityNation varchar(255),
+        id bigint not null,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table ability_container_generic_supertype (
        id bigint not null auto_increment,
-        abilityId integer not null,
-        abilityName varchar(255),
-        abilityType integer not null,
-        count_ integer,
-        duration float(53),
-        enabled bit not null,
+        containerName varchar(255),
+        containerType integer,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table ability_container_on_action (
+       max float(53),
+        min float(53),
+        stop float(53),
+        enabled bit,
+        onAgro bit,
+        rechargeTime float(53),
+        id bigint not null,
+        ability_id bigint,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table ability_container_work (
+       id bigint not null,
+        ability_id bigint,
+        work_id bigint,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table ability_container_zone_event (
+       envSearchDistance integer,
+        envTags varbinary(255),
+        size integer,
+        id bigint not null,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table ability_container_zone_event_abilities (
+       ability_container_zone_event_id bigint not null,
+        abilities_id bigint not null
+    ) engine=InnoDB;
+
+    create table ability_create_env (
+       count_ integer,
+        entityId integer,
+        entityImage varchar(255),
+        entityName varchar(255),
+        entityNation varchar(255),
+        id bigint not null,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table ability_create_unit (
+       count_ integer,
         entityId integer,
         entityImage varchar(255),
         entityName varchar(255),
         entityNation varchar(255),
         lifeTime float(53),
-        makeTime float(53),
-        researchesAll bit,
-        unitsAll bit,
-        reserveLimit integer,
-        reserveTime float(53),
-        onAction_id bigint,
+        id bigint not null,
         primary key (id)
     ) engine=InnoDB;
 
-    create table ability_cost (
-       ability_id bigint not null,
-        image varchar(255),
-        resourceId integer not null,
-        resourceName varchar(255),
-        value_ integer
+    create table ability_damage (
+       id bigint not null,
+        damage_id bigint,
+        primary key (id)
     ) engine=InnoDB;
 
-    create table ability_researches (
-       ability_id bigint not null,
+    create table ability_generic_supertype (
+       id bigint not null auto_increment,
+        abilityId integer not null,
+        abilityName varchar(255),
+        abilityType integer not null,
+        researchesAll bit,
+        unitsAll bit,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table ability_generic_supertype_researches (
+       ability_generic_supertype_id bigint not null,
         researchId integer not null,
         researchImage varchar(255),
         researchName varchar(255)
     ) engine=InnoDB;
 
-    create table ability_units (
-       ability_id bigint not null,
+    create table ability_generic_supertype_units (
+       ability_generic_supertype_id bigint not null,
         quantity varchar(255),
         unitId integer not null,
         unitImage varchar(255),
         unitName varchar(255),
         unitNation varchar(255)
+    ) engine=InnoDB;
+
+    create table ability_research (
+       entityId integer,
+        entityImage varchar(255),
+        entityName varchar(255),
+        entityNation varchar(255),
+        id bigint not null,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table ability_transform (
+       entityId integer,
+        entityImage varchar(255),
+        entityName varchar(255),
+        entityNation varchar(255),
+        id bigint not null,
+        primary key (id)
     ) engine=InnoDB;
 
     create table account (
@@ -85,7 +159,10 @@
     create table buff (
        id bigint not null auto_increment,
         buffId integer not null,
-        name varchar(255),
+        entityId integer,
+        entityImage varchar(255),
+        entityName varchar(255),
+        entityNation varchar(255),
         period float(53),
         primary key (id)
     ) engine=InnoDB;
@@ -238,14 +315,18 @@
         primary key (id)
     ) engine=InnoDB;
 
-    create table onaction (
+    create table research (
        id bigint not null auto_increment,
-        max float(53),
-        min float(53),
-        stop float(53),
-        onAgro bit,
-        rechargeTime float(53),
+        gameId integer not null,
+        image varchar(255),
+        name varchar(255),
+        description varchar(255),
         primary key (id)
+    ) engine=InnoDB;
+
+    create table research_upgrades (
+       research_id bigint not null,
+        upgrades_id bigint not null
     ) engine=InnoDB;
 
     create table role (
@@ -295,11 +376,12 @@
         gameId integer not null,
         image varchar(255),
         name varchar(255),
-        nation varchar(255),
         controllable bit not null,
+        description varchar(1023),
         health float(53),
         lifetime float(53),
         limit_ integer,
+        nation varchar(255),
         parentMustIdle bit,
         receiveFriendlyDamage bit,
         regenerationSpeed float(53),
@@ -351,10 +433,26 @@
         weapons_id bigint not null
     ) engine=InnoDB;
 
+    create table upgrade (
+       id bigint not null auto_increment,
+        programFile varchar(255),
+        programId integer not null,
+        entityId integer,
+        entityImage varchar(255),
+        entityName varchar(255),
+        entityNation varchar(255),
+        upgradeId integer not null,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table upgrade_parameters (
+       upgrade_id bigint not null,
+        parameters varchar(255)
+    ) engine=InnoDB;
+
     create table weapon (
        id bigint not null auto_increment,
         angle float(53),
-        areaType varchar(255),
         attackDelay float(53),
         attackGround bit,
         attackTime float(53),
@@ -363,36 +461,64 @@
         autoAttack bit,
         avgShotTime float(53),
         charges integer,
-        damageAngle float(53),
-        damageFriendly bit,
-        damagesCount integer not null,
         max float(53),
         min float(53),
         stop float(53),
         enabled bit,
-        envDamage float(53),
         projectileId integer,
         projectileSpeed float(53),
         projectileTimeToStartCollision float(53),
-        radius float(53),
         rechargePeriod float(53),
         spread float(53),
         weaponId integer not null,
         weaponType varchar(255),
+        damage_id bigint,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table weapon_damage (
+       id bigint not null auto_increment,
+        angle float(53),
+        areaType varchar(255),
+        damageFriendly bit,
+        damagesCount integer not null,
+        envDamage float(53),
+        radius float(53),
         buff_id bigint,
         primary key (id)
     ) engine=InnoDB;
 
-    create table weapon_damages (
-       weapon_id bigint not null,
+    create table weapon_damage_damages (
+       weapon_damage_id bigint not null,
         damageType varchar(255),
         damageValue float(53)
     ) engine=InnoDB;
 
-    create table weapon_envsAffected (
-       weapon_id bigint not null,
+    create table weapon_damage_envsAffected (
+       weapon_damage_id bigint not null,
         envsAffected varchar(255)
     ) engine=InnoDB;
+
+    create table work (
+       id bigint not null auto_increment,
+        enabled bit not null,
+        makeTime float(53),
+        reserveLimit integer,
+        reserveTime float(53),
+        workId integer not null,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table work_cost (
+       work_id bigint not null,
+        image varchar(255),
+        resourceId integer not null,
+        resourceName varchar(255),
+        value_ integer
+    ) engine=InnoDB;
+
+    alter table ability_container_zone_event_abilities 
+       add constraint UK_ol7bt94dgxedhwddd8yyxig3v unique (abilities_id);
 
     alter table account 
        add constraint UK_gex1lmaqpg0ir5g1f5eftyaa1 unique (username);
@@ -402,6 +528,9 @@
 
     alter table localization 
        add constraint UK_j6j9h30eydn1rkg0etaayj2is unique (locale);
+
+    alter table research_upgrades 
+       add constraint UK_7gdiey3v5lj970tgswajvs1y7 unique (upgrades_id);
 
     alter table role 
        add constraint UK_bjxn5ii7v7ygwx39et0wawu0q unique (role);
@@ -427,25 +556,90 @@
     alter table unit_weapons 
        add constraint UK_3b39kb4h68srfcl8gfjtp2tcc unique (weapons_id);
 
-    alter table ability 
-       add constraint FK3yo3vt5xhee64g8e1xsrx9u9a 
-       foreign key (onAction_id) 
-       references onaction (id);
+    alter table ability_action 
+       add constraint FK1l8xi8hgvu8913vrg1srqtxgv 
+       foreign key (id) 
+       references ability_generic_supertype (id);
 
-    alter table ability_cost 
-       add constraint FKb3ofn2mr8w0b0k6nu2772nx2h 
+    alter table ability_container_on_action 
+       add constraint FKdac3l40pnlpo63mdn3d53q8v9 
        foreign key (ability_id) 
-       references ability (id);
+       references ability_generic_supertype (id);
 
-    alter table ability_researches 
-       add constraint FKkrxhxaoalsdcty49erhur4rro 
-       foreign key (ability_id) 
-       references ability (id);
+    alter table ability_container_on_action 
+       add constraint FK1jknwwxw7k9xejrihvh7diomj 
+       foreign key (id) 
+       references ability_container_generic_supertype (id);
 
-    alter table ability_units 
-       add constraint FKkhvs4vetcidxnnavyrjhw9ewg 
+    alter table ability_container_work 
+       add constraint FKjc4y869t6xl7psvbw5hhn27m0 
        foreign key (ability_id) 
-       references ability (id);
+       references ability_generic_supertype (id);
+
+    alter table ability_container_work 
+       add constraint FKsglqcpruk7qa86hc1bo1f7bbu 
+       foreign key (work_id) 
+       references work (id);
+
+    alter table ability_container_work 
+       add constraint FKh7k7vyepv399imswpyejimg8 
+       foreign key (id) 
+       references ability_container_generic_supertype (id);
+
+    alter table ability_container_zone_event 
+       add constraint FKreyg6uoxg494hm4ef4ybia5w8 
+       foreign key (id) 
+       references ability_container_generic_supertype (id);
+
+    alter table ability_container_zone_event_abilities 
+       add constraint FK35uldifmhyuueqeqod20gge21 
+       foreign key (abilities_id) 
+       references ability_generic_supertype (id);
+
+    alter table ability_container_zone_event_abilities 
+       add constraint FKll9a6h3dd8lt57d897bmck8ja 
+       foreign key (ability_container_zone_event_id) 
+       references ability_container_zone_event (id);
+
+    alter table ability_create_env 
+       add constraint FKkit8gi0j21dg1womkaaor6r1p 
+       foreign key (id) 
+       references ability_generic_supertype (id);
+
+    alter table ability_create_unit 
+       add constraint FKhf2mlef8loeoyiljr4x30hl8s 
+       foreign key (id) 
+       references ability_generic_supertype (id);
+
+    alter table ability_damage 
+       add constraint FKp6dan04sg94s8hsy3jcy5l6cn 
+       foreign key (damage_id) 
+       references weapon_damage (id);
+
+    alter table ability_damage 
+       add constraint FKa5ueud0kqbeg4p3rg5yyl84v 
+       foreign key (id) 
+       references ability_generic_supertype (id);
+
+    alter table ability_generic_supertype_researches 
+       add constraint FKjyukm9o6mhcwyjdluv00yonsb 
+       foreign key (ability_generic_supertype_id) 
+       references ability_generic_supertype (id);
+
+    alter table ability_generic_supertype_units 
+       add constraint FKlufi9hwyrrd0du0h8eym40ga6 
+       foreign key (ability_generic_supertype_id) 
+       references ability_generic_supertype (id);
+
+    alter table ability_research 
+       add constraint FKffsvbrkw62kaea2ps0c9hfmdn 
+       foreign key (id) 
+       references ability_generic_supertype (id);
+
+    alter table ability_transform 
+       add constraint FKjl3ah1t28iqf9db7s5i39u4we 
+       foreign key (id) 
+       references ability_generic_supertype (id);
 
     alter table account_roles 
        add constraint FK70s9enq5d1oywl7v8vis5ke5w 
@@ -522,6 +716,16 @@
        foreign key (localization_id) 
        references localization (id);
 
+    alter table research_upgrades 
+       add constraint FK576x5xifajchphoeybkjvho4u 
+       foreign key (upgrades_id) 
+       references upgrade (id);
+
+    alter table research_upgrades 
+       add constraint FKsued1ejla95myd0aq6rjcsxn2 
+       foreign key (research_id) 
+       references research (id);
+
     alter table turret_weapons 
        add constraint FKbype15yhrf2iaqggdpdyqe8ma 
        foreign key (weapons_id) 
@@ -568,9 +772,9 @@
        references transporting (id);
 
     alter table unit_abilities 
-       add constraint FKdqpqykv4fpbyi8ijw0hrdj1p2 
+       add constraint FKh323v7d66m3cedq1dp2awt32j 
        foreign key (abilities_id) 
-       references ability (id);
+       references ability_container_generic_supertype (id);
 
     alter table unit_abilities 
        add constraint FKiqwtjo6ves1bnntqi6x979ep5 
@@ -627,17 +831,32 @@
        foreign key (unit_id) 
        references unit (id);
 
+    alter table upgrade_parameters 
+       add constraint FKm3ghnsp5bkg2w59s86a1usirk 
+       foreign key (upgrade_id) 
+       references upgrade (id);
+
     alter table weapon 
-       add constraint FK6yy30tce8ofl4tynr0sb2t5es 
+       add constraint FK4o17xuwme88eq6saahqopcku2 
+       foreign key (damage_id) 
+       references weapon_damage (id);
+
+    alter table weapon_damage 
+       add constraint FK4bm4w7jm83pgqrjtec25wa2u7 
        foreign key (buff_id) 
        references buff (id);
 
-    alter table weapon_damages 
-       add constraint FK1b5roq2uelxn8iyepayi4cpk2 
-       foreign key (weapon_id) 
-       references weapon (id);
+    alter table weapon_damage_damages 
+       add constraint FK5tin2lnvrvoulp84og0ensl50 
+       foreign key (weapon_damage_id) 
+       references weapon_damage (id);
 
-    alter table weapon_envsAffected 
-       add constraint FK3agcghm3ile11w5pq7iygvwnf 
-       foreign key (weapon_id) 
-       references weapon (id);
+    alter table weapon_damage_envsAffected 
+       add constraint FK1clx3dc6xsoxseti53xe2od72 
+       foreign key (weapon_damage_id) 
+       references weapon_damage (id);
+
+    alter table work_cost 
+       add constraint FKs03sqbi6k93sapbdrjgn1834c 
+       foreign key (work_id) 
+       references work (id);
