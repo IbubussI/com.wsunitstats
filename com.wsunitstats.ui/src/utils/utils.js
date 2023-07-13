@@ -52,6 +52,7 @@ export const getEntityRoute = (entityType) => {
  */
 export const setPathParams = (params, removeFrom = 0) => {
   const pathname = window.location.pathname;
+  const search = window.location.search;
   let pathItems = pathname.split('/');
   for (const paramObj of params) {
     if (paramObj.param || paramObj.param === 0) {
@@ -63,7 +64,7 @@ export const setPathParams = (params, removeFrom = 0) => {
   if (removeFrom > 0) {
     pathItems.length = removeFrom;
   }
-  return pathItems.join('/');
+  return pathItems.join('/') + search;
 }
 
 export const navigateToError = (navHook, msg, code) => {

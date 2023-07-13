@@ -77,7 +77,7 @@ export const ResearchSelector = () => {
   const isButtonDisabled = isEqual(getQueryResearchIds(), selected);
 
   return options.length ? (
-    <Stack direction='row' sx={{ gap: 0.5, width: '100%', margin: '2px', maxWidth: '350px' }}>
+    <Stack direction='row' sx={{ gap: 0.5, width: '100%', margin: '2px', maxWidth: '350px', paddingTop: '5px'}}>
       <CheckmarksSelect label='Apply researches' onChange={handleChange} options={optionIds} optionsMetadata={optionsMetadata} value={selected} />
       <Button
         variant='outlined'
