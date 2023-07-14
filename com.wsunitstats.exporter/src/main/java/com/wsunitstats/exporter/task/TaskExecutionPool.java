@@ -23,19 +23,26 @@ public class TaskExecutionPool {
     }
 
     public void executeTasks(List<String> taskNames, ExecutionPayload payload) {
+        int completed = 0;
+        int error = 0;
+        int notFound = 0;
         for (String taskName : taskNames) {
             try {
                 ExecutionTask task = tasks.get(taskName);
                 if (task != null) {
                     LOG.info("Executing {} task", taskName);
                     task.execute(payload);
+                    completed++;
                 } else {
                     LOG.error("Task {} not found", taskName);
+                    notFound++;
                 }
             } catch (TaskExecutionException ex) {
                 LOG.error("Task execution failed with exception: {}", ex.getMessage());
+                error++;
             }
         }
         LOG.info("Task execution completed");
+        LOG.info("Total: {}, completed: {}, error: {}, not found: {}", taskNames.size(), completed, error, notFound);
     }
 }

@@ -12,9 +12,9 @@ import java.util.List;
 public class WorkJsonModel {
     private Integer ability;
     private Integer maketime;
-    // order unit cost
+    // upgrade cost
     private List<Integer> costOrder;
-    // start research cost
+    // unit cost
     private List<Integer> costProcess;
     // only for "Flammenwerfer"
     private List<Integer> costStart;
