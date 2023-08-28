@@ -9,6 +9,12 @@
         primary key (id)
     ) engine=InnoDB;
 
+    create table ability_container_death (
+       id bigint not null,
+        ability_id bigint,
+        primary key (id)
+    ) engine=InnoDB;
+
     create table ability_container_generic_supertype (
        id bigint not null auto_increment,
         containerName varchar(255),
@@ -560,6 +566,16 @@
        add constraint FK1l8xi8hgvu8913vrg1srqtxgv 
        foreign key (id) 
        references ability_generic_supertype (id);
+
+    alter table ability_container_death 
+       add constraint FKat10931kblwlas0j5tbfpvxda 
+       foreign key (ability_id) 
+       references ability_generic_supertype (id);
+
+    alter table ability_container_death 
+       add constraint FKlsr2agkj3h32ibg8h6fee5wuo 
+       foreign key (id) 
+       references ability_container_generic_supertype (id);
 
     alter table ability_container_on_action 
        add constraint FKdac3l40pnlpo63mdn3d53q8v9 

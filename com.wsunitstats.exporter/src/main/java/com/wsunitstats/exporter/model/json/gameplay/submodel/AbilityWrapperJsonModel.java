@@ -17,4 +17,5 @@ public class AbilityWrapperJsonModel {
     private AbilityOnActionJsonModel abilityOnAction;
     private List<Object> rally;
     private List<WorkJsonModel> work;
+    private Integer abilityOnDeath;
 }

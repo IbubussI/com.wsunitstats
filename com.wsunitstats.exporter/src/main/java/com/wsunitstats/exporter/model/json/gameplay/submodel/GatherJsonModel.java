@@ -11,6 +11,9 @@ public class GatherJsonModel {
     private Integer angle;
     private Integer bagsize;
     private Long envtags;
+    private Integer findLevels;
+    private Integer findLevelsMaxDistance;
+    private Integer findLevelsMinDistance;
     private Integer findtargetdistance;
     private Integer gatherdistance;
     private Integer pertick;

@@ -10,6 +10,7 @@ import com.wsunitstats.domain.submodel.ability.GenericAbility;
 import com.wsunitstats.domain.submodel.ability.ResearchAbilityModel;
 import com.wsunitstats.domain.submodel.ability.TransformAbilityModel;
 import com.wsunitstats.domain.submodel.ability.WorkModel;
+import com.wsunitstats.domain.submodel.ability.container.DeathAbilityContainer;
 import com.wsunitstats.domain.submodel.ability.container.GenericAbilityContainer;
 import com.wsunitstats.domain.submodel.ability.container.OnActionAbilityContainer;
 import com.wsunitstats.domain.submodel.ability.container.WorkAbilityContainer;
@@ -78,6 +79,14 @@ public class AbilityMappingServiceImpl implements AbilityMappingService {
             zoneEventAbility.setContainerType(Constants.AbilityContainerType.ZONE_EVENT.getType());
             result.add(zoneEventAbility);
         }
+        Integer abilityOnDeath = unitJsonModel.getAbility().getAbilityOnDeath();
+        if (abilityOnDeath != null) {
+            specialIdList.add(abilityOnDeath);
+            GenericAbilityContainer deathAbilities = mapDeathAbility(unitJsonModel, abilityOnDeath);
+            deathAbilities.setContainerName(Constants.AbilityContainerType.DEATH.getName());
+            deathAbilities.setContainerType(Constants.AbilityContainerType.DEATH.getType());
+            result.add(deathAbilities);
+        }
 
         defaultIdList.removeAll(specialIdList);
         result.addAll(defaultIdList.stream()
@@ -134,6 +143,12 @@ public class AbilityMappingServiceImpl implements AbilityMappingService {
         zoneEventAbilityContainer.setEnvSearchDistance(zoneEventJsonModel.getEnvSearchDistance());
         zoneEventAbilityContainer.setEnvTags(modelMappingService.mapTags(zoneEventJsonModel.getEnvTags(), i -> localization.getEnvSearchTagNames().get(i)));
         return zoneEventAbilityContainer;
+    }
+
+    private DeathAbilityContainer mapDeathAbility(UnitJsonModel unitJsonModel, int abilityId) {
+        DeathAbilityContainer deathAbilityContainer = new DeathAbilityContainer();
+        deathAbilityContainer.setAbility(mapAbility(unitJsonModel, unitJsonModel.getAbility().getAbilities().get(abilityId), abilityId));
+        return deathAbilityContainer;
     }
 
     private GenericAbility mapAbility(UnitJsonModel unitJsonModel, AbilityJsonModel abilityJsonModel, int abilityId) {

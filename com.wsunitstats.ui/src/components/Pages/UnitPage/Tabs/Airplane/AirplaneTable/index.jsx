@@ -53,7 +53,7 @@ export const AirplaneTable = ({ airplane, overflowMinWidth }) => {
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Heal speed',
-        value: airplane.healingSpeed + ' hp/sec',
+        value: airplane.healingSpeed && airplane.healingSpeed + ' hp/sec',
         widthRight: FLEX_TABLE_RIGHT_WIDTH,
         widthLeft: FLEX_TABLE_LEFT_WIDTH
       }

@@ -56,10 +56,10 @@ export const Header = () => {
               }
             }}>
               <Typography fontSize='12px' mr={2}>
-                Last updated: 27.08.2023
+                Last updated: 28.08.2023
               </Typography>
               <Typography fontSize='12px' mr={2}>
-                Game version: v137.1741_25552
+                Game version: v140.2029_25816
               </Typography>
             </Stack>
           }

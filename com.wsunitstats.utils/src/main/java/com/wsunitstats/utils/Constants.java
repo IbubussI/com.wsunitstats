@@ -82,7 +82,8 @@ public class Constants {
         UNDEFINED(-1, UNDEF),
         ON_ACTION(0, "Action abilities"),
         WORK(1, "Work abilities"),
-        ZONE_EVENT(2, "Environment zone events");
+        ZONE_EVENT(2, "Environment zone events"),
+        DEATH(3, "Ability on death");
 
         private final int type;
         private final String name;

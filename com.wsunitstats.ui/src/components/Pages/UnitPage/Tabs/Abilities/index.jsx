@@ -2,6 +2,7 @@ import { GridGroup, ResizableGrid } from "components/Layout/ResizableGrid";
 import { WorkAbilityTable } from "components/Pages/UnitPage/Tabs/Abilities/WorkAbilityTable"
 import { OnActionAbilityTable } from "./OnActionAbilityTable";
 import { ZoneEventAbilityTable } from "./ZoneEventAbilityTable";
+import { DeathAbilityTable } from "./DeathAbilityTable";
 
 const MIN_WIDTH = 280;
 const COLUMN_WIDTH = 480;
@@ -10,6 +11,7 @@ export const AbilitiesTab = ({ entity: unit }) => {
   const onActionAbilities = unit.abilities.filter(element => element.containerType === 0);
   const workAbilities = unit.abilities.filter(element => element.containerType === 1);
   const zoneEventAbilities = unit.abilities.filter(element => element.containerType === 2);
+  const deathAbilities = unit.abilities.filter(element => element.containerType === 3);
 
   return (
     <>
@@ -23,6 +25,9 @@ export const AbilitiesTab = ({ entity: unit }) => {
         </GridGroup>
         <GridGroup heading={zoneEventAbilities[0]?.containerName} columnWidth={COLUMN_WIDTH}>
           {getTables(ZoneEventAbilityTable, zoneEventAbilities)}
+        </GridGroup>
+        <GridGroup heading={deathAbilities[0]?.containerName} columnWidth={COLUMN_WIDTH}>
+          {getTables(DeathAbilityTable, deathAbilities)}
         </GridGroup>
       </ResizableGrid>
     </>

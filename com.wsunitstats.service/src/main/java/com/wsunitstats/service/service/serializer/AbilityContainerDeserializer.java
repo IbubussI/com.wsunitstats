@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.wsunitstats.domain.submodel.ability.container.DeathAbilityContainer;
 import com.wsunitstats.domain.submodel.ability.container.GenericAbilityContainer;
 import com.wsunitstats.domain.submodel.ability.container.OnActionAbilityContainer;
 import com.wsunitstats.domain.submodel.ability.container.WorkAbilityContainer;
@@ -32,6 +33,7 @@ public class AbilityContainerDeserializer extends JsonDeserializer<GenericAbilit
                 case ON_ACTION -> ability = getAbilityContainer(OnActionAbilityContainer.class, node, codec, context);
                 case WORK -> ability = getAbilityContainer(WorkAbilityContainer.class, node, codec, context);
                 case ZONE_EVENT -> ability = getAbilityContainer(ZoneEventAbilityContainer.class, node, codec, context);
+                case DEATH -> ability = getAbilityContainer(DeathAbilityContainer.class, node, codec, context);
             }
         }
         return ability;
