@@ -48,8 +48,8 @@ public class Constants {
         RESEARCH(1, "Research"),
         TRANSFORM(2, "Transform"),
         CREATE_ENV(3, "Create env"),
-        ACTION(4, "Action"),
-        //???(5, "???"),
+        SELF_BUFF(4, "Self buff"),
+        //SELF_STUN(5, "Self stun"),
         DAMAGE(6, "Damage");
 
         private final int type;
@@ -80,7 +80,7 @@ public class Constants {
 
     public enum AbilityContainerType {
         UNDEFINED(-1, UNDEF),
-        ON_ACTION(0, "Action abilities"),
+        SELF(0, "Self abilities"),
         WORK(1, "Work abilities"),
         ZONE_EVENT(2, "Environment zone events"),
         DEATH(3, "Ability on death");

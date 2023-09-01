@@ -67,8 +67,8 @@ public class AbilityMappingServiceImpl implements AbilityMappingService {
         if (abilityOnActionJsonModel != null) {
             specialIdList.add(abilityOnActionJsonModel.getAbility());
             GenericAbilityContainer onActionAbility = mapOnActionAbility(unitJsonModel);
-            onActionAbility.setContainerName(Constants.AbilityContainerType.ON_ACTION.getName());
-            onActionAbility.setContainerType(Constants.AbilityContainerType.ON_ACTION.getType());
+            onActionAbility.setContainerName(Constants.AbilityContainerType.SELF.getName());
+            onActionAbility.setContainerType(Constants.AbilityContainerType.SELF.getType());
             result.add(onActionAbility);
         }
         ZoneEventJsonModel zoneEventJsonModel = unitJsonModel.getZoneEvent();
@@ -155,7 +155,7 @@ public class AbilityMappingServiceImpl implements AbilityMappingService {
         GenericAbility genericAbility;
         Constants.AbilityType abilityType = getAbilityType(abilityJsonModel);
         switch (abilityType) {
-            case ACTION -> genericAbility = mapActionAbility(abilityJsonModel);
+            case SELF_BUFF -> genericAbility = mapActionAbility(abilityJsonModel);
             case DAMAGE -> genericAbility = mapDamageAbility(abilityJsonModel);
             case RESEARCH -> genericAbility = mapResearchAbility(abilityJsonModel);
             case TRANSFORM -> genericAbility = mapTransformAbility(abilityJsonModel);

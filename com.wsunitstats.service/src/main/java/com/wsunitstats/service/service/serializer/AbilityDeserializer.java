@@ -36,7 +36,7 @@ public class AbilityDeserializer extends JsonDeserializer<GenericAbility> {
                 case RESEARCH -> ability = getAbility(ResearchAbilityModel.class, node, codec, context);
                 case TRANSFORM -> ability = getAbility(TransformAbilityModel.class, node, codec, context);
                 case CREATE_ENV -> ability = getAbility(CreateEnvAbilityModel.class, node, codec, context);
-                case ACTION -> ability = getAbility(ActionAbilityModel.class, node, codec, context);
+                case SELF_BUFF -> ability = getAbility(ActionAbilityModel.class, node, codec, context);
                 case DAMAGE -> ability = getAbility(DamageAbilityModel.class, node, codec, context);
             }
         }

@@ -14,7 +14,7 @@ public class AbilityOnActionEnable implements Mutator {
     public void mutate(UnitModel target, Map<String, String> parameters) {
         boolean enable = toBool(parameters.get("enable"), true);
         for (GenericAbilityContainer abilityContainer : target.getAbilities()) {
-            if (abilityContainer.getContainerType() == Constants.AbilityContainerType.ON_ACTION.getType()) {
+            if (abilityContainer.getContainerType() == Constants.AbilityContainerType.SELF.getType()) {
                 OnActionAbilityContainer onActionAbilityContainer = (OnActionAbilityContainer) abilityContainer;
                 onActionAbilityContainer.setEnabled(enable);
                 return;
