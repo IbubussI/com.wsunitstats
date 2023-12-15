@@ -1,5 +1,6 @@
 package com.wsunitstats.exporter.service.impl;
 
+import com.wsunitstats.domain.submodel.BuildingModel;
 import com.wsunitstats.domain.submodel.ConstructionModel;
 import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
@@ -80,7 +81,7 @@ public class UnitModelResolverImpl implements UnitModelResolver {
             unit.setDescription(localizationKeyModel.getUnitTexts().get(id));
 
             // Build traits
-            unit.setBuild(mappingService.map(unitJsonModel, findUnitBuildObject(gameplayModel, id)));
+            unit.setBuild(getBuildModel(unitJsonModel, gameplayModel, id));
 
             // Unit traits
             unit.setViewRange(Util.intToDoubleShift(unitJsonModel.getViewRange()));
@@ -144,9 +145,11 @@ public class UnitModelResolverImpl implements UnitModelResolver {
         return result;
     }
 
-    private BuildJsonModel findUnitBuildObject(GameplayFileJsonModel gameplayJsonModel, int unitId) {
-        return gameplayJsonModel.getBuild().stream()
-                .filter(buildJsonModel -> buildJsonModel.getUnit() == unitId)
+    private BuildingModel getBuildModel(UnitJsonModel unitJsonModel, GameplayFileJsonModel gameplayJsonModel, int unitId) {
+        List<BuildJsonModel> buildJsonModels = gameplayJsonModel.getBuild();
+        return IntStream.range(0, buildJsonModels.size())
+                .filter(index -> buildJsonModels.get(index).getUnit() == unitId)
+                .mapToObj(index -> mappingService.map(index, unitJsonModel, buildJsonModels.get(index)))
                 .findFirst()
                 .orElse(null);
     }
@@ -161,6 +164,9 @@ public class UnitModelResolverImpl implements UnitModelResolver {
     private List<ArmorModel> getArmorList(ArmorJsonModel armorJsonModel) {
         //Armor should not be null for every unit
         List<ArmorJsonModel.Entry> entries = armorJsonModel.getData();
+        if (entries == null) {
+            return null;
+        }
         int probabilitiesSum = Util.sum(armorJsonModel.getData().stream().map(ArmorJsonModel.Entry::getProbability).toList());
         return entries.stream()
                 .map(entry -> mappingService.map(entry, probabilitiesSum))

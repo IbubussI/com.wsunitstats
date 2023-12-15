@@ -20,6 +20,7 @@ import java.util.List;
 @Setter
 @ToString
 public class BuildingModel extends PersistentObject {
+    private int buildId;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<ResourceModel> initCost;
     @ElementCollection(fetch = FetchType.EAGER)

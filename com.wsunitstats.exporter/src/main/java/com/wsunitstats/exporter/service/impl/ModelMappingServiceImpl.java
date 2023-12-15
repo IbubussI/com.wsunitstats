@@ -389,13 +389,14 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public BuildingModel map(UnitJsonModel unitSource, BuildJsonModel buildSource) {
+    public BuildingModel map(int buildId, UnitJsonModel unitSource, BuildJsonModel buildSource) {
         DeathabilityJsonModel deathability = unitSource.getDeathability();
         IncomeJsonModel income = unitSource.getIncome();
         if (buildSource == null && (deathability == null || deathability.getHealMeCost() == null) && income == null) {
             return null;
         }
         BuildingModel buildingModel = new BuildingModel();
+        buildingModel.setBuildId(buildId);
         if (deathability != null) {
             buildingModel.setHealCost(mapResources(deathability.getHealMeCost()));
             if (buildSource != null) {

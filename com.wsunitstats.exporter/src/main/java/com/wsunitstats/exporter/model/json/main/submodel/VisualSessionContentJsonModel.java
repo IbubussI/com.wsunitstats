@@ -15,6 +15,7 @@ import java.util.Map;
 @Setter
 @ToString
 public class VisualSessionContentJsonModel {
+    private Object omniLights;
     private Object atlasses;
     private Object billboards;
     private Object cubeMaps;

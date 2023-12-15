@@ -87,7 +87,7 @@ public interface ModelMappingService {
 
     SupplyModel map(SupplyJsonModel supplySource);
 
-    BuildingModel map(UnitJsonModel unitSource, BuildJsonModel buildSource);
+    BuildingModel map(int buildId, UnitJsonModel unitSource, BuildJsonModel buildSource);
 
     IncomeModel map(IncomeJsonModel incomeSource);
 

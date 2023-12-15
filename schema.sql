@@ -180,6 +180,7 @@
 
     create table building (
        id bigint not null auto_increment,
+        buildId integer not null,
         initHealth float(53),
         researchesAll bit,
         unitsAll bit,

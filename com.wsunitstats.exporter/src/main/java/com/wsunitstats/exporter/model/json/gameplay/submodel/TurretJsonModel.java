@@ -12,6 +12,7 @@ import java.util.Map;
 @Setter
 @ToString
 public class TurretJsonModel {
+    private Object aimer;
     private Integer defaultDirection;
     private Integer idleMode;
     private Map<String, Object> maxDeviation;

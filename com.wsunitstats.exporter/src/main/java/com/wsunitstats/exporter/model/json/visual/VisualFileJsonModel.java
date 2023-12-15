@@ -16,6 +16,7 @@ import java.util.Map;
 @Setter
 @ToString
 public class VisualFileJsonModel {
+    private Object attackOwnTags;
     private Object attackDistance;
     private Object buildPlans;
     private Object buildRules;
