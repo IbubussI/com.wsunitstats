@@ -27,6 +27,12 @@ import com.wsunitstats.service.service.impl.mutator.WorkEnable;
 import com.wsunitstats.service.service.impl.mutator.WorkPriceChange;
 import com.wsunitstats.service.service.impl.mutator.WorkReserveLimitAdd;
 import com.wsunitstats.service.service.impl.mutator.WorkReserveTimeMult;
+import com.wsunitstats.service.service.impl.mutator.weapon.DamageAdd;
+import com.wsunitstats.service.service.impl.mutator.weapon.Enable;
+import com.wsunitstats.service.service.impl.mutator.weapon.MaxDistanceAdd;
+import com.wsunitstats.service.service.impl.mutator.weapon.RechargePeriodDec;
+import com.wsunitstats.service.service.impl.mutator.weapon.SetDamageArea;
+import com.wsunitstats.service.service.impl.mutator.weapon.SpreadMult;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
@@ -42,12 +48,12 @@ public class UnitMutatorServiceImpl implements UnitMutatorService {
     protected void postConstruct() {
         mutators.put(0, new MoveSpeed());
         mutators.put(2, new GatherSpeedAdd());
-        mutators.put(3, new WeaponSetDamageArea());
-        mutators.put(4, new WeaponSpreadMult());
+        mutators.put(3, new SetDamageArea());
+        mutators.put(4, new SpreadMult());
         mutators.put(5, new ArmorAddSize());
         mutators.put(13, new ArmorAddThickness());
-        mutators.put(14, new WeaponRechargePeriodDec());
-        mutators.put(15, new WeaponMaxDistanceAdd());
+        mutators.put(14, new RechargePeriodDec());
+        mutators.put(15, new MaxDistanceAdd());
         mutators.put(17, new WorkEnable());
         mutators.put(19, new Regeneration());
         mutators.put(20, new BuildingSpeedMult());
@@ -55,12 +61,10 @@ public class UnitMutatorServiceImpl implements UnitMutatorService {
         mutators.put(22, new WorkReserveTimeMult());
         mutators.put(23, new WorkReserveLimitAdd());
         mutators.put(27, new StorageMultiplierAdd());
-        mutators.put(28, new TurretRechargePeriodDec());
-        mutators.put(29, new TurretSpreadMult());
         mutators.put(31, new WorkPriceChange());
-        mutators.put(32, new WeaponEnable());
+        mutators.put(32, new Enable());
         mutators.put(33, new AbilityOnActionEnable());
-        mutators.put(34, new WeaponDamageAdd());
+        mutators.put(34, new DamageAdd());
         mutators.put(35, new TurretDamageAdd());
     }
 
