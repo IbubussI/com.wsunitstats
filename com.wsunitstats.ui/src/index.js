@@ -37,7 +37,7 @@ const unitLoader = async (route) => {
   return await entityLoader(route, Constants.UNIT_DATA_API);
 }
 
-const  researchLoader = async (route) => {
+const researchLoader = async (route) => {
   return await entityLoader(route, Constants.RESEARCH_DATA_API);
 }
 

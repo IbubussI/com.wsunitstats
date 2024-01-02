@@ -57,13 +57,6 @@ export const EntityPicker = ({ initialValue, onSelect, options: componentOptions
     };
   }, [inputValue, debouncedFetchHandler, params.locale]);
 
-  // clear on navigation to empty page
-  React.useEffect(() => {
-    if (!params.gameId && params.gameId !== 0) {
-      setValue(null);
-    }
-  }, [params.gameId]);
-
   return (
     <Autocomplete
       sx={{ width: '100%', margin: '2px', maxWidth: '350px' }}

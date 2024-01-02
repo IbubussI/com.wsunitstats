@@ -11,26 +11,30 @@ export const ResearchSelector = () => {
   const [selected, setSelected] = React.useState([]);
   const params = useParams();
 
-  const getQueryResearchIds = React.useCallback(() => {
+  const queryResearchIds = React.useMemo(() => {
     const currentResearchesQueryParams = searchParams.get(Constants.PARAM_RESEARCH_ID)?.split(',');
     return currentResearchesQueryParams ? [...currentResearchesQueryParams] : [];
   }, [searchParams]);
 
   React.useEffect(() => {
-    const currentResearches = getQueryResearchIds();
-    setSelected(currentResearches
-      .filter((value, index, array) => array.indexOf(value) === index)
-      .filter((value) => {
-      for (const option of options) {
-        if (option.gameId.toString() === value) {
-          return true;
-        }
-      }
-      return false;
-    }));
-  }, [options, getQueryResearchIds])
+    if (options.length > 0) {
+      setSelected(queryResearchIds
+        .filter((value, index, array) => array.indexOf(value) === index)
+        .filter((value) => {
+          for (const option of options) {
+            if (option.gameId.toString() === value) {
+              return true;
+            }
+          }
+          return false;
+        }));
+    }
+  }, [options, queryResearchIds]);
 
   const fetchOptions = React.useCallback(() => {
+    // clear initial selected array to ensure there will be no invalid values until fetch is completed
+    setSelected([])
+
     fetch(Constants.HOST + Constants.RESEARCH_UNIT_OPTIONS_API + '?' + new URLSearchParams({
       gameId: params.gameId,
       locale: params.locale
@@ -74,10 +78,10 @@ export const ResearchSelector = () => {
     optionIds.push(option.gameId.toString());
   });
 
-  const isButtonDisabled = isEqual(getQueryResearchIds(), selected);
+  const isButtonDisabled = isEqual(queryResearchIds, selected);
 
   return options.length ? (
-    <Stack direction='row' sx={{ gap: 0.5, width: '100%', margin: '2px', maxWidth: '350px', paddingTop: '5px'}}>
+    <Stack direction='row' sx={{ gap: 0.5, width: '100%', margin: '2px', maxWidth: '350px', paddingTop: '5px' }}>
       <CheckmarksSelect label='Apply researches' onChange={handleChange} options={optionIds} optionsMetadata={optionsMetadata} value={selected} />
       <Button
         variant='outlined'
@@ -90,5 +94,5 @@ export const ResearchSelector = () => {
         APPLY
       </Button>
     </Stack>
-  ) : (null);
+  ) : (false);
 }
