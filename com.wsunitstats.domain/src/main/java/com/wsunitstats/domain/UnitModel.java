@@ -9,6 +9,7 @@ import com.wsunitstats.domain.submodel.ArmorModel;
 import com.wsunitstats.domain.submodel.GatherModel;
 import com.wsunitstats.domain.submodel.SubmarineDepthModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
+import com.wsunitstats.domain.submodel.TagModel;
 import com.wsunitstats.domain.submodel.TransportingModel;
 import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.ability.container.GenericAbilityContainer;
@@ -40,8 +41,10 @@ public class UnitModel extends GenericEntityModel {
     private Double regenerationSpeed;
     private Integer weaponOnDeath;
     private boolean controllable;
-    private List<String> tags;
-    private List<String> searchTags;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<TagModel> tags;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<TagModel> searchTags;
     private Double lifetime;
     private Boolean parentMustIdle;
     private Boolean receiveFriendlyDamage;

@@ -43,7 +43,6 @@
 
     create table ability_container_zone_event (
        envSearchDistance integer,
-        envTags varbinary(255),
         size integer,
         id bigint not null,
         primary key (id)
@@ -52,6 +51,11 @@
     create table ability_container_zone_event_abilities (
        ability_container_zone_event_id bigint not null,
         abilities_id bigint not null
+    ) engine=InnoDB;
+
+    create table ability_container_zone_event_envTags (
+       ability_container_zone_event_id bigint not null,
+        envTags_id bigint not null
     ) engine=InnoDB;
 
     create table ability_create_env (
@@ -152,7 +156,7 @@
 
     create table airplane_aerodromeTags (
        airplane_id bigint not null,
-        aerodromeTags varchar(255)
+        aerodromeTags_id bigint not null
     ) engine=InnoDB;
 
     create table armor (
@@ -175,7 +179,7 @@
 
     create table buff_affectedUnits (
        buff_id bigint not null,
-        affectedUnits varchar(255)
+        affectedUnits_id bigint not null
     ) engine=InnoDB;
 
     create table building (
@@ -262,14 +266,22 @@
         resourceId integer not null,
         resourceName varchar(255),
         value_ integer,
-        storageTags varbinary(255),
-        unitTags varbinary(255),
         primary key (id)
     ) engine=InnoDB;
 
     create table gather_envTags (
        gather_id bigint not null,
         envTags_id bigint not null
+    ) engine=InnoDB;
+
+    create table gather_storageTags (
+       gather_id bigint not null,
+        storageTags_id bigint not null
+    ) engine=InnoDB;
+
+    create table gather_unitTags (
+       gather_id bigint not null,
+        unitTags_id bigint not null
     ) engine=InnoDB;
 
     create table heal (
@@ -284,7 +296,7 @@
 
     create table heal_targetTags (
        heal_id bigint not null,
-        targetTags varchar(255)
+        targetTags_id bigint not null
     ) engine=InnoDB;
 
     create table income (
@@ -358,6 +370,14 @@
         primary key (id)
     ) engine=InnoDB;
 
+    create table tag_general (
+       id bigint not null auto_increment,
+        gameId integer not null,
+        tagGroupName varchar(255),
+        tagName varchar(255),
+        primary key (id)
+    ) engine=InnoDB;
+
     create table transporting (
        id bigint not null auto_increment,
         carrySize integer,
@@ -392,10 +412,8 @@
         parentMustIdle bit,
         receiveFriendlyDamage bit,
         regenerationSpeed float(53),
-        searchTags varbinary(255),
         size float(53),
         storageMultiplier integer,
-        tags varbinary(255),
         threat integer,
         viewRange float(53),
         weaponOnDeath integer,
@@ -428,6 +446,16 @@
     create table unit_gather (
        unit_id bigint not null,
         gather_id bigint not null
+    ) engine=InnoDB;
+
+    create table unit_searchTags (
+       unit_id bigint not null,
+        searchTags_id bigint not null
+    ) engine=InnoDB;
+
+    create table unit_tags (
+       unit_id bigint not null,
+        tags_id bigint not null
     ) engine=InnoDB;
 
     create table unit_turrets (
@@ -503,7 +531,7 @@
 
     create table weapon_damage_envsAffected (
        weapon_damage_id bigint not null,
-        envsAffected varchar(255)
+        envsAffected_id bigint not null
     ) engine=InnoDB;
 
     create table work (
@@ -527,11 +555,29 @@
     alter table ability_container_zone_event_abilities 
        add constraint UK_ol7bt94dgxedhwddd8yyxig3v unique (abilities_id);
 
+    alter table ability_container_zone_event_envTags 
+       add constraint UK_cgduaxy5fhpp8kh7jhrf22edx unique (envTags_id);
+
     alter table account 
        add constraint UK_gex1lmaqpg0ir5g1f5eftyaa1 unique (username);
 
+    alter table airplane_aerodromeTags 
+       add constraint UK_n55cj8gwtlrjonoqiavc2l9hj unique (aerodromeTags_id);
+
+    alter table buff_affectedUnits 
+       add constraint UK_2kbx2yqnm1wvxy756i8g5g2er unique (affectedUnits_id);
+
     alter table gather_envTags 
        add constraint UK_qeda4w5by446sv6reckqmwb1v unique (envTags_id);
+
+    alter table gather_storageTags 
+       add constraint UK_cka7a4egw7c00yy0hofc4d0pk unique (storageTags_id);
+
+    alter table gather_unitTags 
+       add constraint UK_6tgduavnr5q02eecj5unb85c4 unique (unitTags_id);
+
+    alter table heal_targetTags 
+       add constraint UK_cp0nrliji0ffmlep4mcu9bj7n unique (targetTags_id);
 
     alter table localization 
        add constraint UK_j6j9h30eydn1rkg0etaayj2is unique (locale);
@@ -557,11 +603,20 @@
     alter table unit_gather 
        add constraint UK_m9du0q7emwkeahfburk4n1d6p unique (gather_id);
 
+    alter table unit_searchTags 
+       add constraint UK_fya5sm1xn2vmqkxatk6qs94cb unique (searchTags_id);
+
+    alter table unit_tags 
+       add constraint UK_q59ub5gq9boefcs9adbwnk7wv unique (tags_id);
+
     alter table unit_turrets 
        add constraint UK_6bnwk424et96dlv8tqwn6k4my unique (turrets_id);
 
     alter table unit_weapons 
        add constraint UK_3b39kb4h68srfcl8gfjtp2tcc unique (weapons_id);
+
+    alter table weapon_damage_envsAffected 
+       add constraint UK_b96ix9qpfvclg671olc0p52ey unique (envsAffected_id);
 
     alter table ability_action 
        add constraint FK1l8xi8hgvu8913vrg1srqtxgv 
@@ -618,6 +673,16 @@
        foreign key (ability_container_zone_event_id) 
        references ability_container_zone_event (id);
 
+    alter table ability_container_zone_event_envTags 
+       add constraint FKonphm8hjjwusxq5rd9rto9ydf 
+       foreign key (envTags_id) 
+       references tag_general (id);
+
+    alter table ability_container_zone_event_envTags 
+       add constraint FK9prfmqg60ux14u308v6k0grdx 
+       foreign key (ability_container_zone_event_id) 
+       references ability_container_zone_event (id);
+
     alter table ability_create_env 
        add constraint FKkit8gi0j21dg1womkaaor6r1p 
        foreign key (id) 
@@ -669,9 +734,19 @@
        references account (id);
 
     alter table airplane_aerodromeTags 
+       add constraint FK3c2n7j4nhreer7xrdi9xeu7w3 
+       foreign key (aerodromeTags_id) 
+       references tag_general (id);
+
+    alter table airplane_aerodromeTags 
        add constraint FKd6vjkgk3tlo4uccgrgiq2hekt 
        foreign key (airplane_id) 
        references airplane (id);
+
+    alter table buff_affectedUnits 
+       add constraint FKjoxy19g13guwmslw4nq33yuji 
+       foreign key (affectedUnits_id) 
+       references tag_general (id);
 
     alter table buff_affectedUnits 
        add constraint FKlt2pjb4aykbahesuxpedq3m4w 
@@ -717,6 +792,31 @@
        add constraint FK22xc4voqbyj0h9qaih8vvcin3 
        foreign key (gather_id) 
        references gather (id);
+
+    alter table gather_storageTags 
+       add constraint FKg7h3ymw4dygln9jhstc45wabd 
+       foreign key (storageTags_id) 
+       references tag_general (id);
+
+    alter table gather_storageTags 
+       add constraint FKe7ndfvpj9ptijw6lnjtj8malc 
+       foreign key (gather_id) 
+       references gather (id);
+
+    alter table gather_unitTags 
+       add constraint FKswqhhgt6a0kjo0rrp9sxqclhw 
+       foreign key (unitTags_id) 
+       references tag_general (id);
+
+    alter table gather_unitTags 
+       add constraint FKp51d5kuasogb7i6yggbp83bgh 
+       foreign key (gather_id) 
+       references gather (id);
+
+    alter table heal_targetTags 
+       add constraint FKj8lgdy09vm3veabv65ioo363b 
+       foreign key (targetTags_id) 
+       references tag_general (id);
 
     alter table heal_targetTags 
        add constraint FKo3bdaxloq89mnf94d5l628un0 
@@ -828,6 +928,26 @@
        foreign key (unit_id) 
        references unit (id);
 
+    alter table unit_searchTags 
+       add constraint FKsicoocrfwd0br4bdlfrp2yiii 
+       foreign key (searchTags_id) 
+       references tag_general (id);
+
+    alter table unit_searchTags 
+       add constraint FKpjsebrxxr0nykr6gpqlsyblas 
+       foreign key (unit_id) 
+       references unit (id);
+
+    alter table unit_tags 
+       add constraint FK57039qpancdm5h2l6o62j6860 
+       foreign key (tags_id) 
+       references tag_general (id);
+
+    alter table unit_tags 
+       add constraint FKwk5imly15apatbi71i8ysx82 
+       foreign key (unit_id) 
+       references unit (id);
+
     alter table unit_turrets 
        add constraint FK1e34tbe06ytka6rxhyk94ureo 
        foreign key (turrets_id) 
@@ -867,6 +987,11 @@
        add constraint FK5tin2lnvrvoulp84og0ensl50 
        foreign key (weapon_damage_id) 
        references weapon_damage (id);
+
+    alter table weapon_damage_envsAffected 
+       add constraint FKq52akti9xf58fm7nkfqudo7h 
+       foreign key (envsAffected_id) 
+       references tag_general (id);
 
     alter table weapon_damage_envsAffected 
        add constraint FK1clx3dc6xsoxseti53xe2od72 

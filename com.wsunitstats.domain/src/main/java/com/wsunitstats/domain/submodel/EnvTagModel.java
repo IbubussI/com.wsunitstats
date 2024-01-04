@@ -10,7 +10,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class EnvTag extends PersistentObject {
+public class EnvTagModel extends PersistentObject {
     private String envName;
     private String envImage;
     private int envId;

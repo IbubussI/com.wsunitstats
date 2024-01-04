@@ -4,12 +4,13 @@ import com.wsunitstats.domain.EntityInfoModel;
 import com.wsunitstats.domain.submodel.AirplaneModel;
 import com.wsunitstats.domain.submodel.BuildingModel;
 import com.wsunitstats.domain.submodel.ConstructionModel;
-import com.wsunitstats.domain.submodel.EnvTag;
+import com.wsunitstats.domain.submodel.EnvTagModel;
 import com.wsunitstats.domain.submodel.HealModel;
 import com.wsunitstats.domain.submodel.IncomeModel;
 import com.wsunitstats.domain.submodel.ReserveModel;
 import com.wsunitstats.domain.submodel.SubmarineDepthModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
+import com.wsunitstats.domain.submodel.TagModel;
 import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.research.UpgradeModel;
 import com.wsunitstats.domain.submodel.requirement.RequirementsModel;
@@ -53,6 +54,7 @@ import com.wsunitstats.exporter.service.FileContentService;
 import com.wsunitstats.exporter.service.ImageService;
 import com.wsunitstats.exporter.service.ModelMappingService;
 import com.wsunitstats.utils.Constants;
+import com.wsunitstats.utils.Constants.TagGroupName;
 import com.wsunitstats.utils.Util;
 import com.wsunitstats.exporter.model.LocalizationKeyModel;
 import com.wsunitstats.domain.submodel.ArmorModel;
@@ -144,8 +146,8 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         gatherModel.setFindStorageDistance(Constants.DEFAULT_GATHER_FIND_STORAGE_DISTANCE);
         gatherModel.setPutDistance(Util.intToDoubleShift(source.getPutdistance()));
         gatherModel.setEnvTags(mapEnvTags(source.getEnvtags()));
-        gatherModel.setStorageTags(mapTags(source.getStoragetags(), i -> localization.getUnitSearchTagNames().get(i)));
-        gatherModel.setUnitTags(mapTags(source.getUnitTags(), i -> localization.getUnitSearchTagNames().get(i)));
+        gatherModel.setStorageTags(mapTags(TagGroupName.UNIT_SEARCH_TAGS, source.getStoragetags(), i -> localization.getUnitSearchTagNames().get(i)));
+        gatherModel.setUnitTags(mapTags(TagGroupName.UNIT_SEARCH_TAGS, source.getUnitTags(), i -> localization.getUnitSearchTagNames().get(i)));
         gatherModel.setResource(mapResource(source.getResource(), null));
         return gatherModel;
     }
@@ -293,7 +295,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         damageWrapperModel.setDamages(mapDamages(damageJsonModel.getDamages()));
         damageWrapperModel.setDamagesCount(getMultipliable(damageJsonModel.getDamagesCount()));
         damageWrapperModel.setEnvDamage(Util.intToDoubleShift(damageJsonModel.getEnvDamage()));
-        damageWrapperModel.setEnvsAffected(mapTags(damageJsonModel.getEnvsAffected(), i -> localization.getEnvSearchTagNames().get(i)));
+        damageWrapperModel.setEnvsAffected(mapTags(TagGroupName.ENV_SEARCH_TAGS, damageJsonModel.getEnvsAffected(), i -> localization.getEnvSearchTagNames().get(i)));
         damageWrapperModel.setRadius(Util.intToDoubleShift(damageJsonModel.getRadius()));
         return damageWrapperModel;
     }
@@ -439,7 +441,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         airplaneModel.setAscensionSpeed(airplaneSource.getAscensionalRate());
         AerodromeJsonModel aerodromeSource = airplaneSource.getAerodrome();
         if (aerodromeSource != null) {
-            airplaneModel.setAerodromeTags(mapTags(aerodromeSource.getTags(), i -> localization.getUnitSearchTagNames().get(i)));
+            airplaneModel.setAerodromeTags(mapTags(TagGroupName.UNIT_SEARCH_TAGS, aerodromeSource.getTags(), i -> localization.getUnitSearchTagNames().get(i)));
             airplaneModel.setHealingSpeed(Util.intToDoubleTick(aerodromeSource.getHealingSpeed()));
             airplaneModel.setRechargePeriod(Util.intToDoubleShift(aerodromeSource.getRechargingPeriod()));
             airplaneModel.setRefuelSpeed(Util.intToDoubleTick(aerodromeSource.getRefuelingSpeed()));
@@ -462,12 +464,16 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     }
 
     @Override
-    public List<String> mapTags(Long tags, IntFunction<String> valueGetter) {
-        List<String> tagValues = new ArrayList<>();
+    public List<TagModel> mapTags(TagGroupName groupName, Long tags, IntFunction<String> nameGetter) {
+        List<TagModel> tagValues = new ArrayList<>();
         if (tags != null) {
             List<Integer> tagIds = Util.getPositiveBitIndices(tags);
             for (int tagId : tagIds) {
-                tagValues.add(valueGetter.apply(tagId));
+                TagModel tag = new TagModel();
+                tag.setTagName(nameGetter.apply(tagId));
+                tag.setGameId(tagId);
+                tag.setTagGroupName(groupName.getGroupName());
+                tagValues.add(tag);
             }
         }
         return tagValues;
@@ -479,17 +485,17 @@ public class ModelMappingServiceImpl implements ModelMappingService {
      * all units contain tag with value 0
      */
     @Override
-    public List<String> mapUnitTags(Long tags) {
-        return mapTags(tags, i -> i == 0 ? Constants.GENERIC_UNIT_TAG : localization.getUnitTagNames().get(i - 1));
+    public List<TagModel> mapUnitTags(Long tags) {
+        return mapTags(TagGroupName.UNIT_TAGS, tags, i -> i == 0 ? Constants.GENERIC_UNIT_TAG : localization.getUnitTagNames().get(i - 1));
     }
 
     @Override
-    public List<EnvTag> mapEnvTags(Long tags) {
-        List<EnvTag> envTags = new ArrayList<>();
+    public List<EnvTagModel> mapEnvTags(Long tags) {
+        List<EnvTagModel> envTags = new ArrayList<>();
         if (tags != null) {
             List<Integer> tagIds = Util.getPositiveBitIndices(tags);
             for (int tagId : tagIds) {
-                EnvTag envTag = new EnvTag();
+                EnvTagModel envTag = new EnvTagModel();
                 envTag.setEnvId(tagId);
                 envTag.setEnvName(localization.getEnvSearchTagNames().get(tagId));
                 Map.Entry<Integer, EnvJsonModel> targetEnvEntry = envMap.entrySet().stream()

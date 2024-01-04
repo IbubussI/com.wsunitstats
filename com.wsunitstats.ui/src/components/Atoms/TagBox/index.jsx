@@ -1,5 +1,6 @@
 import { Box, Stack, Typography } from "@mui/material";
-import { Tag, Text } from "components/Atoms/Renderer";
+import { Text } from "components/Atoms/Renderer";
+import { PopperTag } from "components/Atoms/ButtonPopper";
 
 export const TagBox = ({ tagsData }) => {
   return (
@@ -8,13 +9,10 @@ export const TagBox = ({ tagsData }) => {
       <Stack direction='row' sx={{ paddingTop: '3px', gap: '3px', flexWrap: 'wrap' }}>
         {tagsData.tags
           ? tagsData.tags.map((tag, index) => (
-            <Tag key={index} data={{ tag: tag, onClick: () => { } }} />
+            <PopperTag key={index} tag={tag} placement='bottom'/>
           ))
           : <Typography>{'\u2013'}</Typography>}
       </Stack>
     </Box>
   );
 }
-
-
-

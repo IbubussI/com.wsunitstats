@@ -1,6 +1,5 @@
-import { Box, Button, Stack } from "@mui/material";
-import { ButtonText, Text } from "components/Atoms/Renderer";
-import { ButtonPopper } from "components/Atoms/ButtonPopper";
+import { Box, Stack } from "@mui/material";
+import { Text } from "components/Atoms/Renderer";
 
 export const FlexibleTable = ({ columns, rows, data, minWidth }) => {
   if (data.length < rows*columns) {
@@ -85,36 +84,6 @@ export const FlexibleTableSingleCellRow = ({ data }) => {
         <ValueRenderer data={data.value} />
       </Stack>
     </Stack>
-  );
-}
-
-export const FlexibleTableButtonRow = ({ data }) => {
-  const ButtonContentRenderer = ({ onClick }) => {
-    return (
-      <Button
-        onClick={onClick}
-        sx={{
-          textTransform: 'none',
-          width: '100%',
-          height: '100%',
-          textAlign: 'left',
-          '&>div': { width: '100%' },
-          '&:hover': { backgroundColor: 'rgb(195, 225, 255)' },
-          padding: 0,
-        }}>
-        <FlexibleTableDoubleCellRow
-          labelRenderer={Text}
-          valueRenderer={ButtonText}
-          data={{ label: data.label, value: 'click to open' }} />
-      </Button>
-    );
-  }
-  return (
-    <ButtonPopper
-      popperRenderer={data.renderer}
-      popperRendererContent={data.value}
-      popperTitle={data.popTitle}
-      buttonRenderer={ButtonContentRenderer} />
   );
 }
 

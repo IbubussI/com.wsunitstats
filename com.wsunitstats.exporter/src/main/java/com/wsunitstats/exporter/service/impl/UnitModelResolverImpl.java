@@ -28,6 +28,7 @@ import com.wsunitstats.exporter.service.ImageService;
 import com.wsunitstats.exporter.service.ModelMappingService;
 import com.wsunitstats.exporter.service.UnitModelResolver;
 import com.wsunitstats.utils.Constants;
+import com.wsunitstats.utils.Constants.TagGroupName;
 import com.wsunitstats.utils.Util;
 import com.wsunitstats.exporter.model.LocalizationKeyModel;
 import com.wsunitstats.domain.UnitModel;
@@ -86,7 +87,7 @@ public class UnitModelResolverImpl implements UnitModelResolver {
             // Unit traits
             unit.setViewRange(Util.intToDoubleShift(unitJsonModel.getViewRange()));
             unit.setTags(mappingService.mapUnitTags(unitJsonModel.getTags()));
-            unit.setSearchTags(mappingService.mapTags(unitJsonModel.getSearchTags(), i -> localizationKeyModel.getUnitSearchTagNames().get(i)));
+            unit.setSearchTags(mappingService.mapTags(TagGroupName.UNIT_SEARCH_TAGS, unitJsonModel.getSearchTags(), i -> localizationKeyModel.getUnitSearchTagNames().get(i)));
             unit.setControllable(Util.getInvertedBoolean(unitJsonModel.getControllable()));
             unit.setParentMustIdle(unitJsonModel.getParentMustIdle());
             unit.setHeal(mappingService.map(unitJsonModel.getHeal()));

@@ -25,8 +25,10 @@ public class GatherModel extends PersistentObject {
     private Double putDistance;
     private Double perSecond;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<EnvTag> envTags;
-    private List<String> storageTags;
-    private List<String> unitTags;
+    private List<EnvTagModel> envTags;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<TagModel> storageTags;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<TagModel> unitTags;
     private ResourceModel resource;
 }

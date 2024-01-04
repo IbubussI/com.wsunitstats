@@ -136,7 +136,7 @@ export const DoubleColumnTable = ({ data }) => {
   return (
     <TableContainer>
       <Table sx={{ tableLayout: tableLayout, width: width, minWidth: minWidth }}>
-        <TableHead sx={{
+        {data.label && <TableHead sx={{
           '& tr th': {
             paddingTop: '7px',
             paddingBottom: '7px'
@@ -149,7 +149,7 @@ export const DoubleColumnTable = ({ data }) => {
               </Typography>
             </TableCell>
           </TableRow>
-        </TableHead>
+        </TableHead>}
         <TableBody>
           {data.content.map((row, index) => {
             return (

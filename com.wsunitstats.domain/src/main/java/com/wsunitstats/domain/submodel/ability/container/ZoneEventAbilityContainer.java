@@ -1,5 +1,6 @@
 package com.wsunitstats.domain.submodel.ability.container;
 
+import com.wsunitstats.domain.submodel.TagModel;
 import com.wsunitstats.domain.submodel.ability.GenericAbility;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -18,7 +19,8 @@ import java.util.List;
 public class ZoneEventAbilityContainer extends GenericAbilityContainer {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<GenericAbility> abilities;
-    private List<String> envTags;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<TagModel> envTags;
     private Integer envSearchDistance;
     private Integer size;
 }
