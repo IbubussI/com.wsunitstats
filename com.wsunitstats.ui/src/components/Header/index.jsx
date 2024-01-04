@@ -12,9 +12,10 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
-import { LocalePicker } from './LocalePicker';
+import { LocalePicker } from 'components/Header/LocalePicker';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Stack, Tooltip } from '@mui/material';
+import { EntityPicker } from 'components/Header/EntityPicker';
 
 const pages = [
   {
@@ -44,8 +45,14 @@ export const Header = () => {
     navigate(Utils.setPathParams([{ param: newLocale, pos: 1 }]), { replace: replace });
   }, [navigate]);
 
+  const onEntityChange = (newGameId) => {
+    if (newGameId !== null) {
+      navigate(Utils.setPathParams([{ param: newGameId, pos: 3 }, { param: Constants.INITIAL_TAB, pos: 4 }]));
+    }
+  };
+
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {
@@ -64,7 +71,7 @@ export const Header = () => {
             </Stack>
           }
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', sm: 'none' } }}>
             <IconButton
               size="large"
               onClick={handleOpenNavMenu}
@@ -87,7 +94,7 @@ export const Header = () => {
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
-                display: { xs: 'block', md: 'none' },
+                display: { xs: 'block', sm: 'none' },
               }}
             >
               {pages.map((page) => (
@@ -99,7 +106,7 @@ export const Header = () => {
               ))}
             </Menu>
           </Box>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}>
             {pages.map((page) => (
               <NavLink key={page.path} to={page.path} style={{ textDecoration: 'none' }}>
                 <Button
@@ -111,6 +118,7 @@ export const Header = () => {
               </NavLink>
             ))}
           </Box>
+          <EntityPicker onSelect={onEntityChange}/>
           <Stack sx={{ gap: 1, alignItems: 'center', flexDirection: 'row', paddingTop: 1, paddingBottom: 1 }}>
             {locale !== Constants.DEFAULT_LOCALE_OPTION && <Tooltip arrow title='Only in-game values are localized using game localization files. Most of the UI is available only in English now'>
               <WarningAmberIcon sx={{ color: '#fd853c', filter: 'drop-shadow(0px 0px 3px rgb(0 0 0 / 0.8))', fontSize: 25 }} />

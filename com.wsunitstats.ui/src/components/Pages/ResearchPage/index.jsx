@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './index.css';
 import { useOutletContext } from 'react-router-dom';
-import { ResearchTable } from './ResearchTable';
+import { ResearchTable } from 'components/Pages/ResearchPage/ResearchTable';
 import { GridGroup, ResizableGrid } from 'components/Layout/ResizableGrid';
 
 const MIN_WIDTH = 400;

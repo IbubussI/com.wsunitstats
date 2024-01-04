@@ -79,7 +79,7 @@ export const getRequirementsData = (requirements, locale) => {
       label: 'Units',
       subLabel: unitsAll,
       head: [
-        'Game\u00A0ID',
+        `Game${Constants.JS_NBSP}ID`,
         'Unit',
         'Quantity'
       ],
@@ -89,7 +89,7 @@ export const getRequirementsData = (requirements, locale) => {
       label: 'Researches',
       subLabel: researchesAll,
       head: [
-        'Game\u00A0ID',
+        `Game${Constants.JS_NBSP}ID`,
         'Research'
       ],
       body: researchRequirements
@@ -173,7 +173,7 @@ export const getWeaponData = (weapon, rotationSpeed, rightWidth, leftWidth) => {
       renderer: FlexibleTableDoubleCellRow,
       childData: {
         label: 'Spread',
-        value: weapon.spread && weapon.spread + '\u00A0%',
+        value: weapon.spread && weapon.spread + `${Constants.JS_NBSP}%`,
         widthRight: rightWidth,
         widthLeft: leftWidth
       }
@@ -254,7 +254,7 @@ export const getWeaponData = (weapon, rotationSpeed, rightWidth, leftWidth) => {
       column: 2,
       renderer: FlexibleTableDoubleCellRow,
       childData: {
-        label: 'Ground attack\u00A0(X)',
+        label: `Ground attack${Constants.JS_NBSP}(X)`,
         value: '' + !!weapon.attackGround,
         widthRight: rightWidth,
         widthLeft: leftWidth

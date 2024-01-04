@@ -35,7 +35,11 @@ export const NO_LINK_INDICATOR = 'no-link';
 
 export const LOCAL_RESIZABLE_WIDTH = 'resizable-width';
 
-export const SECONDS_END_MARKER = '\u00A0sec';
+export const JS_NBSP = '\u00A0';
+export const SECONDS_END_MARKER = `${JS_NBSP}sec`;
+
 export const DEFAULT_COLUMN_WIDTH = 600;
+export const FILTER_SIDEKICK_WIDTH = 240;
 
 export const ABILITY_TYPE_DAMAGE = 6;
+export const ENTITY_OPTIONS_REQUEST_SIZE = 30;

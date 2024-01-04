@@ -40,7 +40,7 @@ export const SubValue = ({ data }) => {
     let delimiter = data.subValues[index + 1] && typeof data.subValues[index + 1].value === 'number' ? ', ' : '';
     if (entry.value) {
       if (entry.label) {
-        subString = subString.concat(`${entry.label}:\u00A0${entry.value}${delimiter}`);
+        subString = subString.concat(`${entry.label}:${Constants.JS_NBSP}${entry.value}${delimiter}`);
       } else {
         subString = subString.concat(`${entry.value}${delimiter}`);
       }

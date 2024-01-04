@@ -9,16 +9,26 @@ import { EntityPage } from 'components/Pages/EntityPage';
 import { UnitPage } from 'components/Pages/UnitPage';
 import { ResearchPage } from 'components/Pages/ResearchPage';
 import { HomePage } from 'components/Pages/HomePage';
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+
+const theme = createTheme({
+  palette: {
+    secondary: {
+      main: "#f3e5f5"
+    }
+  },
+});
 
 const Root = () => {
   return (
-    <>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Header />
       <div className="body-root">
         <Outlet />
       </div>
       <Footer />
-    </>
+    </ThemeProvider>
   );
 }
 
