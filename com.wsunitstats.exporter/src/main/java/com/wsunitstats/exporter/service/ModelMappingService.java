@@ -3,12 +3,13 @@ package com.wsunitstats.exporter.service;
 import com.wsunitstats.domain.submodel.AirplaneModel;
 import com.wsunitstats.domain.submodel.BuildingModel;
 import com.wsunitstats.domain.submodel.ConstructionModel;
-import com.wsunitstats.domain.submodel.EnvTag;
+import com.wsunitstats.domain.submodel.EnvTagModel;
 import com.wsunitstats.domain.submodel.HealModel;
 import com.wsunitstats.domain.submodel.IncomeModel;
 import com.wsunitstats.domain.submodel.ReserveModel;
 import com.wsunitstats.domain.submodel.SubmarineDepthModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
+import com.wsunitstats.domain.submodel.TagModel;
 import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.research.UpgradeModel;
 import com.wsunitstats.domain.submodel.requirement.RequirementsModel;
@@ -31,7 +32,6 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.SupplyJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TransportingJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.TurretJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.UnitJsonModel;
-import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityOnActionJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.air.AirplaneJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.requirement.RequirementsJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.researches.UpgradeJsonModel;
@@ -46,6 +46,7 @@ import com.wsunitstats.domain.submodel.GatherModel;
 import com.wsunitstats.domain.submodel.MovementModel;
 import com.wsunitstats.domain.submodel.ResourceModel;
 import com.wsunitstats.domain.submodel.TransportingModel;
+import com.wsunitstats.utils.Constants;
 
 import java.util.List;
 import java.util.function.IntFunction;
@@ -98,14 +99,14 @@ public interface ModelMappingService {
     /**
      * Works fine for all tags except unit tags. Use {@link ModelMappingService#mapUnitTags} for them
      */
-    List<String> mapTags(Long tags, IntFunction<String> valueGetter);
+    List<TagModel> mapTags(Constants.TagGroupName groupName, Long tags, IntFunction<String> nameGetter);
 
     /**
      * Use this for unit tags
      */
-    List<String> mapUnitTags(Long tags);
+    List<TagModel> mapUnitTags(Long tags);
 
-    List<EnvTag> mapEnvTags(Long tags);
+    List<EnvTagModel> mapEnvTags(Long tags);
 
     HealModel map(HealJsonModel healSource);
 

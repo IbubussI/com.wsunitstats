@@ -141,7 +141,7 @@ public class AbilityMappingServiceImpl implements AbilityMappingService {
                 .collect(Collectors.toList()));
         zoneEventAbilityContainer.setSize(zoneEventJsonModel.getSize());
         zoneEventAbilityContainer.setEnvSearchDistance(zoneEventJsonModel.getEnvSearchDistance());
-        zoneEventAbilityContainer.setEnvTags(modelMappingService.mapTags(zoneEventJsonModel.getEnvTags(), i -> localization.getEnvSearchTagNames().get(i)));
+        zoneEventAbilityContainer.setEnvTags(modelMappingService.mapTags(Constants.TagGroupName.ENV_SEARCH_TAGS, zoneEventJsonModel.getEnvTags(), i -> localization.getEnvSearchTagNames().get(i)));
         return zoneEventAbilityContainer;
     }
 

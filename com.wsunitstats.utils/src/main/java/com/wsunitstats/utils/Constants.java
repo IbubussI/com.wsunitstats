@@ -42,6 +42,22 @@ public class Constants {
     public static final String GENERIC_UNIT_TAG = "Unit";
     public static final String NIL = "nil";
 
+    public enum TagGroupName {
+        UNIT_SEARCH_TAGS("Unit search tags"),
+        UNIT_TAGS("Unit tags"),
+        ENV_SEARCH_TAGS("Env search tags");
+
+        private final String groupName;
+
+        TagGroupName(String groupName) {
+            this.groupName = groupName;
+        }
+
+        public String getGroupName() {
+            return groupName;
+        }
+    }
+
     public enum RestResponseMessage {
         OK("ok"),
         INVALID_JSON("Given json doesn't match expected data model"),
@@ -58,7 +74,6 @@ public class Constants {
             return message;
         }
     }
-
 
     public enum AbilityType {
         UNDEFINED(-1, UNDEF),

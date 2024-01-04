@@ -423,3 +423,33 @@ export const getEnvData = (damage) => {
     ].filter(element => element.value !== undefined)
   }
 }
+
+export const getTagData = (tag) => {
+  return {
+    variant: 'popper',
+    tableLayout: 'fixed',
+    width: 'max-content',
+    rowStyle: {
+      firstRowPaddingTop: '4px',
+      paddingTop: '4px',
+      paddingBottom: '4px'
+    },
+    content: [
+      {
+        label: 'Tag Name',
+        renderer: Text,
+        value: tag.tagName,
+      },
+      {
+        label: 'Tag Group',
+        renderer: Text,
+        value: tag.tagGroupName,
+      },
+      {
+        label: 'Tag ID',
+        renderer: Text,
+        value: tag.gameId,
+      },
+    ].filter(element => element.value !== undefined)
+  }
+}

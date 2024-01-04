@@ -3,6 +3,7 @@ import * as Constants from "utils/constants";
 import { Avatar, Box, Chip, Link, Stack, Tooltip, Typography } from "@mui/material";
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { PopperTag } from "components/Atoms/ButtonPopper";
 
 export const Image = ({ data }) => {
   return (
@@ -58,55 +59,15 @@ export const SubValue = ({ data }) => {
   );
 }
 
-export const Tag = ({ data }) => {
-  return (
-    <Chip
-      label={data.tag}
-      onClick={data.onClick}
-      size='medium'
-      sx={{
-        borderRadius: '1000px', // to match any height
-        height: 'fit-content',
-        backgroundColor: 'rgb(24, 117, 238)',
-        textTransform: 'uppercase',
-        color: 'white',
-        '& span': {
-          fontWeight: 'bold',
-          fontSize: 11,
-          whiteSpace: 'normal',
-          textAlign: 'center',
-          paddingTop: '4px',
-          paddingBottom: '4px',
-        },
-        '&:hover': {
-          backgroundColor: 'rgb(139, 195, 255)'
-        },
-        '&:hover span': {
-          color: 'rgb(1, 113, 212)'
-        },
-      }} />
-  );
-}
-
 export const TagList = ({ data }) => {
   return (
     <>
       {data.tags && data.tags.map((tag, index) => (
         <Box key={index} sx={{ paddingBottom: '2px' }}>
-          <Tag data={{ tag: tag, onClick: () => {}}} />
+          <PopperTag key={index} tag={tag} placement='right'/>
         </Box>
       ))}
     </>
-  );
-}
-
-export const TagRow = ({ data }) => {
-  return (
-    <Stack direction='row' spacing={0.3}>
-      {data.tags && data.tags.map((tag, index) => (
-        <Tag key={index} data={{ tag: tag, onClick: () => {}}} />
-      ))}
-    </Stack>
   );
 }
 
