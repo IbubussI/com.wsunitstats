@@ -42,6 +42,24 @@ public class Constants {
     public static final String GENERIC_UNIT_TAG = "Unit";
     public static final String NIL = "nil";
 
+    public enum RestResponseMessage {
+        OK("ok"),
+        INVALID_JSON("Given json doesn't match expected data model"),
+        ALREADY_EXISTS("Given item already exists"),
+        JSON_ERROR("Json export error");
+
+        private final String message;
+
+        RestResponseMessage(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+    }
+
+
     public enum AbilityType {
         UNDEFINED(-1, UNDEF),
         CREATE_UNIT(0, "Create unit"),

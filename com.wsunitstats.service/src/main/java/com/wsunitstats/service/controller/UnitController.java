@@ -31,12 +31,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.wsunitstats.utils.Constants.RestResponseMessage.INVALID_JSON;
+import static com.wsunitstats.utils.Constants.RestResponseMessage.JSON_ERROR;
+import static com.wsunitstats.utils.Constants.RestResponseMessage.OK;
+
 @RestController
 @RequestMapping(path = "/api/units")
 public class UnitController {
-    private static final String OK = "ok";
-    private static final String INVALID_JSON = "Given json doesn't match expected data model";
-    private static final String JSON_ERROR = "Json export error";
     @Autowired
     private UnitService unitService;
     @Autowired
@@ -61,7 +62,7 @@ public class UnitController {
             List<UnitModel> units = unitService.getUnitsByNames(nameKeys, sort, sortDir, page, size);
             return utilsService.getJson(units, true, locale);
         } catch (JsonProcessingException ex) {
-            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException(JSON_ERROR.getMessage(), ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
             throw new RestException(ex, HttpStatus.BAD_REQUEST);
         }
@@ -80,7 +81,7 @@ public class UnitController {
             List<UnitModel> units = unitService.getUnitsByNations(nationKeys, sort, sortDir, page, size);
             return utilsService.getJson(units, true, locale);
         } catch (JsonProcessingException ex) {
-            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException(JSON_ERROR.getMessage(), ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
             throw new RestException(ex, HttpStatus.BAD_REQUEST);
         }
@@ -108,7 +109,7 @@ public class UnitController {
             }
             return utilsService.getJson(units, true, locale);
         } catch (JsonProcessingException ex) {
-            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException(JSON_ERROR.getMessage(), ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
             throw new RestException(ex, HttpStatus.BAD_REQUEST);
         }
@@ -125,7 +126,7 @@ public class UnitController {
             List<UnitModel> units = unitService.getUnitsAll(sort, sortDir, page, size);
             return utilsService.getJson(units, true, locale);
         } catch (JsonProcessingException ex) {
-            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException(JSON_ERROR.getMessage(), ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
             throw new RestException(ex, HttpStatus.BAD_REQUEST);
         }
@@ -141,7 +142,7 @@ public class UnitController {
             List<EntityOption> unitOptions = unitService.getUnitOptionsByName(locale, nameFilter, size);
             return utilsService.getJson(unitOptions, true, locale);
         } catch (JsonProcessingException ex) {
-            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException(JSON_ERROR.getMessage(), ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
             throw new RestException(ex, HttpStatus.BAD_REQUEST);
         }
@@ -157,9 +158,9 @@ public class UnitController {
             mapper.registerModule(module);
             List<UnitModel> units = Arrays.asList(mapper.readValue(data, UnitModel[].class));
             unitService.setUnits(units);
-            return new ResponseEntity<>(OK, HttpStatus.OK);
+            return new ResponseEntity<>(OK.getMessage(), HttpStatus.OK);
         } catch (JsonProcessingException ex) {
-            throw new RestException(INVALID_JSON, ex, HttpStatus.BAD_REQUEST);
+            throw new RestException(INVALID_JSON.getMessage(), ex, HttpStatus.BAD_REQUEST);
         }
     }
 }

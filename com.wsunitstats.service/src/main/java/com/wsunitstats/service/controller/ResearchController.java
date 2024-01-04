@@ -24,12 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.wsunitstats.utils.Constants.RestResponseMessage.INVALID_JSON;
+import static com.wsunitstats.utils.Constants.RestResponseMessage.JSON_ERROR;
+import static com.wsunitstats.utils.Constants.RestResponseMessage.OK;
+
 @RestController
 @RequestMapping(path = "/api/researches")
 public class ResearchController {
-    private static final String OK = "ok";
-    private static final String INVALID_JSON = "Given json doesn't match expected data model";
-    private static final String JSON_ERROR = "Json export error";
     @Autowired
     private ResearchService researchService;
     @Autowired
@@ -52,7 +53,7 @@ public class ResearchController {
             List<ResearchModel> researches = researchService.getResearchesByNames(nameKeys, sort, sortDir, page, size);
             return utilsService.getJson(researches, true, locale);
         } catch (JsonProcessingException ex) {
-            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException(JSON_ERROR.getMessage(), ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
             throw new RestException(ex, HttpStatus.BAD_REQUEST);
         }
@@ -74,7 +75,7 @@ public class ResearchController {
             List<ResearchModel> researches = researchService.getResearchesByGameIds(parsedGameIdList, sort, sortDir, page, size);
             return utilsService.getJson(researches, true, locale);
         } catch (JsonProcessingException ex) {
-            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException(JSON_ERROR.getMessage(), ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
             throw new RestException(ex, HttpStatus.BAD_REQUEST);
         }
@@ -91,7 +92,7 @@ public class ResearchController {
             List<ResearchModel> researches = researchService.getResearchesAll(sort, sortDir, page, size);
             return utilsService.getJson(researches, true, locale);
         } catch (JsonProcessingException ex) {
-            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException(JSON_ERROR.getMessage(), ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
             throw new RestException(ex, HttpStatus.BAD_REQUEST);
         }
@@ -107,7 +108,7 @@ public class ResearchController {
             List<EntityOption> researchOptions = researchService.getResearchOptionsByName(locale, nameFilter, size);
             return utilsService.getJson(researchOptions, true, locale);
         } catch (JsonProcessingException ex) {
-            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException(JSON_ERROR.getMessage(), ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
             throw new RestException(ex, HttpStatus.BAD_REQUEST);
         }
@@ -125,7 +126,7 @@ public class ResearchController {
             List<EntityOption> unitResearchesOptions = researchService.getResearchOptionsByUnitIds(parsedGameIdList);
             return utilsService.getJson(unitResearchesOptions, true, locale);
         } catch (JsonProcessingException ex) {
-            throw new RestException(JSON_ERROR, ex, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException(JSON_ERROR.getMessage(), ex, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidParameterException ex) {
             throw new RestException(ex, HttpStatus.BAD_REQUEST);
         }
@@ -137,9 +138,9 @@ public class ResearchController {
             ObjectMapper mapper = new ObjectMapper();
             List<ResearchModel> researches = Arrays.asList(mapper.readValue(data, ResearchModel[].class));
             researchService.setResearches(researches);
-            return new ResponseEntity<>(OK, HttpStatus.OK);
+            return new ResponseEntity<>(OK.getMessage(), HttpStatus.OK);
         } catch (JsonProcessingException ex) {
-            throw new RestException(INVALID_JSON, ex, HttpStatus.BAD_REQUEST);
+            throw new RestException(INVALID_JSON.getMessage(), ex, HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -20,13 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.wsunitstats.utils.Constants.RestResponseMessage.ALREADY_EXISTS;
+import static com.wsunitstats.utils.Constants.RestResponseMessage.INVALID_JSON;
+import static com.wsunitstats.utils.Constants.RestResponseMessage.JSON_ERROR;
+import static com.wsunitstats.utils.Constants.RestResponseMessage.OK;
+
 @RestController
 @RequestMapping(path = "/api/locales")
 public class LocalizationController {
-    private static final String OK = "ok";
-    private static final String ALREADY_EXISTS = "Given item already exists";
-    private static final String INVALID_JSON = "Given json doesn't match expected data model";
-
     @Autowired
     private UtilsService utilsService;
     @Autowired
@@ -38,9 +39,9 @@ public class LocalizationController {
             ObjectMapper mapper = new ObjectMapper();
             List<LocalizationModel> localizationModels = Arrays.asList(mapper.readValue(data, LocalizationModel[].class));
             localizationService.setLocalizationData(localizationModels);
-            return new ResponseEntity<>(OK, HttpStatus.OK);
+            return new ResponseEntity<>(OK.getMessage(), HttpStatus.OK);
         } catch (JsonProcessingException ex) {
-            throw new RestException(INVALID_JSON, ex, HttpStatus.BAD_REQUEST);
+            throw new RestException(INVALID_JSON.getMessage(), ex, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -50,12 +51,12 @@ public class LocalizationController {
             ObjectMapper mapper = new ObjectMapper();
             LocalizationModel localizationModel = mapper.readValue(data, LocalizationModel.class);
             if (localizationService.updateLocalizationModel(localizationModel, forceResubmission)) {
-                return new ResponseEntity<>(OK, HttpStatus.OK);
+                return new ResponseEntity<>(OK.getMessage(), HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(ALREADY_EXISTS, HttpStatus.OK);
+                return new ResponseEntity<>(ALREADY_EXISTS.getMessage(), HttpStatus.OK);
             }
         } catch (JsonProcessingException ex) {
-            throw new RestException(INVALID_JSON, ex, HttpStatus.BAD_REQUEST);
+            throw new RestException(INVALID_JSON.getMessage(), ex, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -65,7 +66,7 @@ public class LocalizationController {
             List<String> locales = localizationService.getLocaleNames();
             return utilsService.getJson(locales, false, null);
         } catch (JsonProcessingException ex) {
-            throw new RestException("Json export error", ex, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException(JSON_ERROR.getMessage(), ex, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
