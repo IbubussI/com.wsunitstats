@@ -1,8 +1,9 @@
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { Footer } from './components/Footer';
+import { Footer } from 'components/Footer';
 import { Navigate, Outlet, createBrowserRouter, RouterProvider } from 'react-router-dom';
-import * as Constants from './utils/constants';
+import * as Constants from 'utils/constants';
+import * as Utils from 'utils/utils';
 import { Header } from 'components/Header';
 import { ErrorPage } from 'components/Pages/ErrorPage';
 import { EntityPage } from 'components/Pages/EntityPage';
@@ -10,6 +11,10 @@ import { UnitPage } from 'components/Pages/UnitPage';
 import { ResearchPage } from 'components/Pages/ResearchPage';
 import { HomePage } from 'components/Pages/HomePage';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import { ResearchCard } from 'components/Pages/ResearchPage/ResearchCard';
+import { UnitCard } from 'components/Pages/UnitPage/UnitCard';
+import { UnitFilters } from 'components/Pages/EntitySelectorPage/Filters/UnitFilters';
+import { EntitySelectorPage } from 'components/Pages/EntitySelectorPage';
 
 const theme = createTheme({
   palette: {
@@ -36,31 +41,51 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 const entityLoader = (route, apiPath) => {
   const searchParams = new URLSearchParams(new URL(route.request.url).searchParams);
-  searchParams.set('gameId', route.params.gameId);
+  searchParams.set('gameIds', route.params.gameId);
   searchParams.set('locale', route.params.locale);
   const apiUrl = new URL(Constants.HOST + apiPath);
   apiUrl.search = searchParams;
   return fetch(apiUrl);
 }
 
-const unitLoader = async (route) => {
-  return await entityLoader(route, Constants.UNIT_DATA_API);
+const selectorLoader = (route, apiPath) => {
+  const searchParams = new URLSearchParams(new URL(route.request.url).searchParams);
+  searchParams.set('locale', route.params.locale);
+  searchParams.set('size', Constants.SELECTOR_OPTIONS_SIZE);
+  const apiUrl = new URL(Constants.HOST + apiPath);
+  apiUrl.search = searchParams;
+  return fetch(apiUrl);
 }
 
-const researchLoader = async (route) => {
-  return await entityLoader(route, Constants.RESEARCH_DATA_API);
+const unitLoader = (route) => entityLoader(route, Constants.UNIT_DATA_API);
+const researchLoader = (route) => entityLoader(route, Constants.RESEARCH_DATA_API);
+
+const unitSelectorLoader = (route) => selectorLoader(route, Constants.UNIT_OPTIONS_API);
+const researchSelectorLoader = (route) => selectorLoader(route, Constants.RESEARCH_OPTIONS_API);
+
+const unitSelectorOptions = {
+  title: 'WS Units',
+  Card: UnitCard,
+  getEntityPath: (id) => Utils.getUrlWithPathParams([
+    { param: Constants.UNIT_PAGE_PATH, pos: 2 },
+    { param: id, pos: 3 },
+    { param: Constants.INITIAL_TAB, pos: 4 }
+  ]),
+  Filters: UnitFilters, 
+  optionsSize: Constants.SELECTOR_OPTIONS_SIZE,
+  apiPath:  Constants.UNIT_OPTIONS_API
 }
 
-const unitPickerOptions = {
-  fetchURI: Constants.HOST + Constants.UNIT_OPTIONS_API,
-  placeholder: 'Type the Unit name',
-  optionSecondaryCallback: (option) => `${option.nation}, ID: ${option.gameId}`
-}
-
-const researchPickerOptions = {
-  fetchURI: Constants.HOST + Constants.RESEARCH_OPTIONS_API,
-  placeholder: 'Type the Research name',
-  optionSecondaryCallback: (option) => "ID: " + option.gameId
+const researchSelectorOptions = {
+  title: 'WS Researches',
+  Card: ResearchCard,
+  getEntityPath: (id) => Utils.getUrlWithPathParams([
+    { param: Constants.RESEARCH_PAGE_PATH, pos: 2 },
+    { param: id, pos: 3 },
+    { param: Constants.INITIAL_TAB, pos: 4 }
+  ]),
+  optionsSize: Constants.SELECTOR_OPTIONS_SIZE,
+  apiPath:  Constants.RESEARCH_OPTIONS_API
 }
 
 const router = createBrowserRouter([
@@ -74,7 +99,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to={Constants.UNIT_PAGE_PATH} replace />
+        element: <Navigate to={Constants.UNIT_SELECTOR_PAGE_PATH} replace />
       },
       {
         path: Constants.ERROR_PAGE_PATH,
@@ -85,12 +110,13 @@ const router = createBrowserRouter([
         element: <HomePage />
       },
       {
-        path: Constants.UNIT_PAGE_PATH,
-        element: <EntityPage pickerOptions={unitPickerOptions} />
+        path: Constants.UNIT_SELECTOR_PAGE_PATH,
+        element: <EntitySelectorPage selectorOptions={unitSelectorOptions} />,
+        loader: unitSelectorLoader
       },
       {
         path: `${Constants.UNIT_PAGE_PATH}/${Constants.PARAM_GAME_ID}`,
-        element: <EntityPage pickerOptions={unitPickerOptions} />,
+        element: <EntityPage />,
         loader: unitLoader,
         children: [
           {
@@ -104,12 +130,13 @@ const router = createBrowserRouter([
         ]
       },
       {
-        path: Constants.RESEARCH_PAGE_PATH,
-        element: <EntityPage pickerOptions={researchPickerOptions} />
+        path: Constants.RESEARCH_SELECTOR_PAGE_PATH,
+        element: <EntitySelectorPage selectorOptions={researchSelectorOptions} />,
+        loader: researchSelectorLoader
       },
       {
         path: `${Constants.RESEARCH_PAGE_PATH}/${Constants.PARAM_GAME_ID}`,
-        element: <EntityPage pickerOptions={researchPickerOptions} />,
+        element: <EntityPage />,
         loader: researchLoader,
         children: [
           {
@@ -128,6 +155,6 @@ const router = createBrowserRouter([
 
 root.render(
   <div className='page-root'>
-    <RouterProvider  router={router} />
+    <RouterProvider router={router} />
   </div>
 );

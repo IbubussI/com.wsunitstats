@@ -4,8 +4,8 @@
         entityId integer,
         entityImage varchar(255),
         entityName varchar(255),
-        entityNation varchar(255),
         id bigint not null,
+        entityNation_id bigint,
         primary key (id)
     ) engine=InnoDB;
 
@@ -63,8 +63,8 @@
         entityId integer,
         entityImage varchar(255),
         entityName varchar(255),
-        entityNation varchar(255),
         id bigint not null,
+        entityNation_id bigint,
         primary key (id)
     ) engine=InnoDB;
 
@@ -73,9 +73,9 @@
         entityId integer,
         entityImage varchar(255),
         entityName varchar(255),
-        entityNation varchar(255),
         lifeTime float(53),
         id bigint not null,
+        entityNation_id bigint,
         primary key (id)
     ) engine=InnoDB;
 
@@ -108,15 +108,15 @@
         unitId integer not null,
         unitImage varchar(255),
         unitName varchar(255),
-        unitNation varchar(255)
+        unitNation_id bigint
     ) engine=InnoDB;
 
     create table ability_research (
        entityId integer,
         entityImage varchar(255),
         entityName varchar(255),
-        entityNation varchar(255),
         id bigint not null,
+        entityNation_id bigint,
         primary key (id)
     ) engine=InnoDB;
 
@@ -124,8 +124,8 @@
        entityId integer,
         entityImage varchar(255),
         entityName varchar(255),
-        entityNation varchar(255),
         id bigint not null,
+        entityNation_id bigint,
         primary key (id)
     ) engine=InnoDB;
 
@@ -172,8 +172,8 @@
         entityId integer,
         entityImage varchar(255),
         entityName varchar(255),
-        entityNation varchar(255),
         period float(53),
+        entityNation_id bigint,
         primary key (id)
     ) engine=InnoDB;
 
@@ -229,18 +229,19 @@
         unitId integer not null,
         unitImage varchar(255),
         unitName varchar(255),
-        unitNation varchar(255)
+        unitNation_id bigint
     ) engine=InnoDB;
 
     create table construction (
        id bigint not null auto_increment,
         constructionId integer not null,
         constructionSpeed float(53),
+        constructionSpeedOnOwnTerritory float(53),
         distance float(53),
         entityId integer,
         entityImage varchar(255),
         entityName varchar(255),
-        entityNation varchar(255),
+        entityNation_id bigint,
         primary key (id)
     ) engine=InnoDB;
 
@@ -334,6 +335,12 @@
         primary key (id)
     ) engine=InnoDB;
 
+    create table nation (
+       id bigint not null,
+        name varchar(255),
+        primary key (id)
+    ) engine=InnoDB;
+
     create table research (
        id bigint not null auto_increment,
         gameId integer not null,
@@ -371,10 +378,10 @@
     ) engine=InnoDB;
 
     create table tag_general (
-       id bigint not null auto_increment,
+       id bigint not null,
         gameId integer not null,
-        tagGroupName varchar(255),
-        tagName varchar(255),
+        groupName varchar(255),
+        name varchar(255),
         primary key (id)
     ) engine=InnoDB;
 
@@ -408,7 +415,6 @@
         health float(53),
         lifetime float(53),
         limit_ integer,
-        nation varchar(255),
         parentMustIdle bit,
         receiveFriendlyDamage bit,
         regenerationSpeed float(53),
@@ -422,6 +428,7 @@
         build_id bigint,
         heal_id bigint,
         movement_id bigint,
+        nation_id bigint,
         submarine_id bigint,
         supply_id bigint,
         transporting_id bigint,
@@ -431,6 +438,11 @@
     create table unit_abilities (
        unit_id bigint not null,
         abilities_id bigint not null
+    ) engine=InnoDB;
+
+    create table unit_applicableResearches (
+       unit_id bigint not null,
+        applicableResearches integer
     ) engine=InnoDB;
 
     create table unit_armor (
@@ -475,8 +487,8 @@
         entityId integer,
         entityImage varchar(255),
         entityName varchar(255),
-        entityNation varchar(255),
         upgradeId integer not null,
+        entityNation_id bigint,
         primary key (id)
     ) engine=InnoDB;
 
@@ -555,29 +567,11 @@
     alter table ability_container_zone_event_abilities 
        add constraint UK_ol7bt94dgxedhwddd8yyxig3v unique (abilities_id);
 
-    alter table ability_container_zone_event_envTags 
-       add constraint UK_cgduaxy5fhpp8kh7jhrf22edx unique (envTags_id);
-
     alter table account 
        add constraint UK_gex1lmaqpg0ir5g1f5eftyaa1 unique (username);
 
-    alter table airplane_aerodromeTags 
-       add constraint UK_n55cj8gwtlrjonoqiavc2l9hj unique (aerodromeTags_id);
-
-    alter table buff_affectedUnits 
-       add constraint UK_2kbx2yqnm1wvxy756i8g5g2er unique (affectedUnits_id);
-
     alter table gather_envTags 
        add constraint UK_qeda4w5by446sv6reckqmwb1v unique (envTags_id);
-
-    alter table gather_storageTags 
-       add constraint UK_cka7a4egw7c00yy0hofc4d0pk unique (storageTags_id);
-
-    alter table gather_unitTags 
-       add constraint UK_6tgduavnr5q02eecj5unb85c4 unique (unitTags_id);
-
-    alter table heal_targetTags 
-       add constraint UK_cp0nrliji0ffmlep4mcu9bj7n unique (targetTags_id);
 
     alter table localization 
        add constraint UK_j6j9h30eydn1rkg0etaayj2is unique (locale);
@@ -603,20 +597,16 @@
     alter table unit_gather 
        add constraint UK_m9du0q7emwkeahfburk4n1d6p unique (gather_id);
 
-    alter table unit_searchTags 
-       add constraint UK_fya5sm1xn2vmqkxatk6qs94cb unique (searchTags_id);
-
-    alter table unit_tags 
-       add constraint UK_q59ub5gq9boefcs9adbwnk7wv unique (tags_id);
-
     alter table unit_turrets 
        add constraint UK_6bnwk424et96dlv8tqwn6k4my unique (turrets_id);
 
     alter table unit_weapons 
        add constraint UK_3b39kb4h68srfcl8gfjtp2tcc unique (weapons_id);
 
-    alter table weapon_damage_envsAffected 
-       add constraint UK_b96ix9qpfvclg671olc0p52ey unique (envsAffected_id);
+    alter table ability_action 
+       add constraint FK266ad6om5gjmmtq0p706pjq1m 
+       foreign key (entityNation_id) 
+       references nation (id);
 
     alter table ability_action 
        add constraint FK1l8xi8hgvu8913vrg1srqtxgv 
@@ -684,9 +674,19 @@
        references ability_container_zone_event (id);
 
     alter table ability_create_env 
+       add constraint FKgd3959or9dvipnjvvncwv6adl 
+       foreign key (entityNation_id) 
+       references nation (id);
+
+    alter table ability_create_env 
        add constraint FKkit8gi0j21dg1womkaaor6r1p 
        foreign key (id) 
        references ability_generic_supertype (id);
+
+    alter table ability_create_unit 
+       add constraint FKb100uo61uxreyb3rturbojef1 
+       foreign key (entityNation_id) 
+       references nation (id);
 
     alter table ability_create_unit 
        add constraint FKhf2mlef8loeoyiljr4x30hl8s 
@@ -709,14 +709,29 @@
        references ability_generic_supertype (id);
 
     alter table ability_generic_supertype_units 
+       add constraint FKqt85spjq0275of0oks7jpqrh1 
+       foreign key (unitNation_id) 
+       references nation (id);
+
+    alter table ability_generic_supertype_units 
        add constraint FKlufi9hwyrrd0du0h8eym40ga6 
        foreign key (ability_generic_supertype_id) 
        references ability_generic_supertype (id);
 
     alter table ability_research 
+       add constraint FKm3jehx0onwgt8i23oh2la304k 
+       foreign key (entityNation_id) 
+       references nation (id);
+
+    alter table ability_research 
        add constraint FKffsvbrkw62kaea2ps0c9hfmdn 
        foreign key (id) 
        references ability_generic_supertype (id);
+
+    alter table ability_transform 
+       add constraint FKobcqxsw86eys0jv4j7q66pdq9 
+       foreign key (entityNation_id) 
+       references nation (id);
 
     alter table ability_transform 
        add constraint FKjl3ah1t28iqf9db7s5i39u4we 
@@ -742,6 +757,11 @@
        add constraint FKd6vjkgk3tlo4uccgrgiq2hekt 
        foreign key (airplane_id) 
        references airplane (id);
+
+    alter table buff 
+       add constraint FKgmhif7v76gy5180kr0tc2oaab 
+       foreign key (entityNation_id) 
+       references nation (id);
 
     alter table buff_affectedUnits 
        add constraint FKjoxy19g13guwmslw4nq33yuji 
@@ -779,9 +799,19 @@
        references building (id);
 
     alter table building_units 
+       add constraint FK4xsg031gxg16wvnmg5s16fa24 
+       foreign key (unitNation_id) 
+       references nation (id);
+
+    alter table building_units 
        add constraint FK6964irkx8f1eb2ht3ktfeg55c 
        foreign key (building_id) 
        references building (id);
+
+    alter table construction 
+       add constraint FKq4sfublrw7wwynd3l3v5ifln4 
+       foreign key (entityNation_id) 
+       references nation (id);
 
     alter table gather_envTags 
        add constraint FKnfqjrf1r5gim88qhvry55slej 
@@ -874,6 +904,11 @@
        references movement (id);
 
     alter table unit 
+       add constraint FKsrg1n7ww0ljln3ae3rcr47ls1 
+       foreign key (nation_id) 
+       references nation (id);
+
+    alter table unit 
        add constraint FKehsumcw6v6v43sjog4r65cqos 
        foreign key (submarine_id) 
        references submarine (id);
@@ -895,6 +930,11 @@
 
     alter table unit_abilities 
        add constraint FKiqwtjo6ves1bnntqi6x979ep5 
+       foreign key (unit_id) 
+       references unit (id);
+
+    alter table unit_applicableResearches 
+       add constraint FKgbdkx16y7i8yj9uwlwoafjice 
        foreign key (unit_id) 
        references unit (id);
 
@@ -967,6 +1007,11 @@
        add constraint FKi5u8i79qq0pc2tbd8f41fl9or 
        foreign key (unit_id) 
        references unit (id);
+
+    alter table upgrade 
+       add constraint FK4j4kq5ie159xflteux1p3xit2 
+       foreign key (entityNation_id) 
+       references nation (id);
 
     alter table upgrade_parameters 
        add constraint FKm3ghnsp5bkg2w59s86a1usirk 

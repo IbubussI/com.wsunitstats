@@ -46,26 +46,26 @@ public class UnitMutatorServiceImpl implements UnitMutatorService {
 
     @PostConstruct
     protected void postConstruct() {
-        mutators.put(0, new MoveSpeed());
-        mutators.put(2, new GatherSpeedAdd());
-        mutators.put(3, new SetDamageArea());
-        mutators.put(4, new SpreadMult());
-        mutators.put(5, new ArmorAddSize());
-        mutators.put(13, new ArmorAddThickness());
-        mutators.put(14, new RechargePeriodDec());
-        mutators.put(15, new MaxDistanceAdd());
-        mutators.put(17, new WorkEnable());
-        mutators.put(19, new Regeneration());
-        mutators.put(20, new BuildingSpeedMult());
-        mutators.put(21, new GatherBagSizeAdd());
-        mutators.put(22, new WorkReserveTimeMult());
-        mutators.put(23, new WorkReserveLimitAdd());
-        mutators.put(27, new StorageMultiplierAdd());
-        mutators.put(31, new WorkPriceChange());
-        mutators.put(32, new Enable());
-        mutators.put(33, new AbilityOnActionEnable());
-        mutators.put(34, new DamageAdd());
-        mutators.put(35, new TurretDamageAdd());
+        mutators.put(0, new MoveSpeed()); // 1749535993
+        mutators.put(2, new GatherSpeedAdd()); // 996158931
+        mutators.put(3, new SetDamageArea()); // 2545488229
+        mutators.put(4, new SpreadMult()); // 1165500952
+        mutators.put(5, new ArmorAddSize()); // 732754697
+        mutators.put(13, new ArmorAddThickness()); // 3347185990
+        mutators.put(14, new RechargePeriodDec()); // 3672228551
+        mutators.put(15, new MaxDistanceAdd()); // 310275754
+        mutators.put(17, new WorkEnable()); // 1995273458
+        mutators.put(19, new Regeneration()); // 1287263617
+        mutators.put(20, new BuildingSpeedMult()); // 1184009123
+        mutators.put(21, new GatherBagSizeAdd()); // 4100800216
+        mutators.put(22, new WorkReserveTimeMult()); // 943779194
+        mutators.put(23, new WorkReserveLimitAdd()); // 4203811904
+        mutators.put(27, new StorageMultiplierAdd()); // 2433490476
+        mutators.put(31, new WorkPriceChange()); // 1042819526
+        mutators.put(32, new Enable()); // 1815469020
+        mutators.put(33, new AbilityOnActionEnable()); // 1911934956
+        mutators.put(34, new DamageAdd()); // 440889882
+        mutators.put(35, new TurretDamageAdd()); // 187789004 - not exists anymore
     }
 
     @Override

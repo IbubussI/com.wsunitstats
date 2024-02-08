@@ -4,6 +4,7 @@ import com.wsunitstats.domain.PersistentObject;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +19,7 @@ import java.util.List;
 public class HealModel extends PersistentObject {
     private Double distance;
     private Double perSecond;
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<TagModel> targetTags;
     private Double searchNextDistance;
     private Double autoSearchTargetDistance;

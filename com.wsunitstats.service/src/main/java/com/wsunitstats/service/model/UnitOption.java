@@ -1,12 +1,12 @@
 package com.wsunitstats.service.model;
 
 /**
- * Holds data to fetch unit names for option autocomplete purposes
+ * Holds data to fetch unit options autocomplete purposes
  */
-public interface EntityOption {
+public interface UnitOption {
     String getName();
     Integer getGameId();
-    Integer getId();
+    Long getId();
     String getNation();
     String getImage();
 }

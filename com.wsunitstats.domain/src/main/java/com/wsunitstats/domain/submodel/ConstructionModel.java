@@ -19,4 +19,5 @@ public class ConstructionModel extends PersistentObject {
     private EntityInfoModel entityInfo;
     // %/sec
     private Double constructionSpeed;
+    private Double constructionSpeedOnOwnTerritory;
 }

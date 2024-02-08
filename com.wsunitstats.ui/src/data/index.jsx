@@ -438,12 +438,12 @@ export const getTagData = (tag) => {
       {
         label: 'Tag Name',
         renderer: Text,
-        value: tag.tagName,
+        value: tag.name,
       },
       {
         label: 'Tag Group',
         renderer: Text,
-        value: tag.tagGroupName,
+        value: tag.groupName,
       },
       {
         label: 'Tag ID',

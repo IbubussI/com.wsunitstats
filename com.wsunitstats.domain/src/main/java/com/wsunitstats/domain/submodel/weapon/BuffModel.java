@@ -6,6 +6,7 @@ import com.wsunitstats.domain.submodel.TagModel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +22,6 @@ public class BuffModel extends PersistentObject {
     private int buffId;
     private EntityInfoModel entityInfo;
     private Double period;
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<TagModel> affectedUnits;
 }

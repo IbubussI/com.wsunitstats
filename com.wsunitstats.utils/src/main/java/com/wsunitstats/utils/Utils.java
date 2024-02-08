@@ -18,10 +18,10 @@ import static com.wsunitstats.utils.Constants.LOCALIZATION_MAP_ENTRY_PATTERN;
 import static com.wsunitstats.utils.Constants.LOCALIZATION_PATTERN;
 import static com.wsunitstats.utils.Constants.NIL;
 
-public class Util {
-    private static final Logger LOG = LoggerFactory.getLogger(Util.class);
+public class Utils {
+    private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
 
-    private Util() {
+    private Utils() {
         //Utility class
     }
 
@@ -64,7 +64,7 @@ public class Util {
         if (progress == null) {
             return null;
         }
-        return Util.intToDoubleShift(progress) * Constants.BUILD_SPEED_MODIFIER;
+        return Utils.intToDoubleShift(progress) * Constants.BUILD_SPEED_MODIFIER;
     }
 
     public static List<Integer> add(List<Integer> intList1, List<Integer> intList2) {
@@ -136,19 +136,6 @@ public class Util {
     }
 
     /**
-     * Returns unit nation name
-     *
-     * @param nations list of unit nation indexes
-     * @param nationNames list of nation names
-     * @param unitId ID of unit
-     */
-    public static String getUnitNation(List<String> nations, List<String> nationNames, int unitId) {
-        String unitNation = nations.get(unitId);
-        Integer nationId = NIL.equals(unitNation) ? null : Integer.parseInt(unitNation);
-        return nationId == null ? null : nationNames.get(nationId);
-    }
-
-    /**
      * Converts list of next format: {[0]=localize("<*sample_tag/0>"), ...} to map where key - env id, value - localization key
      */
     public static Map<Integer, String> convertToLocalizationTagMap(List<String> list) {
@@ -187,12 +174,16 @@ public class Util {
         List<String> result = new ArrayList<>();
         for (int i = 0; i < rawNationNames.size(); ++i) {
             String ir1 = rawNationNames.get(i);
+            String ir2 = null;
             if (ir1.contains("{")) {
-                ++i; // skip ir2 value
-                ir1 = ir1.replace("{", StringUtils.EMPTY);
+                ++i;
+                ir2 = rawNationNames.get(i);
             }
-            String nationName;
-            nationName = convertToLocalizationTag(ir1);
+
+            String nationName = convertToLocalizationTag(ir1);
+            if (ir2 != null) {
+                nationName = nationName + "/" + convertToLocalizationTag(ir2);
+            }
             result.add(nationName);
         }
         return result;

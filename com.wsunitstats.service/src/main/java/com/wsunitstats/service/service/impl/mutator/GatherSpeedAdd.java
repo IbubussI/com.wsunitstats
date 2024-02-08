@@ -2,7 +2,7 @@ package com.wsunitstats.service.service.impl.mutator;
 
 import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.domain.submodel.GatherModel;
-import com.wsunitstats.utils.Util;
+import com.wsunitstats.utils.Utils;
 
 import java.util.Map;
 
@@ -15,7 +15,7 @@ public class GatherSpeedAdd implements Mutator {
         int add = toNumber(parameters.get("add"), 0);
         for (GatherModel gather : target.getGather()) {
             if (gather.getGatherId() == gatherId) {
-                gather.setPerSecond(gather.getPerSecond() + Util.intToDoubleTick(add));
+                gather.setPerSecond(gather.getPerSecond() + Utils.intToDoubleTick(add));
                 return;
             }
         }

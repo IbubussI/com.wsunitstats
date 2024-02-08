@@ -28,7 +28,7 @@ export const WorkAbilityTable = ({ abilityContainer, overflowMinWidth }) => {
           values: [
             ability.entityInfo && {
               primary: ability.entityInfo.entityName,
-              secondary: ability.entityInfo.entityNation,
+              secondary: ability.entityInfo.entityNation && ability.entityInfo.entityNation.name,
               image: {
                 path: ability.entityInfo.entityImage,
                 width: 35,

@@ -8,7 +8,9 @@ import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.domain.submodel.ability.GenericAbility;
 import com.wsunitstats.domain.submodel.ability.container.GenericAbilityContainer;
 import com.wsunitstats.service.exception.RestException;
-import com.wsunitstats.service.model.EntityOption;
+import com.wsunitstats.service.model.NationOption;
+import com.wsunitstats.service.model.TagOption;
+import com.wsunitstats.service.model.UnitOption;
 import com.wsunitstats.service.service.ResearchService;
 import com.wsunitstats.service.service.UtilsService;
 import com.wsunitstats.service.exception.InvalidParameterException;
@@ -87,23 +89,23 @@ public class UnitController {
         }
     }
 
-    @GetMapping(path = "/game-id", params = "gameId")
-    public ResponseEntity<String> getUnitsByGameIds(@RequestParam(name = "gameId") List<String> gameIdList,
-                                                    @RequestParam(name = "researchId", required = false) List<String> researchIdList,
+    @GetMapping(path = "/game-id", params = "gameIds")
+    public ResponseEntity<String> getUnitsByGameIds(@RequestParam List<String> gameIds,
+                                                    @RequestParam(required = false) List<String> researchIds,
                                                     @RequestParam(defaultValue = "en") String locale,
                                                     @RequestParam(defaultValue = "gameId") String sort,
                                                     @RequestParam(defaultValue = "asc") String sortDir,
                                                     @RequestParam(defaultValue = "0") Integer page,
                                                     @RequestParam(defaultValue = "50") Integer size) {
         try {
-            List<Integer> parsedGameIdList = utilsService.parseGameIds(gameIdList);
+            List<Integer> parsedGameIdList = utilsService.parseGameIds(gameIds);
             if (parsedGameIdList.size() == 0) {
                 throw new InvalidParameterException("Provided Game ID(s) not valid");
             }
             parameterValidatorService.validateLocale(locale);
             List<UnitModel> units = unitService.getUnitsByGameIds(parsedGameIdList, sort, sortDir, page, size);
-            if (researchIdList != null) {
-                List<Integer> parsedResearchIdList = utilsService.parseGameIds(researchIdList);
+            if (researchIds != null) {
+                List<Integer> parsedResearchIdList = utilsService.parseGameIds(researchIds);
                 List<ResearchModel> researches = researchService.getResearchesByGameIds(parsedResearchIdList);
                 unitService.applyResearches(units, researches);
             }
@@ -132,14 +134,59 @@ public class UnitController {
         }
     }
 
-    @GetMapping(path = "/options", params = "nameFilter")
-    public ResponseEntity<String> fetchUnitOptions(@RequestParam String nameFilter,
+    @GetMapping(path = "/options")
+    public ResponseEntity<String> fetchUnitOptions(@RequestParam(required = false) String name,
+                                                   @RequestParam(defaultValue = "") List<Integer> gameIds,
+                                                   @RequestParam(defaultValue = "") List<Integer> nations,
+                                                   @RequestParam(defaultValue = "") List<Integer> unitTags,
+                                                   @RequestParam(defaultValue = "") List<Integer> searchTags,
                                                    @RequestParam(defaultValue = "en") String locale,
+                                                   @RequestParam(defaultValue = "id") String sort,
+                                                   @RequestParam(defaultValue = "asc") String sortDir,
+                                                   @RequestParam(defaultValue = "0") Integer page,
                                                    @RequestParam(defaultValue = "30") Integer size) {
         try {
+            parameterValidatorService.validateStandard(locale, sort, unitService.getColumnNames(), sortDir, page, size);
+            List<UnitOption> unitOptions = unitService.getUnitOptions(locale, name, gameIds, nations, unitTags, searchTags, sort, sortDir, page, size);
+            return utilsService.getJson(unitOptions, true, locale);
+        } catch (JsonProcessingException ex) {
+            throw new RestException(JSON_ERROR.getMessage(), ex, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (InvalidParameterException ex) {
+            throw new RestException(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "/nations")
+    public ResponseEntity<String> fetchUnitNations(@RequestParam(defaultValue = "en") String locale) {
+        try {
             parameterValidatorService.validateLocale(locale);
-            parameterValidatorService.validateSize(size);
-            List<EntityOption> unitOptions = unitService.getUnitOptionsByName(locale, nameFilter, size);
+            List<NationOption> unitOptions = unitService.getNationOptions();
+            return utilsService.getJson(unitOptions, true, locale);
+        } catch (JsonProcessingException ex) {
+            throw new RestException(JSON_ERROR.getMessage(), ex, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (InvalidParameterException ex) {
+            throw new RestException(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "/unit-tags")
+    public ResponseEntity<String> fetchUnitTags(@RequestParam(defaultValue = "en") String locale) {
+        try {
+            parameterValidatorService.validateLocale(locale);
+            List<TagOption> unitOptions = unitService.getUnitTagOptions();
+            return utilsService.getJson(unitOptions, true, locale);
+        } catch (JsonProcessingException ex) {
+            throw new RestException(JSON_ERROR.getMessage(), ex, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (InvalidParameterException ex) {
+            throw new RestException(ex, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "/search-tags")
+    public ResponseEntity<String> fetchSearchTags(@RequestParam(defaultValue = "en") String locale) {
+        try {
+            parameterValidatorService.validateLocale(locale);
+            List<TagOption> unitOptions = unitService.getSearchTagOptions();
             return utilsService.getJson(unitOptions, true, locale);
         } catch (JsonProcessingException ex) {
             throw new RestException(JSON_ERROR.getMessage(), ex, HttpStatus.INTERNAL_SERVER_ERROR);

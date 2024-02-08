@@ -1,7 +1,7 @@
 package com.wsunitstats.service.service;
 
 import com.wsunitstats.domain.ResearchModel;
-import com.wsunitstats.service.model.EntityOption;
+import com.wsunitstats.service.model.ResearchOption;
 
 import java.util.List;
 
@@ -14,12 +14,8 @@ public interface ResearchService {
 
     List<ResearchModel> getResearchesByGameIds(List<Integer> ids);
 
-    /**
-     * Returns localized options
-     */
-    List<EntityOption> getResearchOptionsByName(String locale, String namePattern, int size);
-
-    List<EntityOption> getResearchOptionsByUnitIds(List<Integer> unitIds);
+    List<ResearchOption> getResearchOptions(String locale, String namePattern, List<Integer> gameIds,
+                                            String sort, String sortDir, int page, int size);
 
     List<String> getColumnNames();
 

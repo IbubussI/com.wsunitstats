@@ -145,7 +145,7 @@ const TagChip = styled(Chip)(() => ({
 export const PopperTag = ({ tag, placement }) => {
   const Tag = ({ onClick }) => {
     return (
-      <TagChip onClick={onClick} label={tag.tagName}/>
+      <TagChip onClick={onClick} label={tag.name}/>
     );
   }
 

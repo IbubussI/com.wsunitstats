@@ -24,7 +24,7 @@ export const EntityTabsView = ({
   }, [tabsData]);
 
   const setTab = React.useCallback((tab) => {
-    navigate(Utils.setPathParams([{ param: tab, pos: 4 }]), { replace: true });
+    navigate(Utils.getUrlWithPathParams([{ param: tab, pos: 4 }]), { replace: true });
   }, [navigate]);
 
   React.useEffect(() => {

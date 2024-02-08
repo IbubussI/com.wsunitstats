@@ -50,7 +50,7 @@ export const getEntityRoute = (entityType) => {
  * @param {*} removeFrom if specified and positive - this function removes all param from (include) given in removeFrom position up to the end of the url
  * @returns current url with given path params
  */
-export const setPathParams = (params, removeFrom = 0) => {
+export const getUrlWithPathParams = (params, removeFrom = 0) => {
   const pathname = window.location.pathname;
   const search = window.location.search;
   let pathItems = pathname.split('/');
@@ -99,4 +99,16 @@ export const getAbilityRoute = (abilityType) => {
     default: result = getEntityRoute('');
   }
   return result;
+}
+
+export const getSearchParamList = (searchParams, paramName) => {
+  const currentQuerySearchParams = searchParams.get(paramName)?.split(',');
+  return currentQuerySearchParams ? [...currentQuerySearchParams] : [];
+}
+
+export const fetchJson = (fetchURI, callback) => {
+  fetch(fetchURI)
+    .then((response) => response.ok ? response.json() : [])
+    .then(callback)
+    .catch(console.log);
 }

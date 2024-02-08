@@ -1,6 +1,9 @@
 package com.wsunitstats.domain;
 
+import com.wsunitstats.domain.submodel.NationModel;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,5 +17,6 @@ public class EntityInfoModel {
     private Integer entityId;
     private String entityImage;
     // Nation is optional
-    private String entityNation;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private NationModel entityNation;
 }

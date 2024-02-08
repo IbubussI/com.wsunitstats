@@ -7,6 +7,7 @@ import com.wsunitstats.domain.submodel.HealModel;
 import com.wsunitstats.domain.submodel.MovementModel;
 import com.wsunitstats.domain.submodel.ArmorModel;
 import com.wsunitstats.domain.submodel.GatherModel;
+import com.wsunitstats.domain.submodel.NationModel;
 import com.wsunitstats.domain.submodel.SubmarineDepthModel;
 import com.wsunitstats.domain.submodel.SupplyModel;
 import com.wsunitstats.domain.submodel.TagModel;
@@ -16,8 +17,11 @@ import com.wsunitstats.domain.submodel.ability.container.GenericAbilityContainer
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Getter;
@@ -25,6 +29,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity(name = "unit")
 @Getter
@@ -32,7 +37,8 @@ import java.util.List;
 @ToString
 public class UnitModel extends GenericEntityModel {
     // Unit traits
-    private String nation;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private NationModel nation;
     @Column(length = 1023)
     private String description;
     private Double size;
@@ -41,9 +47,9 @@ public class UnitModel extends GenericEntityModel {
     private Double regenerationSpeed;
     private Integer weaponOnDeath;
     private boolean controllable;
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<TagModel> tags;
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<TagModel> searchTags;
     private Double lifetime;
     private Boolean parentMustIdle;
@@ -59,6 +65,10 @@ public class UnitModel extends GenericEntityModel {
     private List<TurretModel> turrets;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<ArmorModel> armor;
+
+    // Technical data to render research selector
+    @ElementCollection
+    private Set<Integer> applicableResearches;
 
     // Movable unit traits
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

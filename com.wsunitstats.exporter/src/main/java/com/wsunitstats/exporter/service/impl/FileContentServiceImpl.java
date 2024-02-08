@@ -24,9 +24,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static com.wsunitstats.utils.Util.convertToLocalizationTagMap;
-import static com.wsunitstats.utils.Util.convertToLocalizationTags;
-import static com.wsunitstats.utils.Util.convertToNationNames;
+import static com.wsunitstats.utils.Utils.convertToLocalizationTagMap;
+import static com.wsunitstats.utils.Utils.convertToLocalizationTags;
+import static com.wsunitstats.utils.Utils.convertToNationNames;
 
 @Service
 public class FileContentServiceImpl implements FileContentService {

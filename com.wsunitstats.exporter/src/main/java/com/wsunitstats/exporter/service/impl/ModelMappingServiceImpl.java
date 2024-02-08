@@ -53,9 +53,11 @@ import com.wsunitstats.exporter.model.json.gameplay.submodel.work.WorkReserveJso
 import com.wsunitstats.exporter.service.FileContentService;
 import com.wsunitstats.exporter.service.ImageService;
 import com.wsunitstats.exporter.service.ModelMappingService;
+import com.wsunitstats.exporter.service.NationResolver;
+import com.wsunitstats.exporter.service.TagResolver;
 import com.wsunitstats.utils.Constants;
 import com.wsunitstats.utils.Constants.TagGroupName;
-import com.wsunitstats.utils.Util;
+import com.wsunitstats.utils.Utils;
 import com.wsunitstats.exporter.model.LocalizationKeyModel;
 import com.wsunitstats.domain.submodel.ArmorModel;
 import com.wsunitstats.domain.submodel.GatherModel;
@@ -92,11 +94,14 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     private ImageService imageService;
     @Autowired
     private FileContentService fileContentService;
+    @Autowired
+    private NationResolver nationResolver;
+    @Autowired
+    private TagResolver tagResolver;
 
     private LocalizationKeyModel localization;
     private Map<Integer, EnvJsonModel> envMap;
     private Map<Integer, ProjectileJsonModel> projectileMap;
-    private List<String> unitNations;
     private UpgradesScriptsJsonModel upgradesScripts;
 
     @PostConstruct
@@ -104,7 +109,6 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         localization = fileContentService.getLocalizationKeyModel();
         envMap = fileContentService.getGameplayFileModel().getScenes().getEnvs();
         projectileMap = fileContentService.getGameplayFileModel().getScenes().getProjectiles();
-        unitNations = fileContentService.getSessionInitFileModel().getUnitNations();
         upgradesScripts = fileContentService.getGameplayFileModel().getUpgradesScripts();
     }
 
@@ -114,7 +118,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
             return null;
         }
         ArmorModel armorModel = new ArmorModel();
-        armorModel.setValue(Util.intToDoubleShift(source.getObject()));
+        armorModel.setValue(Utils.intToDoubleShift(source.getObject()));
         Optional.ofNullable(source.getProbability()).ifPresentOrElse(
                 armorModel::setProbability,
                 () -> {
@@ -135,19 +139,19 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         }
         GatherModel gatherModel = new GatherModel();
         gatherModel.setGatherId(index);
-        gatherModel.setAngle(Util.intToDoubleShift(source.getAngle()));
-        gatherModel.setBagSize(Util.intToDoubleShift(source.getBagsize()));
-        Double gatherDistance = Util.intToDoubleShift(source.getGatherdistance());
+        gatherModel.setAngle(Utils.intToDoubleShift(source.getAngle()));
+        gatherModel.setBagSize(Utils.intToDoubleShift(source.getBagsize()));
+        Double gatherDistance = Utils.intToDoubleShift(source.getGatherdistance());
         gatherModel.setGatherDistance(gatherDistance != null ? gatherDistance : 0);
-        gatherModel.setPerSecond(Util.intToDoubleTick(source.getPertick()));
+        gatherModel.setPerSecond(Utils.intToDoubleTick(source.getPertick()));
         Integer findTargetDistance = source.getFindtargetdistance();
-        gatherModel.setFindTargetDistance(findTargetDistance != null ? Util.intToDoubleShift(findTargetDistance) : Constants.DEFAULT_GATHER_FIND_TARGET_DISTANCE);
+        gatherModel.setFindTargetDistance(findTargetDistance != null ? Utils.intToDoubleShift(findTargetDistance) : Constants.DEFAULT_GATHER_FIND_TARGET_DISTANCE);
         // present only in game, probably hardcoded in the engine
         gatherModel.setFindStorageDistance(Constants.DEFAULT_GATHER_FIND_STORAGE_DISTANCE);
-        gatherModel.setPutDistance(Util.intToDoubleShift(source.getPutdistance()));
+        gatherModel.setPutDistance(Utils.intToDoubleShift(source.getPutdistance()));
         gatherModel.setEnvTags(mapEnvTags(source.getEnvtags()));
-        gatherModel.setStorageTags(mapTags(TagGroupName.UNIT_SEARCH_TAGS, source.getStoragetags(), i -> localization.getUnitSearchTagNames().get(i)));
-        gatherModel.setUnitTags(mapTags(TagGroupName.UNIT_SEARCH_TAGS, source.getUnitTags(), i -> localization.getUnitSearchTagNames().get(i)));
+        gatherModel.setStorageTags(tagResolver.getUnitSearchTags(source.getStoragetags()));
+        gatherModel.setUnitTags(tagResolver.getUnitSearchTags(source.getUnitTags()));
         gatherModel.setResource(mapResource(source.getResource(), null));
         return gatherModel;
     }
@@ -157,7 +161,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         List<ResourceModel> resources = new ArrayList<>();
         if (source != null && !source.isEmpty()) {
             for (int i = 0; i < Constants.ACTIVE_RESOURCES; ++i) {
-                resources.add(mapResource(i, Util.intToDoubleShift(source.get(i)).intValue()));
+                resources.add(mapResource(i, Utils.intToDoubleShift(source.get(i)).intValue()));
             }
         }
         return resources;
@@ -196,7 +200,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         }
         MovementModel movementModel = new MovementModel();
         movementModel.setSpeed(source.getSpeed());
-        movementModel.setRotationSpeed(Util.intToDoubleShift(source.getRotationSpeed()));
+        movementModel.setRotationSpeed(Utils.intToDoubleShift(source.getRotationSpeed()));
         return movementModel;
     }
 
@@ -207,7 +211,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         }
         ReserveModel reserveModel = new ReserveModel();
         reserveModel.setReserveLimit(reserveSource.getLimit());
-        reserveModel.setReserveTime(Util.intToDoubleShift(reserveSource.getTime()));
+        reserveModel.setReserveTime(Utils.intToDoubleShift(reserveSource.getTime()));
         return reserveModel;
     }
 
@@ -234,18 +238,18 @@ public class ModelMappingServiceImpl implements ModelMappingService {
                 .map(unitJson -> {
                     UnitRequirementModel result = new UnitRequirementModel();
                     int unitId = unitJson.getType();
-                    result.setQuantity(Util.getQuantityString(unitJson.getMin(), unitJson.getMax()));
+                    result.setQuantity(Utils.getQuantityString(unitJson.getMin(), unitJson.getMax()));
                     result.setUnitImage(imageService.getImageName(Constants.EntityType.UNIT.getName(), unitId));
                     result.setUnitId(unitId);
                     result.setUnitName(localization.getUnitNames().get(unitId));
-                    result.setUnitNation(Util.getUnitNation(unitNations, localization.getNationNames(), unitId));
+                    result.setUnitNation(nationResolver.getUnitNation(unitId));
                     return result;
                 })
                 .toList();
         requirementsModel.setResearches(researchRequirementModels);
         requirementsModel.setUnits(unitRequirementModels);
-        requirementsModel.setResearchesAll(Util.getDirectBoolean(requirementsSource.getResearchesAll()));
-        requirementsModel.setUnitsAll(Util.getInvertedBoolean(requirementsSource.getUnitsAll()));
+        requirementsModel.setResearchesAll(Utils.getDirectBoolean(requirementsSource.getResearchesAll()));
+        requirementsModel.setUnitsAll(Utils.getInvertedBoolean(requirementsSource.getUnitsAll()));
         return requirementsModel;
     }
 
@@ -261,25 +265,25 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         WeaponModel weaponModel = new WeaponModel();
         weaponModel.setWeaponId(weaponId);
         weaponModel.setAttackGround(attackGround);
-        weaponModel.setAutoAttack(Util.getInvertedBoolean(weaponSource.getAutoAttack()));
+        weaponModel.setAutoAttack(Utils.getInvertedBoolean(weaponSource.getAutoAttack()));
         weaponModel.setDistance(map(weaponSource.getDistance()));
         weaponModel.setEnabled(weaponSource.getEnabled());
         Integer projectileId = weaponSource.getProjectile();
         weaponModel.setProjectile(projectileId == null ? null : map(projectileId, projectileMap.get(projectileId)));
-        weaponModel.setRechargePeriod(Util.intToDoubleShift(weaponSource.getRechargePeriod()));
-        weaponModel.setSpread(Util.intToPercent(weaponSource.getSpread()));
+        weaponModel.setRechargePeriod(Utils.intToDoubleShift(weaponSource.getRechargePeriod()));
+        weaponModel.setSpread(Utils.intToPercent(weaponSource.getSpread()));
         List<DirectionAttacksPointJsonModel> points = weaponSource.getDirectionAttacks().getDefaultValue().getPoints();
         Integer startTime = points.get(0).getTime();
         Integer endTime = points.get(points.size() - 1).getTime();
         // size should be always > 1
         int attacksPerAction = weaponSource.getDirectionAttacks().getDefaultValue().getPoints().size();
-        weaponModel.setAttackDelay(Util.intToDoubleShift(startTime));
-        weaponModel.setAttackTime(Util.intToDoubleShift(endTime));
-        weaponModel.setAvgShotTime(Util.doubleToDoubleShift(getAvgShotTime(points)));
+        weaponModel.setAttackDelay(Utils.intToDoubleShift(startTime));
+        weaponModel.setAttackTime(Utils.intToDoubleShift(endTime));
+        weaponModel.setAvgShotTime(Utils.doubleToDoubleShift(getAvgShotTime(points)));
         weaponModel.setAttacksPerAction(attacksPerAction);
         weaponModel.setAttacksPerAttack(getMultipliable(weaponSource.getAttackscount()));
         weaponModel.setCharges(weaponSource.getCharges());
-        weaponModel.setAngle(Util.intToDoubleShift(weaponSource.getAngle()));
+        weaponModel.setAngle(Utils.intToDoubleShift(weaponSource.getAngle()));
         weaponModel.setDamage(map(weaponSource.getDamage()));
         weaponModel.setWeaponType(getWeaponType(isTurret, weaponModel, onDeathId));
         return weaponModel;
@@ -289,14 +293,14 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     public DamageWrapperModel map(DamageJsonModel damageJsonModel) {
         DamageWrapperModel damageWrapperModel = new DamageWrapperModel();
         damageWrapperModel.setAreaType(Constants.DamageAreaType.get(damageJsonModel.getArea()).getName());
-        damageWrapperModel.setAngle(Util.intToDoubleShift(damageJsonModel.getAngle()));
+        damageWrapperModel.setAngle(Utils.intToDoubleShift(damageJsonModel.getAngle()));
         damageWrapperModel.setBuff(map(damageJsonModel.getBuff()));
-        damageWrapperModel.setDamageFriendly(Util.getDirectBoolean(damageJsonModel.getDamageFriendly()));
+        damageWrapperModel.setDamageFriendly(Utils.getDirectBoolean(damageJsonModel.getDamageFriendly()));
         damageWrapperModel.setDamages(mapDamages(damageJsonModel.getDamages()));
         damageWrapperModel.setDamagesCount(getMultipliable(damageJsonModel.getDamagesCount()));
-        damageWrapperModel.setEnvDamage(Util.intToDoubleShift(damageJsonModel.getEnvDamage()));
-        damageWrapperModel.setEnvsAffected(mapTags(TagGroupName.ENV_SEARCH_TAGS, damageJsonModel.getEnvsAffected(), i -> localization.getEnvSearchTagNames().get(i)));
-        damageWrapperModel.setRadius(Util.intToDoubleShift(damageJsonModel.getRadius()));
+        damageWrapperModel.setEnvDamage(Utils.intToDoubleShift(damageJsonModel.getEnvDamage()));
+        damageWrapperModel.setEnvsAffected(tagResolver.getEnvSearchTags(damageJsonModel.getEnvsAffected()));
+        damageWrapperModel.setRadius(Utils.intToDoubleShift(damageJsonModel.getRadius()));
         return damageWrapperModel;
     }
 
@@ -309,7 +313,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
 
             DamageModel damage = new DamageModel();
             damage.setType(unitTag == 0 ? Constants.BASIC_DAMAGE_TYPE : localization.getUnitTagNames().get(unitTag - 1));
-            damage.setValue(Util.intToDoubleShift(value));
+            damage.setValue(Utils.intToDoubleShift(value));
             damages.add(damage);
         }
         return damages;
@@ -321,9 +325,9 @@ public class ModelMappingServiceImpl implements ModelMappingService {
             return null;
         }
         DistanceModel distanceModel = new DistanceModel();
-        distanceModel.setMax(Util.intToDoubleShift(distanceSource.getMax()));
-        distanceModel.setMin(Util.intToDoubleShift(distanceSource.getMin()));
-        distanceModel.setStop(Util.intToDoubleShift(distanceSource.getStop()));
+        distanceModel.setMax(Utils.intToDoubleShift(distanceSource.getMax()));
+        distanceModel.setMin(Utils.intToDoubleShift(distanceSource.getMin()));
+        distanceModel.setStop(Utils.intToDoubleShift(distanceSource.getStop()));
         return distanceModel;
     }
 
@@ -334,8 +338,8 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         }
         ProjectileModel projectileModel = new ProjectileModel();
         projectileModel.setGameId(id);
-        projectileModel.setSpeed(Util.intToDoubleSpeed(projectileSource.getSpeed()));
-        projectileModel.setTimeToStartCollision(Util.intToDoubleShift(projectileSource.getCollisionTimeToStart()));
+        projectileModel.setSpeed(Utils.intToDoubleSpeed(projectileSource.getSpeed()));
+        projectileModel.setTimeToStartCollision(Utils.intToDoubleShift(projectileSource.getCollisionTimeToStart()));
         return projectileModel;
     }
 
@@ -346,8 +350,8 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         }
         BuffModel buffModel = new BuffModel();
         buffModel.setBuffId(buffSource.getResearch());
-        buffModel.setPeriod(Util.intToDoubleShift(buffSource.getPeriod()));
-        buffModel.setAffectedUnits(mapUnitTags(buffSource.getTargetsTags()));
+        buffModel.setPeriod(Utils.intToDoubleShift(buffSource.getPeriod()));
+        buffModel.setAffectedUnits(tagResolver.getUnitTags(buffSource.getTargetsTags()));
         EntityInfoModel entityInfo = new EntityInfoModel();
         int entityId = buffSource.getResearch();
         entityInfo.setEntityName(localization.getResearchNames().get(entityId));
@@ -364,7 +368,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         }
         TurretModel turretModel = new TurretModel();
         turretModel.setTurretId(turretId);
-        turretModel.setRotationSpeed(Util.intToDoubleShift(turretSource.getRotationSpeed()));
+        turretModel.setRotationSpeed(Utils.intToDoubleShift(turretSource.getRotationSpeed()));
         turretModel.setWeapons(turretWeapons);
         return turretModel;
     }
@@ -385,8 +389,8 @@ public class ModelMappingServiceImpl implements ModelMappingService {
             take = supplySource.getTakesList().get(0);
         }
         SupplyModel supplyModel = new SupplyModel();
-        supplyModel.setConsume(Util.intToSupply(cost));
-        supplyModel.setProduce(Util.intToSupply(take));
+        supplyModel.setConsume(Utils.intToSupply(cost));
+        supplyModel.setProduce(Utils.intToSupply(take));
         return supplyModel;
     }
 
@@ -408,7 +412,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         if (buildSource != null) {
             buildingModel.setRequirements(map(buildSource.getRequirements()));
             buildingModel.setInitCost(mapResources(buildSource.getCostInit()));
-            List<Integer> fullCost = Util.add(buildSource.getCostInit(), buildSource.getCostBuilding());
+            List<Integer> fullCost = Utils.add(buildSource.getCostInit(), buildSource.getCostBuilding());
             buildingModel.setFullCost(mapResources(fullCost));
         }
         if (income != null) {
@@ -424,7 +428,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         }
         IncomeModel incomeModel = new IncomeModel();
         incomeModel.setValue(mapResources(incomeSource.getValue()));
-        incomeModel.setPeriod(Util.intToDoubleShift(incomeSource.getPeriod()));
+        incomeModel.setPeriod(Utils.intToDoubleShift(incomeSource.getPeriod()));
         return incomeModel;
     }
 
@@ -435,16 +439,16 @@ public class ModelMappingServiceImpl implements ModelMappingService {
             return null;
         }
         AirplaneModel airplaneModel = new AirplaneModel();
-        airplaneModel.setFuel(Util.intToDoubleShift(airplaneSource.getFuel()));
+        airplaneModel.setFuel(Utils.intToDoubleShift(airplaneSource.getFuel()));
         airplaneModel.setKamikaze(airplaneSource.getMoveAsFallDown());
-        airplaneModel.setFlyHeight(Util.intToDoubleShift(airplaneSource.getHeightAboveSurface()));
+        airplaneModel.setFlyHeight(Utils.intToDoubleShift(airplaneSource.getHeightAboveSurface()));
         airplaneModel.setAscensionSpeed(airplaneSource.getAscensionalRate());
         AerodromeJsonModel aerodromeSource = airplaneSource.getAerodrome();
         if (aerodromeSource != null) {
-            airplaneModel.setAerodromeTags(mapTags(TagGroupName.UNIT_SEARCH_TAGS, aerodromeSource.getTags(), i -> localization.getUnitSearchTagNames().get(i)));
-            airplaneModel.setHealingSpeed(Util.intToDoubleTick(aerodromeSource.getHealingSpeed()));
-            airplaneModel.setRechargePeriod(Util.intToDoubleShift(aerodromeSource.getRechargingPeriod()));
-            airplaneModel.setRefuelSpeed(Util.intToDoubleTick(aerodromeSource.getRefuelingSpeed()));
+            airplaneModel.setAerodromeTags(tagResolver.getUnitSearchTags(aerodromeSource.getTags()));
+            airplaneModel.setHealingSpeed(Utils.intToDoubleTick(aerodromeSource.getHealingSpeed()));
+            airplaneModel.setRechargePeriod(Utils.intToDoubleShift(aerodromeSource.getRechargingPeriod()));
+            airplaneModel.setRefuelSpeed(Utils.intToDoubleTick(aerodromeSource.getRefuelingSpeed()));
         }
         return airplaneModel;
     }
@@ -456,9 +460,9 @@ public class ModelMappingServiceImpl implements ModelMappingService {
             return null;
         }
         SubmarineDepthModel submarineModel = new SubmarineDepthModel();
-        submarineModel.setUnderwaterTime(Util.intToDoubleShift(submarineSource.getFuel()));
+        submarineModel.setUnderwaterTime(Utils.intToDoubleShift(submarineSource.getFuel()));
         submarineModel.setAbilityOnFuelEnd(submarineSource.getWorkOnFuelEnd());
-        submarineModel.setSwimDepth(Util.intToDoubleShift(submarineSource.getHeightAboveSurface()));
+        submarineModel.setSwimDepth(Utils.intToDoubleShift(submarineSource.getHeightAboveSurface()));
         submarineModel.setAscensionSpeed(submarineSource.getAscensionalRate());
         return submarineModel;
     }
@@ -467,12 +471,12 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     public List<TagModel> mapTags(TagGroupName groupName, Long tags, IntFunction<String> nameGetter) {
         List<TagModel> tagValues = new ArrayList<>();
         if (tags != null) {
-            List<Integer> tagIds = Util.getPositiveBitIndices(tags);
+            List<Integer> tagIds = Utils.getPositiveBitIndices(tags);
             for (int tagId : tagIds) {
                 TagModel tag = new TagModel();
-                tag.setTagName(nameGetter.apply(tagId));
+                tag.setName(nameGetter.apply(tagId));
                 tag.setGameId(tagId);
-                tag.setTagGroupName(groupName.getGroupName());
+                tag.setGroupName(groupName.getGroupName());
                 tagValues.add(tag);
             }
         }
@@ -493,7 +497,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
     public List<EnvTagModel> mapEnvTags(Long tags) {
         List<EnvTagModel> envTags = new ArrayList<>();
         if (tags != null) {
-            List<Integer> tagIds = Util.getPositiveBitIndices(tags);
+            List<Integer> tagIds = Utils.getPositiveBitIndices(tags);
             for (int tagId : tagIds) {
                 EnvTagModel envTag = new EnvTagModel();
                 envTag.setEnvId(tagId);
@@ -501,7 +505,7 @@ public class ModelMappingServiceImpl implements ModelMappingService {
                 Map.Entry<Integer, EnvJsonModel> targetEnvEntry = envMap.entrySet().stream()
                         .filter(envEntry -> envEntry.getValue().getSearchTags() != null)
                         .filter(envEntry -> {
-                            List<Integer> searchTags = Util.getPositiveBitIndices(envEntry.getValue().getSearchTags());
+                            List<Integer> searchTags = Utils.getPositiveBitIndices(envEntry.getValue().getSearchTags());
                             if (searchTags.size() != 1) {
                                 throw new IllegalStateException("Should be only 1 search tag for single env");
                             }
@@ -522,12 +526,12 @@ public class ModelMappingServiceImpl implements ModelMappingService {
             return null;
         }
         HealModel healModel = new HealModel();
-        healModel.setDistance(Util.intToDoubleShift(healSource.getDistance()));
-        healModel.setTargetTags(mapUnitTags(healSource.getTargetTags()));
-        healModel.setPerSecond(Util.intToDoubleTick(healSource.getPerTick()));
-        healModel.setSearchNextDistance(Util.intToDoubleShift(healSource.getSearchNextDistance()));
-        healModel.setAutoSearchTargetDistance(Util.intToDoubleShift(healSource.getAutoSearchTargetDistance()));
-        healModel.setAutoSearchTargetPeriod(Util.intToDoubleShift(healSource.getAutoSearchTargetPeriod()));
+        healModel.setDistance(Utils.intToDoubleShift(healSource.getDistance()));
+        healModel.setTargetTags(tagResolver.getUnitTags(healSource.getTargetTags()));
+        healModel.setPerSecond(Utils.intToDoubleTick(healSource.getPerTick()));
+        healModel.setSearchNextDistance(Utils.intToDoubleShift(healSource.getSearchNextDistance()));
+        healModel.setAutoSearchTargetDistance(Utils.intToDoubleShift(healSource.getAutoSearchTargetDistance()));
+        healModel.setAutoSearchTargetPeriod(Utils.intToDoubleShift(healSource.getAutoSearchTargetPeriod()));
         return healModel;
     }
 
@@ -540,13 +544,14 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         EntityInfoModel entityInfoModel = new EntityInfoModel();
         Integer entityId = buildingSource.getId();
         entityInfoModel.setEntityId(entityId);
-        entityInfoModel.setEntityNation(Util.getUnitNation(unitNations, localization.getNationNames(), entityId));
+        entityInfoModel.setEntityNation(nationResolver.getUnitNation(entityId));
         entityInfoModel.setEntityName(localization.getUnitNames().get(entityId));
         entityInfoModel.setEntityImage(imageService.getImageName(Constants.EntityType.UNIT.getName(), entityId));
         constructionModel.setEntityInfo(entityInfoModel);
         constructionModel.setConstructionId(id);
-        constructionModel.setDistance(Util.intToDoubleShift(buildingSource.getDistance()));
-        constructionModel.setConstructionSpeed(Util.intToConstructionSpeed(buildingSource.getProgress()));
+        constructionModel.setDistance(Utils.intToDoubleShift(buildingSource.getDistance()));
+        constructionModel.setConstructionSpeed(Utils.intToConstructionSpeed(buildingSource.getProgress()));
+        constructionModel.setConstructionSpeedOnOwnTerritory(Utils.intToConstructionSpeed(buildingSource.getProgressTerritory()));
         return constructionModel;
     }
 
@@ -623,8 +628,8 @@ public class ModelMappingServiceImpl implements ModelMappingService {
         if (fullHealth == null || healthParam == null) {
             return null;
         }
-        double healthPerPercent = Util.intToDoubleShift(fullHealth) / 100d;
-        return healthPerPercent * Util.intToDoubleShift(healthParam) * Constants.INIT_HEALTH_MODIFIER;
+        double healthPerPercent = Utils.intToDoubleShift(fullHealth) / 100d;
+        return healthPerPercent * Utils.intToDoubleShift(healthParam) * Constants.INIT_HEALTH_MODIFIER;
     }
 
     private String getWeaponType(boolean isTurret, WeaponModel weaponModel, Integer onDeathId) {

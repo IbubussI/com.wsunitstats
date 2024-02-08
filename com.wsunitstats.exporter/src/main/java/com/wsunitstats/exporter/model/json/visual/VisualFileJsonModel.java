@@ -30,6 +30,7 @@ public class VisualFileJsonModel {
     private Object researches;
     private Object scripts;
     private Object selection;
+    private Object statusBars;
     private Object unitSelector;
     private Object unitSkins;
     @JsonDeserialize(using = UnitTypeJsonModelDeserializer.class)

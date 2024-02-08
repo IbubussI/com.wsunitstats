@@ -6,7 +6,7 @@ export const ErrorPage = () => {
   return (
     <div style={{ textAlign: 'center'}}>
       <p>Something went wrong...</p>
-      <p>Error {state.code}{state.msg && ': '}{state.msg}</p>
+      {state && <p>Error {state.code}{state.msg && ': '}{state.msg}</p>}
     </div>
   );
 }

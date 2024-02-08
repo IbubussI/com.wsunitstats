@@ -3,7 +3,7 @@ package com.wsunitstats.service.service.impl;
 import com.wsunitstats.domain.LocalizationModel;
 import com.wsunitstats.service.repository.LocalizationRepository;
 import com.wsunitstats.service.service.LocalizationService;
-import com.wsunitstats.utils.Util;
+import com.wsunitstats.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ public class LocalizationServiceImpl implements LocalizationService {
     @Override
     public String localize(String input, String locale) {
         LocalizationModel localizationModel = localizationRepository.findByLocale(locale);
-        return Util.localizeAll(input, localizationModel::getValue);
+        return Utils.localizeAll(input, localizationModel::getValue);
     }
 
     @Override

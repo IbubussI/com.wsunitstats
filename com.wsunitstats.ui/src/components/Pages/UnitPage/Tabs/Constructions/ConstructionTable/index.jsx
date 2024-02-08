@@ -21,7 +21,7 @@ export const ConstructionTable = ({ construction, overflowMinWidth }) => {
           values: [
             construction.entityInfo && {
               primary: construction.entityInfo.entityName,
-              secondary: construction.entityInfo.entityNation,
+              secondary: construction.entityInfo.entityNation && construction.entityInfo.entityNation.name,
               image: {
                 path: construction.entityInfo.entityImage,
                 width: 35,

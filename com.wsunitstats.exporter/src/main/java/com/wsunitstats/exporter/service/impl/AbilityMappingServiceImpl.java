@@ -16,6 +16,8 @@ import com.wsunitstats.domain.submodel.ability.container.OnActionAbilityContaine
 import com.wsunitstats.domain.submodel.ability.container.WorkAbilityContainer;
 import com.wsunitstats.domain.submodel.ability.container.ZoneEventAbilityContainer;
 import com.wsunitstats.exporter.model.LocalizationKeyModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.CreateEnvJsonModel;
+import com.wsunitstats.exporter.model.json.gameplay.submodel.EnvJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.UnitJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ZoneEventJsonModel;
 import com.wsunitstats.exporter.model.json.gameplay.submodel.ability.AbilityJsonModel;
@@ -25,8 +27,10 @@ import com.wsunitstats.exporter.service.AbilityMappingService;
 import com.wsunitstats.exporter.service.FileContentService;
 import com.wsunitstats.exporter.service.ImageService;
 import com.wsunitstats.exporter.service.ModelMappingService;
+import com.wsunitstats.exporter.service.NationResolver;
+import com.wsunitstats.exporter.service.TagResolver;
 import com.wsunitstats.utils.Constants;
-import com.wsunitstats.utils.Util;
+import com.wsunitstats.utils.Utils;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +38,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -45,14 +50,18 @@ public class AbilityMappingServiceImpl implements AbilityMappingService {
     private FileContentService fileContentService;
     @Autowired
     private ModelMappingService modelMappingService;
+    @Autowired
+    private NationResolver nationResolver;
+    @Autowired
+    private TagResolver tagResolver;
 
     private LocalizationKeyModel localization;
-    private List<String> unitNations;
+    private Map<Integer, EnvJsonModel> envMap;
 
     @PostConstruct
     protected void postConstruct() {
         localization = fileContentService.getLocalizationKeyModel();
-        unitNations = fileContentService.getSessionInitFileModel().getUnitNations();
+        envMap = fileContentService.getGameplayFileModel().getScenes().getEnvs();
     }
 
     @Override
@@ -114,8 +123,14 @@ public class AbilityMappingServiceImpl implements AbilityMappingService {
         WorkAbilityContainer workAbilityContainer = new WorkAbilityContainer();
         AbilityJsonModel abilityJsonModel = unitJsonModel.getAbility().getAbilities().get(abilityId);
         workAbilityContainer.setAbility(mapAbility(unitJsonModel, abilityJsonModel, abilityId));
+
         int workId = getWorkId(unitJsonModel, abilityId);
-        workAbilityContainer.setWork(mapWork(unitJsonModel.getAbility().getWork().get(workId), workId));
+        WorkJsonModel workJsonModel = null;
+        if (workId != -1) {
+            workJsonModel = unitJsonModel.getAbility().getWork().get(workId);
+        }
+
+        workAbilityContainer.setWork(mapWork(workJsonModel, workId));
         return workAbilityContainer;
     }
 
@@ -128,7 +143,7 @@ public class AbilityMappingServiceImpl implements AbilityMappingService {
         onActionAbilityContainer.setDistance(modelMappingService.map(abilityOnActionJsonModel.getDistance()));
         onActionAbilityContainer.setOnAgro(abilityOnActionJsonModel.getOnAgro());
         onActionAbilityContainer.setEnabled(abilityOnActionJsonModel.getEnabled() != null ? abilityOnActionJsonModel.getEnabled() : true );
-        onActionAbilityContainer.setRechargeTime(Util.intToDoubleShift(abilityOnActionJsonModel.getRestore()));
+        onActionAbilityContainer.setRechargeTime(Utils.intToDoubleShift(abilityOnActionJsonModel.getRestore()));
         return onActionAbilityContainer;
     }
 
@@ -141,7 +156,7 @@ public class AbilityMappingServiceImpl implements AbilityMappingService {
                 .collect(Collectors.toList()));
         zoneEventAbilityContainer.setSize(zoneEventJsonModel.getSize());
         zoneEventAbilityContainer.setEnvSearchDistance(zoneEventJsonModel.getEnvSearchDistance());
-        zoneEventAbilityContainer.setEnvTags(modelMappingService.mapTags(Constants.TagGroupName.ENV_SEARCH_TAGS, zoneEventJsonModel.getEnvTags(), i -> localization.getEnvSearchTagNames().get(i)));
+        zoneEventAbilityContainer.setEnvTags(tagResolver.getEnvSearchTags(zoneEventJsonModel.getEnvTags()));
         return zoneEventAbilityContainer;
     }
 
@@ -180,7 +195,7 @@ public class AbilityMappingServiceImpl implements AbilityMappingService {
         entityInfoModel.setEntityName(localization.getResearchNames().get(entityId));
         entityInfoModel.setEntityId(entityId);
         abilityModel.setEntityInfo(entityInfoModel);
-        abilityModel.setDuration(Util.intToDoubleShift(abilityJsonModel.getData().getDuration()));
+        abilityModel.setDuration(Utils.intToDoubleShift(abilityJsonModel.getData().getDuration()));
         return abilityModel;
     }
 
@@ -209,7 +224,7 @@ public class AbilityMappingServiceImpl implements AbilityMappingService {
         String entityType = Constants.EntityType.UNIT.getName();
         entityInfoModel.setEntityImage(imageService.getImageName(entityType, entityId));
         entityInfoModel.setEntityName(localization.getUnitNames().get(entityId));
-        entityInfoModel.setEntityNation(Util.getUnitNation(unitNations, localization.getNationNames(), entityId));
+        entityInfoModel.setEntityNation(nationResolver.getUnitNation(entityId));
         entityInfoModel.setEntityId(entityId);
         abilityModel.setEntityInfo(entityInfoModel);
         return abilityModel;
@@ -218,13 +233,22 @@ public class AbilityMappingServiceImpl implements AbilityMappingService {
     private GenericAbility mapCreateEnvAbility(AbilityJsonModel abilityJsonModel, UnitJsonModel unitJsonModel) {
         CreateEnvAbilityModel abilityModel = new CreateEnvAbilityModel();
         EntityInfoModel entityInfoModel = new EntityInfoModel();
-        Integer entityId = abilityJsonModel.getData().getId();
+
+        Integer createEnvId = abilityJsonModel.getData().getId();
+        CreateEnvJsonModel createEnvSource = unitJsonModel.getCreateEnvs().get(createEnvId);
+        String createEnvTag = createEnvSource.getTag();
+        int entityId = envMap.entrySet().stream()
+                .filter(env -> createEnvTag.equals(env.getValue().getCreateTag()))
+                .findAny()
+                .orElseThrow()
+                .getKey();
+
         String entityType = Constants.EntityType.ENV.getName();
         entityInfoModel.setEntityImage(imageService.getImageName(entityType, entityId));
         entityInfoModel.setEntityName(localization.getEnvNames().get(entityId));
         entityInfoModel.setEntityId(entityId);
         abilityModel.setEntityInfo(entityInfoModel);
-        abilityModel.setCount(unitJsonModel.getCreateEnvs().get(entityId).getCount());
+        abilityModel.setCount(createEnvSource.getCount());
         return abilityModel;
     }
 
@@ -235,11 +259,11 @@ public class AbilityMappingServiceImpl implements AbilityMappingService {
         String entityType = Constants.EntityType.UNIT.getName();
         entityInfoModel.setEntityImage(imageService.getImageName(entityType, entityId));
         entityInfoModel.setEntityName(localization.getUnitNames().get(entityId));
-        entityInfoModel.setEntityNation(Util.getUnitNation(unitNations, localization.getNationNames(), entityId));
+        entityInfoModel.setEntityNation(nationResolver.getUnitNation(entityId));
         entityInfoModel.setEntityId(entityId);
         abilityModel.setEntityInfo(entityInfoModel);
         abilityModel.setCount(abilityJsonModel.getData().getCount());
-        abilityModel.setLifeTime(Util.intToDoubleShift(abilityJsonModel.getData().getLifeTime()));
+        abilityModel.setLifeTime(Utils.intToDoubleShift(abilityJsonModel.getData().getLifeTime()));
         return abilityModel;
     }
 
@@ -255,9 +279,11 @@ public class AbilityMappingServiceImpl implements AbilityMappingService {
         WorkModel workModel = new WorkModel();
         workModel.setWorkId(workId);
         workModel.setCost(getWorkCost(workJsonModel));
-        workModel.setMakeTime(Util.intToDoubleShift(workJsonModel.getMaketime()));
-        workModel.setReserve(modelMappingService.map(workJsonModel.getReserve()));
-        workModel.setEnabled(workJsonModel.getEnabled() != null ? workJsonModel.getEnabled() : true);
+        if (workJsonModel != null) {
+            workModel.setMakeTime(Utils.intToDoubleShift(workJsonModel.getMaketime()));
+            workModel.setReserve(modelMappingService.map(workJsonModel.getReserve()));
+            workModel.setEnabled(workJsonModel.getEnabled() != null ? workJsonModel.getEnabled() : true);
+        }
         return workModel;
     }
 

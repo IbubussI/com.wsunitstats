@@ -3,7 +3,7 @@ package com.wsunitstats.service.service.impl.mutator;
 import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.domain.submodel.TurretModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
-import com.wsunitstats.utils.Util;
+import com.wsunitstats.utils.Utils;
 
 import java.util.Map;
 
@@ -44,6 +44,6 @@ public class TurretRechargePeriodDec implements Mutator {
     }
 
     private void processWeapon(WeaponModel weapon, int dec) {
-        weapon.setRechargePeriod(weapon.getRechargePeriod() - Util.intToDoubleShift(dec));
+        weapon.setRechargePeriod(weapon.getRechargePeriod() - Utils.intToDoubleShift(dec));
     }
 }

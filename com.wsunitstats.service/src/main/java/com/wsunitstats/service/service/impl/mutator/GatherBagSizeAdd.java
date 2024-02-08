@@ -2,7 +2,7 @@ package com.wsunitstats.service.service.impl.mutator;
 
 import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.domain.submodel.GatherModel;
-import com.wsunitstats.utils.Util;
+import com.wsunitstats.utils.Utils;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +29,6 @@ public class GatherBagSizeAdd implements Mutator {
     }
 
     private void addBagSize(GatherModel gather, int add) {
-        gather.setBagSize(gather.getBagSize() + Util.intToDoubleShift(add));
+        gather.setBagSize(gather.getBagSize() + Utils.intToDoubleShift(add));
     }
 }

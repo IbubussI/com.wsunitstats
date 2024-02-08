@@ -1,7 +1,7 @@
 package com.wsunitstats.service.service.impl;
 
 import com.wsunitstats.domain.ResearchModel;
-import com.wsunitstats.service.model.EntityOption;
+import com.wsunitstats.service.model.ResearchOption;
 import com.wsunitstats.service.repository.ResearchRepository;
 import com.wsunitstats.service.service.ResearchService;
 import com.wsunitstats.service.service.UtilsService;
@@ -38,13 +38,15 @@ public class ResearchServiceImpl implements ResearchService {
     }
 
     @Override
-    public List<EntityOption> getResearchOptionsByName(String locale, String namePattern, int size) {
-        return researchRepository.findByPatternContaining(locale, "<*upgrade%", String.format("%%%s%%", namePattern), size);
-    }
+    public List<ResearchOption> getResearchOptions(String locale, String namePattern, List<Integer> gameIds,
+                                                   String sort, String sortDir, int page, int size) {
+        int offset = page * size;
+        String textPattern = namePattern == null ? null : String.format("%%%s%%", namePattern);
+        if (gameIds != null) {
 
-    @Override
-    public List<EntityOption> getResearchOptionsByUnitIds(List<Integer> unitIds) {
-        return researchRepository.findByUnitIds(unitIds);
+        }
+        return researchRepository.findOptionsWithGameIdsFilter(locale, "<*upgrade%",
+                textPattern, gameIds, sort, sortDir, offset, size);
     }
 
     @Override

@@ -3,10 +3,14 @@ export const UNIT_OPTIONS_API = '/api/units/options';
 export const RESEARCH_OPTIONS_API = '/api/researches/options';
 export const RESEARCH_UNIT_OPTIONS_API = '/api/researches/unit-options';
 export const LOCALE_OPTIONS_API = '/api/locales/options';
-export const DEFAULT_LOCALE_OPTION = 'en';
+export const NATION_OPTIONS_API = '/api/units/nations';
+export const SEARCH_TAGS_OPTIONS_API = '/api/units/search-tags';
+export const UNIT_TAGS_OPTIONS_API = '/api/units/unit-tags';
 export const UNIT_DATA_API = '/api/units/game-id';
 export const RESEARCH_DATA_API = '/api/researches/game-id';
 
+export const UNIT_SELECTOR_PAGE_PATH = 'units';
+export const RESEARCH_SELECTOR_PAGE_PATH = 'researches';
 export const UNIT_PAGE_PATH = 'unit';
 export const RESEARCH_PAGE_PATH = 'research';
 export const ENV_PAGE_PATH = 'env';
@@ -29,17 +33,22 @@ export const RESEARCH_UPGRADES_TAB = 'upgrades';
 
 export const PARAM_LOCALE = ':locale';
 export const PARAM_GAME_ID = ':gameId';
-export const PARAM_RESEARCH_ID = 'researchId';
 export const PARAM_TAB = ':tab';
+export const PARAM_RESEARCH_IDS = 'researchIds';
+export const PARAM_NATIONS = 'nations';
+export const PARAM_UNIT_TAGS = 'unitTags';
+export const PARAM_SEARCH_TAGS = 'searchTags';
 export const NO_LINK_INDICATOR = 'no-link';
 
+export const DEFAULT_LOCALE_OPTION = 'en';
 export const LOCAL_RESIZABLE_WIDTH = 'resizable-width';
 
 export const JS_NBSP = '\u00A0';
 export const SECONDS_END_MARKER = `${JS_NBSP}sec`;
 
 export const DEFAULT_COLUMN_WIDTH = 600;
-export const FILTER_SIDEKICK_WIDTH = 240;
+export const FILTER_PANEL_HEIGHT = 120;
 
 export const ABILITY_TYPE_DAMAGE = 6;
-export const ENTITY_OPTIONS_REQUEST_SIZE = 30;
+export const ENTITY_PICKER_OPTIONS_SIZE = 40;
+export const SELECTOR_OPTIONS_SIZE = 20;

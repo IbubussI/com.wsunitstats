@@ -3,7 +3,7 @@ package com.wsunitstats.service.service.impl.mutator;
 import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.domain.submodel.weapon.DamageModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
-import com.wsunitstats.utils.Util;
+import com.wsunitstats.utils.Utils;
 
 import java.util.Map;
 
@@ -32,10 +32,10 @@ public class WeaponDamageAdd implements Mutator {
         DamageModel damage = weapon.getDamage().getDamages().get(0);
         Double value = damage.getValue();
         if (mult == -1) {
-            value = value + Util.intToDoubleShift(add);
+            value = value + Utils.intToDoubleShift(add);
         } else {
             // floored to match in-game ui value
-            value = Math.floor(value * mult / 100) + Util.intToDoubleShift(add);
+            value = Math.floor(value * mult / 100) + Utils.intToDoubleShift(add);
         }
         damage.setValue(value);
     }

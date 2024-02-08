@@ -14,7 +14,7 @@ const FLEX_TABLE_LEFT_WIDTH = '50%';
 export const CommonTable = ({ unit, overflowMinWidth }) => {
   const commonData = [
     createRowData('Game ID', unit.gameId),
-    createRowData('Nation', unit.nation),
+    createRowData('Nation', unit.nation.name),
     createRowData('Health', unit.health),
     createRowData('View Range', unit.viewRange),
     createRowData('Size', unit.size),

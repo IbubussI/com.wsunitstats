@@ -16,23 +16,26 @@ import java.io.Serial;
 @Service
 public class ModelExporterServiceImpl implements ModelExporterService {
     @Override
-    public <T> String exportToJson(T model) throws JsonProcessingException {
-        return getExportMapper().writeValueAsString(model);
+    public <T> String exportToJson(T model, boolean suppressIdentityInfo) throws JsonProcessingException {
+        return getExportMapper(suppressIdentityInfo).writeValueAsString(model);
     }
 
     @Override
-    public <T> String exportToPrettyJson(T model) throws JsonProcessingException {
+    public <T> String exportToPrettyJson(T model, boolean suppressIdentityInfo) throws JsonProcessingException {
         DefaultPrettyPrinter prettyWriter = new DefaultPrettyPrinter();
         DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("\t", DefaultIndenter.SYS_LF);
         prettyWriter.indentObjectsWith(indenter);
         prettyWriter.indentArraysWith(indenter);
-        return getExportMapper().writer(prettyWriter).writeValueAsString(model);
+        return getExportMapper(suppressIdentityInfo).writer(prettyWriter).writeValueAsString(model);
     }
 
     @Override
-    public ObjectMapper getExportMapper() {
+    public ObjectMapper getExportMapper(boolean suppressIdentityInfo) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new ExporterModule());
+        if (suppressIdentityInfo) {
+            mapper.setAnnotationIntrospector(new IdentityFreeJacksonAnnotationIntrospector());
+        }
         mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         return mapper;
     }
