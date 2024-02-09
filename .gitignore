@@ -38,3 +38,5 @@ build/
 /com.wsunitstats.ui/public/files/
 /com.wsunitstats.service/src/main/resources/static/
 /entities.json
+/specialTaskResults.txt
+/logs/
