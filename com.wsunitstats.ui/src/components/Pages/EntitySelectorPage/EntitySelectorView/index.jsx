@@ -19,7 +19,7 @@ const FlexFilterDrawer = styled(Drawer)(({ theme }) => ({
   flexShrink: 0
 }));
 
-export const EntitySelectorView = ({ title, Card, getEntityPath, Filters, options, optionsSize, apiPath }) => {
+export const EntitySelectorView = ({ title, Card, getEntityPath, Filters, optionsSize, apiPath }) => {
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
   const theme = useTheme();
@@ -27,14 +27,16 @@ export const EntitySelectorView = ({ title, Card, getEntityPath, Filters, option
   const params = useParams();
   const [loadedOptions, setLoadedOptions] = React.useState([]);
   const [hasMore, setHasMore] = React.useState(true);
-  const [page, setPage] = React.useState(1);
+  const [page, setPage] = React.useState(0);
 
-  // reset if options changes (by changing filters for example)
+  // if search params changes we need to reset to ensure only valid data is present
   React.useEffect(() => {
-    setLoadedOptions(options);
-    setHasMore(true);
-    setPage(1);
-  }, [options]);
+    if (page > 0) {
+      setLoadedOptions([]);
+      setHasMore(true);
+      setPage(0);
+    }
+  }, [searchParams]);
 
   const fetchMoreData = () => {
     const requestSearchParams = new URLSearchParams(searchParams);

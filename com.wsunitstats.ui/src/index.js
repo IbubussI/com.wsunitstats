@@ -48,20 +48,8 @@ const entityLoader = (route, apiPath) => {
   return fetch(apiUrl);
 }
 
-const selectorLoader = (route, apiPath) => {
-  const searchParams = new URLSearchParams(new URL(route.request.url).searchParams);
-  searchParams.set('locale', route.params.locale);
-  searchParams.set('size', Constants.SELECTOR_OPTIONS_SIZE);
-  const apiUrl = new URL(Constants.HOST + apiPath);
-  apiUrl.search = searchParams;
-  return fetch(apiUrl);
-}
-
 const unitLoader = (route) => entityLoader(route, Constants.UNIT_DATA_API);
 const researchLoader = (route) => entityLoader(route, Constants.RESEARCH_DATA_API);
-
-const unitSelectorLoader = (route) => selectorLoader(route, Constants.UNIT_OPTIONS_API);
-const researchSelectorLoader = (route) => selectorLoader(route, Constants.RESEARCH_OPTIONS_API);
 
 const unitSelectorOptions = {
   title: 'WS Units',
@@ -112,7 +100,6 @@ const router = createBrowserRouter([
       {
         path: Constants.UNIT_SELECTOR_PAGE_PATH,
         element: <EntitySelectorPage selectorOptions={unitSelectorOptions} />,
-        loader: unitSelectorLoader
       },
       {
         path: `${Constants.UNIT_PAGE_PATH}/${Constants.PARAM_GAME_ID}`,
@@ -132,7 +119,6 @@ const router = createBrowserRouter([
       {
         path: Constants.RESEARCH_SELECTOR_PAGE_PATH,
         element: <EntitySelectorPage selectorOptions={researchSelectorOptions} />,
-        loader: researchSelectorLoader
       },
       {
         path: `${Constants.RESEARCH_PAGE_PATH}/${Constants.PARAM_GAME_ID}`,
