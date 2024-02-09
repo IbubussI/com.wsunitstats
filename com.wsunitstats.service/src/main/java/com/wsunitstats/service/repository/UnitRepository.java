@@ -34,14 +34,14 @@ public interface UnitRepository extends CrudRepository<UnitModel, Long>, PagingA
             RIGHT JOIN wsunitstats.unit ON localization_entries.entries_KEY = unit.name
             LEFT JOIN wsunitstats.nation ON nation.id = unit.nation_id
             LEFT JOIN wsunitstats.unit_tags ON unit_tags.unit_id = unit.id
-            LEFT JOIN wsunitstats.unit_searchtags ON unit_searchtags.unit_id = unit.id
+            LEFT JOIN wsunitstats.unit_searchTags ON unit_searchTags.unit_id = unit.id
             WHERE localization_id = (SELECT id FROM wsunitstats.localization WHERE locale = :locale)
             AND entries_KEY LIKE :entryPattern
             AND (:textPattern IS NULL OR entries LIKE :textPattern)
             AND (COALESCE(:gameIds) IS NULL OR unit.gameId IN :gameIds)
             AND (COALESCE(:nations) IS NULL OR unit.nation_id IN :nations)
             AND (COALESCE(:unitTagIds) IS NULL OR unit_tags.tags_id IN :unitTagIds)
-            AND (COALESCE(:searchTagIds) IS NULL OR unit_searchtags.searchTags_id IN :searchTagIds)
+            AND (COALESCE(:searchTagIds) IS NULL OR unit_searchTags.searchTags_id IN :searchTagIds)
             GROUP BY unit.id
             ORDER BY :sort :sortDir
             LIMIT :limit
