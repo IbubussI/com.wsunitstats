@@ -1,8 +1,9 @@
 import * as React from 'react';
+import * as Constants from "utils/constants";
 import { FlexibleTable, FlexibleTableDoubleCellRow } from 'components/Layout/FlexibleTable';
 import { Stack, Typography } from '@mui/material';
 import { DoubleColumnFrame } from 'components/Layout/DoubleColumnFrame';
-import { ArmorChart } from '../ArmorChart';
+import { ArmorChart } from 'components/Pages/UnitPage/Tabs/Common/ArmorChart';
 import { TagBox } from 'components/Atoms/TagBox';
 import { EntityImage } from 'components/Atoms/EntityImage';
 
@@ -13,7 +14,7 @@ const FLEX_TABLE_LEFT_WIDTH = '50%';
 export const CommonTable = ({ unit, overflowMinWidth }) => {
   const commonData = [
     createRowData('Game ID', unit.gameId),
-    createRowData('Nation', unit.nation),
+    createRowData('Nation', unit.nation.name),
     createRowData('Health', unit.health),
     createRowData('View Range', unit.viewRange),
     createRowData('Size', unit.size),
@@ -30,7 +31,7 @@ export const CommonTable = ({ unit, overflowMinWidth }) => {
     createRowData('Gives population', unit.supply?.produce),
     createRowData('Limit', unit.limit),
 
-    createRowData('Receives friendly\u00A0dmg', '' + !!unit.receiveFriendlyDamage),
+    createRowData(`Receives friendly${Constants.JS_NBSP}dmg`, '' + !!unit.receiveFriendlyDamage),
     createRowData('Parent must not move', unit.parentMustIdle ? '' + true : null),
     createRowData('Controllable', '' + !!unit.controllable),
 

@@ -28,7 +28,7 @@ export const WorkAbilityTable = ({ abilityContainer, overflowMinWidth }) => {
           values: [
             ability.entityInfo && {
               primary: ability.entityInfo.entityName,
-              secondary: ability.entityInfo.entityNation,
+              secondary: ability.entityInfo.entityNation && ability.entityInfo.entityNation.name,
               image: {
                 path: ability.entityInfo.entityImage,
                 width: 35,
@@ -107,8 +107,18 @@ export const WorkAbilityTable = ({ abilityContainer, overflowMinWidth }) => {
         widthRight: FLEX_TABLE_RIGHT_WIDTH,
         widthLeft: FLEX_TABLE_LEFT_WIDTH
       }
-    }
-  ].filter(x => x.childData.value && (!x.childData.value.values || x.childData.value.values.length > 0));
+    },
+    {
+      column: 1,
+      renderer: FlexibleTableDoubleCellRow,
+      childData: {
+        label: 'Work ID',
+        value: work.workId,
+        widthRight: FLEX_TABLE_RIGHT_WIDTH,
+        widthLeft: FLEX_TABLE_LEFT_WIDTH
+      }
+    },
+  ].filter(x => (x.childData.value || x.childData.value === 0) && (!x.childData.value.values || x.childData.value.values.length > 0));
 
   const requirementsData = ability.requirements && Data.getRequirementsData(ability.requirements, locale);
 

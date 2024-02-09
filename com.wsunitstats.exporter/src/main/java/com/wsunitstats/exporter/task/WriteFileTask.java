@@ -54,8 +54,8 @@ public class WriteFileTask implements ExecutionTask {
             try (Writer fileWriter = new FileWriter(fileName, false)) {
                 LOG.info("Converting to json...");
                 String unitsJson = filePretty
-                        ? exporterService.exportToPrettyJson(exportWrapper)
-                        : exporterService.exportToJson(exportWrapper);
+                        ? exporterService.exportToPrettyJson(exportWrapper, true)
+                        : exporterService.exportToJson(exportWrapper, true);
                 if (fileLocalize) {
                     LOG.info("Localizing...");
                     LOG.info("Locale: {}", fileLocale);

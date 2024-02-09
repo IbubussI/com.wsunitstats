@@ -2,9 +2,12 @@ package com.wsunitstats.domain.submodel.weapon;
 
 import com.wsunitstats.domain.EntityInfoModel;
 import com.wsunitstats.domain.PersistentObject;
-import jakarta.persistence.ElementCollection;
+import com.wsunitstats.domain.submodel.TagModel;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,6 +22,6 @@ public class BuffModel extends PersistentObject {
     private int buffId;
     private EntityInfoModel entityInfo;
     private Double period;
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> affectedUnits;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<TagModel> affectedUnits;
 }

@@ -10,6 +10,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class MainFileJsonModel {
+    private Object appearancesExceptions;
     private Object contentExceptions;
     private Object fileEditor;
     private Object gameServer;

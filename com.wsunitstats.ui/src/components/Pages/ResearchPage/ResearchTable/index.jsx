@@ -42,7 +42,7 @@ export const ResearchTable = ({ research }) => {
               values: [
                 {
                   primary: upgrade.unit.entityName,
-                  secondary: upgrade.unit.entityNation ? upgrade.unit.entityNation + ', ID: ' + upgrade.unit.entityId : 'ID: ' + upgrade.unit.entityId,
+                  secondary: upgrade.unit.entityNation ? upgrade.unit.entityNation.name + ', ID: ' + upgrade.unit.entityId : 'ID: ' + upgrade.unit.entityId,
                   image: {
                     path: upgrade.unit.entityImage,
                     width: 50,

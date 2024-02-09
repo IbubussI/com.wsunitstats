@@ -2,7 +2,7 @@ package com.wsunitstats.exporter.service.impl;
 
 import com.wsunitstats.domain.LocalizationModel;
 import com.wsunitstats.exporter.service.LocalizationService;
-import com.wsunitstats.utils.Util;
+import com.wsunitstats.utils.Utils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,6 +12,6 @@ public class LocalizationServiceImpl implements LocalizationService {
         if (localizationModel == null) {
             return null;
         }
-        return Util.localizeAll(input, localizationModel::getValue);
+        return Utils.localizeAll(input, localizationModel::getValue);
     }
 }

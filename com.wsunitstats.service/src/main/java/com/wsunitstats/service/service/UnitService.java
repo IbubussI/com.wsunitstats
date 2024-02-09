@@ -2,7 +2,9 @@ package com.wsunitstats.service.service;
 
 import com.wsunitstats.domain.ResearchModel;
 import com.wsunitstats.domain.UnitModel;
-import com.wsunitstats.service.model.EntityOption;
+import com.wsunitstats.service.model.NationOption;
+import com.wsunitstats.service.model.TagOption;
+import com.wsunitstats.service.model.UnitOption;
 
 import java.util.List;
 
@@ -22,7 +24,15 @@ public interface UnitService {
     /**
      * Returns localized options
      */
-    List<EntityOption> getUnitOptionsByName(String locale, String namePattern, int size);
+    List<UnitOption> getUnitOptions(String locale, String namePattern, List<Integer> gameIds, List<Integer> nations,
+                                    List<Integer> unitTagIds, List<Integer> searchTagIds,
+                                    String sort, String sortDir, int page, int size);
+
+    List<NationOption> getNationOptions();
+
+    List<TagOption> getUnitTagOptions();
+
+    List<TagOption> getSearchTagOptions();
 
     List<String> getColumnNames();
 

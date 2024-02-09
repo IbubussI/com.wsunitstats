@@ -2,7 +2,7 @@ package com.wsunitstats.service.service.impl.mutator;
 
 import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.domain.submodel.ArmorModel;
-import com.wsunitstats.utils.Util;
+import com.wsunitstats.utils.Utils;
 
 import java.util.List;
 import java.util.Map;
@@ -43,7 +43,7 @@ public class ArmorAddThickness implements Mutator {
     private void mod(List<ArmorModel> armorData, int armorId, int add, int mult) {
         if (armorData.size() > armorId) {
             ArmorModel armor = armorData.get(armorId);
-            Double value = armor.getValue() * mult / 100 + Util.intToDoubleShift(add);
+            Double value = armor.getValue() * mult / 100 + Utils.intToDoubleShift(add);
             armor.setValue(value);
         }
     }

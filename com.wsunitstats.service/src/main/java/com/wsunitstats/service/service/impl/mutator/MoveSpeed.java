@@ -2,7 +2,7 @@ package com.wsunitstats.service.service.impl.mutator;
 
 import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.domain.submodel.MovementModel;
-import com.wsunitstats.utils.Util;
+import com.wsunitstats.utils.Utils;
 
 import java.util.Map;
 
@@ -19,6 +19,6 @@ public class MoveSpeed implements Mutator {
         Integer currentSpeed = movement.getSpeed();
         movement.setSpeed(currentSpeed * mult / 100 + add);
         Double currentRotationSpeed = movement.getRotationSpeed();
-        movement.setRotationSpeed(currentRotationSpeed * multR / 100 + Util.intToDoubleShift(addR));
+        movement.setRotationSpeed(currentRotationSpeed * multR / 100 + Utils.intToDoubleShift(addR));
     }
 }

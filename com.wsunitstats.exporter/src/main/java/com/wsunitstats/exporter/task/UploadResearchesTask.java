@@ -34,7 +34,7 @@ public class UploadResearchesTask extends RestUploadTask implements ExecutionTas
     public void execute(ExecutionPayload payload) throws TaskExecutionException {
         try {
             String authToken = getAuthToken(restService, payload);
-            String json = exporterService.exportToJson(payload.getResearches());
+            String json = exporterService.exportToJson(payload.getResearches(), false);
             String endpoint = payload.getHostname() + uploadUriPath;
             LOG.info("Sending researches data to {}", endpoint);
             ResponseEntity<String> response = restService.postJson(endpoint, new HashMap<>(), json, authToken);

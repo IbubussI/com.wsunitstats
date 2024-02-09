@@ -1,21 +1,19 @@
 import * as React from 'react';
 import { Outlet, useLoaderData } from 'react-router-dom';
-import { EntityHeader } from './EntityHeader';
+import { Box, styled } from '@mui/material';
 
-export const EntityPage = ({ pickerOptions }) => {
+const StyledRootContainer = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(2),
+  width: '100%'
+}));
+
+export const EntityPage = () => {
   const loaderData = useLoaderData();
   const entity = loaderData ? loaderData[0] : undefined;
-  
+
   return (
-    <>
-      <EntityHeader
-        entity={entity}
-        pickerOptions={pickerOptions}
-      />
-      {entity ? <Outlet context={entity} />
-        : <DefaultView />}
-    </>
+    <StyledRootContainer>
+      <Outlet context={entity} />
+    </StyledRootContainer>
   );
 }
-
-const DefaultView = () => <div>Waiting for your input...</div>

@@ -1,67 +1,91 @@
 import * as React from 'react';
 import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
-import { Autocomplete, Checkbox, Stack, TextField, Typography } from "@mui/material";
+import { Autocomplete, Checkbox, Chip, Stack, TextField, Typography, autocompleteClasses, styled } from "@mui/material";
 import { Image } from "components/Atoms/Renderer";
 
-export const CheckmarksSelect = ({ label, onChange, options, optionsMetadata, value }) => {
-  const icon = <CheckBoxOutlineBlank fontSize="small" />;
-  const checkedIcon = <CheckBox fontSize="small" />;
+const StyledAutocomplete = styled(Autocomplete)(() => ({
+  [`& .${autocompleteClasses.inputRoot} .${autocompleteClasses.input}`]: {
+    minWidth: 0,
+    cursor: 'pointer',
+    paddingRight: 0,
+    paddingLeft: 0
+  }
+}));
+
+export const CheckmarksSelect = (props) => {
+  const {
+    label,
+    values,
+    options,
+    onChange,
+    limitTags,
+    getSecondaryText,
+    ...forwardedProps
+  } = props;
 
   return (
-    <Autocomplete
-      sx={{
-        width: '100%',
-        '& .MuiAutocomplete-inputRoot .MuiAutocomplete-input': {
-          minWidth: 0,
-          cursor: 'pointer',
-          paddingRight: 0,
-          paddingLeft: 0
-        }
-      }}
+    <StyledAutocomplete
+      {...forwardedProps}
       multiple
       disableCloseOnSelect
-      onChange={onChange}
+      onChange={(_, newValues) => onChange(newValues)}
       options={options}
-      value={value}
-      limitTags={2}
-      getOptionLabel={(option) => optionsMetadata.get(option).name }
+      value={values}
+      getOptionLabel={(option) => option.name}
       renderOption={(props, option, { selected }) => {
-        const optionData = optionsMetadata.get(option);
         return (
           <li {...props}>
             <Checkbox
-              icon={icon}
-              checkedIcon={checkedIcon}
+              icon={<CheckBoxOutlineBlank fontSize="small" />}
+              checkedIcon={<CheckBox fontSize="small" />}
               style={{ marginRight: 8 }}
               checked={selected}
             />
             <Stack direction='row' alignItems='center'>
-              <Stack sx={{ marginRight: 0.6, height: 'fit-content' }}>
-                <Image data={{
-                  path: optionData.image,
-                  width: 42,
-                  height: 42,
-                }} />
-              </Stack>
+              {option.image &&
+                <Stack sx={{ marginRight: 0.6, height: 'fit-content' }}>
+                  <Image data={{
+                    path: option.image,
+                    width: 42,
+                    height: 42,
+                  }} />
+                </Stack>}
               <Stack>
                 <Typography variant='body1' color='text.primary'>
-                  {optionData.name}
+                  {option.name}
                 </Typography>
-                <Typography variant='body2' color='text.secondary'>
-                  {optionData.secondary}
-                </Typography>
+                {getSecondaryText &&
+                  <Typography variant='body2' color='text.secondary'>
+                    {getSecondaryText(option)}
+                  </Typography>}
               </Stack>
             </Stack>
           </li>
         );
       }}
       renderInput={({ inputProps, ...props }) => (
-        <TextField {...props} inputProps={{ ...inputProps, readOnly: true }} label={label} sx={{ minWidth: '0'}}/>
+        <TextField {...props} inputProps={{ ...inputProps, readOnly: true }} label={label} sx={{ minWidth: '0' }} />
       )}
       componentsProps={{
         paper: {
           elevation: 3
         }
+      }}
+      renderTags={(value, getTagProps) => {
+        const numTags = value.length;
+        return (
+          <>
+            {value.slice(0, limitTags).map((option, index) => (
+              <Chip
+                {...getTagProps({ index })}
+                key={index}
+                label={option.name}
+              />
+            ))}
+
+            {numTags > limitTags && ` +${numTags - limitTags}`}
+          </>
+        );
       }}
     />
   );

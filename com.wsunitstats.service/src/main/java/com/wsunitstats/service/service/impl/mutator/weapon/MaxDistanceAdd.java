@@ -3,10 +3,9 @@ package com.wsunitstats.service.service.impl.mutator.weapon;
 import com.wsunitstats.domain.UnitModel;
 import com.wsunitstats.domain.submodel.DistanceModel;
 import com.wsunitstats.domain.submodel.TurretModel;
-import com.wsunitstats.domain.submodel.weapon.DamageModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import com.wsunitstats.service.service.impl.mutator.Mutator;
-import com.wsunitstats.utils.Util;
+import com.wsunitstats.utils.Utils;
 
 import java.util.List;
 import java.util.Map;
@@ -51,7 +50,7 @@ public class MaxDistanceAdd implements Mutator {
 
     private void processWeapon(WeaponModel weapon, int add) {
         DistanceModel distance = weapon.getDistance();
-        distance.setMax(distance.getMax() + Util.intToDoubleShift(add));
-        distance.setStop(distance.getStop() + Util.intToDoubleShift(add));
+        distance.setMax(distance.getMax() + Utils.intToDoubleShift(add));
+        distance.setStop(distance.getStop() + Utils.intToDoubleShift(add));
     }
 }

@@ -34,7 +34,7 @@ public class UploadUnitsTask extends RestUploadTask implements ExecutionTask {
     public void execute(ExecutionPayload payload) throws TaskExecutionException {
         try {
             String authToken = getAuthToken(restService, payload);
-            String json = exporterService.exportToJson(payload.getUnits());
+            String json = exporterService.exportToJson(payload.getUnits(), false);
             String endpoint = payload.getHostname() + uploadUriPath;
             LOG.info("Sending units data to {}", endpoint);
             ResponseEntity<String> response = restService.postJson(endpoint, new HashMap<>(), json, authToken);

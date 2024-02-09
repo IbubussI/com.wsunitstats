@@ -20,4 +20,5 @@ public class CreateEnvJsonModel {
     private Integer direction;
     private Integer count;
     private List<Integer> position;
+    private Integer findPositionSize;
 }

@@ -20,6 +20,7 @@ public class EnvJsonModel {
     private Integer health;
     private Integer lifeTime;
     private Map<String, Object> passability;
+    private Integer regeneration;
     private Integer searchTags;
     private Integer size;
     private Integer tags;

@@ -9,7 +9,7 @@ public class Constants {
     }
 
     public static final Pattern LOCALIZATION_KEY_PATTERN = Pattern.compile("<\\*[a-zA-Z0-9/]+>");
-    public static final Pattern LOCALIZATION_PATTERN = Pattern.compile("^localize\\(\"(<\\*[a-zA-Z0-9/]+>)\"\\)$", Pattern.MULTILINE);
+    public static final Pattern LOCALIZATION_PATTERN = Pattern.compile("^\\{?localize\\(\"(<\\*[a-zA-Z0-9/]+>)\"\\)}?$", Pattern.MULTILINE);
     public static final Pattern LOCALIZATION_MAP_ENTRY_PATTERN = Pattern.compile("^\\[(\\d*)]=localize\\(\"(<\\*[a-zA-Z0-9/]+>)\"\\)$", Pattern.MULTILINE);
     public static final double TICK_RATE_MULTIPLIER = 50d;
     public static final double SHIFT_VALUE_MULTIPLIER = 1000d;
@@ -41,6 +41,39 @@ public class Constants {
     public static final String BASIC_DAMAGE_TYPE = "Base";
     public static final String GENERIC_UNIT_TAG = "Unit";
     public static final String NIL = "nil";
+
+    public enum TagGroupName {
+        UNIT_SEARCH_TAGS("Unit search tags"),
+        UNIT_TAGS("Unit tags"),
+        ENV_SEARCH_TAGS("Env search tags");
+
+        private final String groupName;
+
+        TagGroupName(String groupName) {
+            this.groupName = groupName;
+        }
+
+        public String getGroupName() {
+            return groupName;
+        }
+    }
+
+    public enum RestResponseMessage {
+        OK("ok"),
+        INVALID_JSON("Given json doesn't match expected data model"),
+        ALREADY_EXISTS("Given item already exists"),
+        JSON_ERROR("Json export error");
+
+        private final String message;
+
+        RestResponseMessage(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+    }
 
     public enum AbilityType {
         UNDEFINED(-1, UNDEF),

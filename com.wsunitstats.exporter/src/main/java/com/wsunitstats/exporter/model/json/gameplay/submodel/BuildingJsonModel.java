@@ -13,4 +13,5 @@ public class BuildingJsonModel {
     private Integer id;
     // ticks for 1 hp
     private Integer progress;
+    private Integer progressTerritory;
 }

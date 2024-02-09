@@ -3,10 +3,9 @@ package com.wsunitstats.exporter;
 import com.wsunitstats.domain.ResearchModel;
 import com.wsunitstats.exporter.service.FileContentService;
 import com.wsunitstats.exporter.service.LocalizationModelResolver;
-import com.wsunitstats.exporter.service.ResearchModelResolver;
+import com.wsunitstats.exporter.service.ModelResolver;
 import com.wsunitstats.exporter.task.ExecutionPayload;
 import com.wsunitstats.exporter.task.TaskExecutionPool;
-import com.wsunitstats.exporter.service.UnitModelResolver;
 import com.wsunitstats.domain.LocalizationModel;
 import com.wsunitstats.domain.UnitModel;
 import org.apache.logging.log4j.LogManager;
@@ -33,9 +32,7 @@ public class UnitStatsExporterApplication {
         private static final Logger LOG = LogManager.getLogger(ExporterRunner.class);
 
         @Autowired
-        private UnitModelResolver unitModelResolver;
-        @Autowired
-        private ResearchModelResolver researchModelResolver;
+        private ModelResolver modelResolver;
         @Autowired
         private LocalizationModelResolver localizationModelResolver;
         @Autowired
@@ -62,8 +59,8 @@ public class UnitStatsExporterApplication {
             }
 
             LOG.info("Transforming files to data model...");
-            List<UnitModel> unitModels = unitModelResolver.resolve();
-            List<ResearchModel> researchModels = researchModelResolver.resolve();
+            List<UnitModel> unitModels = modelResolver.resolveUnits();
+            List<ResearchModel> researchModels = modelResolver.resolveResearches();
             List<LocalizationModel> localizationModels = fileContentService.getLocalizationFileModels().stream()
                     .map(locFile -> localizationModelResolver.resolveFromJsonModel(locFile))
                     .toList();

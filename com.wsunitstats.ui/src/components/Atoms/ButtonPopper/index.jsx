@@ -2,16 +2,22 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import {
   Button,
+  Chip,
   ClickAwayListener,
   Paper,
-  Popper
+  Popper,
+  styled
 } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import { getTagData } from 'data';
+import { DoubleColumnTable } from 'components/Layout/DoubleColumnTable';
 
 export const ButtonPopper = ({
   children,
   buttonRenderer: ButtonRenderer,
+  placement,
+  padding = '16px'
 }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [open, setOpen] = React.useState(false);
@@ -36,10 +42,11 @@ export const ButtonPopper = ({
 
   return (
     <>
-      <ButtonRenderer onClick={handleClick} icon={open ? ArrowDropUpIcon : ArrowDropDownIcon} />
+      <ButtonRenderer onClick={handleClick} open={open} />
       <Popper
         open={open}
         anchorEl={anchorEl}
+        placement={placement}
         modifiers={[
           {
             name: 'flip',
@@ -48,7 +55,7 @@ export const ButtonPopper = ({
         ]}>
         <ClickAwayListener onClickAway={handleClickAway}>
           <Paper elevation={6}>
-            <Box sx={{ p: '16px' }}>
+            <Box sx={{ p: padding }}>
               {children}
             </Box>
           </Paper>
@@ -59,7 +66,8 @@ export const ButtonPopper = ({
 }
 
 export const InfoButtonPopper = ({ children, label }) => {
-  const ButtonContentRenderer = ({ onClick, icon: Icon }) => {
+  const ButtonContentRenderer = ({ onClick, open }) => {
+    const Icon = open ? ArrowDropUpIcon : ArrowDropDownIcon
     return (
       <Button
         variant='outlined'
@@ -78,12 +86,14 @@ export const InfoButtonPopper = ({ children, label }) => {
   return (
     <ButtonPopper
       children={children}
-      buttonRenderer={ButtonContentRenderer} />
+      buttonRenderer={ButtonContentRenderer}
+      placement='bottom' />
   );
 }
 
 export const MenuListButtonPopper = ({ children, label }) => {
-  const ButtonContentRenderer = ({ onClick, icon: Icon }) => {
+  const ButtonContentRenderer = ({ onClick, open }) => {
+    const Icon = open ? ArrowDropUpIcon : ArrowDropDownIcon
     return (
       <Button
         variant='outlined'
@@ -105,7 +115,47 @@ export const MenuListButtonPopper = ({ children, label }) => {
   return (
     <ButtonPopper
       children={children}
-      buttonRenderer={ButtonContentRenderer} />
+      buttonRenderer={ButtonContentRenderer}
+      placement='bottom' />
   );
 }
 
+const TagChip = styled(Chip)(() => ({
+  borderRadius: '1000px', // to match any height
+  height: 'fit-content',
+  backgroundColor: 'rgb(24, 117, 238)',
+  textTransform: 'uppercase',
+  color: 'white',
+  '& span': {
+    fontWeight: 'bold',
+    fontSize: 11,
+    whiteSpace: 'normal',
+    textAlign: 'center',
+    paddingTop: '4px',
+    paddingBottom: '4px',
+  },
+  '&:hover': {
+    backgroundColor: 'rgb(139, 195, 255)'
+  },
+  '&:hover span': {
+    color: 'rgb(1, 113, 212)'
+  },
+}));
+
+export const PopperTag = ({ tag, placement }) => {
+  const Tag = ({ onClick }) => {
+    return (
+      <TagChip onClick={onClick} label={tag.name}/>
+    );
+  }
+
+  return (
+    <ButtonPopper
+      buttonRenderer={Tag}
+      placement={placement}
+      padding='8px'
+    >
+      <DoubleColumnTable data={getTagData(tag)} />
+    </ButtonPopper>
+  );
+}

@@ -12,17 +12,18 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
-import { LocalePicker } from './LocalePicker';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { EntityPicker } from 'components/Header/EntityPicker';
 import { Stack, Tooltip } from '@mui/material';
+import { LocaleSelector } from './LocaleSelector';
 
 const pages = [
   {
-    path: Constants.UNIT_PAGE_PATH,
+    path: Constants.UNIT_SELECTOR_PAGE_PATH,
     name: 'Units'
   },
   {
-    path: Constants.RESEARCH_PAGE_PATH,
+    path: Constants.RESEARCH_SELECTOR_PAGE_PATH,
     name: 'Researches'
   }
 ];
@@ -40,9 +41,11 @@ export const Header = () => {
     setAnchorElNav(null);
   };
 
-  const onLocaleChange = React.useCallback((newLocale, replace) => {
-    navigate(Utils.setPathParams([{ param: newLocale, pos: 1 }]), { replace: replace });
-  }, [navigate]);
+  const onEntityChange = (newRoute, newGameId) => {
+    if (newGameId !== null) {
+      navigate(Utils.getUrlWithPathParams([{ param: newRoute, pos: 2 }, { param: newGameId, pos: 3 }, { param: Constants.INITIAL_TAB, pos: 4 }]));
+    }
+  };
 
   return (
     <AppBar position="static">
@@ -56,15 +59,15 @@ export const Header = () => {
               }
             }}>
               <Typography fontSize='12px' mr={2}>
-                Last updated: 15.12.2023
+                Last updated: 09.02.2024
               </Typography>
               <Typography fontSize='12px' mr={2}>
-                Game version: v154.2259_26659
+                Game version: v159.2525_26999
               </Typography>
             </Stack>
           }
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', sm: 'none' } }}>
             <IconButton
               size="large"
               onClick={handleOpenNavMenu}
@@ -87,7 +90,7 @@ export const Header = () => {
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
-                display: { xs: 'block', md: 'none' },
+                display: { xs: 'block', sm: 'none' },
               }}
             >
               {pages.map((page) => (
@@ -99,7 +102,7 @@ export const Header = () => {
               ))}
             </Menu>
           </Box>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}>
             {pages.map((page) => (
               <NavLink key={page.path} to={page.path} style={{ textDecoration: 'none' }}>
                 <Button
@@ -111,13 +114,12 @@ export const Header = () => {
               </NavLink>
             ))}
           </Box>
-          <Stack sx={{ gap: 1, alignItems: 'center', flexDirection: 'row', paddingTop: 1, paddingBottom: 1 }}>
+          <EntityPicker onSelect={onEntityChange}/>
+          <Stack sx={{ width: '135px', gap: 1, alignItems: 'center', flexDirection: 'row', paddingTop: 1, paddingBottom: 1 }}>
+            <LocaleSelector currentLocale={locale} />
             {locale !== Constants.DEFAULT_LOCALE_OPTION && <Tooltip arrow title='Only in-game values are localized using game localization files. Most of the UI is available only in English now'>
               <WarningAmberIcon sx={{ color: '#fd853c', filter: 'drop-shadow(0px 0px 3px rgb(0 0 0 / 0.8))', fontSize: 25 }} />
             </Tooltip>}
-            <LocalePicker
-              onSelect={onLocaleChange}
-              currentLocale={locale} />
           </Stack>
         </Toolbar>
       </Container>

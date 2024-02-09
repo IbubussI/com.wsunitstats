@@ -3,7 +3,7 @@ package com.wsunitstats.exporter.service.impl;
 import com.wsunitstats.exporter.model.localization.LocalizationFileModel;
 import com.wsunitstats.exporter.service.LocalizationModelResolver;
 import com.wsunitstats.domain.LocalizationModel;
-import com.wsunitstats.utils.Util;
+import com.wsunitstats.utils.Utils;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -32,7 +32,7 @@ public class LocalizationModelResolverImpl implements LocalizationModelResolver 
                 if (listSize > 1) {
                     key.insert(key.indexOf(CLOSING_ANGLE_BRACKET), LOCALIZATION_INDEX_DELIMITER + i);
                 }
-                entryMap.put(key.toString(), Util.clearCurlyBraces(list.get(i)));
+                entryMap.put(key.toString(), Utils.clearCurlyBraces(list.get(i)));
             }
         }
         localizationModel.setEntries(entryMap);

@@ -57,7 +57,7 @@ public class UtilsServiceImpl implements UtilsService {
 
     @Override
     public ResponseEntity<String> getJson(Object entities, boolean localize, String locale) throws JsonProcessingException {
-        String json = exporterService.exportToJson(entities);
+        String json = exporterService.exportToJson(entities, true);
         if (localize) {
             json = localizationService.localize(json, locale);
         }

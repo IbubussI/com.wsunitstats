@@ -4,6 +4,7 @@ import com.wsunitstats.domain.PersistentObject;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,8 +26,10 @@ public class GatherModel extends PersistentObject {
     private Double putDistance;
     private Double perSecond;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<EnvTag> envTags;
-    private List<String> storageTags;
-    private List<String> unitTags;
+    private List<EnvTagModel> envTags;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<TagModel> storageTags;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<TagModel> unitTags;
     private ResourceModel resource;
 }

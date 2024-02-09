@@ -1,11 +1,8 @@
 package com.wsunitstats.service.service.impl.mutator.weapon;
 
 import com.wsunitstats.domain.UnitModel;
-import com.wsunitstats.domain.submodel.TurretModel;
-import com.wsunitstats.domain.submodel.weapon.DamageModel;
 import com.wsunitstats.domain.submodel.weapon.WeaponModel;
 import com.wsunitstats.service.service.impl.mutator.Mutator;
-import com.wsunitstats.utils.Util;
 
 import java.util.List;
 import java.util.Map;

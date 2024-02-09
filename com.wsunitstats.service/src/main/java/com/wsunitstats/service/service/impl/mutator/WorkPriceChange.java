@@ -5,7 +5,7 @@ import com.wsunitstats.domain.submodel.ResourceModel;
 import com.wsunitstats.domain.submodel.ability.container.GenericAbilityContainer;
 import com.wsunitstats.domain.submodel.ability.container.WorkAbilityContainer;
 import com.wsunitstats.utils.Constants;
-import com.wsunitstats.utils.Util;
+import com.wsunitstats.utils.Utils;
 
 import java.util.List;
 import java.util.Map;
@@ -45,6 +45,6 @@ public class WorkPriceChange implements Mutator {
     }
 
     private void processResource(ResourceModel resource, int mult, int add) {
-        resource.setValue(resource.getValue() * mult / 100 + Util.intToDoubleShift(add).intValue());
+        resource.setValue(resource.getValue() * mult / 100 + Utils.intToDoubleShift(add).intValue());
     }
 }

@@ -43,7 +43,7 @@ public class UploadLocalizationTask extends RestUploadTask implements ExecutionT
             parameters.put("forceResubmission", List.of("true"));
             LOG.info("Sending localization data to {}", endpoint);
             for (LocalizationModel localizationModel : localizationModels) {
-                String locJson = exporterService.exportToJson(localizationModel);
+                String locJson = exporterService.exportToJson(localizationModel, false);
                 ResponseEntity<String> locResponse = restService.postJson(endpoint, parameters, locJson, authToken);
                 LOG.info("Locale {} submitted: HTTP {} : {}", localizationModel.getLocale(), locResponse.getStatusCode().value(), locResponse.getBody());
             }

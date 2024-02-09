@@ -1,6 +1,6 @@
 package com.wsunitstats.domain.submodel.requirement;
 
-import com.wsunitstats.utils.Util;
+import com.wsunitstats.utils.Utils;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
@@ -36,10 +36,10 @@ public class RequirementsModel {
         if (o == null) return true;
         if (getClass() != o.getClass()) return false;
         RequirementsModel that = (RequirementsModel) o;
-        return Util.equalsNullable(units, that.units)
-                && Util.equalsNullable(researches, that.researches)
-                && Objects.equals(researchesAll, that.researchesAll)
-                && Objects.equals(unitsAll, that.unitsAll);
+        return Utils.equalsNullable(units, that.units)
+               && Utils.equalsNullable(researches, that.researches)
+               && Objects.equals(researchesAll, that.researchesAll)
+               && Objects.equals(unitsAll, that.unitsAll);
     }
 
     @Override

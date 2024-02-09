@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.util.Base64;
 
+import static com.wsunitstats.utils.Constants.RestResponseMessage.OK;
+
 @RestController
 @RequestMapping(path = "/api/files")
 @PropertySource(value = "classpath:service.properties")
 @PropertySource(value = "file:config/service.properties", ignoreResourceNotFound = true)
 public class FileController {
-    private static final String OK = "ok";
-
     @Autowired
     private FileService fileService;
 
@@ -32,7 +32,7 @@ public class FileController {
     public ResponseEntity<String> uploadIcon(@RequestParam String fileName, @RequestParam String file) {
         try {
             fileService.saveFile(imagesPath, fileName, Base64.getDecoder().decode(file));
-            return new ResponseEntity<>(OK, HttpStatus.OK);
+            return new ResponseEntity<>(OK.getMessage(), HttpStatus.OK);
         } catch (IOException ex) {
             throw new RestException("Can't persist files", ex, HttpStatus.INTERNAL_SERVER_ERROR);
         }

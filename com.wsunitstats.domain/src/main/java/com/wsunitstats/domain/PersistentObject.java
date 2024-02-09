@@ -7,6 +7,9 @@ import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.ToString;
 
+/**
+ * An object which can be persisted with automatically assigned primary key
+ */
 @Getter
 @ToString
 @MappedSuperclass
