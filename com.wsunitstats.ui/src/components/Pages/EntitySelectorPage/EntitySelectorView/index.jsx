@@ -36,6 +36,8 @@ export const EntitySelectorView = ({ title, Card, getEntityPath, Filters, option
       setHasMore(true);
       setPage(0);
     }
+  // adding page here will lead to costant resets
+  // eslint-disable-next-line
   }, [searchParams]);
 
   const fetchMoreData = () => {
