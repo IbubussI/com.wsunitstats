@@ -92,6 +92,7 @@ public class UnitController {
     @GetMapping(path = "/game-id", params = "gameIds")
     public ResponseEntity<String> getUnitsByGameIds(@RequestParam List<String> gameIds,
                                                     @RequestParam(required = false) List<String> researchIds,
+                                                    @RequestParam(required = false) List<String> researchGameIds,
                                                     @RequestParam(defaultValue = "en") String locale,
                                                     @RequestParam(defaultValue = "gameId") String sort,
                                                     @RequestParam(defaultValue = "asc") String sortDir,
@@ -105,8 +106,13 @@ public class UnitController {
             parameterValidatorService.validateLocale(locale);
             List<UnitModel> units = unitService.getUnitsByGameIds(parsedGameIdList, sort, sortDir, page, size);
             if (researchIds != null) {
-                List<Integer> parsedResearchIdList = utilsService.parseGameIds(researchIds);
-                List<ResearchModel> researches = researchService.getResearchesByGameIds(parsedResearchIdList);
+                List<Long> parsedResearchIdList = utilsService.parseIds(researchIds);
+                List<ResearchModel> researches = researchService.getResearchesByIds(parsedResearchIdList);
+                unitService.applyResearches(units, researches);
+            }
+            if (researchGameIds != null) {
+                List<Integer> parsedResearchGameIdList = utilsService.parseGameIds(researchGameIds);
+                List<ResearchModel> researches = researchService.getResearchesByGameIds(parsedResearchGameIdList);
                 unitService.applyResearches(units, researches);
             }
             return utilsService.getJson(units, true, locale);

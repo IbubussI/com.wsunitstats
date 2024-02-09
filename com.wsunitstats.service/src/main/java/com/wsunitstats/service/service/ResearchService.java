@@ -14,6 +14,8 @@ public interface ResearchService {
 
     List<ResearchModel> getResearchesByGameIds(List<Integer> ids);
 
+    List<ResearchModel> getResearchesByIds(List<Long> ids);
+
     List<ResearchOption> getResearchOptions(String locale, String namePattern, List<Integer> gameIds,
                                             String sort, String sortDir, int page, int size);
 

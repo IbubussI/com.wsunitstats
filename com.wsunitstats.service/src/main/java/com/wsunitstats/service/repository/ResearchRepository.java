@@ -18,6 +18,8 @@ public interface ResearchRepository extends CrudRepository<ResearchModel, Long>,
 
     List<ResearchModel> findByGameIdIn(Collection<Integer> ids);
 
+    List<ResearchModel> findByIdIn(Collection<Long> ids);
+
     @Query(nativeQuery = true, value = """
             SELECT COLUMN_NAME
             FROM INFORMATION_SCHEMA.COLUMNS

@@ -38,6 +38,11 @@ public class ResearchServiceImpl implements ResearchService {
     }
 
     @Override
+    public List<ResearchModel> getResearchesByIds(List<Long> ids) {
+        return researchRepository.findByIdIn(ids);
+    }
+
+    @Override
     public List<ResearchOption> getResearchOptions(String locale, String namePattern, List<Integer> gameIds,
                                                    String sort, String sortDir, int page, int size) {
         int offset = page * size;
