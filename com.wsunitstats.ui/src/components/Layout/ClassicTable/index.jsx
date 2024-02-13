@@ -32,9 +32,8 @@ export const ClassicTable = ({ data }) => {
           }}>
             <TableRow>
               {data.head.map((headCell, index) => {
-                let isIdCell = index === 0 ? true : false;
                 return (
-                  <TableCell key={index} sx={{ width: isIdCell ? '60px' : '' }}>
+                  <TableCell key={index} sx={{ width: index === 0 ? '60px' : 'auto' }}>
                     <Typography variant='body2' color='text.primary' sx={{ fontWeight: 'bold' }}>
                       {headCell}
                     </Typography>

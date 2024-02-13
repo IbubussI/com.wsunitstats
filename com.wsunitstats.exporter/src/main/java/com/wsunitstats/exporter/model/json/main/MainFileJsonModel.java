@@ -15,6 +15,7 @@ public class MainFileJsonModel {
     private Object fileEditor;
     private Object gameServer;
     private GlobalContentJsonModel globalContent;
+    private Object messenger;
     private Object launcher;
     private Object lobby;
     private Object ratings;
