@@ -29,6 +29,8 @@ export const EntitySelectorView = ({ title, Card, getEntityPath, Filters, option
   const [hasMore, setHasMore] = React.useState(true);
   const [page, setPage] = React.useState(0);
 
+  // TODO: reconsider approach below to avoid flicker (since we are clearing all values explicitly)
+
   // if search params changes we need to reset to ensure only valid data is present
   React.useEffect(() => {
     if (page > 0) {
@@ -36,7 +38,7 @@ export const EntitySelectorView = ({ title, Card, getEntityPath, Filters, option
       setHasMore(true);
       setPage(0);
     }
-  // adding page here will lead to costant resets
+  // adding page here will lead to constant resets
   // eslint-disable-next-line
   }, [searchParams]);
 

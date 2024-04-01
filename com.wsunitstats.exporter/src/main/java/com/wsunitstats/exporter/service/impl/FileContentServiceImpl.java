@@ -17,10 +17,13 @@ import jakarta.annotation.PostConstruct;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +32,19 @@ import static com.wsunitstats.utils.Utils.convertToLocalizationTags;
 import static com.wsunitstats.utils.Utils.convertToNationNames;
 
 @Service
+@PropertySource(value = "classpath:exporter.properties")
+@PropertySource(value = "file:config/exporter.properties", ignoreResourceNotFound = true)
 public class FileContentServiceImpl implements FileContentService {
     private static final Logger LOG = LogManager.getLogger(FileContentServiceImpl.class);
+    private static final String UNIT_NAME_LOCALIZATION_PREFIX = "<*unitName";
+    private static final String UNIT_NAME_LOCALIZATION_POSTFIX = ">";
+    private static final String UNIT_TEXT_LOCALIZATION_PREFIX = "<*unitText";
+    private static final String UNIT_TEXT_LOCALIZATION_POSTFIX = ">";
+    private static final String RESEARCH_NAME_LOCALIZATION_PREFIX = "<*upgrade";
+    private static final String RESEARCH_NAME_LOCALIZATION_POSTFIX = "/0>";
+    private static final String RESEARCH_TEXT_LOCALIZATION_PREFIX = "<*upgrade";
+    private static final String RESEARCH_TEXT_LOCALIZATION_POSTFIX = "/1>";
+
     private GameplayFileJsonModel gameplayFileModel;
     private MainFileJsonModel mainFileModel;
     private VisualFileJsonModel visualFileModel;
@@ -46,6 +60,9 @@ public class FileContentServiceImpl implements FileContentService {
     private FilePathResolver filePathResolver;
     @Autowired
     private ImageService imageService;
+
+    @Value("${com.wsunitstats.exporter.warselection.unit.types.number}")
+    private int unitTypesNumber;
 
     @Override
     public GameplayFileJsonModel getGameplayFileModel() {
@@ -106,18 +123,26 @@ public class FileContentServiceImpl implements FileContentService {
 
     private LocalizationKeyModel getLocalizationKeyModel(SessionInitFileModel sessionInitSource, MainStartupFileModel mainStartupSource) {
         LocalizationKeyModel localizationModel = new LocalizationKeyModel();
-        localizationModel.setNationNames(convertToNationNames(sessionInitSource.getNationNames()));
-        localizationModel.setResearchNames(convertToLocalizationTags(sessionInitSource.getResearchNames()));
-        localizationModel.setResearchTexts(convertToLocalizationTags(sessionInitSource.getResearchTexts()));
-        localizationModel.setUnitNames(convertToLocalizationTags(sessionInitSource.getUnitNames()));
-        localizationModel.setUnitTexts(convertToLocalizationTags(sessionInitSource.getUnitTexts()));
+        localizationModel.setNationNames(convertToNationNames(mainStartupSource.getUnitGroupsNames()));
+        localizationModel.setResearchNames(generateByIds(RESEARCH_NAME_LOCALIZATION_PREFIX, RESEARCH_NAME_LOCALIZATION_POSTFIX));
+        localizationModel.setResearchTexts(generateByIds(RESEARCH_TEXT_LOCALIZATION_PREFIX, RESEARCH_TEXT_LOCALIZATION_POSTFIX));
+        localizationModel.setUnitNames(generateByIds(UNIT_NAME_LOCALIZATION_PREFIX, UNIT_NAME_LOCALIZATION_POSTFIX));
+        localizationModel.setUnitTexts(generateByIds(UNIT_TEXT_LOCALIZATION_PREFIX, UNIT_TEXT_LOCALIZATION_POSTFIX));
         localizationModel.setUnitTagNames(convertToLocalizationTags(mainStartupSource.getUnitTagNames()));
         localizationModel.setUnitSearchTagNames(convertToLocalizationTags(mainStartupSource.getUnitSearchTagNames()));
-        localizationModel.setEnvNames(convertToLocalizationTagMap(sessionInitSource.getEnvNames()));
+        localizationModel.setEnvNames(convertToLocalizationTagMap(mainStartupSource.getEnvNames()));
         localizationModel.setEnvTagNames(convertToLocalizationTags(mainStartupSource.getEnvTagNames()));
         localizationModel.setEnvSearchTagNames(convertToLocalizationTags(mainStartupSource.getEnvSearchTagNames()));
         localizationModel.setAgeNames(convertToLocalizationTags(sessionInitSource.getAgeNames()));
         localizationModel.setResourceNames(convertToLocalizationTags(mainStartupSource.getResourceNames()));
         return localizationModel;
+    }
+
+    private List<String> generateByIds(String prefix, String postfix) {
+        List<String> result = new ArrayList<>(unitTypesNumber);
+        for (int i = 0; i < unitTypesNumber; i++) {
+            result.add(prefix + i + postfix);
+        }
+        return result;
     }
 }

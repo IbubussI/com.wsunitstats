@@ -11,35 +11,13 @@ import java.util.List;
 @ToString
 public class SessionInitFileModel {
     public static final List<String> ARRAY_NAMES = List.of(
-            "unitNations",
-            "nationNames",
-            "researchNames",
-            "researchTexts",
-            "unitNames",
-            "unitTexts",
-            "envNames",
             "ageNames"
     );
-
-    private List<String> unitNations;
-    private List<String> nationNames;
-    private List<String> researchNames;
-    private List<String> researchTexts;
-    private List<String> unitNames;
-    private List<String> unitTexts;
-    private List<String> envNames;
     private List<String> ageNames;
 
     public void setAll(List<List<String>> lists) {
-        if (lists.size() == 8) {
-            unitNations = lists.get(0);
-            nationNames = lists.get(1);
-            researchNames = lists.get(2);
-            researchTexts = lists.get(3);
-            unitNames = lists.get(4);
-            unitTexts = lists.get(5);
-            envNames = lists.get(6);
-            ageNames = lists.get(7);
+        if (lists.size() == ARRAY_NAMES.size()) {
+            ageNames = lists.get(0);
         }
     }
 }

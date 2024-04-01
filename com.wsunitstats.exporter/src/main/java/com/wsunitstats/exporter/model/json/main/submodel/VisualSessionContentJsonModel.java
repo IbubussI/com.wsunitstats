@@ -24,6 +24,7 @@ public class VisualSessionContentJsonModel {
     @JsonDeserialize(using = ImageJsonModelDeserializer.class)
     @JsonSerialize(using = IndexedArrayDataModelSerializer.class)
     private Map<Integer, ImageJsonModel> images;
+    private Object imagesNames;
     private Object interfaceBillboards;
     private Object lenses;
     private Object light;
