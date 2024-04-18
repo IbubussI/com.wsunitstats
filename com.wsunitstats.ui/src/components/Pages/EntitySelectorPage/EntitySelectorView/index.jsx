@@ -38,9 +38,10 @@ export const EntitySelectorView = ({ title, Card, getEntityPath, Filters, option
       setHasMore(true);
       setPage(0);
     }
-  // adding page here will lead to constant resets
+  // adding page here will lead to constant resets;
+  // searchParams and params were added to react on url changes (filters & locale)
   // eslint-disable-next-line
-  }, [searchParams]);
+  }, [searchParams, params]);
 
   const fetchMoreData = () => {
     const requestSearchParams = new URLSearchParams(searchParams);
