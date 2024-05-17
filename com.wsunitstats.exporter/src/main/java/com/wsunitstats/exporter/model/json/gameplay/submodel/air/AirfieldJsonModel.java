@@ -19,4 +19,6 @@ public class AirfieldJsonModel {
     private Boolean on;
     @JsonInclude
     private List<Integer> stopPosition;
+    private Object pathLanding;
+    private Object pathTakeoff;
 }
