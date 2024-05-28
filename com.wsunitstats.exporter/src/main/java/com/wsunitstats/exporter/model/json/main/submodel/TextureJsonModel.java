@@ -19,4 +19,5 @@ public class TextureJsonModel {
     private Integer source;
     private Integer target;
     private List<Object> urls;
+    private Object wrapMode;
 }
