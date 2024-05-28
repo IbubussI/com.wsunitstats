@@ -47,9 +47,6 @@ public class ResearchServiceImpl implements ResearchService {
                                                    String sort, String sortDir, int page, int size) {
         int offset = page * size;
         String textPattern = namePattern == null ? null : String.format("%%%s%%", namePattern);
-        if (gameIds != null) {
-
-        }
         return researchRepository.findOptionsWithGameIdsFilter(locale, "<*upgrade%",
                 textPattern, gameIds, sort, sortDir, offset, size);
     }
