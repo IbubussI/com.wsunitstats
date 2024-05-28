@@ -2,11 +2,14 @@ package com.wsunitstats.service.service.impl;
 
 import com.wsunitstats.service.exception.AuthorizationException;
 import com.wsunitstats.service.service.AuthService;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +23,7 @@ import java.util.UUID;
 @PropertySource(value = "classpath:service.properties")
 @PropertySource(value = "file:config/service.properties", ignoreResourceNotFound = true)
 public class AuthServiceImpl implements AuthService {
+    private static final Logger LOG = LoggerFactory.getLogger(AuthServiceImpl.class);
     private SecretKey sessionSecretKey;
 
     @Value("${com.wsunitstats.service.auth.token.lifetime}")
@@ -50,8 +54,11 @@ public class AuthServiceImpl implements AuthService {
                     .parseClaimsJws(token)
                     .getBody()
                     .getSubject();
+        } catch (ExpiredJwtException ex) {
+            throw new AuthorizationException("Authentication token expired", ex);
         } catch (JwtException ex) {
-            throw new AuthorizationException(ex.getMessage(), ex);
+            LOG.error("Authorization failed with error: [{}]", ex.getMessage(), ex);
+            throw new AuthorizationException("Authentication error", ex);
         }
     }
 

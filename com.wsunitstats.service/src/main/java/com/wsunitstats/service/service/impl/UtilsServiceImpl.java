@@ -1,9 +1,11 @@
 package com.wsunitstats.service.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wsunitstats.service.service.LocalizationService;
 import com.wsunitstats.service.service.UtilsService;
 import com.wsunitstats.utils.service.ModelExporterService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -72,5 +77,22 @@ public class UtilsServiceImpl implements UtilsService {
     @Override
     public ResponseEntity<Map<String, Object>> getMapJsonResponseEntity(Map<String, Object> payload, HttpStatus status) {
         return ResponseEntity.status(status).contentType(MediaType.APPLICATION_JSON).body(payload);
+    }
+
+    @Override
+    public Map<String, Object> getErrorBody(HttpStatus status, String message) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", new Date());
+        body.put("status", status.value());
+        body.put("error", status.getReasonPhrase());
+        body.put("message", message);
+        return body;
+    }
+
+    @Override
+    public void setMapJsonResponse(HttpServletResponse response, Map<String, Object> payload, HttpStatus status) throws IOException {
+        response.setHeader("Content-Type", "application/json");
+        response.setStatus(status.value());
+        new ObjectMapper().writeValue(response.getWriter(), payload);
     }
 }
