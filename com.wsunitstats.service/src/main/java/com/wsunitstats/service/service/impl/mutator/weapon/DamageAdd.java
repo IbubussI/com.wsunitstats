@@ -15,12 +15,15 @@ import static com.wsunitstats.service.service.impl.mutator.MutatorUtils.toNumber
 public class DamageAdd implements Mutator {
     @Override
     public void mutate(UnitModel target, Map<String, String> parameters) {
-        int turretId = toNumber(parameters.get("turret"), -1);
+        // upgrade can have turret index < 0 which means "for each turret"; 0, 1, 2, 3 ... - for concrete turret; null - for no turret
+        // it means there is no solid way to represent turret by int since int has no null value and negative numbers are already used
+        // representing null turret value by Integer.MIN_VALUE is a "hacky" and not reliable way, consider using Integer as object in the future
+        int turretId = toNumber(parameters.get("turret"), Integer.MIN_VALUE);
         int weaponId = toNumber(parameters.get("weapon"), -1);
         int add = toNumber(parameters.get("add"), 0);
         int mult = toNumber(parameters.get("mult"), -1);
 
-        if (turretId == -1) {
+        if (turretId == Integer.MIN_VALUE) {
             processWeapons(target.getWeapons(), weaponId, mult, add);
         } else if (turretId < 0) {
             for (TurretModel turret : target.getTurrets()) {
